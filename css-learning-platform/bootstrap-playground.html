@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bootstrap Interactive Playground</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success-gradient: linear-gradient(135deg, #28a745, #20c997);
+            --bg-light: #f8f9fa;
+            --border-color: #dee2e6;
+            --text-muted: #6c757d;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.1);
+            --shadow-md: 0 4px 15px rgba(0,0,0,0.15);
+            --transition-base: 0.3s ease-out;
+        }
+
+        body {
+            background: var(--bg-light);
+        }
+
+        .playground-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+        }
+
+        .controls-panel {
+            background: #f8f9fa;
+            border-right: 1px solid var(--border-color);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .control-group {
+            background: white;
+            border-radius: 8px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 1rem;
+            transition: all var(--transition-base);
+        }
+
+        .control-group:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .control-group h6 {
+            background: var(--primary-gradient);
+            color: white;
+            margin: 0;
+            padding: 0.75rem 1rem;
+            border-radius: 8px 8px 0 0;
+            font-weight: 600;
+        }
+
+        .preview-area {
+            min-height: 400px;
+            background: white;
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            transition: all var(--transition-base);
+        }
+
+        .preview-area.has-content {
+            border-style: solid;
+            border-color: #28a745;
+        }
+
+        .component-btn {
+            width: 100%;
+            margin-bottom: 0.5rem;
+            text-align: left;
+            transition: all var(--transition-base);
+        }
+
+        .component-btn:hover {
+            transform: translateX(5px);
+        }
+
+        .code-output {
+            background: #1a1a1a;
+            color: #e6e6e6;
+            border-radius: 8px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .code-output pre {
+            margin: 0;
+            padding: 1rem;
+        }
+
+        .navbar-playground {
+            background: var(--primary-gradient) !important;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .generated-component {
+            margin-bottom: 1rem;
+            position: relative;
+            transition: all var(--transition-base);
+        }
+
+        .generated-component:hover {
+            transform: scale(1.02);
+        }
+
+        .component-controls {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            opacity: 0;
+            transition: opacity var(--transition-base);
+        }
+
+        .generated-component:hover .component-controls {
+            opacity: 1;
+        }
+
+        .color-picker-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .color-option {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: var(--shadow-sm);
+            cursor: pointer;
+            transition: all var(--transition-base);
+        }
+
+        .color-option:hover,
+        .color-option.active {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-md);
+        }
+
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1050;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="index.html"><i class="bi bi-arrow-left me-2"></i>Bootstrap Playground</a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="index.html"><i class="bi bi-house me-1"></i>Home</a>
+                <a class="nav-link" href="flexbox-playground.html"><i class="bi bi-grid-3x3 me-1"></i>Flexbox</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-4">
+        <div class="row">
+            <!-- Controls Panel -->
+            <div class="col-lg-3">
+                <div class="controls-panel p-3">
+                    <h5 class="text-center mb-3">
+                        <i class="bi bi-tools me-2"></i>Component Library
+                    </h5>
+
+                    <!-- Layout Components -->
+                    <div class="control-group">
+                        <h6><i class="bi bi-grid me-2"></i>Layout</h6>
+                        <div class="p-3">
+                            <button class="btn btn-outline-primary component-btn" onclick="addContainer()">
+                                <i class="bi bi-square me-2"></i>Container
+                            </button>
+                            <button class="btn btn-outline-primary component-btn" onclick="addRow()">
+                                <i class="bi bi-columns me-2"></i>Row
+                            </button>
+                            <button class="btn btn-outline-primary component-btn" onclick="addColumn()">
+                                <i class="bi bi-layout-three-columns me-2"></i>Column
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Navigation Components -->
+                    <div class="control-group">
+                        <h6><i class="bi bi-compass me-2"></i>Navigation</h6>
+                        <div class="p-3">
+                            <button class="btn btn-outline-success component-btn" onclick="addNavbar()">
+                                <i class="bi bi-menu-button me-2"></i>Navbar
+                            </button>
+                            <button class="btn btn-outline-success component-btn" onclick="addBreadcrumb()">
+                                <i class="bi bi-arrow-right me-2"></i>Breadcrumb
+                            </button>
+                            <button class="btn btn-outline-success component-btn" onclick="addPagination()">
+                                <i class="bi bi-chevron-bar-left me-2"></i>Pagination
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Content Components -->
+                    <div class="control-group">
+                        <h6><i class="bi bi-card-text me-2"></i>Content</h6>
+                        <div class="p-3">
+                            <button class="btn btn-outline-info component-btn" onclick="addCard()">
+                                <i class="bi bi-card-image me-2"></i>Card
+                            </button>
+                            <button class="btn btn-outline-info component-btn" onclick="addAlert()">
+                                <i class="bi bi-exclamation-triangle me-2"></i>Alert
+                            </button>
+                            <button class="btn btn-outline-info component-btn" onclick="addBadge()">
+                                <i class="bi bi-award me-2"></i>Badge
+                            </button>
+                            <button class="btn btn-outline-info component-btn" onclick="addButton()">
+                                <i class="bi bi-cursor me-2"></i>Button
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Form Components -->
+                    <div class="control-group">
+                        <h6><i class="bi bi-input-cursor me-2"></i>Forms</h6>
+                        <div class="p-3">
+                            <button class="btn btn-outline-warning component-btn" onclick="addFormGroup()">
+                                <i class="bi bi-input-cursor-text me-2"></i>Input Group
+                            </button>
+                            <button class="btn btn-outline-warning component-btn" onclick="addSelect()">
+                                <i class="bi bi-menu-down me-2"></i>Select
+                            </button>
+                            <button class="btn btn-outline-warning component-btn" onclick="addCheckbox()">
+                                <i class="bi bi-check-square me-2"></i>Checkbox
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Color Theme Selector -->
+                    <div class="control-group">
+                        <h6><i class="bi bi-palette me-2"></i>Theme Colors</h6>
+                        <div class="p-3">
+                            <div class="color-picker-group">
+                                <div class="color-option" style="background: #0d6efd" onclick="changeTheme('primary')" title="Primary"></div>
+                                <div class="color-option" style="background: #6610f2" onclick="changeTheme('purple')" title="Purple"></div>
+                                <div class="color-option" style="background: #d63384" onclick="changeTheme('pink')" title="Pink"></div>
+                                <div class="color-option" style="background: #dc3545" onclick="changeTheme('danger')" title="Danger"></div>
+                                <div class="color-option" style="background: #fd7e14" onclick="changeTheme('orange')" title="Orange"></div>
+                                <div class="color-option" style="background: #ffc107" onclick="changeTheme('warning')" title="Warning"></div>
+                                <div class="color-option" style="background: #198754" onclick="changeTheme('success')" title="Success"></div>
+                                <div class="color-option" style="background: #20c997" onclick="changeTheme('teal')" title="Teal"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="control-group">
+                        <h6><i class="bi bi-lightning me-2"></i>Actions</h6>
+                        <div class="p-3">
+                            <button class="btn btn-success w-100 mb-2" onclick="generateCode()">
+                                <i class="bi bi-code me-2"></i>Generate Code
+                            </button>
+                            <button class="btn btn-warning w-100 mb-2" onclick="copyCode()">
+                                <i class="bi bi-clipboard me-2"></i>Copy Code
+                            </button>
+                            <button class="btn btn-danger w-100" onclick="clearPreview()">
+                                <i class="bi bi-trash me-2"></i>Clear All
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Preview Area -->
+            <div class="col-lg-6">
+                <div class="playground-container">
+                    <div class="p-3 bg-primary text-white">
+                        <h5 class="mb-0"><i class="bi bi-eye me-2"></i>Live Preview</h5>
+                        <small>Drag components here or use the buttons on the left</small>
+                    </div>
+                    <div class="preview-area" id="preview-area">
+                        <div class="text-center text-muted py-5">
+                            <i class="bi bi-plus-circle display-4 mb-3"></i>
+                            <h5>Start Building</h5>
+                            <p>Click components from the sidebar to add them here</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Code Output -->
+            <div class="col-lg-3">
+                <div class="playground-container">
+                    <div class="p-3 bg-dark text-white">
+                        <h5 class="mb-0"><i class="bi bi-code-slash me-2"></i>Generated Code</h5>
+                        <small>HTML & CSS ready to copy</small>
+                    </div>
+                    <div class="code-output" id="code-output">
+                        <pre><!-- Click "Generate Code" to see HTML/CSS here --></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container">
+        <div id="copy-toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header bg-success text-white">
+                <i class="bi bi-check-circle me-2"></i>
+                <strong class="me-auto">Success</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body">
+                Code copied to clipboard!
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        let componentCounter = 0;
+        let currentTheme = 'primary';
+        const themeColors = {
+            primary: '#0d6efd',
+            purple: '#6610f2', 
+            pink: '#d63384',
+            danger: '#dc3545',
+            orange: '#fd7e14',
+            warning: '#ffc107',
+            success: '#198754',
+            teal: '#20c997'
+        };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updatePreviewState();
+        });
+
+        function updatePreviewState() {
+            const previewArea = document.getElementById('preview-area');
+            const hasContent = previewArea.children.length > 1; // More than just the placeholder
+            
+            if (hasContent) {
+                previewArea.classList.add('has-content');
+            } else {
+                previewArea.classList.remove('has-content');
+            }
+        }
+
+        function addContainer() {
+            const previewArea = document.getElementById('preview-area');
+            clearPlaceholder();
+            
+            const container = document.createElement('div');
+            container.className = 'container generated-component';
+            container.innerHTML = `
+                <div class="component-controls">
+                    <button class="btn btn-sm btn-danger" onclick="this.closest('.generated-component').remove(); updatePreviewState();">
+                        <i class="bi bi-x"></i>
+                    </button>
+                </div>
+                <div class="border border-2 border-${currentTheme} p-3 rounded">
+                    <h6 class="text-${currentTheme}"><i class="bi bi-square me-2"></i>Container</h6>
+                    <p class="text-muted mb-0">Bootstrap container with responsive margins</p>
+                </div>
+            `;
+            
+            previewArea.appendChild(container);
+            updatePreviewState();
+            showToast('Container added!');
+        }
+
+        function addRow() {
+            const previewArea = document.getElementById('preview-area');
+            clearPlaceholder();
+            
+            const row = document.createElement('div');
+            row.className = 'row generated-component mb-3';
+            row.innerHTML = `
+                <div class="component-controls">
+                    <button class="btn btn-sm btn-danger" onclick="this.closest('.generated-component').remove(); updatePreviewState();">
+                        <i class="bi bi-x"></i>
+                    </button>
+                </div>
+                <div class="col-md-6">
+                    <div class="bg-${currentTheme} bg-opacity-10 border border-${currentTheme} p-3 rounded text-center">
+                        <strong>Column 1</strong><br>
+                        <small>col-md-6</small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="bg-${currentTheme} bg-opacity-10 border border-${currentTheme} p-3 rounded text-center">
+                        <strong>Column 2</strong><br>
+                        <small>col-md-6</small>
+                    </div>
+                </div>
+            `;
+            
+            previewArea.appendChild(row);
+            updatePreviewState();
+            showToast('Row with columns added!');
+        }
+
+        function addColumn() {
+            const previewArea = document.getElementById('preview-area');
+            clearPlaceholder();
+            
+            const col = document.createElement('div');
+            col.className = 'col-md-4 generated-component mb-3';
+            col.innerHTML = `
+                <div class="component-controls">
+                    <button class="btn btn-sm btn-danger" onclick="this.closest('.generated-component').remove(); updatePreviewState();">
+                        <i class="bi bi-x"></i>
+                    </button>
+                </div>
+                <div class="bg-${currentTheme} bg-opacity-10 border border-${currentTheme} p-3 rounded text-center">
+                    <strong>Column</strong><br>
+                    <small>col-md-4</small>
+                </div>
+            `;
+            
+            previewArea.appendChild(col);
+            updatePreviewState();
+            showToast('Column added!');
+        }
+
+        function addNavbar() {
+            const previewArea = document.getElementById('preview-area');
+            clearPlaceholder();
+            
+            const navbar = document.createElement('nav');
+            navbar.className = `navbar navbar-expand-lg navbar-dark bg-${currentTheme} generated-component`;
+            navbar.innerHTML = `
+                <div class="component-controls">
+                    <button class="btn btn-sm btn-light" onclick="this.closest('.generated-component').remove(); updatePreviewState();">
+                        <i class="bi bi-x"></i>
+                    </button>
+                </div>
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="#"><i class="bi bi-bootstrap me-2"></i>Brand</a>
+                    <button class="navbar-toggler" type="button">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="navbar-nav ms-auto">
+                        <a class="nav-link" href="#">Home</a>
+                        <a class="nav-link" href="#">About</a>
+                        <a class="nav-link" href="#">Contact</a>
+                    </div>
+                </div>
+            `;
+            
+            previewArea.appendChild(navbar);
+            updatePreviewState();
+            showToast('Navbar added!');
+        }
+
+        function addCard() {
+            const previewArea = document.getElementById('preview-area');
+            clearPlaceholder();
+            
+            const card = document.createElement('div');
+            card.className = 'card generated-component mb-3';
+            card.style.maxWidth = '350px';
+            card.innerHTML = `
+                <div class="component-controls">
+                    <button class="btn btn-sm btn-danger" onclick="this.closest('.generated-component').remove(); updatePreviewState();">
+                        <i class="bi bi-x"></i>
+                    </button>
+                </div>
+                <div class="card-header bg-${currentTheme} text-white">
+                    <h6 class="mb-0"><i class="bi bi-card-image me-2"></i>Card Header</h6>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Card Title</h5>
+                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                    <a href="#" class="btn btn-${currentTheme}">Go somewhere</a>
+                </div>
+            `;
+            
+            previewArea.appendChild(card);
+            updatePreviewState();
+            showToast('Card added!');
+        }
+
+        function addAlert() {
+            const previewArea = document.getElementById('preview-area');
+            clearPlaceholder();
+            
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${currentTheme} generated-component`;
+            alert.innerHTML = `
+                <div class="component-controls">
+                    <button class="btn btn-sm btn-outline-danger" onclick="this.closest('.generated-component').remove(); updatePreviewState();">
+                        <i class="bi bi-x"></i>
+                    </button>
+                </div>
+                <i class="bi bi-info-circle me-2"></i>
+                <strong>Well done!</strong> You successfully added an alert component.
+            `;
+            
+            previewArea.appendChild(alert);
+            updatePreviewState();
+            showToast('Alert added!');
+        }
+
+        function addButton() {
+            const previewArea = document.getElementById('preview-area');  
+            clearPlaceholder();
+            
+            const buttonGroup = document.createElement('div');
+            buttonGroup.className = 'generated-component mb-3';
+            buttonGroup.innerHTML = `
+                <div class="component-controls">
+                    <button class="btn btn-sm btn-danger" onclick="this.closest('.generated-component').remove(); updatePreviewState();">
+                        <i class="bi bi-x"></i>
+                    </button>
+                </div>
+                <button class="btn btn-${currentTheme} me-2">Primary Button</button>
+                <button class="btn btn-outline-${currentTheme}">Outline Button</button>
+            `;
+            
+            previewArea.appendChild(buttonGroup);
+            updatePreviewState();
+            showToast('Buttons added!');
+        }
+
+        function addBadge() {
+            const previewArea = document.getElementById('preview-area');
+            clearPlaceholder();
+            
+            const badgeGroup = document.createElement('div');
+            badgeGroup.className = 'generated-component mb-3';
+            badgeGroup.innerHTML = `
+                <div class="component-controls">
+                    <button class="btn btn-sm btn-danger" onclick="this.closest('.generated-component').remove(); updatePreviewState();">
+                        <i class="bi bi-x"></i>
+                    </button>
+                </div>
+                <h5>Example heading <span class="badge bg-${currentTheme}">New</span></h5>
+                <p>Here are some badges: 
+                    <span class="badge bg-${currentTheme} me-1">Primary</span>
+                    <span class="badge bg-secondary me-1">Secondary</span>
+                    <span class="badge bg-success">Success</span>
+                </p>
+            `;
+            
+            previewArea.appendChild(badgeGroup);
+            updatePreviewState();
+            showToast('Badges added!');
+        }
+
+        function addFormGroup() {
+            const previewArea = document.getElementById('preview-area');
+            clearPlaceholder();
+            
+            const form = document.createElement('form');
+            form.className = 'generated-component mb-3';
+            form.innerHTML = `
+                <div class="component-controls">
+                    <button class="btn btn-sm btn-danger" onclick="this.closest('.generated-component').remove(); updatePreviewState();">
+                        <i class="bi bi-x"></i>
+                    </button>
+                </div>
+                <div class="mb-3">
+                    <label for="email${componentCounter}" class="form-label">Email address</label>
+                    <input type="email" class="form-control" id="email${componentCounter}" placeholder="name@example.com">
+                </div>
+                <div class="mb-3">
+                    <label for="message${componentCounter}" class="form-label">Message</label>
+                    <textarea class="form-control" id="message${componentCounter}" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn btn-${currentTheme}">Submit</button>
+            `;
+            
+            previewArea.appendChild(form);
+            componentCounter++;
+            updatePreviewState();
+            showToast('Form added!');
+        }
+
+        function addBreadcrumb() {
+            const previewArea = document.getElementById('preview-area');
+            clearPlaceholder();
+            
+            const breadcrumb = document.createElement('nav');
+            breadcrumb.className = 'generated-component mb-3';
+            breadcrumb.innerHTML = `
+                <div class="component-controls">
+                    <button class="btn btn-sm btn-danger" onclick="this.closest('.generated-component').remove(); updatePreviewState();">
+                        <i class="bi bi-x"></i>
+                    </button>
+                </div>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="#" class="text-${currentTheme}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="#" class="text-${currentTheme}">Library</a></li>
+                    <li class="breadcrumb-item active">Data</li>
+                </ol>
+            `;
+            
+            previewArea.appendChild(breadcrumb);
+            updatePreviewState();
+            showToast('Breadcrumb added!');
+        }
+
+        function addPagination() {
+            const previewArea = document.getElementById('preview-area');
+            clearPlaceholder();
+            
+            const pagination = document.createElement('nav');
+            pagination.className = 'generated-component mb-3';
+            pagination.innerHTML = `
+                <div class="component-controls">
+                    <button class="btn btn-sm btn-danger" onclick="this.closest('.generated-component').remove(); updatePreviewState();">
+                        <i class="bi bi-x"></i>
+                    </button>
+                </div>
+                <ul class="pagination">
+                    <li class="page-item"><a class="page-link text-${currentTheme}" href="#">Previous</a></li>
+                    <li class="page-item"><a class="page-link text-${currentTheme}" href="#">1</a></li>
+                    <li class="page-item active"><a class="page-link bg-${currentTheme} border-${currentTheme}" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link text-${currentTheme}" href="#">3</a></li>
+                    <li class="page-item"><a class="page-link text-${currentTheme}" href="#">Next</a></li>
+                </ul>
+            `;
+            
+            previewArea.appendChild(pagination);
+            updatePreviewState();
+            showToast('Pagination added!');
+        }
+
+        function changeTheme(theme) {
+            currentTheme = theme;
+            
+            // Update active color picker
+            document.querySelectorAll('.color-option').forEach(option => {
+                option.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Update existing components
+            const previewArea = document.getElementById('preview-area');
+            const themeClasses = ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'light', 'dark', 'purple', 'pink', 'orange', 'teal'];
+            
+            previewArea.innerHTML = previewArea.innerHTML.replace(/bg-(primary|secondary|success|danger|warning|info|light|dark|purple|pink|orange|teal)/g, `bg-${theme}`)
+                                                         .replace(/text-(primary|secondary|success|danger|warning|info|light|dark|purple|pink|orange|teal)/g, `text-${theme}`)
+                                                         .replace(/btn-(primary|secondary|success|danger|warning|info|light|dark|purple|pink|orange|teal)/g, `btn-${theme}`)
+                                                         .replace(/border-(primary|secondary|success|danger|warning|info|light|dark|purple|pink|orange|teal)/g, `border-${theme}`)
+                                                         .replace(/alert-(primary|secondary|success|danger|warning|info|light|dark|purple|pink|orange|teal)/g, `alert-${theme}`)
+                                                         .replace(/navbar-dark bg-(primary|secondary|success|danger|warning|info|light|dark|purple|pink|orange|teal)/g, `navbar-dark bg-${theme}`);
+            
+            showToast(`Theme changed to ${theme}!`);
+        }
+
+        function clearPlaceholder() {
+            const previewArea = document.getElementById('preview-area');
+            const placeholder = previewArea.querySelector('.text-center.text-muted');
+            if (placeholder) {
+                placeholder.remove();
+            }
+        }
+
+        function clearPreview() {
+            const previewArea = document.getElementById('preview-area');
+            previewArea.innerHTML = `
+                <div class="text-center text-muted py-5">
+                    <i class="bi bi-plus-circle display-4 mb-3"></i>
+                    <h5>Start Building</h5>
+                    <p>Click components from the sidebar to add them here</p>
+                </div>
+            `;
+            updatePreviewState();
+            showToast('Preview cleared!');
+        }
+
+        function generateCode() {
+            const previewArea = document.getElementById('preview-area');
+            const codeOutput = document.getElementById('code-output');
+            
+            let html = previewArea.innerHTML;
+            
+            // Clean up the HTML
+            html = html.replace(/class="component-controls"[\s\S]*?<\/div>/g, '') // Remove control buttons
+                      .replace(/\s+/g, ' ') // Normalize whitespace
+                      .replace(/> </g, '>\n<') // Add line breaks
+                      .trim();
+            
+            const formattedCode = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bootstrap Layout</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-4">
+${html.split('\n').map(line => '        ' + line).join('\n')}
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"><\/script>
+</body>
+</html>`;
+            
+            codeOutput.innerHTML = `<pre>${escapeHtml(formattedCode)}</pre>`;
+            showToast('Code generated successfully!');
+        }
+
+        function copyCode() {
+            const codeOutput = document.getElementById('code-output');
+            const code = codeOutput.textContent;
+            
+            navigator.clipboard.writeText(code).then(() => {
+                showToast('Code copied to clipboard!', 'success');
+            }).catch(() => {
+                showToast('Failed to copy code', 'danger');
+            });
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('copy-toast');
+            const toastBody = toast.querySelector('.toast-body');
+            const toastHeader = toast.querySelector('.toast-header');
+            
+            toastBody.textContent = message;
+            
+            // Update toast styling based on type
+            toastHeader.className = `toast-header bg-${type} text-white`;
+            
+            const bsToast = new bootstrap.Toast(toast);
+            bsToast.show();
+        }
+
+        // Add some initial content to demonstrate
+        window.addEventListener('load', function() {
+            // Set primary as default active theme
+            document.querySelector('.color-option[style*="#0d6efd"]').classList.add('active');
+        });
+    </script>
+</body>
+</html>

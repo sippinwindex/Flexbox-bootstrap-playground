@@ -1,0 +1,30 @@
+# Bootstrap Generator Python Dependencies
+# Install with: pip install -r requirements.txt
+
+# Core dependencies for the Bootstrap Generator
+requests>=2.28.0          # For downloading Bootstrap assets
+beautifulsoup4>=4.11.0    # For HTML parsing and validation
+lxml>=4.9.0               # XML/HTML parser for BeautifulSoup
+Pillow>=9.2.0             # Image processing for placeholder generation
+colorama>=0.4.5           # Colored terminal output
+click>=8.1.0              # Enhanced CLI interface
+jinja2>=3.1.0             # Template engine for advanced templates
+csscompressor>=0.9.5      # CSS minification
+jsmin>=3.0.1              # JavaScript minification
+watchdog>=2.1.0           # File watching for auto-reload
+
+# Optional dependencies for enhanced features
+markdown>=3.4.0           # For README generation with Markdown
+pygments>=2.13.0          # Syntax highlighting for code examples
+qrcode>=7.3.1             # QR code generation for sharing projects
+python-dotenv>=0.20.0     # Environment variable management
+
+# Development and testing (optional)
+pytest>=7.1.0            # Testing framework
+black>=22.6.0             # Code formatting
+flake8>=5.0.0             # Code linting
+mypy>=0.971               # Type checking
+
+# Web server enhancements (optional)  
+flask>=2.2.0              # Advanced local development server
+livereload>=2.6.3         # Auto-reload for development
