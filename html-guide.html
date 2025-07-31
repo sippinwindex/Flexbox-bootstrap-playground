@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML Learning Guide - Complete Reference</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success-gradient: linear-gradient(135deg, #28a745, #20c997);
+            --bg-light: #f8f9fa;
+            --border-color: #dee2e6;
+            --text-muted: #6c757d;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.1);
+            --shadow-md: 0 4px 15px rgba(0,0,0,0.15);
+        }
+
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+        }
+
+        .hero-section {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 3rem 0;
+        }
+
+        .guide-nav {
+            background: white;
+            border-radius: 8px;
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 100px;
+            max-height: calc(100vh - 120px);
+            overflow-y: auto;
+        }
+
+        .guide-nav .nav-link {
+            color: #495057;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            margin: 2px 0;
+            transition: all 0.3s ease;
+        }
+
+        .guide-nav .nav-link:hover,
+        .guide-nav .nav-link.active {
+            background: var(--primary-gradient);
+            color: white;
+        }
+
+        .content-section {
+            background: white;
+            border-radius: 8px;
+            box-shadow: var(--shadow-sm);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .example-container {
+            background: #f8f9fa;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .example-output {
+            background: white;
+            border: 2px dashed #dee2e6;
+            border-radius: 6px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .code-block {
+            position: relative;
+            margin: 1rem 0;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            opacity: 0.8;
+            transition: all 0.2s;
+            z-index: 10;
+        }
+
+        .copy-btn:hover {
+            opacity: 1;
+            transform: scale(1.05);
+        }
+
+        .copy-btn.copied {
+            background: #17a2b8;
+        }
+
+        .badge-level {
+            font-size: 0.7rem;
+            padding: 0.25rem 0.5rem;
+        }
+
+        .progress-indicator {
+            height: 4px;
+            background: var(--primary-gradient);
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+
+        .table-responsive {
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .best-practice {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 6px 6px 0;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 6px 6px 0;
+        }
+
+        .error-box {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 6px 6px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="bi bi-arrow-left me-2"></i>HTML Learning Guide
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="index.html"><i class="bi bi-house me-1"></i>Home</a>
+                <a class="nav-link" href="html-playground.html"><i class="bi bi-code-slash me-1"></i>HTML Playground</a>
+                <a class="nav-link" href="css-guide.html"><i class="bi bi-palette me-1"></i>CSS Guide</a>
+                <a class="nav-link" href="bootstrap-guide.html"><i class="bi bi-bootstrap me-1"></i>Bootstrap Guide</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="display-5 fw-bold mb-3">HTML Learning Guide</h1>
+                    <p class="lead mb-4">Master HTML from basics to advanced semantic structures with practical examples and best practices.</p>
+                    <div class="d-flex gap-3">
+                        <a href="html-playground.html" class="btn btn-light">
+                            <i class="bi bi-play-fill me-2"></i>Try HTML Playground
+                        </a>
+                        <a href="#getting-started" class="btn btn-outline-light">
+                            <i class="bi bi-book me-2"></i>Start Learning
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-4 text-center">
+                    <i class="bi bi-code-slash display-1 opacity-75"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="container-fluid mt-4">
+        <div class="row">
+            <!-- Navigation Sidebar -->
+            <div class="col-lg-3">
+                <div class="guide-nav p-3">
+                    <h6 class="text-muted small text-uppercase mb-3">Table of Contents</h6>
+                    <nav class="nav flex-column">
+                        <a class="nav-link active" href="#getting-started">
+                            <i class="bi bi-play-circle me-2"></i>Getting Started
+                        </a>
+                        <a class="nav-link" href="#basic-structure">
+                            <i class="bi bi-file-code me-2"></i>Basic Structure
+                        </a>
+                        <a class="nav-link" href="#text-elements">
+                            <i class="bi bi-type me-2"></i>Text Elements
+                        </a>
+                        <a class="nav-link" href="#links-media">
+                            <i class="bi bi-link me-2"></i>Links & Media
+                        </a>
+                        <a class="nav-link" href="#lists-tables">
+                            <i class="bi bi-list-ul me-2"></i>Lists & Tables
+                        </a>
+                        <a class="nav-link" href="#forms-input">
+                            <i class="bi bi-ui-checks me-2"></i>Forms & Input
+                        </a>
+                        <a class="nav-link" href="#semantic-html">
+                            <i class="bi bi-diagram-3 me-2"></i>Semantic HTML
+                        </a>
+                        <a class="nav-link" href="#accessibility">
+                            <i class="bi bi-universal-access me-2"></i>Accessibility
+                        </a>
+                        <a class="nav-link" href="#best-practices">
+                            <i class="bi bi-check-circle me-2"></i>Best Practices
+                        </a>
+                        <a class="nav-link" href="#modern-html">
+                            <i class="bi bi-lightning me-2"></i>Modern HTML
+                        </a>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-lg-9">
+                <!-- Getting Started -->
+                <section id="getting-started" class="content-section">
+                    <div class="d-flex align-items-center mb-4">
+                        <h2 class="mb-0">Getting Started with HTML</h2>
+                        <span class="badge bg-success ms-3 badge-level">Beginner</span>
+                    </div>
+                    
+                    <p class="lead">HTML (HyperText Markup Language) is the foundation of web development. It provides structure and meaning to web content through elements and attributes.</p>
+
+                    <div class="best-practice">
+                        <h6><i class="bi bi-lightbulb text-success me-2"></i>What You'll Learn</h6>
+                        <ul class="mb-0">
+                            <li>HTML document structure and syntax</li>
+                            <li>Essential elements for text, media, and forms</li>
+                            <li>Semantic HTML for accessibility and SEO</li>
+                            <li>Modern HTML5 features and best practices</li>
+                        </ul>
+                    </div>
+
+                    <h4 class="mt-4">Your First HTML Document</h4>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><code class="language-html"><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My First Web Page</title>
+</head>
+<body>
+    <h1>Hello, World!</h1>
+    <p>Welcome to my first web page.</p>
+</body>
+</html></code></pre>
+                    </div>
+                </section>
+
+                <!-- Basic Structure -->
+                <section id="basic-structure" class="content-section">
+                    <div class="d-flex align-items-center mb-4">
+                        <h2 class="mb-0">Basic HTML Structure</h2>
+                        <span class="badge bg-success ms-3 badge-level">Beginner</span>
+                    </div>
+
+                    <p>Every HTML document follows a standard structure with essential elements that define the document type, language, and metadata.</p>
+
+                    <h4>Document Declaration</h4>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><code class="language-html"><!DOCTYPE html></code></pre>
+                    </div>
+                    <p>The DOCTYPE declaration tells the browser this is an HTML5 document.</p>
+
+                    <h4>HTML Element</h4>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><code class="language-html"><html lang="en">
+    <!-- All content goes here -->
+</html></code></pre>
+                    </div>
+                    <p>The root element that contains all other elements. The <code>lang</code> attribute helps screen readers and search engines.</p>
+
+                    <h4>Head Section</h4>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <pre><code class="language-html"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Page description for SEO">
+    <title>Page Title - Shows in Browser Tab</title>
+    <link rel="stylesheet" href="styles.css">
+</head></code></pre>
+                    </div>
+
+                    <div class="table-responsive mt-4">
+                        <table class="table table-striped">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Element</th>
+                                    <th>Purpose</th>
+                                    <th>Required</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>&lt;meta charset&gt;</code></td>
+                                    <td>Character encoding (UTF-8 recommended)</td>
+                                    <td class="text-success"><i class="bi bi-check-circle"></i> Yes</td>
+                                </tr>
+                                <tr>
+                                    <td><code>&lt;meta viewport&gt;</code></td>
+                                    <td>Responsive design control</td>
+                                    <td class="text-warning"><i class="bi bi-exclamation-circle"></i> Recommended</td>
+                                </tr>
+                                <tr>
+                                    <td><code>&lt;title&gt;</code></td>
+                                    <td>Browser tab title and SEO</td>
+                                    <td class="text-success"><i class="bi bi-check-circle"></i> Yes</td>
+                                </tr>
+                                <tr>
+                                    <td><code>&lt;meta description&gt;</code></td>
+                                    <td>Search engine description</td>
+                                    <td class="text-info"><i class="bi bi-info-circle"></i> SEO</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Text Elements -->
+                <section id="text-elements" class="content-section">
+                    <div class="d-flex align-items-center mb-4">
+                        <h2 class="mb-0">Text Elements</h2>
+                        <span class="badge bg-primary ms-3 badge-level">Beginner</span>
+                    </div>
+
+                    <h4>Headings</h4>
+                    <p>Use headings to create a clear content hierarchy. Always start with h1 and don't skip levels.</p>
+                    
+                    <div class="example-container">
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <pre><code class="language-html"><h1>Main Page Title</h1>
+<h2>Section Heading</h2>
+<h3>Subsection Heading</h3>
+<h4>Minor Heading</h4>
+<h5>Small Heading</h5>
+<h6>Smallest Heading</h6></code></pre>
+                        </div>
+                        <div class="example-output">
+                            <h1>Main Page Title</h1>
+                            <h2>Section Heading</h2>
+                            <h3>Subsection Heading</h3>
+                            <h4>Minor Heading</h4>
+                            <h5>Small Heading</h5>
+                            <h6>Smallest Heading</h6>
+                        </div>
+                    </div>
+
+                    <h4>Paragraphs and Text Formatting</h4>
+                    <div class="example-container">
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <pre><code class="language-html"><p>This is a regular paragraph with some <strong>bold text</strong> and <em>italic text</em>.</p>
+
+<p>You can also use <mark>highlighted text</mark>, <small>small text</small>, and <code>inline code</code>.</p>
+
+<blockquote>
+    "This is a blockquote for longer quotations."
+    <cite>- Author Name</cite>
+</blockquote></code></pre>
+                        </div>
+                        <div class="example-output">
+                            <p>This is a regular paragraph with some <strong>bold text</strong> and <em>italic text</em>.</p>
+                            <p>You can also use <mark>highlighted text</mark>, <small>small text</small>, and <code>inline code</code>.</p>
+                            <blockquote>
+                                "This is a blockquote for longer quotations."
+                                <cite>- Author Name</cite>
+                            </blockquote>
+                        </div>
+                    </div>
+
+                    <div class="best-practice">
+                        <h6><i class="bi bi-check-circle text-success me-2"></i>Best Practice</h6>
+                        <p class="mb-0">Use <code>&lt;strong&gt;</code> and <code>&lt;em&gt;</code> instead of <code>&lt;b&gt;</code> and <code>&lt;i&gt;</code> for semantic meaning, not just visual styling.</p>
+                    </div>
+                </section>
+
+                <!-- Links & Media -->
+                <section id="links-media" class="content-section">
+                    <div class="d-flex align-items-center mb-4">
+                        <h2 class="mb-0">Links & Media</h2>
+                        <span class="badge bg-primary ms-3 badge-level">Beginner</span>
+                    </div>
+
+                    <h4>Links</h4>
+                    <div class="example-container">
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <pre><code class="language-html"><!-- External link -->
+<a href="https://example.com" target="_blank" rel="noopener">
+    Visit Example.com
+</a>
+
+<!-- Internal link -->
+<a href="#section-id">Jump to Section</a>
+
+<!-- Email link -->
+<a href="mailto:contact@example.com">Send Email</a>
+
+<!-- Phone link -->
+<a href="tel:+1234567890">Call Us</a></code></pre>
+                        </div>
+                        <div class="example-output">
+                            <a href="https://example.com" target="_blank" rel="noopener">Visit Example.com</a><br>
+                            <a href="#section-id">Jump to Section</a><br>
+                            <a href="mailto:contact@example.com">Send Email</a><br>
+                            <a href="tel:+1234567890">Call Us</a>
+                        </div>
+                    </div>
+
+                    <h4>Images</h4>
+                    <div class="example-container">
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <pre><code class="language-html"><!-- Basic image -->
+<img src="https://via.placeholder.com/300x200" 
+     alt="Description of the image" 
+     width="300" 
+     height="200">
+
+<!-- Responsive image -->
+<img src="hero-image.jpg" 
+     alt="Hero banner showing our product" 
+     style="max-width: 100%; height: auto;">
+
+<!-- Image with caption -->
+<figure>
+    <img src="chart.png" alt="Sales data for Q3 2024">
+    <figcaption>Sales growth over the last quarter</figcaption>
+</figure></code></pre>
+                        </div>
+                        <div class="example-output">
+                            <img src="https://via.placeholder.com/300x200" alt="Description of the image" width="300" height="200" style="max-width: 100%; height: auto;">
+                            <figure class="mt-3">
+                                <img src="https://via.placeholder.com/400x200" alt="Sales data for Q3 2024" style="max-width: 100%; height: auto;">
+                                <figcaption class="text-center mt-2 text-muted">Sales growth over the last quarter</figcaption>
+                            </figure>
+                        </div>
+                    </div>
+
+                    <div class="warning-box">
+                        <h6><i class="bi bi-exclamation-triangle text-warning me-2"></i>Important</h6>
+                        <p class="mb-0">Always include the <code>alt</code> attribute for accessibility. It describes the image for screen readers and shows when images fail to load.</p>
+                    </div>
+                </section>
+
+                <!-- Lists & Tables -->
+                <section id="lists-tables" class="content-section">
+                    <div class="d-flex align-items-center mb-4">
+                        <h2 class="mb-0">Lists & Tables</h2>
+                        <span class="badge bg-warning ms-3 badge-level">Intermediate</span>
+                    </div>
+
+                    <h4>Lists</h4>
+                    <div class="example-container">
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <pre><code class="language-html"><!-- Unordered List -->
+<ul>
+    <li>First item</li>
+    <li>Second item</li>
+    <li>Third item with <a href="#">a link</a></li>
+</ul>
+
+<!-- Ordered List -->
+<ol>
+    <li>Step one</li>
+    <li>Step two</li>
+    <li>Step three</li>
+</ol>
+
+<!-- Description List -->
+<dl>
+    <dt>HTML</dt>
+    <dd>HyperText Markup Language</dd>
+    <dt>CSS</dt>
+    <dd>Cascading Style Sheets</dd>
+</dl></code></pre>
+                        </div>
+                        <div class="example-output">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <h6>Unordered List</h6>
+                                    <ul>
+                                        <li>First item</li>
+                                        <li>Second item</li>
+                                        <li>Third item with <a href="#">a link</a></li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-4">
+                                    <h6>Ordered List</h6>
+                                    <ol>
+                                        <li>Step one</li>
+                                        <li>Step two</li>
+                                        <li>Step three</li>
+                                    </ol>
+                                </div>
+                                <div class="col-md-4">
+                                    <h6>Description List</h6>
+                                    <dl>
+                                        <dt>HTML</dt>
+                                        <dd>HyperText Markup Language</dd>
+                                        <dt>CSS</dt>
+                                        <dd>Cascading Style Sheets</dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4>Tables</h4>
+                    <div class="example-container">
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <pre><code class="language-html"><table>
+    <caption>Student Grades</caption>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Subject</th>
+            <th>Grade</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Alice Johnson</td>
+            <td>Mathematics</td>
+            <td>95%</td>
+        </tr>
+        <tr>
+            <td>Bob Smith</td>
+            <td>Science</td>
+            <td>87%</td>
+        </tr>
+    </tbody>
+</table></code></pre>
+                        </div>
+                        <div class="example-output">
+                            <table class="table table-striped">
+                                <caption>Student Grades</caption>
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Subject</th>
+                                        <th>Grade</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Alice Johnson</td>
+                                        <td>Mathematics</td>
+                                        <td>95%</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Bob Smith</td>
+                                        <td>Science</td>
+                                        <td>87%</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Forms & Input -->
+                <section id="forms-input" class="content-section">
+                    <div class="d-flex align-items-center mb-4">
+                        <h2 class="mb-0">Forms & Input</h2>
+                        <span class="badge bg-warning ms-3 badge-level">Intermediate</span>
+                    </div>
+
+                    <p>Forms collect user input and are essential for interactive websites. Always associate labels with form controls for accessibility.</p>
+
+                    <div class="example-container">
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <pre><code class="language-html"><form action="/submit" method="POST">
+    <!-- Text Input -->
+    <label for="name">Full Name:</label>
+    <input type="text" id="name" name="name" required>
+
+    <!-- Email Input -->
+    <label for="email">Email Address:</label>
+    <input type="email" id="email" name="email" required>
+
+    <!-- Password Input -->
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required>
+
+    <!-- Textarea -->
+    <label for="message">Message:</label>
+    <textarea id="message" name="message" rows="4" cols="50"></textarea>
+
+    <!-- Select Dropdown -->
+    <label for="country">Country:</label>
+    <select id="country" name="country">
+        <option value="">Choose a country</option>
+        <option value="us">United States</option>
+        <option value="ca">Canada</option>
+        <option value="uk">United Kingdom</option>
+    </select>
+
+    <!-- Radio Buttons -->
+    <fieldset>
+        <legend>Preferred Contact Method:</legend>
+        <input type="radio" id="contact-email" name="contact" value="email">
+        <label for="contact-email">Email</label>
+        
+        <input type="radio" id="contact-phone" name="contact" value="phone">
+        <label for="contact-phone">Phone</label>
+    </fieldset>
+
+    <!-- Checkboxes -->
+    <input type="checkbox" id="newsletter" name="newsletter" value="yes">
+    <label for="newsletter">Subscribe to newsletter</label>
+
+    <!-- Submit Button -->
+    <button type="submit">Submit Form</button>
+</form></code></pre>
+                        </div>
+                        <div class="example-output">
+                            <form class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="demo-name" class="form-label">Full Name:</label>
+                                    <input type="text" class="form-control" id="demo-name" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="demo-email" class="form-label">Email Address:</label>
+                                    <input type="email" class="form-control" id="demo-email" required>
+                                </div>
+                                <div class="col-12">
+                                    <label for="demo-message" class="form-label">Message:</label>
+                                    <textarea class="form-control" id="demo-message" rows="3"></textarea>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="demo-country" class="form-label">Country:</label>
+                                    <select class="form-select" id="demo-country">
+                                        <option value="">Choose a country</option>
+                                        <option value="us">United States</option>
+                                        <option value="ca">Canada</option>
+                                        <option value="uk">United Kingdom</option>
+                                    </select>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="demo-newsletter">
+                                        <label class="form-check-label" for="demo-newsletter">
+                                            Subscribe to newsletter
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-primary">Submit Form</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="best-practice">
+                        <h6><i class="bi bi-lightbulb text-success me-2"></i>Form Best Practices</h6>
+                        <ul class="mb-0">
+                            <li>Always use <code>&lt;label&gt;</code> elements with form controls</li>
+                            <li>Include <code>required</code> attribute for mandatory fields</li>
+                            <li>Use appropriate input types (email, tel, date, etc.)</li>
+                            <li>Group related inputs with <code>&lt;fieldset&gt;</code> and <code>&lt;legend&gt;</code></li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- Semantic HTML -->
+                <section id="semantic-html" class="content-section">
+                    <div class="d-flex align-items-center mb-4">
+                        <h2 class="mb-0">Semantic HTML5</h2>
+                        <span class="badge bg-info ms-3 badge-level">Intermediate</span>
+                    </div>
+
+                    <p>Semantic HTML uses elements that clearly describe their meaning and purpose, improving accessibility and SEO.</p>
+
+                    <div class="example-container">
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <pre><code class="language-html"><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Semantic HTML Example</title>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="home">
+            <h1>Welcome to Our Website</h1>
+            <article>
+                <h2>Latest News</h2>
+                <p>Published on <time datetime="2024-01-15">January 15, 2024</time></p>
+                <p>Article content goes here...</p>
+            </article>
+        </section>
+
+        <aside>
+            <h3>Related Links</h3>
+            <p>Additional resources and information.</p>
+        </aside>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Company Name. All rights reserved.</p>
+    </footer>
+</body>
+</html></code></pre>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive mt-4">
+                        <table class="table table-striped">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Element</th>
+                                    <th>Purpose</th>
+                                    <th>Use Case</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>&lt;header&gt;</code></td>
+                                    <td>Page or section header</td>
+                                    <td>Site navigation, page title</td>
+                                </tr>
+                                <tr>
+                                    <td><code>&lt;nav&gt;</code></td>
+                                    <td>Navigation links</td>
+                                    <td>Main menu, breadcrumbs</td>
+                                </tr>
+                                <tr>
+                                    <td><code>&lt;main&gt;</code></td>
+                                    <td>Primary content</td>
+                                    <td>Main page content (only one per page)</td>
+                                </tr>
+                                <tr>
+                                    <td><code>&lt;section&gt;</code></td>
+                                    <td>Thematic content group</td>
+                                    <td>Chapters, tabs, content areas</td>
+                                </tr>
+                                <tr>
+                                    <td><code>&lt;article&gt;</code></td>
+                                    <td>Independent content</td>
+                                    <td>Blog posts, news articles</td>
+                                </tr>
+                                <tr>
+                                    <td><code>&lt;aside&gt;</code></td>
+                                    <td>Sidebar content</td>
+                                    <td>Related links, ads, author info</td>
+                                </tr>
+                                <tr>
+                                    <td><code>&lt;footer&gt;</code></td>
+                                    <td>Page or section footer</td>
+                                    <td>Copyright, contact info</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Accessibility -->
+                <section id="accessibility" class="content-section">
+                    <div class="d-flex align-items-center mb-4">
+                        <h2 class="mb-0">Accessibility</h2>
+                        <span class="badge bg-info ms-3 badge-level">Intermediate</span>
+                    </div>
+
+                    <p>Making your HTML accessible ensures everyone can use your website, including people using screen readers or keyboard navigation.</p>
+
+                    <h4>ARIA Attributes</h4>
+                    <div class="example-container">
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <pre><code class="language-html"><!-- Screen reader descriptions -->
+<button aria-label="Close dialog">×</button>
+
+<!-- Expanded/collapsed states -->
+<button aria-expanded="false" aria-controls="menu">Menu</button>
+<div id="menu" aria-hidden="true">...</div>
+
+<!-- Form validation -->
+<input type="email" 
+       aria-describedby="email-error" 
+       aria-invalid="true">
+<div id="email-error" role="alert">
+    Please enter a valid email address
+</div>
+
+<!-- Landmarks -->
+<nav aria-label="Main navigation">...</nav>
+<main aria-label="Main content">...</main></code></pre>
+                        </div>
+                    </div>
+
+                    <h4>Keyboard Navigation</h4>
+                    <div class="example-container">
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <pre><code class="language-html"><!-- Tab order control -->
+<input type="text" tabindex="1" placeholder="First field">
+<input type="text" tabindex="2" placeholder="Second field">
+<button tabindex="3">Submit</button>
+
+<!-- Skip to main content -->
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<main id="main-content">
+    <!-- Main page content -->
+</main></code></pre>
+                        </div>
+                    </div>
+
+                    <div class="best-practice">
+                        <h6><i class="bi bi-universal-access text-success me-2"></i>Accessibility Checklist</h6>
+                        <ul class="mb-0">
+                            <li>Use semantic HTML elements appropriately</li>
+                            <li>Provide alt text for all images</li>
+                            <li>Ensure proper heading hierarchy (h1 → h2 → h3)</li>
+                            <li>Associate labels with form controls</li>
+                            <li>Use sufficient color contrast</li>
+                            <li>Make interactive elements keyboard accessible</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- Best Practices -->
+                <section id="best-practices" class="content-section">
+                    <div class="d-flex align-items-center mb-4">
+                        <h2 class="mb-0">Best Practices</h2>
+                        <span class="badge bg-danger ms-3 badge-level">Advanced</span>
+                    </div>
+
+                    <h4>Code Organization</h4>
+                    <div class="best-practice">
+                        <h6><i class="bi bi-check-circle text-success me-2"></i>HTML Structure</h6>
+                        <ul class="mb-0">
+                            <li>Use consistent indentation (2 or 4 spaces)</li>
+                            <li>Close all tags properly</li>
+                            <li>Use lowercase for element and attribute names</li>
+                            <li>Quote all attribute values</li>
+                            <li>Include alt attributes for images</li>
+                        </ul>
+                    </div>
+
+                    <h4>Performance Optimization</h4>
+                    <div class="example-container">
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <pre><code class="language-html"><!-- Optimize images -->
+<img src="image.webp" 
+     alt="Description" 
+     loading="lazy"
+     width="800" 
+     height="600">
+
+<!-- Preload critical resources -->
+<link rel="preload" href="critical.css" as="style">
+<link rel="preload" href="hero-image.jpg" as="image">
+
+<!-- Defer non-critical scripts -->
+<script src="analytics.js" defer></script></code></pre>
+                        </div>
+                    </div>
+
+                    <h4>SEO Optimization</h4>
+                    <div class="example-container">
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <pre><code class="language-html"><head>
+    <!-- Essential meta tags -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Title - Keep Under 60 Characters</title>
+    <meta name="description" content="Page description under 160 characters">
+    
+    <!-- Open Graph for social sharing -->
+    <meta property="og:title" content="Page Title">
+    <meta property="og:description" content="Page description">
+    <meta property="og:image" content="https://example.com/image.jpg">
+    <meta property="og:url" content="https://example.com/page">
+    
+    <!-- Structured data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": "Page Title",
+        "description": "Page description"
+    }
+    </script>
+</head></code></pre>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Modern HTML -->
+                <section id="modern-html" class="content-section">
+                    <div class="d-flex align-items-center mb-4">
+                        <h2 class="mb-0">Modern HTML Features</h2>
+                        <span class="badge bg-danger ms-3 badge-level">Advanced</span>
+                    </div>
+
+                    <h4>HTML5 Input Types</h4>
+                    <div class="example-container">
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <pre><code class="language-html"><!-- Date and time inputs -->
+<input type="date" name="birthday">
+<input type="time" name="appointment">
+<input type="datetime-local" name="meeting">
+
+<!-- Number and range inputs -->
+<input type="number" min="1" max="100" step="1" name="quantity">
+<input type="range" min="0" max="100" name="volume">
+
+<!-- File and color inputs -->
+<input type="file" accept="image/*" name="photo">
+<input type="color" name="theme-color">
+
+<!-- Search and URL inputs -->
+<input type="search" name="query" placeholder="Search...">
+<input type="url" name="website" placeholder="https://example.com"></code></pre>
+                        </div>
+                        <div class="example-output">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Date:</label>
+                                    <input type="date" class="form-control">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Time:</label>
+                                    <input type="time" class="form-control">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Number (1-100):</label>
+                                    <input type="number" class="form-control" min="1" max="100">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Range:</label>
+                                    <input type="range" class="form-control" min="0" max="100">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4>Web Components</h4>
+                    <div class="example-container">
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <pre><code class="language-html"><!-- Details/Summary for collapsible content -->
+<details>
+    <summary>Click to expand</summary>
+    <p>This content is hidden by default and shows when clicked.</p>
+</details>
+
+<!-- Progress indicators -->
+<label for="file-progress">Upload progress:</label>
+<progress id="file-progress" value="32" max="100">32%</progress>
+
+<!-- Dialog element -->
+<dialog id="my-dialog">
+    <form method="dialog">
+        <p>This is a modal dialog</p>
+        <button value="cancel">Cancel</button>
+        <button value="confirm">Confirm</button>
+    </form>
+</dialog></code></pre>
+                        </div>
+                        <div class="example-output">
+                            <details class="mb-3">
+                                <summary>Click to expand</summary>
+                                <p class="mt-2 mb-0">This content is hidden by default and shows when clicked.</p>
+                            </details>
+                            <div class="mb-3">
+                                <label for="demo-progress" class="form-label">Upload progress:</label>
+                                <progress id="demo-progress" class="form-control" value="32" max="100">32%</progress>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Practice Exercises -->
+                <section class="content-section">
+                    <h2><i class="bi bi-pencil-square me-2"></i>Practice Exercises</h2>
+                    
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Exercise 1: Basic Page</h5>
+                                    <p class="card-text">Create a simple webpage with proper structure, headings, and paragraphs.</p>
+                                    <a href="html-playground.html" class="btn btn-primary btn-sm">Try in Playground</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Exercise 2: Contact Form</h5>
+                                    <p class="card-text">Build a contact form with various input types and proper labels.</p>
+                                    <a href="html-playground.html" class="btn btn-primary btn-sm">Try in Playground</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Prism.js for syntax highlighting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+    <script>
+        // Copy code functionality
+        function copyCode(button) {
+            const codeBlock = button.nextElementSibling.textContent;
+            
+            navigator.clipboard.writeText(codeBlock).then(() => {
+                const originalText = button.innerHTML;
+                button.classList.add('copied');
+                button.innerHTML = '<i class="bi bi-check me-1"></i>Copied!';
+                
+                setTimeout(() => {
+                    button.classList.remove('copied');
+                    button.innerHTML = originalText;
+                }, 2000);
+            }).catch(() => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = codeBlock;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                button.innerHTML = '<i class="bi bi-check me-1"></i>Copied!';
+                setTimeout(() => {
+                    button.innerHTML = '<i class="bi bi-clipboard me-1"></i>Copy';
+                }, 2000);
+            });
+        }
+
+        // Smooth scrolling for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Update active navigation item
+        window.addEventListener('scroll', () => {
+            const sections = document.querySelectorAll('section[id]');
+            const navLinks = document.querySelectorAll('.guide-nav .nav-link');
+            
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 150;
+                if (window.scrollY >= sectionTop) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

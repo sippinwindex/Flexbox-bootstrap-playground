@@ -64,6 +64,12 @@
                             <i class="bi bi-play-circle me-1"></i>Interactive Playgrounds
                         </a>
                         <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="html-playground.html">
+                                <i class="bi bi-code-slash me-2"></i>HTML Playground
+                            </a></li>
+                            <li><a class="dropdown-item" href="css-playground.html">
+                                <i class="bi bi-palette me-2"></i>CSS Playground
+                            </a></li>
                             <li><a class="dropdown-item" href="flexbox-playground.html">
                                 <i class="bi bi-grid-3x3 me-2"></i>Flexbox Playground
                             </a></li>
@@ -80,6 +86,12 @@
                         </a>
                         <ul class="dropdown-menu">
                             <li><h6 class="dropdown-header">Documentation</h6></li>
+                            <li><a class="dropdown-item" href="html-guide.html">
+                                <i class="bi bi-file-text me-2"></i>HTML Guide
+                            </a></li>
+                            <li><a class="dropdown-item" href="css-guide.html">
+                                <i class="bi bi-palette me-2"></i>CSS Guide
+                            </a></li>
                             <li><a class="dropdown-item" href="flexbox-guide.html">
                                 <i class="bi bi-file-text me-2"></i>Flexbox Guide
                             </a></li>
@@ -116,14 +128,14 @@
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-8">
-                    <h1 class="display-4 fw-bold mb-3">Everything You Need to Learn CSS</h1>
-                    <p class="lead mb-4">From beginner basics to advanced techniques, our interactive platform has it all.</p>
+                    <h1 class="display-4 fw-bold mb-3">Everything You Need to Learn Web Development</h1>
+                    <p class="lead mb-4">From HTML fundamentals to advanced CSS techniques, our interactive platform covers it all with hands-on playgrounds.</p>
                     <div class="d-flex gap-3 flex-wrap">
-                        <a href="flexbox-playground.html" class="btn btn-light btn-lg btn-feature">
-                            <i class="bi bi-play-fill me-2"></i>Try Flexbox Playground
+                        <a href="html-playground.html" class="btn btn-light btn-lg btn-feature">
+                            <i class="bi bi-play-fill me-2"></i>Try HTML Playground
                         </a>
-                        <a href="bootstrap-playground.html" class="btn btn-outline-light btn-lg btn-feature">
-                            <i class="bi bi-bootstrap me-2"></i>Bootstrap Playground
+                        <a href="css-playground.html" class="btn btn-outline-light btn-lg btn-feature">
+                            <i class="bi bi-palette me-2"></i>CSS Playground
                         </a>
                     </div>
                 </div>
@@ -140,37 +152,69 @@
             <div class="row text-center mb-5">
                 <div class="col-lg-8 mx-auto">
                     <h2 class="display-6 fw-bold">Interactive Learning Tools</h2>
-                    <p class="lead text-muted">Master CSS and Bootstrap through hands-on experimentation.</p>
+                    <p class="lead text-muted">Master HTML, CSS, and Bootstrap through hands-on experimentation.</p>
                 </div>
             </div>
             
             <div class="row g-4">
-                <!-- Flexbox Playground Card -->
-                <div class="col-md-6 col-lg-4">
+                <!-- HTML Playground Card -->
+                <div class="col-md-6 col-lg-3">
                     <div class="card feature-card">
                         <div class="card-body text-center p-4">
                             <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
-                                <i class="bi bi-grid-3x3 text-primary fs-4"></i>
+                                <i class="bi bi-code-slash text-primary fs-4"></i>
+                            </div>
+                            <h5 class="card-title">HTML Playground</h5>
+                            <p class="card-text text-muted">Learn HTML elements, attributes, and structure with interactive examples and live preview.</p>
+                            <a href="html-playground.html" class="btn btn-primary btn-feature">
+                                <i class="bi bi-arrow-right me-1"></i>Learn HTML
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CSS Playground Card -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="card feature-card">
+                        <div class="card-body text-center p-4">
+                            <div class="bg-secondary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                                <i class="bi bi-palette text-secondary fs-4"></i>
+                            </div>
+                            <h5 class="card-title">CSS Playground</h5>
+                            <p class="card-text text-muted">Experiment with CSS properties, colors, transforms, and effects with real-time visual feedback.</p>
+                            <a href="css-playground.html" class="btn btn-secondary btn-feature">
+                                <i class="bi bi-arrow-right me-1"></i>Style Elements
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Flexbox Playground Card -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="card feature-card">
+                        <div class="card-body text-center p-4">
+                            <div class="bg-success bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                                <i class="bi bi-grid-3x3 text-success fs-4"></i>
                             </div>
                             <h5 class="card-title">Flexbox Playground</h5>
                             <p class="card-text text-muted">Interactive drag & drop interface to master CSS Flexbox with real-time code generation.</p>
-                            <a href="flexbox-playground.html" class="btn btn-primary btn-feature">
-                                <i class="bi bi-arrow-right me-1"></i>Start Learning
+                            <a href="flexbox-playground.html" class="btn btn-success btn-feature">
+                                <i class="bi bi-arrow-right me-1"></i>Master Flexbox
                             </a>
                         </div>
                     </div>
                 </div>
 
                 <!-- Bootstrap Playground Card -->
-                <div class="col-md-6 col-lg-4">
+                <div class="col-md-6 col-lg-3">
                     <div class="card feature-card">
                         <div class="card-body text-center p-4">
-                            <div class="bg-success bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
-                                <i class="bi bi-bootstrap text-success fs-4"></i>
+                            <div class="bg-info bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                                <i class="bi bi-bootstrap text-info fs-4"></i>
                             </div>
                             <h5 class="card-title">Bootstrap Playground</h5>
                             <p class="card-text text-muted">Build responsive layouts with Bootstrap components and copy the code for your projects.</p>
-                            <a href="bootstrap-playground.html" class="btn btn-success btn-feature">
+                            <a href="bootstrap-playground.html" class="btn btn-info btn-feature">
                                 <i class="bi bi-arrow-right me-1"></i>Build Layouts
                             </a>
                         </div>
@@ -181,12 +225,12 @@
                 <div class="col-md-6 col-lg-4">
                     <div class="card feature-card">
                         <div class="card-body text-center p-4">
-                            <div class="bg-info bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
-                                <i class="bi bi-book text-info fs-4"></i>
+                            <div class="bg-warning bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                                <i class="bi bi-book text-warning fs-4"></i>
                             </div>
                             <h5 class="card-title">Guided Tutorials</h5>
-                            <p class="card-text text-muted">Step-by-step tutorials covering Bootstrap grid, components, and advanced techniques.</p>
-                            <a href="flexbox-guide.html" class="btn btn-info btn-feature">
+                            <p class="card-text text-muted">Step-by-step tutorials covering HTML, CSS, Bootstrap grid, components, and advanced techniques.</p>
+                            <a href="html-guide.html" class="btn btn-warning btn-feature">
                                 <i class="bi bi-arrow-right me-1"></i>View Tutorials
                             </a>
                         </div>
@@ -197,12 +241,12 @@
                 <div class="col-md-6 col-lg-4">
                     <div class="card feature-card">
                         <div class="card-body text-center p-4">
-                            <div class="bg-warning bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
-                                <i class="bi bi-palette text-warning fs-4"></i>
+                            <div class="bg-danger bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                                <i class="bi bi-palette2 text-danger fs-4"></i>
                             </div>
                             <h5 class="card-title">CSS Utilities</h5>
                             <p class="card-text text-muted">Generate custom CSS utilities, color palettes, and styling helpers for your projects.</p>
-                            <a href="css-utilities.html" class="btn btn-warning btn-feature">
+                            <a href="css-utilities.html" class="btn btn-danger btn-feature">
                                 <i class="bi bi-arrow-right me-1"></i>Generate CSS
                             </a>
                         </div>
@@ -213,29 +257,13 @@
                 <div class="col-md-6 col-lg-4">
                     <div class="card feature-card">
                         <div class="card-body text-center p-4">
-                            <div class="bg-danger bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
-                                <i class="bi bi-code-slash text-danger fs-4"></i>
+                            <div class="bg-dark bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                                <i class="bi bi-code-slash text-dark fs-4"></i>
                             </div>
                             <h5 class="card-title">Ready-to-Use Components</h5>
                             <p class="card-text text-muted">Browse our library of pre-built components with HTML and CSS you can copy instantly.</p>
-                            <a href="bootstrap-playground.html" class="btn btn-danger btn-feature">
+                            <a href="bootstrap-playground.html" class="btn btn-dark btn-feature">
                                 <i class="bi bi-arrow-right me-1"></i>Browse Components
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Python Tools Card -->
-                <div class="col-md-6 col-lg-4">
-                    <div class="card feature-card">
-                        <div class="card-body text-center p-4">
-                            <div class="bg-secondary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
-                                <i class="bi bi-terminal text-secondary fs-4"></i>
-                            </div>
-                            <h5 class="card-title">Python Tools</h5>
-                            <p class="card-text text-muted">Command-line tools to generate Bootstrap templates, validate HTML, and automate workflows.</p>
-                            <a href="#python-tools" class="btn btn-secondary btn-feature">
-                                <i class="bi bi-arrow-right me-1"></i>View Tools
                             </a>
                         </div>
                     </div>
@@ -258,7 +286,7 @@
                                 <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">1</div>
                                 <div class="text-start">
                                     <h6 class="mb-0">Choose a Topic</h6>
-                                    <small class="text-muted">Flexbox, Bootstrap, or CSS Utilities</small>
+                                    <small class="text-muted">HTML, CSS, Flexbox, or Bootstrap</small>
                                 </div>
                             </div>
                         </div>
@@ -267,7 +295,7 @@
                                 <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">2</div>
                                 <div class="text-start">
                                     <h6 class="mb-0">Practice Interactive</h6>
-                                    <small class="text-muted">Drag, drop, and see changes live</small>
+                                    <small class="text-muted">Edit, experiment, and see changes live</small>
                                 </div>
                             </div>
                         </div>
@@ -277,6 +305,41 @@
                                 <div class="text-start">
                                     <h6 class="mb-0">Copy & Use</h6>
                                     <small class="text-muted">Get ready-to-use code for your projects</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Playground Overview Section -->
+                    <div class="mt-5 pt-4 border-top">
+                        <h3 class="mb-4">Complete Learning Path</h3>
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <div class="bg-primary bg-opacity-10 p-3 rounded">
+                                    <i class="bi bi-code-slash text-primary fs-3 mb-2"></i>
+                                    <h6 class="text-primary">HTML Basics</h6>
+                                    <small class="text-muted">Elements, attributes, structure</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="bg-secondary bg-opacity-10 p-3 rounded">
+                                    <i class="bi bi-palette text-secondary fs-3 mb-2"></i>
+                                    <h6 class="text-secondary">CSS Styling</h6>
+                                    <small class="text-muted">Colors, layout, effects</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="bg-success bg-opacity-10 p-3 rounded">
+                                    <i class="bi bi-grid-3x3 text-success fs-3 mb-2"></i>
+                                    <h6 class="text-success">Flexbox Layout</h6>
+                                    <small class="text-muted">Modern CSS layouts</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="bg-info bg-opacity-10 p-3 rounded">
+                                    <i class="bi bi-bootstrap text-info fs-3 mb-2"></i>
+                                    <h6 class="text-info">Bootstrap Framework</h6>
+                                    <small class="text-muted">Responsive components</small>
                                 </div>
                             </div>
                         </div>

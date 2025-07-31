@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CSS Utilities Generator</title>
+    <title>Flexbox Interactive Playground</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
@@ -11,69 +11,101 @@
     <style>
         :root {
             --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --success-color: #28a745;
-            --danger-color: #dc3545;
-            --warning-color: #ffc107;
-            --info-color: #17a2b8;
+            --success-gradient: linear-gradient(135deg, #28a745, #20c997);
+            --bg-light: #f8f9fa;
+            --border-color: #dee2e6;
+            --text-muted: #6c757d;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.1);
+            --shadow-md: 0 4px 15px rgba(0,0,0,0.15);
         }
 
-        .generator-panel {
+        body {
+            background: var(--bg-light);
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        .playground-container {
             background: white;
             border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: var(--shadow-md);
             overflow: hidden;
         }
 
-        .panel-header {
-            background: var(--primary-gradient);
-            color: white;
-            padding: 1rem;
+        .controls-panel {
+            background: #f8f9fa;
+            border-right: 1px solid var(--border-color);
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 20px;
         }
 
-        .color-preview {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: 3px solid white;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-            cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-
-        .color-preview:hover {
-            transform: scale(1.1);
-        }
-
-        .generated-palette {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 1rem;
-            margin: 1rem 0;
-        }
-
-        .color-card {
+        .control-group {
             background: white;
             border-radius: 8px;
-            padding: 1rem;
-            text-align: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
-            cursor: pointer;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 1rem;
+            overflow: hidden;
         }
 
-        .color-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        .control-group h6 {
+            background: var(--primary-gradient);
+            color: white;
+            margin: 0;
+            padding: 0.75rem 1rem;
+            font-weight: 600;
         }
 
-        .color-swatch {
-            width: 60px;
-            height: 60px;
+        .flex-container {
+            background: white;
+            border: 3px dashed #667eea;
+            border-radius: 12px;
+            padding: 20px;
+            min-height: 400px;
+            display: flex;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .flex-container::before {
+            content: 'Flex Container';
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .flex-item {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            margin: 5px;
             border-radius: 8px;
-            margin: 0 auto 0.5rem;
-            border: 2px solid white;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            font-weight: 600;
+            text-align: center;
+            min-width: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
         }
+
+        .flex-item:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .flex-item:nth-child(1) { background: linear-gradient(135deg, #ff6b6b, #ee5a52); }
+        .flex-item:nth-child(2) { background: linear-gradient(135deg, #4ecdc4, #26d0ce); }
+        .flex-item:nth-child(3) { background: linear-gradient(135deg, #45b7d1, #96c93d); }
+        .flex-item:nth-child(4) { background: linear-gradient(135deg, #f9ca24, #f0932b); }
+        .flex-item:nth-child(5) { background: linear-gradient(135deg, #6c5ce7, #a29bfe); }
+        .flex-item:nth-child(n+6) { background: linear-gradient(135deg, #fd79a8, #fdcb6e); }
 
         .code-output {
             background: #1a1a1a;
@@ -85,429 +117,387 @@
             line-height: 1.5;
             max-height: 400px;
             overflow-y: auto;
+            white-space: pre;
+            position: relative;
         }
 
-        .utility-preview {
-            min-height: 200px;
-            border: 2px dashed #dee2e6;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #f8f9fa;
-            transition: all 0.3s ease;
-        }
-
-        .utility-preview.has-content {
-            border-color: var(--success-color);
-            border-style: solid;
-        }
-
-        .range-input {
-            width: 100%;
-        }
-
-        .tab-content {
-            padding: 1.5rem;
-        }
-
-        .nav-tabs .nav-link {
-            border: none;
-            background: none;
-            color: #6c757d;
-            font-weight: 500;
-        }
-
-        .nav-tabs .nav-link.active {
-            background: var(--primary-gradient);
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #28a745;
             color: white;
-            border-radius: 8px 8px 0 0;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            opacity: 0.8;
+            transition: all 0.2s;
         }
 
-        .utility-item {
-            background: white;
-            border: 1px solid #dee2e6;
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1rem;
+        .copy-btn:hover {
+            opacity: 1;
+            transform: scale(1.05);
+        }
+
+        .copy-btn.copied {
+            background: #17a2b8;
+        }
+
+        .range-value {
+            font-weight: 600;
+            color: #667eea;
+            font-size: 0.9rem;
+        }
+
+        .btn-action {
+            border-radius: 25px;
+            font-weight: 500;
             transition: all 0.3s ease;
         }
 
-        .utility-item:hover {
-            border-color: #667eea;
-            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+        .btn-action:hover {
+            transform: translateY(-2px);
         }
 
-        .toast-container {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1050;
+        .demo-section {
+            background: linear-gradient(135deg, rgba(248, 249, 250, 0.8), rgba(233, 236, 239, 0.8));
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            border: 1px solid var(--border-color);
+        }
+
+        .demo-container {
+            background: white;
+            border: 2px dashed #28a745;
+            border-radius: 8px;
+            padding: 20px;
+            min-height: 200px;
+            display: flex;
+            position: relative;
+        }
+
+        .demo-container::before {
+            content: 'Demo Container';
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background: #28a745;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .demo-item {
+            background: white;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 5px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: move;
+            user-select: none;
+        }
+
+        .demo-item:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+            border-color: #667eea;
+        }
+
+        .demo-item.dragging {
+            opacity: 0.5;
+            transform: rotate(5deg);
+        }
+
+        .live-indicator {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #28a745;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .css-property { color: #4CAF50; font-weight: 500; }
+        .css-value { color: #FFA726; }
+        .css-selector { color: #42A5F5; font-weight: 500; }
+
+        @media (max-width: 768px) {
+            .playground-layout {
+                flex-direction: column;
+            }
+            .controls-panel {
+                max-height: none;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+            }
         }
     </style>
 </head>
-<body class="bg-light">
-
+<body>
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand" href="index.html"><i class="bi bi-arrow-left me-2"></i>CSS Utilities Generator</a>
+            <a class="navbar-brand" href="index.html">
+                <i class="bi bi-arrow-left me-2"></i>Flexbox Playground
+            </a>
             <div class="navbar-nav ms-auto">
-                <a class="nav-link" href="index.html"><i class="bi bi-house me-1"></i>Home</a>
-                <a class="nav-link" href="bootstrap-playground.html"><i class="bi bi-bootstrap me-1"></i>Bootstrap</a>
-                <a class="nav-link" href="flexbox-playground.html"><i class="bi bi-grid-3x3 me-1"></i>Flexbox</a>
+                <a class="nav-link" href="flexbox-guide.html">
+                    <i class="bi bi-book me-1"></i>Documentation
+                </a>
+                <a class="nav-link" href="index.html">
+                    <i class="bi bi-house me-1"></i>Home
+                </a>
             </div>
         </div>
     </nav>
 
-    <div class="container mt-4">
-        <div class="row">
-            <div class="col-12">
-                <div class="text-center mb-4">
-                    <h1 class="display-5 fw-bold mb-3">
-                        <i class="bi bi-palette me-3"></i>CSS Utilities Generator
-                    </h1>
-                    <p class="lead text-muted">Generate custom CSS utilities, color palettes, and styling helpers for your projects</p>
-                </div>
-            </div>
-        </div>
+    <div class="container-fluid p-3">
+        <div class="row playground-layout">
+            <!-- Controls Panel -->
+            <div class="col-lg-3">
+                <div class="controls-panel">
+                    <h5 class="text-center mb-4">
+                        <i class="bi bi-sliders me-2"></i>Flexbox Controls
+                    </h5>
 
-        <!-- Tabs Navigation -->
-        <ul class="nav nav-tabs mb-4" id="generatorTabs" role="tablist">
-            <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="colors-tab" data-bs-toggle="tab" data-bs-target="#colors" type="button" role="tab">
-                    <i class="bi bi-palette me-2"></i>Color Palette
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="spacing-tab" data-bs-toggle="tab" data-bs-target="#spacing" type="button" role="tab">
-                    <i class="bi bi-arrows-move me-2"></i>Spacing
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="typography-tab" data-bs-toggle="tab" data-bs-target="#typography" type="button" role="tab">
-                    <i class="bi bi-type me-2"></i>Typography
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="effects-tab" data-bs-toggle="tab" data-bs-target="#effects" type="button" role="tab">
-                    <i class="bi bi-magic me-2"></i>Effects
-                </button>
-            </li>
-        </ul>
-
-        <!-- Tab Content -->
-        <div class="tab-content" id="generatorTabContent">
-            
-            <!-- Color Palette Generator -->
-            <div class="tab-pane fade show active" id="colors" role="tabpanel">
-                <div class="row g-4">
-                    <div class="col-lg-4">
-                        <div class="generator-panel">
-                            <div class="panel-header">
-                                <h5 class="mb-0"><i class="bi bi-droplet me-2"></i>Color Generator</h5>
+                    <!-- Container Properties -->
+                    <div class="control-group">
+                        <h6><i class="bi bi-box me-2"></i>Container Properties</h6>
+                        <div class="p-3">
+                            <div class="mb-3">
+                                <label class="form-label">Display:</label>
+                                <select class="form-select form-select-sm" id="display" onchange="updateContainer()">
+                                    <option value="block">Block</option>
+                                    <option value="flex" selected>Flex</option>
+                                    <option value="inline-flex">Inline Flex</option>
+                                </select>
                             </div>
-                            <div class="p-3">
-                                <div class="mb-3">
-                                    <label for="baseColor" class="form-label">Base Color</label>
-                                    <input type="color" class="form-control form-control-color" id="baseColor" value="#667eea" title="Choose base color">
-                                </div>
-                                
-                                <div class="mb-3">
-                                    <label for="paletteType" class="form-label">Palette Type</label>
-                                    <select class="form-select" id="paletteType" onchange="generatePalette()">
-                                        <option value="monochromatic">Monochromatic</option>
-                                        <option value="analogous">Analogous</option>
-                                        <option value="complementary">Complementary</option>
-                                        <option value="triadic">Triadic</option>
-                                        <option value="tetradic">Tetradic</option>
-                                    </select>
-                                </div>
-                                
-                                <div class="mb-3">
-                                    <label for="colorCount" class="form-label">Colors: <span id="colorCountValue">5</span></label>
-                                    <input type="range" class="form-range" id="colorCount" min="3" max="12" value="5" oninput="updateColorCount(this.value)">
-                                </div>
-                                
-                                <button class="btn btn-primary w-100" onclick="generatePalette()">
-                                    <i class="bi bi-arrow-clockwise me-2"></i>Generate Palette
-                                </button>
+
+                            <div class="mb-3">
+                                <label class="form-label">Flex Direction:</label>
+                                <select class="form-select form-select-sm" id="flex-direction" onchange="updateContainer()">
+                                    <option value="row" selected>Row</option>
+                                    <option value="row-reverse">Row Reverse</option>
+                                    <option value="column">Column</option>
+                                    <option value="column-reverse">Column Reverse</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Justify Content:</label>
+                                <select class="form-select form-select-sm" id="justify-content" onchange="updateContainer()">
+                                    <option value="flex-start" selected>Flex Start</option>
+                                    <option value="center">Center</option>
+                                    <option value="flex-end">Flex End</option>
+                                    <option value="space-between">Space Between</option>
+                                    <option value="space-around">Space Around</option>
+                                    <option value="space-evenly">Space Evenly</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Align Items:</label>
+                                <select class="form-select form-select-sm" id="align-items" onchange="updateContainer()">
+                                    <option value="stretch" selected>Stretch</option>
+                                    <option value="flex-start">Flex Start</option>
+                                    <option value="center">Center</option>
+                                    <option value="flex-end">Flex End</option>
+                                    <option value="baseline">Baseline</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Flex Wrap:</label>
+                                <select class="form-select form-select-sm" id="flex-wrap" onchange="updateContainer()">
+                                    <option value="nowrap" selected>No Wrap</option>
+                                    <option value="wrap">Wrap</option>
+                                    <option value="wrap-reverse">Wrap Reverse</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Gap: <span class="range-value" id="gap-value">10px</span></label>
+                                <input type="range" class="form-range" id="gap" min="0" max="50" value="10" oninput="updateGap()" onchange="updateContainer()">
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Height: <span class="range-value" id="height-value">400px</span></label>
+                                <input type="range" class="form-range" id="container-height" min="200" max="800" value="400" oninput="updateHeight()" onchange="updateContainer()">
                             </div>
                         </div>
+                    </div>
+
+                    <!-- Item Controls -->
+                    <div class="control-group">
+                        <h6><i class="bi bi-square me-2"></i>Item Controls</h6>
+                        <div class="p-3">
+                            <div class="mb-3">
+                                <label class="form-label">Select Item:</label>
+                                <select class="form-select form-select-sm" id="selected-item" onchange="updateItemControls()">
+                                    <option value="1">Item 1</option>
+                                    <option value="2">Item 2</option>
+                                    <option value="3">Item 3</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Flex Grow: <span class="range-value" id="grow-value">0</span></label>
+                                <input type="range" class="form-range" id="flex-grow" min="0" max="5" value="0" oninput="updateGrow()" onchange="updateSelectedItem()">
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Flex Shrink: <span class="range-value" id="shrink-value">1</span></label>
+                                <input type="range" class="form-range" id="flex-shrink" min="0" max="5" value="1" oninput="updateShrink()" onchange="updateSelectedItem()">
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Flex Basis:</label>
+                                <select class="form-select form-select-sm" id="flex-basis" onchange="updateSelectedItem()">
+                                    <option value="auto" selected>Auto</option>
+                                    <option value="0">0</option>
+                                    <option value="50px">50px</option>
+                                    <option value="100px">100px</option>
+                                    <option value="200px">200px</option>
+                                    <option value="50%">50%</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Align Self:</label>
+                                <select class="form-select form-select-sm" id="align-self" onchange="updateSelectedItem()">
+                                    <option value="auto" selected>Auto</option>
+                                    <option value="flex-start">Flex Start</option>
+                                    <option value="center">Center</option>
+                                    <option value="flex-end">Flex End</option>
+                                    <option value="stretch">Stretch</option>
+                                    <option value="baseline">Baseline</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Order: <span class="range-value" id="order-value">0</span></label>
+                                <input type="range" class="form-range" id="order" min="-5" max="5" value="0" oninput="updateOrder()" onchange="updateSelectedItem()">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="control-group">
+                        <h6><i class="bi bi-lightning me-2"></i>Actions</h6>
+                        <div class="p-3">
+                            <button class="btn btn-success btn-action w-100 mb-2" onclick="addItem()">
+                                <i class="bi bi-plus me-2"></i>Add Item
+                            </button>
+                            <button class="btn btn-danger btn-action w-100 mb-2" onclick="removeItem()">
+                                <i class="bi bi-dash me-2"></i>Remove Item
+                            </button>
+                            <button class="btn btn-warning btn-action w-100" onclick="resetAll()">
+                                <i class="bi bi-arrow-clockwise me-2"></i>Reset All
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Playground -->
+            <div class="col-lg-6">
+                <div class="playground-container">
+                    <div class="p-3 bg-primary text-white position-relative">
+                        <h5 class="mb-0">
+                            <i class="bi bi-eye me-2"></i>Live Preview
+                        </h5>
+                        <small>Flexbox container with real-time updates</small>
+                        <div class="live-indicator">LIVE</div>
                     </div>
                     
-                    <div class="col-lg-4">
-                        <div class="generator-panel">
-                            <div class="panel-header">
-                                <h5 class="mb-0"><i class="bi bi-eye me-2"></i>Color Preview</h5>
-                            </div>
-                            <div class="p-3">
-                                <div id="colorPalette" class="generated-palette">
-                                    <!-- Generated colors will appear here -->
-                                </div>
-                            </div>
+                    <div class="p-3">
+                        <div class="flex-container" id="flex-container">
+                            <div class="flex-item" data-item="1">Item 1</div>
+                            <div class="flex-item" data-item="2">Item 2</div>
+                            <div class="flex-item" data-item="3">Item 3</div>
                         </div>
                     </div>
-                    
-                    <div class="col-lg-4">
-                        <div class="generator-panel">
-                            <div class="panel-header">
-                                <h5 class="mb-0"><i class="bi bi-code-slash me-2"></i>CSS Output</h5>
-                            </div>
-                            <div class="p-3">
-                                <div class="code-output" id="colorCSS">
-                                    <pre>/* Click "Generate Palette" to see CSS variables */</pre>
-                                </div>
-                                <button class="btn btn-success btn-sm mt-2 w-100" onclick="copyColorCSS()">
-                                    <i class="bi bi-clipboard me-2"></i>Copy CSS
-                                </button>
-                            </div>
+                </div>
+
+                <!-- Demo Section -->
+                <div class="demo-section">
+                    <h5><i class="bi bi-grid-3x3 me-2"></i>Real Content Demo</h5>
+                    <p class="text-muted mb-3">See how flexbox works with actual content:</p>
+                    <div class="demo-container" id="demo-container">
+                        <div class="demo-item" draggable="true">
+                            <h6>📝 Text Card</h6>
+                            <p class="mb-0 small">Sample content</p>
                         </div>
+                        <div class="demo-item" draggable="true">
+                            <h6>🚀 Icon Card</h6>
+                            <p class="mb-0 small">With icon</p>
+                        </div>
+                        <div class="demo-item" draggable="true">
+                            <button class="btn btn-sm btn-primary">Button</button>
+                            <p class="mb-0 small mt-1">Interactive</p>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <button class="btn btn-info btn-sm" onclick="applyToDemo()">
+                            <i class="bi bi-arrow-right me-1"></i>Apply Settings to Demo
+                        </button>
+                        <button class="btn btn-secondary btn-sm ms-2" onclick="resetDemo()">
+                            <i class="bi bi-arrow-clockwise me-1"></i>Reset Demo
+                        </button>
                     </div>
                 </div>
             </div>
 
-            <!-- Spacing Utilities -->
-            <div class="tab-pane fade" id="spacing" role="tabpanel">
-                <div class="row g-4">
-                    <div class="col-lg-6">
-                        <div class="generator-panel">
-                            <div class="panel-header">
-                                <h5 class="mb-0"><i class="bi bi-arrows-move me-2"></i>Spacing Generator</h5>
-                            </div>
-                            <div class="p-3">
-                                <div class="mb-3">
-                                    <label for="baseSpacing" class="form-label">Base Spacing (rem): <span id="baseSpacingValue">1</span></label>
-                                    <input type="range" class="form-range" id="baseSpacing" min="0.25" max="4" step="0.25" value="1" oninput="updateSpacing(this.value)">
-                                </div>
-                                
-                                <div class="mb-3">
-                                    <label for="spacingScale" class="form-label">Scale Factor: <span id="scaleValue">1.5</span></label>
-                                    <input type="range" class="form-range" id="spacingScale" min="1.2" max="2" step="0.1" value="1.5" oninput="updateScale(this.value)">
-                                </div>
-                                
-                                <div class="mb-3">
-                                    <label for="spacingSteps" class="form-label">Steps: <span id="stepsValue">8</span></label>
-                                    <input type="range" class="form-range" id="spacingSteps" min="5" max="12" value="8" oninput="updateSteps(this.value)">
-                                </div>
-                                
-                                <button class="btn btn-primary w-100" onclick="generateSpacing()">
-                                    <i class="bi bi-arrow-clockwise me-2"></i>Generate Spacing
-                                </button>
-                            </div>
-                        </div>
+            <!-- CSS Output -->
+            <div class="col-lg-3">
+                <div class="playground-container">
+                    <div class="p-3 bg-success text-white position-relative">
+                        <h5 class="mb-0">
+                            <i class="bi bi-code-slash me-2"></i>Live CSS
+                        </h5>
+                        <small>Copy-ready CSS code</small>
+                        <div class="live-indicator">LIVE</div>
                     </div>
-                    
-                    <div class="col-lg-6">
-                        <div class="generator-panel">
-                            <div class="panel-header">
-                                <h5 class="mb-0"><i class="bi bi-code-slash me-2"></i>Spacing CSS</h5>
-                            </div>
-                            <div class="p-3">
-                                <div class="code-output" id="spacingCSS">
-                                    <pre>/* Click "Generate Spacing" to see utilities */</pre>
-                                </div>
-                                <button class="btn btn-success btn-sm mt-2 w-100" onclick="copySpacingCSS()">
-                                    <i class="bi bi-clipboard me-2"></i>Copy CSS
-                                </button>
-                            </div>
-                        </div>
+                    <div class="position-relative">
+                        <button class="copy-btn" onclick="copyCSS()" id="copy-css-btn">
+                            <i class="bi bi-clipboard me-1"></i>Copy
+                        </button>
+                        <div class="code-output" id="css-output">/* CSS will appear here */</div>
                     </div>
                 </div>
-                
-                <!-- Spacing Preview -->
-                <div class="row g-4 mt-4">
-                    <div class="col-12">
-                        <div class="generator-panel">
-                            <div class="panel-header">
-                                <h5 class="mb-0"><i class="bi bi-eye me-2"></i>Spacing Preview</h5>
-                            </div>
-                            <div class="p-3">
-                                <div id="spacingPreview" class="d-flex flex-wrap gap-2">
-                                    <!-- Generated spacing preview will appear here -->
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Typography Utilities -->
-            <div class="tab-pane fade" id="typography" role="tabpanel">
-                <div class="row g-4">
-                    <div class="col-lg-6">
-                        <div class="generator-panel">
-                            <div class="panel-header">
-                                <h5 class="mb-0"><i class="bi bi-type me-2"></i>Typography Scale</h5>
-                            </div>
-                            <div class="p-3">
-                                <div class="mb-3">
-                                    <label for="baseFont" class="form-label">Base Font Size (px): <span id="baseFontValue">16</span></label>
-                                    <input type="range" class="form-range" id="baseFont" min="12" max="24" value="16" oninput="updateBaseFont(this.value)">
-                                </div>
-                                
-                                <div class="mb-3">
-                                    <label for="typeScale" class="form-label">Type Scale: <span id="typeScaleValue">1.25</span></label>
-                                    <select class="form-select" id="typeScale" onchange="updateTypeScale(this.value)">
-                                        <option value="1.125">Minor Second (1.125)</option>
-                                        <option value="1.2">Major Second (1.2)</option>
-                                        <option value="1.25" selected>Minor Third (1.25)</option>
-                                        <option value="1.333">Major Third (1.333)</option>
-                                        <option value="1.414">Augmented Fourth (1.414)</option>
-                                        <option value="1.5">Perfect Fifth (1.5)</option>
-                                        <option value="1.618">Golden Ratio (1.618)</option>
-                                    </select>
-                                </div>
-                                
-                                <div class="mb-3">
-                                    <label for="fontFamily" class="form-label">Font Family</label>
-                                    <select class="form-select" id="fontFamily">
-                                        <option value="system-ui, -apple-system, sans-serif">System UI</option>
-                                        <option value="'Inter', sans-serif">Inter</option>
-                                        <option value="'Roboto', sans-serif">Roboto</option>
-                                        <option value="'Open Sans', sans-serif">Open Sans</option>
-                                        <option value="'Lato', sans-serif">Lato</option>
-                                        <option value="Georgia, serif">Georgia</option>
-                                        <option value="'Times New Roman', serif">Times New Roman</option>
-                                        <option value="'Consolas', monospace">Consolas</option>
-                                    </select>
-                                </div>
-                                
-                                <button class="btn btn-primary w-100" onclick="generateTypography()">
-                                    <i class="bi bi-arrow-clockwise me-2"></i>Generate Typography
-                                </button>
-                            </div>
-                        </div>
+                <!-- HTML Output -->
+                <div class="playground-container mt-3">
+                    <div class="p-3 bg-info text-white position-relative">
+                        <h5 class="mb-0">
+                            <i class="bi bi-file-code me-2"></i>HTML Structure
+                        </h5>
+                        <small>Complete HTML code</small>
                     </div>
-                    
-                    <div class="col-lg-6">
-                        <div class="generator-panel">
-                            <div class="panel-header">
-                                <h5 class="mb-0"><i class="bi bi-code-slash me-2"></i>Typography CSS</h5>
-                            </div>
-                            <div class="p-3">
-                                <div class="code-output" id="typographyCSS">
-                                    <pre>/* Click "Generate Typography" to see CSS */</pre>
-                                </div>
-                                <button class="btn btn-success btn-sm mt-2 w-100" onclick="copyTypographyCSS()">
-                                    <i class="bi bi-clipboard me-2"></i>Copy CSS
-                                </button>
-                            </div>
-                        </div>
+                    <div class="position-relative">
+                        <button class="copy-btn" onclick="copyHTML()" id="copy-html-btn">
+                            <i class="bi bi-clipboard me-1"></i>Copy
+                        </button>
+                        <div class="code-output" id="html-output"><!-- HTML will appear here --></div>
                     </div>
                 </div>
-                
-                <!-- Typography Preview -->
-                <div class="row g-4 mt-4">
-                    <div class="col-12">
-                        <div class="generator-panel">
-                            <div class="panel-header">
-                                <h5 class="mb-0"><i class="bi bi-eye me-2"></i>Typography Preview</h5>
-                            </div>
-                            <div class="p-3">
-                                <div id="typographyPreview">
-                                    <!-- Generated typography preview will appear here -->
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Effects Utilities -->
-            <div class="tab-pane fade" id="effects" role="tabpanel">
-                <div class="row g-4">
-                    <div class="col-lg-6">
-                        <div class="generator-panel">
-                            <div class="panel-header">
-                                <h5 class="mb-0"><i class="bi bi-magic me-2"></i>Effects Generator</h5>
-                            </div>
-                            <div class="p-3">
-                                <h6>Shadow Effects</h6>
-                                <div class="mb-3">
-                                    <label for="shadowBlur" class="form-label">Blur: <span id="shadowBlurValue">10</span>px</label>
-                                    <input type="range" class="form-range" id="shadowBlur" min="0" max="50" value="10" oninput="updateShadowBlur(this.value)">
-                                </div>
-                                
-                                <div class="mb-3">
-                                    <label for="shadowSpread" class="form-label">Spread: <span id="shadowSpreadValue">0</span>px</label>
-                                    <input type="range" class="form-range" id="shadowSpread" min="-10" max="10" value="0" oninput="updateShadowSpread(this.value)">
-                                </div>
-                                
-                                <hr>
-                                
-                                <h6>Border Radius</h6>
-                                <div class="mb-3">
-                                    <label for="borderRadius" class="form-label">Radius: <span id="borderRadiusValue">8</span>px</label>
-                                    <input type="range" class="form-range" id="borderRadius" min="0" max="50" value="8" oninput="updateBorderRadius(this.value)">
-                                </div>
-                                
-                                <hr>
-                                
-                                <h6>Transforms</h6>
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input" type="checkbox" id="includeHover" checked>
-                                    <label class="form-check-label" for="includeHover">Include hover effects</label>
-                                </div>
-                                
-                                <div class="form-check mb-3">
-                                    <input class="form-check-input" type="checkbox" id="includeTransitions" checked>
-                                    <label class="form-check-label" for="includeTransitions">Include transitions</label>
-                                </div>
-                                
-                                <button class="btn btn-primary w-100" onclick="generateEffects()">
-                                    <i class="bi bi-arrow-clockwise me-2"></i>Generate Effects
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="col-lg-6">
-                        <div class="generator-panel">
-                            <div class="panel-header">
-                                <h5 class="mb-0"><i class="bi bi-code-slash me-2"></i>Effects CSS</h5>
-                            </div>
-                            <div class="p-3">
-                                <div class="code-output" id="effectsCSS">
-                                    <pre>/* Click "Generate Effects" to see CSS */</pre>
-                                </div>
-                                <button class="btn btn-success btn-sm mt-2 w-100" onclick="copyEffectsCSS()">
-                                    <i class="bi bi-clipboard me-2"></i>Copy CSS
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Effects Preview -->
-                <div class="row g-4 mt-4">
-                    <div class="col-12">
-                        <div class="generator-panel">
-                            <div class="panel-header">
-                                <h5 class="mb-0"><i class="bi bi-eye me-2"></i>Effects Preview</h5>
-                            </div>
-                            <div class="p-3">
-                                <div id="effectsPreview" class="d-flex flex-wrap gap-3">
-                                    <!-- Generated effects preview will appear here -->
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Toast Container -->
-    <div class="toast-container">
-        <div id="copy-toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="toast-header bg-success text-white">
-                <i class="bi bi-check-circle me-2"></i>
-                <strong class="me-auto">Success</strong>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
-            </div>
-            <div class="toast-body">
-                CSS copied to clipboard!
             </div>
         </div>
     </div>
@@ -516,520 +506,442 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        // Color utilities
-        function hexToHsl(hex) {
-            const r = parseInt(hex.slice(1, 3), 16) / 255;
-            const g = parseInt(hex.slice(3, 5), 16) / 255;
-            const b = parseInt(hex.slice(5, 7), 16) / 255;
-
-            const max = Math.max(r, g, b);
-            const min = Math.min(r, g, b);
-            let h, s, l = (max + min) / 2;
-
-            if (max === min) {
-                h = s = 0;
-            } else {
-                const d = max - min;
-                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-                switch (max) {
-                    case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-                    case g: h = (b - r) / d + 2; break;
-                    case b: h = (r - g) / d + 4; break;
-                }
-                h /= 6;
-            }
-
-            return [h * 360, s * 100, l * 100];
-        }
-
-        function hslToHex(h, s, l) {
-            l /= 100;
-            const a = s * Math.min(l, 1 - l) / 100;
-            const f = n => {
-                const k = (n + h / 30) % 12;
-                const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
-                return Math.round(255 * color).toString(16).padStart(2, '0');
-            };
-            return `#${f(0)}${f(8)}${f(4)}`;
-        }
-
-        function generatePalette() {
-            const baseColor = document.getElementById('baseColor').value;
-            const paletteType = document.getElementById('paletteType').value;
-            const colorCount = parseInt(document.getElementById('colorCount').value);
-            
-            const [h, s, l] = hexToHsl(baseColor);
-            const colors = [];
-            
-            switch (paletteType) {
-                case 'monochromatic':
-                    for (let i = 0; i < colorCount; i++) {
-                        const lightness = Math.max(10, Math.min(90, l + (i - colorCount/2) * 15));
-                        colors.push(hslToHex(h, s, lightness));
-                    }
-                    break;
-                    
-                case 'analogous':
-                    for (let i = 0; i < colorCount; i++) {
-                        const hue = (h + (i - colorCount/2) * 30) % 360;
-                        colors.push(hslToHex(hue < 0 ? hue + 360 : hue, s, l));
-                    }
-                    break;
-                    
-                case 'complementary':
-                    colors.push(baseColor);
-                    colors.push(hslToHex((h + 180) % 360, s, l));
-                    for (let i = 2; i < colorCount; i++) {
-                        const variation = i % 2 === 0 ? h : (h + 180) % 360;
-                        const lightness = l + (Math.floor(i/2) * 20 - 20);
-                        colors.push(hslToHex(variation, s, Math.max(10, Math.min(90, lightness))));
-                    }
-                    break;
-                    
-                case 'triadic':
-                    colors.push(baseColor);
-                    colors.push(hslToHex((h + 120) % 360, s, l));
-                    colors.push(hslToHex((h + 240) % 360, s, l));
-                    for (let i = 3; i < colorCount; i++) {
-                        const baseHue = [h, (h + 120) % 360, (h + 240) % 360][i % 3];
-                        const lightness = l + (Math.floor(i/3) * 15 - 15);
-                        colors.push(hslToHex(baseHue, s, Math.max(10, Math.min(90, lightness))));
-                    }
-                    break;
-                    
-                case 'tetradic':
-                    colors.push(baseColor);
-                    colors.push(hslToHex((h + 90) % 360, s, l));
-                    colors.push(hslToHex((h + 180) % 360, s, l));
-                    colors.push(hslToHex((h + 270) % 360, s, l));
-                    for (let i = 4; i < colorCount; i++) {
-                        const baseHue = [h, (h + 90) % 360, (h + 180) % 360, (h + 270) % 360][i % 4];
-                        const lightness = l + (Math.floor(i/4) * 10 - 10);
-                        colors.push(hslToHex(baseHue, s, Math.max(10, Math.min(90, lightness))));
-                    }
-                    break;
-            }
-            
-            displayColorPalette(colors);
-            generateColorCSS(colors);
-        }
-
-        function displayColorPalette(colors) {
-            const paletteContainer = document.getElementById('colorPalette');
-            paletteContainer.innerHTML = '';
-            
-            colors.forEach((color, index) => {
-                const colorCard = document.createElement('div');
-                colorCard.className = 'color-card';
-                colorCard.onclick = () => copyToClipboard(color);
-                
-                colorCard.innerHTML = `
-                    <div class="color-swatch" style="background-color: ${color}"></div>
-                    <small class="text-muted">Color ${index + 1}</small>
-                    <div class="fw-bold" style="font-size: 0.8rem;">${color.toUpperCase()}</div>
-                `;
-                
-                paletteContainer.appendChild(colorCard);
-            });
-        }
-
-        function generateColorCSS(colors) {
-            let css = ':root {\n';
-            colors.forEach((color, index) => {
-                css += `  --color-${index + 1}: ${color};\n`;
-            });
-            css += '}\n\n';
-            
-            css += '/* Utility classes */\n';
-            colors.forEach((color, index) => {
-                css += `.bg-color-${index + 1} { background-color: var(--color-${index + 1}); }\n`;
-                css += `.text-color-${index + 1} { color: var(--color-${index + 1}); }\n`;
-                css += `.border-color-${index + 1} { border-color: var(--color-${index + 1}); }\n\n`;
-            });
-            
-            document.getElementById('colorCSS').innerHTML = `<pre>${css}</pre>`;
-        }
-
-        function updateColorCount(value) {
-            document.getElementById('colorCountValue').textContent = value;
-        }
-
-        function copyColorCSS() {
-            const cssText = document.getElementById('colorCSS').textContent;
-            copyToClipboard(cssText);
-        }
-
-        // Spacing utilities
-        function generateSpacing() {
-            const baseSpacing = parseFloat(document.getElementById('baseSpacing').value);
-            const scale = parseFloat(document.getElementById('spacingScale').value);
-            const steps = parseInt(document.getElementById('spacingSteps').value);
-            
-            let css = ':root {\n';
-            css += `  --spacing-base: ${baseSpacing}rem;\n`;
-            
-            for (let i = 0; i < steps; i++) {
-                const value = (baseSpacing * Math.pow(scale, i - Math.floor(steps/2))).toFixed(3);
-                css += `  --spacing-${i}: ${value}rem;\n`;
-            }
-            
-            css += '}\n\n/* Spacing utilities */\n';
-            
-            for (let i = 0; i < steps; i++) {
-                css += `.m-${i} { margin: var(--spacing-${i}); }\n`;
-                css += `.mt-${i} { margin-top: var(--spacing-${i}); }\n`;
-                css += `.mr-${i} { margin-right: var(--spacing-${i}); }\n`;
-                css += `.mb-${i} { margin-bottom: var(--spacing-${i}); }\n`;
-                css += `.ml-${i} { margin-left: var(--spacing-${i}); }\n`;
-                css += `.mx-${i} { margin-left: var(--spacing-${i}); margin-right: var(--spacing-${i}); }\n`;
-                css += `.my-${i} { margin-top: var(--spacing-${i}); margin-bottom: var(--spacing-${i}); }\n`;
-                css += `.p-${i} { padding: var(--spacing-${i}); }\n`;
-                css += `.pt-${i} { padding-top: var(--spacing-${i}); }\n`;
-                css += `.pr-${i} { padding-right: var(--spacing-${i}); }\n`;
-                css += `.pb-${i} { padding-bottom: var(--spacing-${i}); }\n`;
-                css += `.pl-${i} { padding-left: var(--spacing-${i}); }\n`;
-                css += `.px-${i} { padding-left: var(--spacing-${i}); padding-right: var(--spacing-${i}); }\n`;
-                css += `.py-${i} { padding-top: var(--spacing-${i}); padding-bottom: var(--spacing-${i}); }\n\n`;
-            }
-            
-            document.getElementById('spacingCSS').innerHTML = `<pre>${css}</pre>`;
-            
-            // Update preview
-            updateSpacingPreview(steps);
-        }
-
-        function updateSpacingPreview(steps) {
-            const preview = document.getElementById('spacingPreview');
-            preview.innerHTML = '';
-            
-            for (let i = 0; i < Math.min(steps, 6); i++) {
-                const box = document.createElement('div');
-                box.style.cssText = `
-                    background: #667eea;
-                    color: white;
-                    padding: var(--spacing-${i}, ${(1 * Math.pow(1.5, i - 3)).toFixed(2)}rem);
-                    border-radius: 4px;
-                    font-size: 0.8rem;
-                    font-weight: 500;
-                `;
-                box.textContent = `p-${i}`;
-                preview.appendChild(box);
-            }
-        }
-
-        function updateSpacing(value) {
-            document.getElementById('baseSpacingValue').textContent = value;
-        }
-
-        function updateScale(value) {
-            document.getElementById('scaleValue').textContent = value;
-        }
-
-        function updateSteps(value) {
-            document.getElementById('stepsValue').textContent = value;
-        }
-
-        function copySpacingCSS() {
-            const cssText = document.getElementById('spacingCSS').textContent;
-            copyToClipboard(cssText);
-        }
-
-        // Typography utilities
-        function generateTypography() {
-            const baseFont = parseInt(document.getElementById('baseFont').value);
-            const scale = parseFloat(document.getElementById('typeScale').value);
-            const fontFamily = document.getElementById('fontFamily').value;
-            
-            const sizes = ['xs', 'sm', 'base', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl', '6xl'];
-            
-            let css = ':root {\n';
-            css += `  --font-family-base: ${fontFamily};\n`;
-            css += `  --font-size-base: ${baseFont}px;\n\n`;
-            
-            sizes.forEach((size, index) => {
-                const multiplier = Math.pow(scale, index - 2); // 'base' is at index 2
-                const fontSize = (baseFont * multiplier).toFixed(1);
-                css += `  --font-size-${size}: ${fontSize}px;\n`;
-            });
-            
-            css += '}\n\n/* Typography utilities */\n';
-            css += `body { font-family: var(--font-family-base); font-size: var(--font-size-base); }\n\n`;
-            
-            sizes.forEach(size => {
-                css += `.text-${size} { font-size: var(--font-size-${size}); }\n`;
-            });
-            
-            css += `
-.font-thin { font-weight: 100; }
-.font-light { font-weight: 300; }
-.font-normal { font-weight: 400; }
-.font-medium { font-weight: 500; }
-.font-semibold { font-weight: 600; }
-.font-bold { font-weight: 700; }
-.font-extrabold { font-weight: 800; }
-.font-black { font-weight: 900; }
-
-.leading-tight { line-height: 1.25; }
-.leading-snug { line-height: 1.375; }
-.leading-normal { line-height: 1.5; }
-.leading-relaxed { line-height: 1.625; }
-.leading-loose { line-height: 2; }
-
-.tracking-tight { letter-spacing: -0.025em; }
-.tracking-normal { letter-spacing: 0; }
-.tracking-wide { letter-spacing: 0.025em; }
-.tracking-wider { letter-spacing: 0.05em; }
-.tracking-widest { letter-spacing: 0.1em; }
-`;
-            
-            document.getElementById('typographyCSS').innerHTML = `<pre>${css}</pre>`;
-            updateTypographyPreview(sizes, baseFont, scale, fontFamily);
-        }
-
-        function updateTypographyPreview(sizes, baseFont, scale, fontFamily) {
-            const preview = document.getElementById('typographyPreview');
-            preview.innerHTML = '';
-            
-            sizes.forEach((size, index) => {
-                const multiplier = Math.pow(scale, index - 2);
-                const fontSize = (baseFont * multiplier).toFixed(1);
-                
-                const element = document.createElement('div');
-                element.style.cssText = `
-                    font-family: ${fontFamily};
-                    font-size: ${fontSize}px;
-                    margin-bottom: 0.5rem;
-                    line-height: 1.4;
-                `;
-                element.innerHTML = `<span class="text-muted">.text-${size}</span> - The quick brown fox jumps over the lazy dog`;
-                preview.appendChild(element);
-            });
-        }
-
-        function updateBaseFont(value) {
-            document.getElementById('baseFontValue').textContent = value;
-        }
-
-        function updateTypeScale(value) {
-            document.getElementById('typeScaleValue').textContent = value;
-        }
-
-        function copyTypographyCSS() {
-            const cssText = document.getElementById('typographyCSS').textContent;
-            copyToClipboard(cssText);
-        }
-
-        // Effects utilities
-        function generateEffects() {
-            const shadowBlur = parseInt(document.getElementById('shadowBlur').value);
-            const shadowSpread = parseInt(document.getElementById('shadowSpread').value);
-            const borderRadius = parseInt(document.getElementById('borderRadius').value);
-            const includeHover = document.getElementById('includeHover').checked;
-            const includeTransitions = document.getElementById('includeTransitions').checked;
-            
-            let css = ':root {\n';
-            css += `  --shadow-blur: ${shadowBlur}px;\n`;
-            css += `  --shadow-spread: ${shadowSpread}px;\n`;
-            css += `  --border-radius: ${borderRadius}px;\n`;
-            css += '}\n\n/* Shadow utilities */\n';
-            
-            const shadowSizes = [
-                { name: 'none', value: 'none' },
-                { name: 'sm', value: `0 1px 2px 0 rgba(0, 0, 0, 0.05)` },
-                { name: 'base', value: `0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)` },
-                { name: 'md', value: `0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)` },
-                { name: 'lg', value: `0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)` },
-                { name: 'xl', value: `0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)` },
-                { name: '2xl', value: `0 25px 50px -12px rgba(0, 0, 0, 0.25)` }
-            ];
-            
-            shadowSizes.forEach(shadow => {
-                css += `.shadow-${shadow.name} { box-shadow: ${shadow.value}; }\n`;
-            });
-            
-            css += '\n/* Border radius utilities */\n';
-            const radiusSizes = ['none', 'sm', 'base', 'md', 'lg', 'xl', 'full'];
-            const radiusValues = [0, 2, 4, 6, 8, 12, 9999];
-            
-            radiusSizes.forEach((size, index) => {
-                const value = size === 'base' ? `var(--border-radius)` : `${radiusValues[index]}px`;
-                css += `.rounded-${size === 'base' ? '' : size} { border-radius: ${value}; }\n`;
-            });
-            
-            if (includeTransitions) {
-                css += '\n/* Transition utilities */\n';
-                css += `.transition-none { transition: none; }\n`;
-                css += `.transition-all { transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1); }\n`;
-                css += `.transition-colors { transition: color, background-color, border-color 150ms cubic-bezier(0.4, 0, 0.2, 1); }\n`;
-                css += `.transition-opacity { transition: opacity 150ms cubic-bezier(0.4, 0, 0.2, 1); }\n`;
-                css += `.transition-shadow { transition: box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1); }\n`;
-                css += `.transition-transform { transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1); }\n`;
-                
-                css += '\n/* Duration utilities */\n';
-                css += `.duration-75 { transition-duration: 75ms; }\n`;
-                css += `.duration-100 { transition-duration: 100ms; }\n`;
-                css += `.duration-150 { transition-duration: 150ms; }\n`;
-                css += `.duration-200 { transition-duration: 200ms; }\n`;
-                css += `.duration-300 { transition-duration: 300ms; }\n`;
-                css += `.duration-500 { transition-duration: 500ms; }\n`;
-            }
-            
-            if (includeHover) {
-                css += '\n/* Hover effects */\n';
-                css += `.hover-lift { transition: transform 150ms ease; }\n`;
-                css += `.hover-lift:hover { transform: translateY(-2px); }\n`;
-                css += `.hover-scale:hover { transform: scale(1.05); }\n`;
-                css += `.hover-rotate:hover { transform: rotate(3deg); }\n`;
-                css += `.hover-shadow:hover { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }\n`;
-                css += `.hover-opacity:hover { opacity: 0.8; }\n`;
-            }
-            
-            css += '\n/* Transform utilities */\n';
-            css += `.scale-50 { transform: scale(0.5); }\n`;
-            css += `.scale-75 { transform: scale(0.75); }\n`;
-            css += `.scale-90 { transform: scale(0.9); }\n`;
-            css += `.scale-95 { transform: scale(0.95); }\n`;
-            css += `.scale-100 { transform: scale(1); }\n`;
-            css += `.scale-105 { transform: scale(1.05); }\n`;
-            css += `.scale-110 { transform: scale(1.1); }\n`;
-            css += `.scale-125 { transform: scale(1.25); }\n`;
-            css += `.scale-150 { transform: scale(1.5); }\n`;
-            
-            css += '\n/* Rotate utilities */\n';
-            css += `.rotate-0 { transform: rotate(0deg); }\n`;
-            css += `.rotate-1 { transform: rotate(1deg); }\n`;
-            css += `.rotate-2 { transform: rotate(2deg); }\n`;
-            css += `.rotate-3 { transform: rotate(3deg); }\n`;
-            css += `.rotate-6 { transform: rotate(6deg); }\n`;
-            css += `.rotate-12 { transform: rotate(12deg); }\n`;
-            css += `.rotate-45 { transform: rotate(45deg); }\n`;
-            css += `.rotate-90 { transform: rotate(90deg); }\n`;
-            css += `.rotate-180 { transform: rotate(180deg); }\n`;
-            
-            document.getElementById('effectsCSS').innerHTML = `<pre>${css}</pre>`;
-            updateEffectsPreview();
-        }
-
-        function updateEffectsPreview() {
-            const preview = document.getElementById('effectsPreview');
-            preview.innerHTML = '';
-            
-            const effects = [
-                { class: 'shadow-sm', label: 'Small Shadow' },
-                { class: 'shadow-md', label: 'Medium Shadow' },
-                { class: 'shadow-lg', label: 'Large Shadow' },
-                { class: 'rounded-lg', label: 'Rounded' },
-                { class: 'hover-lift', label: 'Hover Lift' },
-                { class: 'scale-105', label: 'Scaled' }
-            ];
-            
-            effects.forEach(effect => {
-                const box = document.createElement('div');
-                box.style.cssText = `
-                    width: 80px;
-                    height: 80px;
-                    background: linear-gradient(135deg, #667eea, #764ba2);
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    color: white;
-                    font-size: 0.7rem;
-                    font-weight: 500;
-                    text-align: center;
-                    cursor: pointer;
-                `;
-                
-                // Apply the effect class
-                box.className = effect.class;
-                box.textContent = effect.label;
-                
-                // Add inline styles for shadow effects since CSS isn't loaded
-                if (effect.class.includes('shadow-sm')) {
-                    box.style.boxShadow = '0 1px 2px 0 rgba(0, 0, 0, 0.05)';
-                } else if (effect.class.includes('shadow-md')) {
-                    box.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)';
-                } else if (effect.class.includes('shadow-lg')) {
-                    box.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)';
-                } else if (effect.class.includes('rounded')) {
-                    box.style.borderRadius = '8px';
-                } else if (effect.class.includes('scale')) {
-                    box.style.transform = 'scale(1.05)';
-                }
-                
-                if (effect.class.includes('hover-lift')) {
-                    box.style.transition = 'transform 150ms ease';
-                    box.onmouseenter = () => box.style.transform = 'translateY(-2px)';
-                    box.onmouseleave = () => box.style.transform = 'translateY(0)';
-                }
-                
-                preview.appendChild(box);
-            });
-        }
-
-        function updateShadowBlur(value) {
-            document.getElementById('shadowBlurValue').textContent = value;
-        }
-
-        function updateShadowSpread(value) {
-            document.getElementById('shadowSpreadValue').textContent = value;
-        }
-
-        function updateBorderRadius(value) {
-            document.getElementById('borderRadiusValue').textContent = value;
-        }
-
-        function copyEffectsCSS() {
-            const cssText = document.getElementById('effectsCSS').textContent;
-            copyToClipboard(cssText);
-        }
-
-        // Utility functions
-        function copyToClipboard(text) {
-            navigator.clipboard.writeText(text).then(() => {
-                showToast('Copied to clipboard!', 'success');
-            }).catch(() => {
-                // Fallback for older browsers
-                const textArea = document.createElement('textarea');
-                textArea.value = text;
-                document.body.appendChild(textArea);
-                textArea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textArea);
-                showToast('Copied to clipboard!', 'success');
-            });
-        }
-
-        function showToast(message, type = 'success') {
-            const toast = document.getElementById('copy-toast');
-            const toastBody = toast.querySelector('.toast-body');
-            const toastHeader = toast.querySelector('.toast-header');
-            
-            toastBody.textContent = message;
-            toastHeader.className = `toast-header bg-${type} text-white`;
-            
-            const bsToast = new bootstrap.Toast(toast);
-            bsToast.show();
-        }
+        let itemCount = 3;
+        let currentSelectedItem = 1;
+        let itemProperties = {
+            1: { flexGrow: 0, flexShrink: 1, flexBasis: 'auto', alignSelf: 'auto', order: 0 },
+            2: { flexGrow: 0, flexShrink: 1, flexBasis: 'auto', alignSelf: 'auto', order: 0 },
+            3: { flexGrow: 0, flexShrink: 1, flexBasis: 'auto', alignSelf: 'auto', order: 0 }
+        };
 
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
-            // Set up color picker event listener
-            document.getElementById('baseColor').addEventListener('input', function() {
-                generatePalette();
-            });
-            
-            // Generate initial palette
-            generatePalette();
-            
-            // Generate initial spacing
-            generateSpacing();
-            
-            // Generate initial typography
-            generateTypography();
-            
-            // Generate initial effects
-            generateEffects();
+            updateContainer();
+            updateAllCode();
+            setupDragAndDrop();
         });
+
+        // Update range value displays
+        function updateGap() {
+            document.getElementById('gap-value').textContent = document.getElementById('gap').value + 'px';
+        }
+
+        function updateHeight() {
+            document.getElementById('height-value').textContent = document.getElementById('container-height').value + 'px';
+        }
+
+        function updateGrow() {
+            document.getElementById('grow-value').textContent = document.getElementById('flex-grow').value;
+        }
+
+        function updateShrink() {
+            document.getElementById('shrink-value').textContent = document.getElementById('flex-shrink').value;
+        }
+
+        function updateOrder() {
+            document.getElementById('order-value').textContent = document.getElementById('order').value;
+        }
+
+        // Update flex container
+        function updateContainer() {
+            const container = document.getElementById('flex-container');
+            const display = document.getElementById('display').value;
+            const flexDirection = document.getElementById('flex-direction').value;
+            const justifyContent = document.getElementById('justify-content').value;
+            const alignItems = document.getElementById('align-items').value;
+            const flexWrap = document.getElementById('flex-wrap').value;
+            const gap = document.getElementById('gap').value + 'px';
+            const height = document.getElementById('container-height').value + 'px';
+
+            container.style.display = display;
+            container.style.flexDirection = flexDirection;
+            container.style.justifyContent = justifyContent;
+            container.style.alignItems = alignItems;
+            container.style.flexWrap = flexWrap;
+            container.style.gap = gap;
+            container.style.minHeight = height;
+
+            updateAllCode();
+        }
+
+        // Update selected item
+        function updateSelectedItem() {
+            const selectedItem = parseInt(document.getElementById('selected-item').value);
+            const flexGrow = document.getElementById('flex-grow').value;
+            const flexShrink = document.getElementById('flex-shrink').value;
+            const flexBasis = document.getElementById('flex-basis').value;
+            const alignSelf = document.getElementById('align-self').value;
+            const order = document.getElementById('order').value;
+
+            const item = document.querySelector(`[data-item="${selectedItem}"]`);
+            if (item) {
+                item.style.flexGrow = flexGrow;
+                item.style.flexShrink = flexShrink;
+                item.style.flexBasis = flexBasis;
+                item.style.alignSelf = alignSelf;
+                item.style.order = order;
+
+                // Update stored properties
+                itemProperties[selectedItem] = {
+                    flexGrow: parseInt(flexGrow),
+                    flexShrink: parseInt(flexShrink),
+                    flexBasis: flexBasis,
+                    alignSelf: alignSelf,
+                    order: parseInt(order)
+                };
+            }
+
+            updateAllCode();
+        }
+
+        // Update item controls when selection changes
+        function updateItemControls() {
+            const selectedItem = parseInt(document.getElementById('selected-item').value);
+            currentSelectedItem = selectedItem;
+            
+            if (itemProperties[selectedItem]) {
+                const props = itemProperties[selectedItem];
+                document.getElementById('flex-grow').value = props.flexGrow;
+                document.getElementById('flex-shrink').value = props.flexShrink;
+                document.getElementById('flex-basis').value = props.flexBasis;
+                document.getElementById('align-self').value = props.alignSelf;
+                document.getElementById('order').value = props.order;
+                
+                updateGrow();
+                updateShrink();
+                updateOrder();
+            }
+        }
+
+        // Add new item
+        function addItem() {
+            if (itemCount >= 8) {
+                alert('Maximum 8 items allowed');
+                return;
+            }
+
+            itemCount++;
+            const container = document.getElementById('flex-container');
+            const newItem = document.createElement('div');
+            newItem.className = 'flex-item';
+            newItem.setAttribute('data-item', itemCount);
+            newItem.textContent = `Item ${itemCount}`;
+            
+            container.appendChild(newItem);
+
+            // Add to dropdown
+            const select = document.getElementById('selected-item');
+            const option = document.createElement('option');
+            option.value = itemCount;
+            option.textContent = `Item ${itemCount}`;
+            select.appendChild(option);
+
+            // Initialize properties
+            itemProperties[itemCount] = {
+                flexGrow: 0, flexShrink: 1, flexBasis: 'auto', alignSelf: 'auto', order: 0
+            };
+
+            updateAllCode();
+            showToast('Item added successfully!');
+        }
+
+        // Remove item
+        function removeItem() {
+            if (itemCount <= 1) {
+                alert('Must have at least 1 item');
+                return;
+            }
+
+            const itemToRemove = document.querySelector(`[data-item="${itemCount}"]`);
+            const optionToRemove = document.querySelector(`#selected-item option[value="${itemCount}"]`);
+            
+            if (itemToRemove) itemToRemove.remove();
+            if (optionToRemove) optionToRemove.remove();
+            
+            delete itemProperties[itemCount];
+            itemCount--;
+
+            if (currentSelectedItem > itemCount) {
+                currentSelectedItem = itemCount;
+                document.getElementById('selected-item').value = currentSelectedItem;
+                updateItemControls();
+            }
+
+            updateAllCode();
+            showToast('Item removed successfully!');
+        }
+
+        // Reset all settings
+        function resetAll() {
+            // Reset container
+            document.getElementById('display').value = 'flex';
+            document.getElementById('flex-direction').value = 'row';
+            document.getElementById('justify-content').value = 'flex-start';
+            document.getElementById('align-items').value = 'stretch';
+            document.getElementById('flex-wrap').value = 'nowrap';
+            document.getElementById('gap').value = '10';
+            document.getElementById('container-height').value = '400';
+            
+            // Reset items
+            document.getElementById('flex-grow').value = '0';
+            document.getElementById('flex-shrink').value = '1';
+            document.getElementById('flex-basis').value = 'auto';
+            document.getElementById('align-self').value = 'auto';
+            document.getElementById('order').value = '0';
+            
+            // Reset container HTML
+            const container = document.getElementById('flex-container');
+            container.innerHTML = `
+                <div class="flex-item" data-item="1">Item 1</div>
+                <div class="flex-item" data-item="2">Item 2</div>
+                <div class="flex-item" data-item="3">Item 3</div>
+            `;
+            
+            // Reset dropdown
+            const select = document.getElementById('selected-item');
+            select.innerHTML = `
+                <option value="1">Item 1</option>
+                <option value="2">Item 2</option>
+                <option value="3">Item 3</option>
+            `;
+            
+            // Reset state
+            itemCount = 3;
+            currentSelectedItem = 1;
+            itemProperties = {
+                1: { flexGrow: 0, flexShrink: 1, flexBasis: 'auto', alignSelf: 'auto', order: 0 },
+                2: { flexGrow: 0, flexShrink: 1, flexBasis: 'auto', alignSelf: 'auto', order: 0 },
+                3: { flexGrow: 0, flexShrink: 1, flexBasis: 'auto', alignSelf: 'auto', order: 0 }
+            };
+            
+            updateGap();
+            updateHeight();
+            updateGrow();
+            updateShrink();
+            updateOrder();
+            updateContainer();
+            showToast('All settings reset!');
+        }
+
+        // Apply settings to demo container
+        function applyToDemo() {
+            const mainContainer = document.getElementById('flex-container');
+            const demoContainer = document.getElementById('demo-container');
+            
+            const computedStyle = window.getComputedStyle(mainContainer);
+            demoContainer.style.display = mainContainer.style.display;
+            demoContainer.style.flexDirection = mainContainer.style.flexDirection;
+            demoContainer.style.justifyContent = mainContainer.style.justifyContent;
+            demoContainer.style.alignItems = mainContainer.style.alignItems;
+            demoContainer.style.flexWrap = mainContainer.style.flexWrap;
+            demoContainer.style.gap = mainContainer.style.gap;
+            
+            showToast('Settings applied to demo!', 'info');
+        }
+
+        // Reset demo container
+        function resetDemo() {
+            const demoContainer = document.getElementById('demo-container');
+            demoContainer.style.cssText = '';
+            demoContainer.classList.add('demo-container');
+            showToast('Demo reset!');
+        }
+
+        // Update all code outputs
+        function updateAllCode() {
+            updateCSSOutput();
+            updateHTMLOutput();
+        }
+
+        // Update CSS output with syntax highlighting
+        function updateCSSOutput() {
+            const container = document.getElementById('flex-container');
+            let css = `<span class="css-selector">.flex-container</span> {\n`;
+            
+            if (container.style.display) css += `  <span class="css-property">display</span>: <span class="css-value">${container.style.display}</span>;\n`;
+            if (container.style.flexDirection) css += `  <span class="css-property">flex-direction</span>: <span class="css-value">${container.style.flexDirection}</span>;\n`;
+            if (container.style.justifyContent) css += `  <span class="css-property">justify-content</span>: <span class="css-value">${container.style.justifyContent}</span>;\n`;
+            if (container.style.alignItems) css += `  <span class="css-property">align-items</span>: <span class="css-value">${container.style.alignItems}</span>;\n`;
+            if (container.style.flexWrap) css += `  <span class="css-property">flex-wrap</span>: <span class="css-value">${container.style.flexWrap}</span>;\n`;
+            if (container.style.gap) css += `  <span class="css-property">gap</span>: <span class="css-value">${container.style.gap}</span>;\n`;
+            if (container.style.minHeight) css += `  <span class="css-property">min-height</span>: <span class="css-value">${container.style.minHeight}</span>;\n`;
+            
+            css += `  <span class="css-property">padding</span>: <span class="css-value">20px</span>;\n`;
+            css += `  <span class="css-property">border</span>: <span class="css-value">3px dashed #667eea</span>;\n`;
+            css += `  <span class="css-property">border-radius</span>: <span class="css-value">12px</span>;\n`;
+            css += `}\n\n`;
+
+            // Add item-specific CSS
+            for (let i = 1; i <= itemCount; i++) {
+                const props = itemProperties[i];
+                if (props && (props.flexGrow > 0 || props.flexShrink != 1 || props.flexBasis !== 'auto' || props.alignSelf !== 'auto' || props.order != 0)) {
+                    css += `<span class="css-selector">.flex-item:nth-child(${i})</span> {\n`;
+                    if (props.flexGrow > 0) css += `  <span class="css-property">flex-grow</span>: <span class="css-value">${props.flexGrow}</span>;\n`;
+                    if (props.flexShrink != 1) css += `  <span class="css-property">flex-shrink</span>: <span class="css-value">${props.flexShrink}</span>;\n`;
+                    if (props.flexBasis !== 'auto') css += `  <span class="css-property">flex-basis</span>: <span class="css-value">${props.flexBasis}</span>;\n`;
+                    if (props.alignSelf !== 'auto') css += `  <span class="css-property">align-self</span>: <span class="css-value">${props.alignSelf}</span>;\n`;
+                    if (props.order != 0) css += `  <span class="css-property">order</span>: <span class="css-value">${props.order}</span>;\n`;
+                    css += `}\n\n`;
+                }
+            }
+
+            document.getElementById('css-output').innerHTML = css || '/* Make changes to see CSS here */';
+        }
+
+        // Update HTML output
+        function updateHTMLOutput() {
+            const container = document.getElementById('flex-container');
+            const items = container.querySelectorAll('.flex-item');
+            
+            let html = `&lt;div class="flex-container"&gt;\n`;
+            items.forEach(item => {
+                html += `  &lt;div class="flex-item"&gt;${item.textContent}&lt;/div&gt;\n`;
+            });
+            html += `&lt;/div&gt;`;
+
+            document.getElementById('html-output').textContent = html;
+        }
+
+        // Copy CSS to clipboard
+        function copyCSS() {
+            const cssContent = document.getElementById('css-output').textContent;
+            copyToClipboard(cssContent, 'copy-css-btn', 'CSS copied!');
+        }
+
+        // Copy HTML to clipboard
+        function copyHTML() {
+            const htmlContent = document.getElementById('html-output').textContent;
+            copyToClipboard(htmlContent, 'copy-html-btn', 'HTML copied!');
+        }
+
+        // Copy to clipboard utility
+        function copyToClipboard(text, buttonId, message) {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showCopySuccess(buttonId, message);
+                }).catch(() => {
+                    fallbackCopyToClipboard(text, buttonId, message);
+                });
+            } else {
+                fallbackCopyToClipboard(text, buttonId, message);
+            }
+        }
+
+        // Fallback copy method
+        function fallbackCopyToClipboard(text, buttonId, message) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.top = '0';
+            textArea.style.left = '0';
+            textArea.style.opacity = '0';
+            
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showCopySuccess(buttonId, message);
+                }
+            } catch (err) {
+                showToast('Copy failed - please select and copy manually', 'warning');
+            }
+            
+            document.body.removeChild(textArea);
+        }
+
+        // Show copy success feedback
+        function showCopySuccess(buttonId, message) {
+            const button = document.getElementById(buttonId);
+            const originalHTML = button.innerHTML;
+            
+            button.classList.add('copied');
+            button.innerHTML = '<i class="bi bi-check me-1"></i>Copied!';
+            
+            setTimeout(() => {
+                button.classList.remove('copied');
+                button.innerHTML = originalHTML;
+            }, 2000);
+            
+            showToast(message, 'success');
+        }
+
+        // Toast notification system
+        function showToast(message, type = 'success') {
+            let toastContainer = document.getElementById('toast-container');
+            if (!toastContainer) {
+                toastContainer = document.createElement('div');
+                toastContainer.id = 'toast-container';
+                toastContainer.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    z-index: 10000;
+                `;
+                document.body.appendChild(toastContainer);
+            }
+
+            const toast = document.createElement('div');
+            const colors = {
+                success: '#28a745',
+                info: '#17a2b8',
+                warning: '#ffc107',
+                error: '#dc3545'
+            };
+
+            toast.style.cssText = `
+                background: ${colors[type] || colors.success};
+                color: white;
+                padding: 12px 20px;
+                border-radius: 8px;
+                margin-bottom: 10px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+                font-weight: 500;
+                max-width: 250px;
+            `;
+
+            toast.textContent = message;
+            toastContainer.appendChild(toast);
+
+            setTimeout(() => toast.style.transform = 'translateX(0)', 100);
+            setTimeout(() => {
+                toast.style.transform = 'translateX(100%)';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Simple drag and drop for demo items
+        function setupDragAndDrop() {
+            const demoItems = document.querySelectorAll('.demo-item');
+            const demoContainer = document.getElementById('demo-container');
+
+            demoItems.forEach(item => {
+                item.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.setData('text/plain', '');
+                    item.classList.add('dragging');
+                });
+
+                item.addEventListener('dragend', () => {
+                    item.classList.remove('dragging');
+                });
+            });
+
+            demoContainer.addEventListener('dragover', (e) => {
+                e.preventDefault();
+            });
+
+            demoContainer.addEventListener('drop', (e) => {
+                e.preventDefault();
+                const dragging = document.querySelector('.dragging');
+                if (dragging) {
+                    showToast('Item reordered!', 'info');
+                }
+            });
+        }
     </script>
 </body>
 </html>
