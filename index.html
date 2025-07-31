@@ -17,6 +17,8 @@
         .feature-card {
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             height: 100%;
+            border: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
         .feature-card:hover {
             transform: translateY(-5px);
@@ -28,14 +30,23 @@
         .dropdown-menu {
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
+        .btn-feature {
+            border-radius: 25px;
+            padding: 8px 20px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .btn-feature:hover {
+            transform: translateY(-2px);
+        }
     </style>
 </head>
 <body>
 
-    <!-- Enhanced Navigation with Dropdown -->
+    <!-- Enhanced Navigation with Working Links -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
         <div class="container">
-            <a class="navbar-brand" href="#"><i class="bi bi-code-square me-2"></i>CSS Learning Platform</a>
+            <a class="navbar-brand" href="index.html"><i class="bi bi-code-square me-2"></i>CSS Learning Platform</a>
             
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -44,7 +55,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" href="#"><i class="bi bi-house me-1"></i>Home</a>
+                        <a class="nav-link active" href="index.html"><i class="bi bi-house me-1"></i>Home</a>
                     </li>
                     
                     <!-- Interactive Playgrounds Dropdown -->
@@ -59,10 +70,6 @@
                             <li><a class="dropdown-item" href="bootstrap-playground.html">
                                 <i class="bi bi-bootstrap me-2"></i>Bootstrap Playground
                             </a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="css-utilities.html">
-                                <i class="bi bi-palette me-2"></i>CSS Utilities Generator
-                            </a></li>
                         </ul>
                     </li>
                     
@@ -72,20 +79,12 @@
                             <i class="bi bi-book me-1"></i>Learn
                         </a>
                         <ul class="dropdown-menu">
-                            <li><h6 class="dropdown-header">Bootstrap Basics</h6></li>
-                            <li><a class="dropdown-item" href="grid.html">
-                                <i class="bi bi-grid me-2"></i>Grid System
+                            <li><h6 class="dropdown-header">Documentation</h6></li>
+                            <li><a class="dropdown-item" href="flexbox-guide.html">
+                                <i class="bi bi-file-text me-2"></i>Flexbox Guide
                             </a></li>
-                            <li><a class="dropdown-item" href="components.html">
-                                <i class="bi bi-puzzle me-2"></i>Components
-                            </a></li>
-                            <li><a class="dropdown-item" href="utilities.html">
-                                <i class="bi bi-tools me-2"></i>Utilities
-                            </a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><h6 class="dropdown-header">Advanced</h6></li>
-                            <li><a class="dropdown-item" href="everything.html">
-                                <i class="bi bi-mortarboard me-2"></i>Complete Tutorial
+                            <li><a class="dropdown-item" href="bootstrap-guide.html">
+                                <i class="bi bi-bootstrap me-2"></i>Bootstrap Guide
                             </a></li>
                         </ul>
                     </li>
@@ -96,14 +95,8 @@
                             <i class="bi bi-tools me-1"></i>Tools
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="color-generator.html">
-                                <i class="bi bi-palette2 me-2"></i>Color Palette Generator
-                            </a></li>
-                            <li><a class="dropdown-item" href="layout-builder.html">
-                                <i class="bi bi-layout-wtf me-2"></i>Layout Builder
-                            </a></li>
-                            <li><a class="dropdown-item" href="code-formatter.html">
-                                <i class="bi bi-code me-2"></i>Code Formatter
+                            <li><a class="dropdown-item" href="css-utilities.html">
+                                <i class="bi bi-palette2 me-2"></i>CSS Utilities Generator
                             </a></li>
                         </ul>
                     </li>
@@ -123,13 +116,13 @@
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-8">
-                    <h1 class="display-4 fw-bold mb-3">Master CSS & Bootstrap</h1>
-                    <p class="lead mb-4">Interactive playgrounds, real-time editing, and comprehensive tutorials to help you become a CSS expert.</p>
+                    <h1 class="display-4 fw-bold mb-3">Everything You Need to Learn CSS</h1>
+                    <p class="lead mb-4">From beginner basics to advanced techniques, our interactive platform has it all.</p>
                     <div class="d-flex gap-3 flex-wrap">
-                        <a href="flexbox-playground.html" class="btn btn-light btn-lg">
+                        <a href="flexbox-playground.html" class="btn btn-light btn-lg btn-feature">
                             <i class="bi bi-play-fill me-2"></i>Try Flexbox Playground
                         </a>
-                        <a href="bootstrap-playground.html" class="btn btn-outline-light btn-lg">
+                        <a href="bootstrap-playground.html" class="btn btn-outline-light btn-lg btn-feature">
                             <i class="bi bi-bootstrap me-2"></i>Bootstrap Playground
                         </a>
                     </div>
@@ -146,22 +139,22 @@
         <div class="container">
             <div class="row text-center mb-5">
                 <div class="col-lg-8 mx-auto">
-                    <h2 class="display-6 fw-bold">Everything You Need to Learn CSS</h2>
-                    <p class="lead text-muted">From beginner basics to advanced techniques, our interactive platform has it all.</p>
+                    <h2 class="display-6 fw-bold">Interactive Learning Tools</h2>
+                    <p class="lead text-muted">Master CSS and Bootstrap through hands-on experimentation.</p>
                 </div>
             </div>
             
             <div class="row g-4">
                 <!-- Flexbox Playground Card -->
                 <div class="col-md-6 col-lg-4">
-                    <div class="card feature-card border-0 shadow-sm">
+                    <div class="card feature-card">
                         <div class="card-body text-center p-4">
                             <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
                                 <i class="bi bi-grid-3x3 text-primary fs-4"></i>
                             </div>
                             <h5 class="card-title">Flexbox Playground</h5>
                             <p class="card-text text-muted">Interactive drag & drop interface to master CSS Flexbox with real-time code generation.</p>
-                            <a href="flexbox-playground.html" class="btn btn-primary">
+                            <a href="flexbox-playground.html" class="btn btn-primary btn-feature">
                                 <i class="bi bi-arrow-right me-1"></i>Start Learning
                             </a>
                         </div>
@@ -170,30 +163,30 @@
 
                 <!-- Bootstrap Playground Card -->
                 <div class="col-md-6 col-lg-4">
-                    <div class="card feature-card border-0 shadow-sm">
+                    <div class="card feature-card">
                         <div class="card-body text-center p-4">
                             <div class="bg-success bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
                                 <i class="bi bi-bootstrap text-success fs-4"></i>
                             </div>
                             <h5 class="card-title">Bootstrap Playground</h5>
                             <p class="card-text text-muted">Build responsive layouts with Bootstrap components and copy the code for your projects.</p>
-                            <a href="bootstrap-playground.html" class="btn btn-success">
+                            <a href="bootstrap-playground.html" class="btn btn-success btn-feature">
                                 <i class="bi bi-arrow-right me-1"></i>Build Layouts
                             </a>
                         </div>
                     </div>
                 </div>
 
-                <!-- Learning Resources Card -->
+                <!-- Guided Tutorials Card -->
                 <div class="col-md-6 col-lg-4">
-                    <div class="card feature-card border-0 shadow-sm">
+                    <div class="card feature-card">
                         <div class="card-body text-center p-4">
                             <div class="bg-info bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
                                 <i class="bi bi-book text-info fs-4"></i>
                             </div>
                             <h5 class="card-title">Guided Tutorials</h5>
                             <p class="card-text text-muted">Step-by-step tutorials covering Bootstrap grid, components, and advanced techniques.</p>
-                            <a href="everything.html" class="btn btn-info">
+                            <a href="flexbox-guide.html" class="btn btn-info btn-feature">
                                 <i class="bi bi-arrow-right me-1"></i>View Tutorials
                             </a>
                         </div>
@@ -202,30 +195,30 @@
 
                 <!-- CSS Utilities Card -->
                 <div class="col-md-6 col-lg-4">
-                    <div class="card feature-card border-0 shadow-sm">
+                    <div class="card feature-card">
                         <div class="card-body text-center p-4">
                             <div class="bg-warning bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
                                 <i class="bi bi-palette text-warning fs-4"></i>
                             </div>
                             <h5 class="card-title">CSS Utilities</h5>
                             <p class="card-text text-muted">Generate custom CSS utilities, color palettes, and styling helpers for your projects.</p>
-                            <a href="css-utilities.html" class="btn btn-warning">
+                            <a href="css-utilities.html" class="btn btn-warning btn-feature">
                                 <i class="bi bi-arrow-right me-1"></i>Generate CSS
                             </a>
                         </div>
                     </div>
                 </div>
 
-                <!-- Code Examples Card -->
+                <!-- Ready-to-Use Components Card -->
                 <div class="col-md-6 col-lg-4">
-                    <div class="card feature-card border-0 shadow-sm">
+                    <div class="card feature-card">
                         <div class="card-body text-center p-4">
                             <div class="bg-danger bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
                                 <i class="bi bi-code-slash text-danger fs-4"></i>
                             </div>
                             <h5 class="card-title">Ready-to-Use Components</h5>
                             <p class="card-text text-muted">Browse our library of pre-built components with HTML and CSS you can copy instantly.</p>
-                            <a href="components.html" class="btn btn-danger">
+                            <a href="bootstrap-playground.html" class="btn btn-danger btn-feature">
                                 <i class="bi bi-arrow-right me-1"></i>Browse Components
                             </a>
                         </div>
@@ -234,14 +227,14 @@
 
                 <!-- Python Tools Card -->
                 <div class="col-md-6 col-lg-4">
-                    <div class="card feature-card border-0 shadow-sm">
+                    <div class="card feature-card">
                         <div class="card-body text-center p-4">
                             <div class="bg-secondary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
                                 <i class="bi bi-terminal text-secondary fs-4"></i>
                             </div>
                             <h5 class="card-title">Python Tools</h5>
                             <p class="card-text text-muted">Command-line tools to generate Bootstrap templates, validate HTML, and automate workflows.</p>
-                            <a href="#python-tools" class="btn btn-secondary">
+                            <a href="#python-tools" class="btn btn-secondary btn-feature">
                                 <i class="bi bi-arrow-right me-1"></i>View Tools
                             </a>
                         </div>
@@ -286,6 +279,22 @@
                                     <small class="text-muted">Get ready-to-use code for your projects</small>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Python Tools Section -->
+                    <div class="mt-5 pt-4 border-top" id="python-tools">
+                        <h3 class="mb-3">Python Development Tools</h3>
+                        <p class="text-muted mb-4">Command-line tools for advanced users and educators</p>
+                        <div class="bg-dark text-white p-4 rounded">
+                            <code class="text-success">
+                                # Generate Bootstrap templates<br>
+                                python bootstrap_generator.py create "My Project"<br><br>
+                                # Start development server<br>
+                                python project_manager.py dev my-project<br><br>
+                                # Validate HTML files<br>
+                                python bootstrap_generator.py validate index.html
+                            </code>
                         </div>
                     </div>
                 </div>
