@@ -1,5 +1,5 @@
 /**
- * main-app.js - Main Application Class
+ * main.js - Main Application Class
  * Orchestrates all components and handles initialization
  */
 
@@ -156,7 +156,7 @@ class FlexboxEducationalApp {
         try {
             console.log('🎛️ Initializing controllers...');
             
-            // Initialize FlexboxController (we'll create this next)
+            // Initialize FlexboxController
             if (!window.FlexboxController) {
                 console.warn('FlexboxController not found, creating basic implementation');
                 this.createBasicFlexboxController();
@@ -176,6 +176,121 @@ class FlexboxEducationalApp {
         }
     }
     
+    async initializeContentManagers() {
+        try {
+            console.log('📋 Initializing content managers...');
+            
+            // Create basic content managers if not available
+            if (!window.ImageManager) {
+                this.createBasicImageManager();
+            }
+            
+            if (!window.DemoContentManager) {
+                this.createBasicDemoContentManager();
+            }
+            
+            this.imageManager = new window.ImageManager();
+            this.demoContentManager = new window.DemoContentManager();
+            
+            this.modules.set('imageManager', this.imageManager);
+            this.modules.set('demoContentManager', this.demoContentManager);
+            
+            console.log('✅ Content managers initialized');
+            
+        } catch (error) {
+            console.error('❌ Content managers initialization failed:', error);
+            // Non-critical error, continue
+        }
+    }
+    
+    async setupUserInterface() {
+        try {
+            console.log('🎨 Setting up user interface...');
+            
+            // Initialize event listeners
+            this.setupEventListeners();
+            
+            // Initialize range value displays
+            this.updateRangeValues();
+            
+            // Set initial state
+            this.flexboxController?.updateFromControls?.();
+            
+            console.log('✅ User interface ready');
+            
+        } catch (error) {
+            console.error('❌ User interface setup failed:', error);
+            throw error;
+        }
+    }
+    
+    setupEventListeners() {
+        try {
+            // Container controls
+            const containerControls = [
+                'display', 'flex-direction', 'justify-content', 'align-items',
+                'flex-wrap', 'align-content', 'gap', 'container-height',
+                'container-width'
+            ];
+            
+            containerControls.forEach(controlId => {
+                const element = safeQuerySelector(`#${controlId}`);
+                if (element) {
+                    const updateHandler = debounce(() => {
+                        this.flexboxController?.updateFromControls?.();
+                    }, 100);
+                    
+                    safeAddEventListener(element, 'change', updateHandler);
+                    safeAddEventListener(element, 'input', updateHandler);
+                }
+            });
+            
+            // Item controls
+            const itemControls = [
+                'selected-item', 'flex-grow', 'flex-shrink', 'flex-basis',
+                'align-self', 'order'
+            ];
+            
+            itemControls.forEach(controlId => {
+                const element = safeQuerySelector(`#${controlId}`);
+                if (element) {
+                    const updateHandler = debounce(() => {
+                        this.flexboxController?.updateFromControls?.();
+                    }, 100);
+                    
+                    safeAddEventListener(element, 'change', updateHandler);
+                    safeAddEventListener(element, 'input', updateHandler);
+                }
+            });
+            
+        } catch (error) {
+            console.error('Error setting up event listeners:', error);
+        }
+    }
+    
+    updateRangeValues() {
+        try {
+            const ranges = [
+                { id: 'gap', suffix: 'px' },
+                { id: 'flex-grow', suffix: '' },
+                { id: 'flex-shrink', suffix: '' },
+                { id: 'order', suffix: '' },
+                { id: 'container-height', suffix: 'px' }
+            ];
+            
+            ranges.forEach(({ id, suffix }) => {
+                const input = safeQuerySelector(`#${id}`);
+                const output = safeQuerySelector(`#${id.replace('container-', '')}-value`);
+                
+                if (input && output) {
+                    output.textContent = input.value + suffix;
+                }
+            });
+        } catch (error) {
+            console.error('Error updating range values:', error);
+        }
+    }
+    
     createBasicFlexboxController() {
         // Basic fallback implementation
         class BasicFlexboxController {
@@ -185,22 +300,8 @@ class FlexboxEducationalApp {
             }
             
             setupEventListeners() {
-                // Setup basic event listeners for controls
-                const controls = [
-                    'display', 'flex-direction', 'justify-content', 'align-items',
-                    'flex-wrap', 'align-content', 'gap', 'container-height',
-                    'container-width', 'selected-item', 'flex-grow', 'flex-shrink',
-                    'flex-basis', 'align-self', 'order'
-                ];
-                
-                controls.forEach(controlId => {
-                    const element = safeQuerySelector(`#${controlId}`);
-                    if (element) {
-                        const updateHandler = debounce(() => this.updateFromControls(), 100);
-                        safeAddEventListener(element, 'change', updateHandler);
-                        safeAddEventListener(element, 'input', updateHandler);
-                    }
-                });
+                // Basic event listener setup
+                console.log('Setting up basic FlexboxController');
             }
             
             updateFromControls() {
@@ -224,8 +325,8 @@ class FlexboxEducationalApp {
                     alignItems: safeQuerySelector('#align-items')?.value || 'stretch',
                     flexWrap: safeQuerySelector('#flex-wrap')?.value || 'nowrap',
                     alignContent: safeQuerySelector('#align-content')?.value || 'stretch',
-                    gap: safeQuerySelector('#gap')?.value + 'px' || '10px',
-                    minHeight: safeQuerySelector('#container-height')?.value + 'px' || '400px',
+                    gap: (safeQuerySelector('#gap')?.value || '10') + 'px',
+                    minHeight: (safeQuerySelector('#container-height')?.value || '400') + 'px',
                     width: safeQuerySelector('#container-width')?.value || '100%'
                 };
                 
@@ -311,7 +412,13 @@ class FlexboxEducationalApp {
                             itemCount: newItemNumber,
                             itemProperties: {
                                 ...prevState.itemProperties,
-                                [newItemNumber]: { flexGrow: 0, flexShrink: 1, flexBasis: 'auto', alignSelf: 'auto', order: 0 }
+                                [newItemNumber]: { 
+                                    flexGrow: 0, 
+                                    flexShrink: 1, 
+                                    flexBasis: 'auto', 
+                                    alignSelf: 'auto', 
+                                    order: 0 
+                                }
                             }
                         }));
                     }
@@ -386,3 +493,151 @@ class FlexboxEducationalApp {
         
         window.FlexboxController = BasicFlexboxController;
     }
+    
+    createBasicImageManager() {
+        class BasicImageManager {
+            constructor() {
+                console.log('Basic ImageManager initialized');
+            }
+            
+            addRandomImage() {
+                console.log('Adding random image...');
+                // Basic implementation
+            }
+            
+            cleanup() {
+                console.log('ImageManager cleanup');
+            }
+        }
+        
+        window.ImageManager = BasicImageManager;
+    }
+    
+    createBasicDemoContentManager() {
+        class BasicDemoContentManager {
+            constructor() {
+                console.log('Basic DemoContentManager initialized');
+            }
+            
+            addDemoCard() {
+                console.log('Adding demo card...');
+                // Basic implementation
+            }
+            
+            copyFlexPropsToDemo() {
+                console.log('Copying flex properties to demo...');
+                // Basic implementation
+            }
+            
+            resetDemoOrder() {
+                console.log('Resetting demo order...');
+                // Basic implementation
+            }
+        }
+        
+        window.DemoContentManager = BasicDemoContentManager;
+    }
+    
+    reportInitializationMetrics() {
+        try {
+            const metrics = {
+                moduleCount: this.modules.size,
+                initializationTime: Date.now(),
+                performanceMonitoring: !!this.performanceMonitor
+            };
+            
+            console.log('📊 Initialization metrics:', metrics);
+        } catch (error) {
+            console.error('Error reporting metrics:', error);
+        }
+    }
+    
+    handleInitializationError(error) {
+        console.error('🚨 Initialization error:', error);
+        
+        // Show user-friendly error message
+        const errorMessage = document.createElement('div');
+        errorMessage.style.cssText = `
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #dc3545;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            z-index: 10000;
+            text-align: center;
+            max-width: 400px;
+        `;
+        errorMessage.innerHTML = `
+            <h3>Application Error</h3>
+            <p>The application failed to initialize properly.</p>
+            <p>Please refresh the page to try again.</p>
+            <button onclick="location.reload()" style="background: white; color: #dc3545; border: none; padding: 8px 16px; border-radius: 4px; margin-top: 10px; cursor: pointer;">
+                Refresh Page
+            </button>
+        `;
+        
+        document.body.appendChild(errorMessage);
+    }
+    
+    hasUnsavedChanges() {
+        try {
+            const state = this.playgroundState?.getState();
+            return state?.hasUnsavedChanges || false;
+        } catch (error) {
+            console.error('Error checking unsaved changes:', error);
+            return false;
+        }
+    }
+    
+    getStats() {
+        return {
+            initialized: this.initialized,
+            moduleCount: this.modules.size,
+            modules: Array.from(this.modules.keys()),
+            hasPerformanceMonitoring: !!this.performanceMonitor
+        };
+    }
+    
+    cleanup() {
+        try {
+            console.log('🧹 Cleaning up application...');
+            
+            // Cleanup all modules
+            this.modules.forEach((module, name) => {
+                try {
+                    if (module && typeof module.cleanup === 'function') {
+                        module.cleanup();
+                    }
+                } catch (error) {
+                    console.error(`Error cleaning up module ${name}:`, error);
+                }
+            });
+            
+            // Clear modules
+            this.modules.clear();
+            
+            // Cleanup performance monitor
+            if (this.performanceMonitor) {
+                this.performanceMonitor.cleanup();
+                this.performanceMonitor = null;
+            }
+            
+            // Reset state
+            this.initialized = false;
+            this.initializationPromise = null;
+            
+            console.log('✅ Application cleanup complete');
+            
+        } catch (error) {
+            console.error('❌ Error during cleanup:', error);
+        }
+    }
+}
+
+// Export for global use
+if (typeof window !== 'undefined') {
+    window.FlexboxEducationalApp = FlexboxEducationalApp;
+}

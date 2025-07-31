@@ -1,0 +1,41 @@
+{
+  "name": "css-learning-platform",
+  "version": "1.0.0",
+  "description": "Interactive CSS Learning Platform with Bootstrap, Flexbox, and utilities",
+  "main": "index.html",
+  "scripts": {
+    "build": "node build.js",
+    "dev": "python -m http.server 8000",
+    "preview": "npm run build && python -m http.server 8080 --directory dist",
+    "validate": "python bootstrap_generator.py validate index.html",
+    "generate": "python bootstrap_generator.py create --name 'Generated Project'"
+  },
+  "keywords": [
+    "css",
+    "bootstrap",
+    "flexbox", 
+    "education",
+    "interactive",
+    "learning"
+  ],
+  "author": "CSS Learning Platform",
+  "license": "MIT",
+  "devDependencies": {
+    "html-minifier": "^4.0.0",
+    "csso": "^5.0.5",
+    "terser": "^5.16.0"
+  },
+  "dependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/css-learning-platform.git"
+  },
+  "homepage": "https://css-learning-platform.vercel.app",
+  "bugs": {
+    "url": "https://github.com/yourusername/css-learning-platform/issues"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "python": ">=3.9.0"
+  }
+}
