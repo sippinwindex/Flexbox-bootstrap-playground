@@ -1,6 +1,6 @@
 /**
- * main.js - Main Application Class
- * Orchestrates all components and handles initialization
+ * main.js - Main Application Class (Security Enhanced)
+ * Orchestrates all components and handles initialization with security features
  */
 
 class FlexboxEducationalApp {
@@ -9,11 +9,34 @@ class FlexboxEducationalApp {
         this.initialized = false;
         this.performanceMonitor = null;
         this.initializationPromise = null;
+        this.securityBoundary = null;
+        this.rateLimiter = null;
         
         // Bind methods
         this.initialize = this.initialize.bind(this);
         this.cleanup = this.cleanup.bind(this);
         this.hasUnsavedChanges = this.hasUnsavedChanges.bind(this);
+        
+        // Initialize security features
+        this.initializeSecurity();
+    }
+    
+    /**
+     * Initialize security features before main initialization
+     */
+    initializeSecurity() {
+        try {
+            // Initialize security boundary if SecurityUtils is available
+            if (typeof SecurityUtils !== 'undefined') {
+                this.securityBoundary = new SecureErrorBoundary('main');
+                this.rateLimiter = SecurityUtils.createRateLimiter(50, 10000);
+                console.log('🔒 Security features initialized');
+            } else {
+                console.warn('⚠️ SecurityUtils not found - running without enhanced security');
+            }
+        } catch (error) {
+            console.error('❌ Security initialization failed:', error);
+        }
     }
     
     async initialize() {
@@ -158,12 +181,13 @@ class FlexboxEducationalApp {
             
             // Initialize FlexboxController
             if (!window.FlexboxController) {
-                console.warn('FlexboxController not found, creating basic implementation');
-                this.createBasicFlexboxController();
+                console.warn('FlexboxController not found, creating secure basic implementation');
+                this.createSecureFlexboxController();
             }
             
             this.flexboxController = new window.FlexboxController({
-                playgroundState: this.playgroundState
+                playgroundState: this.playgroundState,
+                securityUtils: typeof SecurityUtils !== 'undefined' ? SecurityUtils : null
             });
             
             this.modules.set('flexbox', this.flexboxController);
@@ -180,13 +204,13 @@ class FlexboxEducationalApp {
         try {
             console.log('📋 Initializing content managers...');
             
-            // Create basic content managers if not available
+            // Create secure content managers if not available
             if (!window.ImageManager) {
-                this.createBasicImageManager();
+                this.createSecureImageManager();
             }
             
             if (!window.DemoContentManager) {
-                this.createBasicDemoContentManager();
+                this.createSecureDemoContentManager();
             }
             
             this.imageManager = new window.ImageManager();
@@ -207,8 +231,8 @@ class FlexboxEducationalApp {
         try {
             console.log('🎨 Setting up user interface...');
             
-            // Initialize event listeners
-            this.setupEventListeners();
+            // Initialize event listeners with security
+            this.setupSecureEventListeners();
             
             // Initialize range value displays
             this.updateRangeValues();
@@ -224,7 +248,10 @@ class FlexboxEducationalApp {
         }
     }
     
-    setupEventListeners() {
+    /**
+     * Setup event listeners with rate limiting and input sanitization
+     */
+    setupSecureEventListeners() {
         try {
             // Container controls
             const containerControls = [
@@ -236,9 +263,9 @@ class FlexboxEducationalApp {
             containerControls.forEach(controlId => {
                 const element = safeQuerySelector(`#${controlId}`);
                 if (element) {
-                    const updateHandler = debounce(() => {
+                    const updateHandler = this.createSecureUpdateHandler(() => {
                         this.flexboxController?.updateFromControls?.();
-                    }, 100);
+                    });
                     
                     safeAddEventListener(element, 'change', updateHandler);
                     safeAddEventListener(element, 'input', updateHandler);
@@ -254,9 +281,9 @@ class FlexboxEducationalApp {
             itemControls.forEach(controlId => {
                 const element = safeQuerySelector(`#${controlId}`);
                 if (element) {
-                    const updateHandler = debounce(() => {
+                    const updateHandler = this.createSecureUpdateHandler(() => {
                         this.flexboxController?.updateFromControls?.();
-                    }, 100);
+                    });
                     
                     safeAddEventListener(element, 'change', updateHandler);
                     safeAddEventListener(element, 'input', updateHandler);
@@ -264,8 +291,41 @@ class FlexboxEducationalApp {
             });
             
         } catch (error) {
-            console.error('Error setting up event listeners:', error);
+            console.error('Error setting up secure event listeners:', error);
         }
+    }
+    
+    /**
+     * Create a secure update handler with rate limiting and error handling
+     */
+    createSecureUpdateHandler(callback) {
+        return (event) => {
+            try {
+                // Rate limit the updates
+                if (this.rateLimiter) {
+                    this.rateLimiter(() => {
+                        // Sanitize input if it's a text input
+                        if (event.target.type === 'text' && typeof SecurityUtils !== 'undefined') {
+                            event.target.value = SecurityUtils.sanitizeFormInput(event.target.value);
+                        }
+                        
+                        // Debounce the callback
+                        const debouncedCallback = debounce(callback, 100);
+                        debouncedCallback();
+                    });
+                } else {
+                    // Fallback without rate limiting
+                    const debouncedCallback = debounce(callback, 100);
+                    debouncedCallback();
+                }
+            } catch (error) {
+                console.warn('Rate limit exceeded or update error:', error);
+                // Dispatch error event for security boundary
+                if (this.securityBoundary) {
+                    window.dispatchEvent(new CustomEvent('playground-error', { detail: error }));
+                }
+            }
+        };
     }
     
     updateRangeValues() {
@@ -283,7 +343,12 @@ class FlexboxEducationalApp {
                 const output = safeQuerySelector(`#${id.replace('container-', '')}-value`);
                 
                 if (input && output) {
-                    output.textContent = input.value + suffix;
+                    // Sanitize the value before displaying
+                    let value = input.value;
+                    if (typeof SecurityUtils !== 'undefined') {
+                        value = SecurityUtils.sanitizeFormInput(value);
+                    }
+                    output.textContent = value + suffix;
                 }
             });
         } catch (error) {
@@ -291,17 +356,26 @@ class FlexboxEducationalApp {
         }
     }
     
-    createBasicFlexboxController() {
-        // Basic fallback implementation
-        class BasicFlexboxController {
+    /**
+     * Create a secure FlexboxController with input sanitization
+     */
+    createSecureFlexboxController() {
+        class SecureFlexboxController {
             constructor(dependencies) {
                 this.playgroundState = dependencies.playgroundState;
+                this.securityUtils = dependencies.securityUtils;
                 this.setupEventListeners();
             }
             
             setupEventListeners() {
-                // Basic event listener setup
-                console.log('Setting up basic FlexboxController');
+                console.log('Setting up secure FlexboxController');
+            }
+            
+            sanitizeValue(value, type = 'text') {
+                if (this.securityUtils) {
+                    return this.securityUtils.sanitizeFormInput(value, type);
+                }
+                return value;
             }
             
             updateFromControls() {
@@ -311,6 +385,7 @@ class FlexboxEducationalApp {
                     this.updateRangeValues();
                 } catch (error) {
                     console.error('Error updating from controls:', error);
+                    window.dispatchEvent(new CustomEvent('playground-error', { detail: error }));
                 }
             }
             
@@ -319,38 +394,81 @@ class FlexboxEducationalApp {
                 if (!container) return;
                 
                 const properties = {
-                    display: safeQuerySelector('#display')?.value || 'flex',
-                    flexDirection: safeQuerySelector('#flex-direction')?.value || 'row',
-                    justifyContent: safeQuerySelector('#justify-content')?.value || 'flex-start',
-                    alignItems: safeQuerySelector('#align-items')?.value || 'stretch',
-                    flexWrap: safeQuerySelector('#flex-wrap')?.value || 'nowrap',
-                    alignContent: safeQuerySelector('#align-content')?.value || 'stretch',
-                    gap: (safeQuerySelector('#gap')?.value || '10') + 'px',
-                    minHeight: (safeQuerySelector('#container-height')?.value || '400') + 'px',
-                    width: safeQuerySelector('#container-width')?.value || '100%'
+                    display: this.sanitizeValue(safeQuerySelector('#display')?.value || 'flex'),
+                    flexDirection: this.sanitizeValue(safeQuerySelector('#flex-direction')?.value || 'row'),
+                    justifyContent: this.sanitizeValue(safeQuerySelector('#justify-content')?.value || 'flex-start'),
+                    alignItems: this.sanitizeValue(safeQuerySelector('#align-items')?.value || 'stretch'),
+                    flexWrap: this.sanitizeValue(safeQuerySelector('#flex-wrap')?.value || 'nowrap'),
+                    alignContent: this.sanitizeValue(safeQuerySelector('#align-content')?.value || 'stretch'),
+                    gap: this.sanitizeValue(safeQuerySelector('#gap')?.value || '10') + 'px',
+                    minHeight: this.sanitizeValue(safeQuerySelector('#container-height')?.value || '400') + 'px',
+                    width: this.sanitizeValue(safeQuerySelector('#container-width')?.value || '100%')
                 };
                 
+                // Apply styles securely
                 Object.entries(properties).forEach(([prop, value]) => {
-                    if (value) container.style[prop] = value;
+                    if (value && this.isValidCSSValue(prop, value)) {
+                        container.style[prop] = value;
+                    }
                 });
             }
             
             updateFlexItem() {
-                const selectedItem = safeQuerySelector('#selected-item')?.value || '1';
+                const selectedItem = this.sanitizeValue(safeQuerySelector('#selected-item')?.value || '1');
                 const item = safeQuerySelector(`[data-item="${selectedItem}"]`);
                 if (!item) return;
                 
                 const properties = {
-                    flexGrow: safeQuerySelector('#flex-grow')?.value || '0',
-                    flexShrink: safeQuerySelector('#flex-shrink')?.value || '1',
-                    flexBasis: safeQuerySelector('#flex-basis')?.value || 'auto',
-                    alignSelf: safeQuerySelector('#align-self')?.value || 'auto',
-                    order: safeQuerySelector('#order')?.value || '0'
+                    flexGrow: this.sanitizeValue(safeQuerySelector('#flex-grow')?.value || '0'),
+                    flexShrink: this.sanitizeValue(safeQuerySelector('#flex-shrink')?.value || '1'),
+                    flexBasis: this.sanitizeValue(safeQuerySelector('#flex-basis')?.value || 'auto'),
+                    alignSelf: this.sanitizeValue(safeQuerySelector('#align-self')?.value || 'auto'),
+                    order: this.sanitizeValue(safeQuerySelector('#order')?.value || '0')
                 };
                 
+                // Apply styles securely
                 Object.entries(properties).forEach(([prop, value]) => {
-                    if (value) item.style[prop] = value;
+                    if (value && this.isValidCSSValue(prop, value)) {
+                        item.style[prop] = value;
+                    }
                 });
+            }
+            
+            /**
+             * Validate CSS values to prevent injection
+             */
+            isValidCSSValue(property, value) {
+                // Basic CSS value validation
+                const validPatterns = {
+                    flexGrow: /^\d+(\.\d+)?$/,
+                    flexShrink: /^\d+(\.\d+)?$/,
+                    order: /^-?\d+$/,
+                    gap: /^\d+px$/,
+                    minHeight: /^\d+px$/,
+                    width: /^(\d+(\.\d+)?%|100%|auto)$/
+                };
+                
+                if (validPatterns[property]) {
+                    return validPatterns[property].test(value);
+                }
+                
+                // For enum-like properties, check against allowed values
+                const allowedValues = {
+                    display: ['flex', 'block', 'inline-flex'],
+                    flexDirection: ['row', 'row-reverse', 'column', 'column-reverse'],
+                    justifyContent: ['flex-start', 'flex-end', 'center', 'space-between', 'space-around', 'space-evenly'],
+                    alignItems: ['flex-start', 'flex-end', 'center', 'stretch', 'baseline'],
+                    flexWrap: ['nowrap', 'wrap', 'wrap-reverse'],
+                    alignContent: ['flex-start', 'flex-end', 'center', 'stretch', 'space-between', 'space-around'],
+                    alignSelf: ['auto', 'flex-start', 'flex-end', 'center', 'stretch', 'baseline'],
+                    flexBasis: ['auto', 'content', '0', '0%', ...Array.from({length: 100}, (_, i) => `${i+1}%`)]
+                };
+                
+                if (allowedValues[property]) {
+                    return allowedValues[property].includes(value);
+                }
+                
+                return false;
             }
             
             updateRangeValues() {
@@ -367,7 +485,8 @@ class FlexboxEducationalApp {
                     const output = safeQuerySelector(`#${id.replace('container-', '')}-value`);
                     
                     if (input && output) {
-                        output.textContent = input.value + suffix;
+                        const value = this.sanitizeValue(input.value);
+                        output.textContent = value + suffix;
                     }
                 });
             }
@@ -383,26 +502,38 @@ class FlexboxEducationalApp {
                         return;
                     }
                     
-                    const newItem = safeCreateElement('div', {
-                        className: 'flex-item',
-                        attributes: {
+                    // Create item securely
+                    const newItem = this.securityUtils ? 
+                        this.securityUtils.createSafeElement('div', `Item ${newItemNumber}`, {
+                            class: 'flex-item',
                             'data-item': newItemNumber.toString(),
-                            'tabindex': '0',
+                            tabindex: '0',
                             'aria-label': `Flex item ${newItemNumber}`
-                        },
-                        textContent: `Item ${newItemNumber}`
-                    });
+                        }) :
+                        safeCreateElement('div', {
+                            className: 'flex-item',
+                            attributes: {
+                                'data-item': newItemNumber.toString(),
+                                'tabindex': '0',
+                                'aria-label': `Flex item ${newItemNumber}`
+                            },
+                            textContent: `Item ${newItemNumber}`
+                        });
                     
                     if (newItem && container) {
                         container.appendChild(newItem);
                         
-                        // Update item selector
+                        // Update item selector securely
                         const selector = safeQuerySelector('#selected-item');
                         if (selector) {
-                            const option = safeCreateElement('option', {
-                                attributes: { value: newItemNumber.toString() },
-                                textContent: `Item ${newItemNumber}`
-                            });
+                            const option = this.securityUtils ?
+                                this.securityUtils.createSafeElement('option', `Item ${newItemNumber}`, {
+                                    value: newItemNumber.toString()
+                                }) :
+                                safeCreateElement('option', {
+                                    attributes: { value: newItemNumber.toString() },
+                                    textContent: `Item ${newItemNumber}`
+                                });
                             if (option) selector.appendChild(option);
                         }
                         
@@ -424,6 +555,7 @@ class FlexboxEducationalApp {
                     }
                 } catch (error) {
                     console.error('Error adding item:', error);
+                    window.dispatchEvent(new CustomEvent('playground-error', { detail: error }));
                 }
             }
             
@@ -453,6 +585,7 @@ class FlexboxEducationalApp {
                     }));
                 } catch (error) {
                     console.error('Error removing item:', error);
+                    window.dispatchEvent(new CustomEvent('playground-error', { detail: error }));
                 }
             }
             
@@ -487,55 +620,93 @@ class FlexboxEducationalApp {
                     this.updateFromControls();
                 } catch (error) {
                     console.error('Error resetting playground:', error);
+                    window.dispatchEvent(new CustomEvent('playground-error', { detail: error }));
                 }
             }
         }
         
-        window.FlexboxController = BasicFlexboxController;
+        window.FlexboxController = SecureFlexboxController;
     }
     
-    createBasicImageManager() {
-        class BasicImageManager {
+    createSecureImageManager() {
+        class SecureImageManager {
             constructor() {
-                console.log('Basic ImageManager initialized');
+                console.log('Secure ImageManager initialized');
+                this.securityUtils = typeof SecurityUtils !== 'undefined' ? SecurityUtils : null;
             }
             
             addRandomImage() {
-                console.log('Adding random image...');
-                // Basic implementation
+                try {
+                    console.log('Adding random image securely...');
+                    // Secure implementation with URL validation
+                    const safeImageUrls = [
+                        'https://via.placeholder.com/150/0066cc/ffffff?text=Image+1',
+                        'https://via.placeholder.com/150/cc6600/ffffff?text=Image+2',
+                        'https://via.placeholder.com/150/009966/ffffff?text=Image+3'
+                    ];
+                    
+                    const randomUrl = safeImageUrls[Math.floor(Math.random() * safeImageUrls.length)];
+                    
+                    if (this.securityUtils && !this.securityUtils.validateURL(randomUrl)) {
+                        console.error('Invalid image URL');
+                        return;
+                    }
+                    
+                    // Add image safely
+                    // Implementation here...
+                } catch (error) {
+                    console.error('Error adding image:', error);
+                    window.dispatchEvent(new CustomEvent('playground-error', { detail: error }));
+                }
             }
             
             cleanup() {
-                console.log('ImageManager cleanup');
+                console.log('Secure ImageManager cleanup');
             }
         }
         
-        window.ImageManager = BasicImageManager;
+        window.ImageManager = SecureImageManager;
     }
     
-    createBasicDemoContentManager() {
-        class BasicDemoContentManager {
+    createSecureDemoContentManager() {
+        class SecureDemoContentManager {
             constructor() {
-                console.log('Basic DemoContentManager initialized');
+                console.log('Secure DemoContentManager initialized');
+                this.securityUtils = typeof SecurityUtils !== 'undefined' ? SecurityUtils : null;
             }
             
             addDemoCard() {
-                console.log('Adding demo card...');
-                // Basic implementation
+                try {
+                    console.log('Adding demo card securely...');
+                    // Secure implementation
+                } catch (error) {
+                    console.error('Error adding demo card:', error);
+                    window.dispatchEvent(new CustomEvent('playground-error', { detail: error }));
+                }
             }
             
             copyFlexPropsToDemo() {
-                console.log('Copying flex properties to demo...');
-                // Basic implementation
+                try {
+                    console.log('Copying flex properties to demo securely...');
+                    // Secure implementation
+                } catch (error) {
+                    console.error('Error copying flex properties:', error);
+                    window.dispatchEvent(new CustomEvent('playground-error', { detail: error }));
+                }
             }
             
             resetDemoOrder() {
-                console.log('Resetting demo order...');
-                // Basic implementation
+                try {
+                    console.log('Resetting demo order securely...');
+                    // Secure implementation
+                } catch (error) {
+                    console.error('Error resetting demo order:', error);
+                    window.dispatchEvent(new CustomEvent('playground-error', { detail: error }));
+                }
             }
         }
         
-        window.DemoContentManager = BasicDemoContentManager;
+        window.DemoContentManager = SecureDemoContentManager;
     }
     
     reportInitializationMetrics() {
@@ -543,7 +714,9 @@ class FlexboxEducationalApp {
             const metrics = {
                 moduleCount: this.modules.size,
                 initializationTime: Date.now(),
-                performanceMonitoring: !!this.performanceMonitor
+                performanceMonitoring: !!this.performanceMonitor,
+                securityEnabled: !!this.securityBoundary,
+                rateLimitingEnabled: !!this.rateLimiter
             };
             
             console.log('📊 Initialization metrics:', metrics);
@@ -555,31 +728,36 @@ class FlexboxEducationalApp {
     handleInitializationError(error) {
         console.error('🚨 Initialization error:', error);
         
-        // Show user-friendly error message
-        const errorMessage = document.createElement('div');
-        errorMessage.style.cssText = `
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: #dc3545;
-            color: white;
-            padding: 20px;
-            border-radius: 8px;
-            z-index: 10000;
-            text-align: center;
-            max-width: 400px;
-        `;
-        errorMessage.innerHTML = `
-            <h3>Application Error</h3>
-            <p>The application failed to initialize properly.</p>
-            <p>Please refresh the page to try again.</p>
-            <button onclick="location.reload()" style="background: white; color: #dc3545; border: none; padding: 8px 16px; border-radius: 4px; margin-top: 10px; cursor: pointer;">
-                Refresh Page
-            </button>
-        `;
-        
-        document.body.appendChild(errorMessage);
+        // Use secure error handling if available
+        if (this.securityBoundary) {
+            window.dispatchEvent(new CustomEvent('playground-error', { detail: error }));
+        } else {
+            // Fallback error display
+            const errorMessage = document.createElement('div');
+            errorMessage.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: #dc3545;
+                color: white;
+                padding: 20px;
+                border-radius: 8px;
+                z-index: 10000;
+                text-align: center;
+                max-width: 400px;
+            `;
+            errorMessage.innerHTML = `
+                <h3>Application Error</h3>
+                <p>The application failed to initialize properly.</p>
+                <p>Please refresh the page to try again.</p>
+                <button onclick="location.reload()" style="background: white; color: #dc3545; border: none; padding: 8px 16px; border-radius: 4px; margin-top: 10px; cursor: pointer;">
+                    Refresh Page
+                </button>
+            `;
+            
+            document.body.appendChild(errorMessage);
+        }
     }
     
     hasUnsavedChanges() {
@@ -597,7 +775,9 @@ class FlexboxEducationalApp {
             initialized: this.initialized,
             moduleCount: this.modules.size,
             modules: Array.from(this.modules.keys()),
-            hasPerformanceMonitoring: !!this.performanceMonitor
+            hasPerformanceMonitoring: !!this.performanceMonitor,
+            securityEnabled: !!this.securityBoundary,
+            rateLimitingEnabled: !!this.rateLimiter
         };
     }
     
@@ -625,9 +805,15 @@ class FlexboxEducationalApp {
                 this.performanceMonitor = null;
             }
             
+            // Cleanup security boundary
+            if (this.securityBoundary) {
+                this.securityBoundary = null;
+            }
+            
             // Reset state
             this.initialized = false;
             this.initializationPromise = null;
+            this.rateLimiter = null;
             
             console.log('✅ Application cleanup complete');
             

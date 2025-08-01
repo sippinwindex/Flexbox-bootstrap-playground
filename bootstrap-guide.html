@@ -2,28 +2,41 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bootstrap Learning Guide - Complete Reference</title>
+    <meta name="description" content="Complete Bootstrap learning guide with interactive examples and modern best practices">
+    <meta name="keywords" content="Bootstrap, learning, guide, tutorial, CSS framework, responsive design">
+    <title>Bootstrap Learning Guide - Complete Secure Edition</title>
+    
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" 
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <!-- Prism.js for syntax highlighting -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    
     <style>
         :root {
             --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             --success-gradient: linear-gradient(135deg, #28a745, #20c997);
+            --warning-gradient: linear-gradient(135deg, #ffc107, #ff8c00);
+            --info-gradient: linear-gradient(135deg, #17a2b8, #20c997);
+            --danger-gradient: linear-gradient(135deg, #dc3545, #fd79a8);
             --bg-light: #f8f9fa;
             --border-color: #dee2e6;
             --text-muted: #6c757d;
             --shadow-sm: 0 2px 8px rgba(0,0,0,0.1);
             --shadow-md: 0 4px 15px rgba(0,0,0,0.15);
+            --shadow-lg: 0 8px 25px rgba(0,0,0,0.2);
         }
 
         body {
             font-family: system-ui, -apple-system, sans-serif;
             line-height: 1.6;
+            scroll-behavior: smooth;
         }
 
         .hero-section {
@@ -34,55 +47,118 @@
 
         .guide-nav {
             background: white;
-            border-radius: 8px;
+            border-radius: 12px;
             box-shadow: var(--shadow-sm);
             position: sticky;
             top: 100px;
             max-height: calc(100vh - 120px);
             overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #667eea #f1f1f1;
+        }
+
+        .guide-nav::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .guide-nav::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .guide-nav::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 3px;
         }
 
         .guide-nav .nav-link {
             color: #495057;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            margin: 2px 0;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            margin: 3px 0;
             transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            position: relative;
         }
 
-        .guide-nav .nav-link:hover,
+        .guide-nav .nav-link:hover {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            transform: translateX(5px);
+        }
+
         .guide-nav .nav-link.active {
             background: var(--primary-gradient);
             color: white;
+            transform: translateX(5px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .guide-nav .nav-link.active::after {
+            content: '';
+            position: absolute;
+            right: -8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-left: 8px solid #667eea;
         }
 
         .content-section {
             background: white;
-            border-radius: 8px;
+            border-radius: 12px;
             box-shadow: var(--shadow-sm);
-            padding: 2rem;
+            padding: 2.5rem;
             margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .content-section:hover {
+            box-shadow: var(--shadow-md);
         }
 
         .example-container {
             background: #f8f9fa;
             border: 1px solid var(--border-color);
-            border-radius: 8px;
+            border-radius: 12px;
             padding: 1.5rem;
-            margin: 1rem 0;
+            margin: 1.5rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .example-container::before {
+            content: 'Live Example';
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            background: #28a745;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
         }
 
         .example-output {
             background: white;
             border: 2px dashed #dee2e6;
-            border-radius: 6px;
-            padding: 1rem;
+            border-radius: 8px;
+            padding: 1.5rem;
             margin-top: 1rem;
+            min-height: 50px;
         }
 
         .code-block {
             position: relative;
-            margin: 1rem 0;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
         }
 
         .copy-btn {
@@ -92,18 +168,22 @@
             background: #28a745;
             color: white;
             border: none;
-            border-radius: 4px;
-            padding: 5px 10px;
+            border-radius: 6px;
+            padding: 6px 12px;
             font-size: 0.8rem;
             cursor: pointer;
             opacity: 0.8;
-            transition: all 0.2s;
+            transition: all 0.3s ease;
             z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
         }
 
         .copy-btn:hover {
             opacity: 1;
             transform: scale(1.05);
+            background: #218838;
         }
 
         .copy-btn.copied {
@@ -112,23 +192,59 @@
 
         .badge-level {
             font-size: 0.7rem;
-            padding: 0.25rem 0.5rem;
+            padding: 0.35rem 0.7rem;
+            border-radius: 12px;
         }
 
         .best-practice {
-            background: #d4edda;
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
             border-left: 4px solid #28a745;
-            padding: 1rem;
-            margin: 1rem 0;
-            border-radius: 0 6px 6px 0;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+            position: relative;
+        }
+
+        .best-practice::before {
+            content: '💡';
+            position: absolute;
+            left: -2px;
+            top: -2px;
+            font-size: 1.2rem;
         }
 
         .warning-box {
-            background: #fff3cd;
+            background: linear-gradient(135deg, #fff3cd, #ffeaa7);
             border-left: 4px solid #ffc107;
-            padding: 1rem;
-            margin: 1rem 0;
-            border-radius: 0 6px 6px 0;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+            position: relative;
+        }
+
+        .warning-box::before {
+            content: '⚠️';
+            position: absolute;
+            left: -2px;
+            top: -2px;
+            font-size: 1.2rem;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #d1ecf1, #bee5eb);
+            border-left: 4px solid #17a2b8;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+            position: relative;
+        }
+
+        .info-box::before {
+            content: 'ℹ️';
+            position: absolute;
+            left: -2px;
+            top: -2px;
+            font-size: 1.2rem;
         }
 
         .grid-demo {
@@ -137,17 +253,131 @@
             padding: 0.75rem;
             text-align: center;
             margin-bottom: 0.5rem;
+            border-radius: 4px;
+            font-weight: 500;
         }
 
         .component-showcase {
             border: 1px solid #dee2e6;
-            border-radius: 6px;
+            border-radius: 8px;
             padding: 1rem;
             margin: 0.5rem 0;
+            background: white;
+        }
+
+        /* Progress indicator */
+        .progress-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 3px;
+            background: var(--primary-gradient);
+            z-index: 9999;
+            transition: width 0.3s ease;
+        }
+
+        /* Toast notifications */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1050;
+        }
+
+        .toast-custom {
+            background: white;
+            border-radius: 8px;
+            box-shadow: var(--shadow-lg);
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            display: none;
+            min-width: 300px;
+        }
+
+        .toast-custom.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Back to top button */
+        .back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .back-to-top:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .back-to-top.show {
+            display: flex;
+        }
+
+        /* Interactive button demos */
+        .btn-demo {
+            margin: 0.25rem;
+        }
+
+        /* Component spacing */
+        .component-demo {
+            margin: 1rem 0;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .guide-nav {
+                position: static;
+                max-height: none;
+                margin-bottom: 2rem;
+            }
+            
+            .content-section {
+                padding: 1.5rem;
+            }
+            
+            .example-container {
+                padding: 1rem;
+            }
+        }
+
+        /* Code syntax highlighting enhancements */
+        pre[class*="language-"] {
+            margin: 0;
+            border-radius: 8px;
+        }
+
+        code[class*="language-"] {
+            font-size: 0.9rem;
+            line-height: 1.4;
         }
     </style>
 </head>
 <body>
+    <!-- Progress Indicator -->
+    <div class="progress-indicator" id="progress-indicator"></div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
 
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
@@ -158,8 +388,8 @@
             <div class="navbar-nav ms-auto">
                 <a class="nav-link" href="index.html"><i class="bi bi-house me-1"></i>Home</a>
                 <a class="nav-link" href="bootstrap-playground.html"><i class="bi bi-bootstrap me-1"></i>Bootstrap Playground</a>
-                <a class="nav-link" href="html-guide.html"><i class="bi bi-code-slash me-1"></i>HTML Guide</a>
                 <a class="nav-link" href="css-guide.html"><i class="bi bi-palette me-1"></i>CSS Guide</a>
+                <a class="nav-link" href="html-playground.html"><i class="bi bi-code me-1"></i>HTML</a>
             </div>
         </div>
     </nav>
@@ -169,19 +399,23 @@
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-8">
-                    <h1 class="display-5 fw-bold mb-3">Bootstrap Learning Guide</h1>
-                    <p class="lead mb-4">Master Bootstrap 5 - the world's most popular CSS framework for building responsive, mobile-first websites.</p>
-                    <div class="d-flex gap-3">
-                        <a href="bootstrap-playground.html" class="btn btn-light">
+                    <h1 class="display-5 fw-bold mb-3">
+                        <i class="bi bi-bootstrap me-3"></i>Bootstrap Learning Guide
+                    </h1>
+                    <p class="lead mb-4">Master Bootstrap 5 - the world's most popular CSS framework for building responsive, mobile-first websites quickly and efficiently.</p>
+                    <div class="d-flex gap-3 flex-wrap">
+                        <a href="bootstrap-playground.html" class="btn btn-light btn-lg">
                             <i class="bi bi-play-fill me-2"></i>Try Bootstrap Playground
                         </a>
-                        <a href="#getting-started" class="btn btn-outline-light">
+                        <a href="#getting-started" class="btn btn-outline-light btn-lg">
                             <i class="bi bi-book me-2"></i>Start Learning
                         </a>
                     </div>
                 </div>
                 <div class="col-lg-4 text-center">
-                    <i class="bi bi-bootstrap display-1 opacity-75"></i>
+                    <div class="d-flex justify-content-center align-items-center" style="height: 200px;">
+                        <i class="bi bi-bootstrap display-1 opacity-75"></i>
+                    </div>
                 </div>
             </div>
         </div>
@@ -192,8 +426,10 @@
             <!-- Navigation Sidebar -->
             <div class="col-lg-3">
                 <div class="guide-nav p-3">
-                    <h6 class="text-muted small text-uppercase mb-3">Table of Contents</h6>
-                    <nav class="nav flex-column">
+                    <h6 class="text-muted small text-uppercase mb-3 fw-bold">
+                        <i class="bi bi-list me-2"></i>Table of Contents
+                    </h6>
+                    <nav class="nav flex-column" id="guide-navigation">
                         <a class="nav-link active" href="#getting-started">
                             <i class="bi bi-play-circle me-2"></i>Getting Started
                         </a>
@@ -232,74 +468,124 @@
             <div class="col-lg-9">
                 <!-- Getting Started -->
                 <section id="getting-started" class="content-section">
-                    <div class="d-flex align-items-center mb-4">
-                        <h2 class="mb-0">Getting Started with Bootstrap</h2>
-                        <span class="badge bg-success ms-3 badge-level">Beginner</span>
+                    <div class="d-flex align-items-center justify-content-between mb-4">
+                        <div class="d-flex align-items-center">
+                            <h2 class="mb-0">Getting Started with Bootstrap</h2>
+                            <span class="badge bg-success ms-3 badge-level">Beginner</span>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-outline-primary btn-sm" onclick="toggleAllExamples()">
+                                <i class="bi bi-eye me-1"></i>Toggle Examples
+                            </button>
+                        </div>
                     </div>
                     
-                    <p class="lead">Bootstrap is a powerful CSS framework that provides pre-built components and utilities for rapid web development.</p>
+                    <p class="lead">Bootstrap is a powerful, feature-packed CSS framework that provides pre-built components and utilities for rapid web development with a mobile-first approach.</p>
 
                     <div class="best-practice">
-                        <h6><i class="bi bi-lightbulb text-success me-2"></i>Why Bootstrap?</h6>
+                        <h6><i class="bi bi-lightbulb text-success me-2"></i>Why Choose Bootstrap?</h6>
                         <ul class="mb-0">
-                            <li>Responsive grid system with flexbox</li>
-                            <li>Pre-designed components (buttons, cards, modals)</li>
-                            <li>Utility classes for quick styling</li>
-                            <li>Cross-browser compatibility</li>
-                            <li>Active community and extensive documentation</li>
+                            <li><strong>Responsive Grid System:</strong> Flexbox-based 12-column grid</li>
+                            <li><strong>Pre-designed Components:</strong> Buttons, modals, navigation, cards, and more</li>
+                            <li><strong>Utility Classes:</strong> Spacing, colors, display, positioning utilities</li>
+                            <li><strong>Cross-browser Compatibility:</strong> Works consistently across modern browsers</li>
+                            <li><strong>Active Community:</strong> Extensive documentation and community support</li>
+                            <li><strong>Customizable:</strong> Sass variables and custom builds</li>
                         </ul>
                     </div>
 
-                    <h4 class="mt-4">Installation Methods</h4>
+                    <h4 class="mt-4 mb-3">Installation Methods</h4>
                     
-                    <h6>1. CDN (Recommended for Learning)</h6>
-                    <div class="code-block">
-                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                        <pre><code class="language-html"><!-- CSS -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+                    <div class="row g-4">
+                        <div class="col-md-4">
+                            <h6 class="text-primary"><i class="bi bi-1-circle me-2"></i>CDN (Recommended for Learning)</h6>
+                            <div class="code-block">
+                                <button class="copy-btn" onclick="copyCode(this)">
+                                    <i class="bi bi-clipboard"></i>Copy
+                                </button>
+                                <pre><code class="language-html">&lt;!-- CSS --&gt;
+&lt;link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"&gt;
 
-<!-- JavaScript Bundle -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script></code></pre>
-                    </div>
+&lt;!-- JavaScript Bundle --&gt;
+&lt;script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"&gt;&lt;/script&gt;</code></pre>
+                            </div>
+                            <div class="info-box">
+                                <small><strong>Pros:</strong> Quick setup, automatic updates, CDN performance benefits.</small>
+                            </div>
+                        </div>
 
-                    <h6>2. Download</h6>
-                    <div class="code-block">
-                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                        <pre><code class="language-html"><!-- Local files -->
-<link rel="stylesheet" href="css/bootstrap.min.css">
-<script src="js/bootstrap.bundle.min.js"></script></code></pre>
-                    </div>
+                        <div class="col-md-4">
+                            <h6 class="text-success"><i class="bi bi-2-circle me-2"></i>Download</h6>
+                            <div class="code-block">
+                                <button class="copy-btn" onclick="copyCode(this)">
+                                    <i class="bi bi-clipboard"></i>Copy
+                                </button>
+                                <pre><code class="language-html">&lt;!-- Local files --&gt;
+&lt;link rel="stylesheet" href="css/bootstrap.min.css"&gt;
+&lt;script src="js/bootstrap.bundle.min.js"&gt;&lt;/script&gt;</code></pre>
+                            </div>
+                            <div class="info-box">
+                                <small><strong>Pros:</strong> Offline development, version control, custom builds.</small>
+                            </div>
+                        </div>
 
-                    <h6>3. Package Manager</h6>
-                    <div class="code-block">
-                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                        <pre><code class="language-bash"># npm
+                        <div class="col-md-4">
+                            <h6 class="text-info"><i class="bi bi-3-circle me-2"></i>Package Manager</h6>
+                            <div class="code-block">
+                                <button class="copy-btn" onclick="copyCode(this)">
+                                    <i class="bi bi-clipboard"></i>Copy
+                                </button>
+                                <pre><code class="language-bash"># npm
 npm install bootstrap
 
 # Yarn
-yarn add bootstrap</code></pre>
+yarn add bootstrap
+
+# pnpm
+pnpm add bootstrap</code></pre>
+                            </div>
+                            <div class="info-box">
+                                <small><strong>Pros:</strong> Dependency management, build tool integration, customization.</small>
+                            </div>
+                        </div>
                     </div>
 
-                    <h4>Basic HTML Template</h4>
+                    <h4 class="mt-5 mb-3">Basic HTML Template</h4>
                     <div class="code-block">
-                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                        <pre><code class="language-html"><!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bootstrap Page</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-    <div class="container">
-        <h1 class="text-center">Hello, Bootstrap!</h1>
-        <p class="lead">Your responsive website starts here.</p>
-    </div>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <i class="bi bi-clipboard"></i>Copy
+                        </button>
+                        <pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta http-equiv="X-Content-Type-Options" content="nosniff"&gt;
+    &lt;meta http-equiv="X-Frame-Options" content="DENY"&gt;
+    &lt;meta http-equiv="X-XSS-Protection" content="1; mode=block"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;Bootstrap Page&lt;/title&gt;
+    &lt;link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class="container"&gt;
+        &lt;h1 class="text-center mt-5"&gt;Hello, Bootstrap!&lt;/h1&gt;
+        &lt;p class="lead text-center"&gt;Your responsive website starts here.&lt;/p&gt;
+        &lt;div class="text-center"&gt;
+            &lt;button type="button" class="btn btn-primary"&gt;Get Started&lt;/button&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
     
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html></code></pre>
+    &lt;script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+                    </div>
+
+                    <div class="example-container">
+                        <div class="example-output text-center">
+                            <h1 class="mt-3">Hello, Bootstrap!</h1>
+                            <p class="lead">Your responsive website starts here.</p>
+                            <button type="button" class="btn btn-primary">Get Started</button>
+                        </div>
                     </div>
                 </section>
 
@@ -307,19 +593,31 @@ yarn add bootstrap</code></pre>
                 <section id="grid-system" class="content-section">
                     <div class="d-flex align-items-center mb-4">
                         <h2 class="mb-0">Bootstrap Grid System</h2>
-                        <span class="badge bg-primary ms-3 badge-level">Beginner</span>
+                        <span class="badge bg-primary ms-3 badge-level">Essential</span>
                     </div>
 
-                    <p>Bootstrap's grid system uses containers, rows, and columns to layout and align content. It's built with flexbox and is fully responsive.</p>
+                    <p class="lead">Bootstrap's grid system uses containers, rows, and columns to layout and align content. It's built with flexbox and is fully responsive.</p>
 
-                    <h4>Breakpoints</h4>
+                    <div class="info-box">
+                        <h6><i class="bi bi-info-circle text-info me-2"></i>Grid Basics</h6>
+                        <ul class="mb-0">
+                            <li><strong>Container:</strong> Wraps content and provides proper alignment</li>
+                            <li><strong>Rows:</strong> Horizontal groups of columns</li>
+                            <li><strong>Columns:</strong> Content placement within rows</li>
+                            <li><strong>12-Column System:</strong> Columns add up to 12 per row</li>
+                            <li><strong>Gutters:</strong> Padding between columns</li>
+                        </ul>
+                    </div>
+
+                    <h4 class="mt-4">Breakpoints</h4>
                     <div class="table-responsive">
-                        <table class="table table-striped">
+                        <table class="table table-striped table-hover">
                             <thead class="table-dark">
                                 <tr>
                                     <th>Breakpoint</th>
                                     <th>Class infix</th>
                                     <th>Dimensions</th>
+                                    <th>Container max-width</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -327,56 +625,64 @@ yarn add bootstrap</code></pre>
                                     <td>Extra small</td>
                                     <td><em>None</em></td>
                                     <td>&lt;576px</td>
+                                    <td>None (auto)</td>
                                 </tr>
                                 <tr>
                                     <td>Small</td>
                                     <td><code>sm</code></td>
                                     <td>≥576px</td>
+                                    <td>540px</td>
                                 </tr>
                                 <tr>
                                     <td>Medium</td>
                                     <td><code>md</code></td>
                                     <td>≥768px</td>
+                                    <td>720px</td>
                                 </tr>
                                 <tr>
                                     <td>Large</td>
                                     <td><code>lg</code></td>
                                     <td>≥992px</td>
+                                    <td>960px</td>
                                 </tr>
                                 <tr>
                                     <td>Extra large</td>
                                     <td><code>xl</code></td>
                                     <td>≥1200px</td>
+                                    <td>1140px</td>
                                 </tr>
                                 <tr>
                                     <td>Extra extra large</td>
                                     <td><code>xxl</code></td>
                                     <td>≥1400px</td>
+                                    <td>1320px</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
 
-                    <h4>Basic Grid Example</h4>
+                    <h4 class="mt-4">Basic Grid Example</h4>
                     <div class="example-container">
                         <div class="code-block">
-                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                            <pre><code class="language-html"><div class="container">
-    <div class="row">
-        <div class="col-md-8">Main content (8 columns)</div>
-        <div class="col-md-4">Sidebar (4 columns)</div>
-    </div>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="bi bi-clipboard"></i>Copy
+                            </button>
+                            <pre><code class="language-html">&lt;div class="container"&gt;
+    &lt;div class="row"&gt;
+        &lt;div class="col-md-8"&gt;Main content (8 columns)&lt;/div&gt;
+        &lt;div class="col-md-4"&gt;Sidebar (4 columns)&lt;/div&gt;
+    &lt;/div&gt;
     
-    <div class="row">
-        <div class="col-sm-6 col-md-4">Responsive column</div>
-        <div class="col-sm-6 col-md-4">Responsive column</div>
-        <div class="col-sm-12 col-md-4">Responsive column</div>
-    </div>
-</div></code></pre>
+    &lt;div class="row"&gt;
+        &lt;div class="col-sm-6 col-md-4"&gt;Responsive column&lt;/div&gt;
+        &lt;div class="col-sm-6 col-md-4"&gt;Responsive column&lt;/div&gt;
+        &lt;div class="col-sm-12 col-md-4"&gt;Responsive column&lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;</code></pre>
                         </div>
                         <div class="example-output">
                             <div class="container-fluid">
-                                <div class="row">
+                                <div class="row mb-3">
                                     <div class="col-md-8">
                                         <div class="grid-demo">Main content (8 columns)</div>
                                     </div>
@@ -400,38 +706,40 @@ yarn add bootstrap</code></pre>
                         </div>
                     </div>
 
-                    <h4>Advanced Grid Features</h4>
+                    <h4 class="mt-4">Advanced Grid Features</h4>
                     <div class="example-container">
                         <div class="code-block">
-                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                            <pre><code class="language-html"><!-- Auto-layout columns -->
-<div class="row">
-    <div class="col">Auto width</div>
-    <div class="col">Auto width</div>
-    <div class="col">Auto width</div>
-</div>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="bi bi-clipboard"></i>Copy
+                            </button>
+                            <pre><code class="language-html">&lt;!-- Auto-layout columns --&gt;
+&lt;div class="row"&gt;
+    &lt;div class="col"&gt;Auto width&lt;/div&gt;
+    &lt;div class="col"&gt;Auto width&lt;/div&gt;
+    &lt;div class="col"&gt;Auto width&lt;/div&gt;
+&lt;/div&gt;
 
-<!-- Column ordering -->
-<div class="row">
-    <div class="col order-3">First (appears third)</div>
-    <div class="col order-1">Second (appears first)</div>
-    <div class="col order-2">Third (appears second)</div>
-</div>
+&lt;!-- Column ordering --&gt;
+&lt;div class="row"&gt;
+    &lt;div class="col order-3"&gt;First (appears third)&lt;/div&gt;
+    &lt;div class="col order-1"&gt;Second (appears first)&lt;/div&gt;
+    &lt;div class="col order-2"&gt;Third (appears second)&lt;/div&gt;
+&lt;/div&gt;
 
-<!-- Offset columns -->
-<div class="row">
-    <div class="col-md-4 offset-md-2">Centered column</div>
-</div>
+&lt;!-- Offset columns --&gt;
+&lt;div class="row"&gt;
+    &lt;div class="col-md-4 offset-md-4"&gt;Centered column&lt;/div&gt;
+&lt;/div&gt;
 
-<!-- Nested columns -->
-<div class="row">
-    <div class="col-12">
-        <div class="row">
-            <div class="col-6">Nested column</div>
-            <div class="col-6">Nested column</div>
-        </div>
-    </div>
-</div></code></pre>
+&lt;!-- Nested columns --&gt;
+&lt;div class="row"&gt;
+    &lt;div class="col-12"&gt;
+        &lt;div class="row"&gt;
+            &lt;div class="col-6"&gt;Nested column&lt;/div&gt;
+            &lt;div class="col-6"&gt;Nested column&lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;</code></pre>
                         </div>
                         <div class="example-output">
                             <div class="container-fluid">
@@ -441,13 +749,30 @@ yarn add bootstrap</code></pre>
                                     <div class="col"><div class="grid-demo">Auto width</div></div>
                                 </div>
                                 
+                                <div class="row mb-2">
+                                    <div class="col order-3"><div class="grid-demo">Appears 3rd</div></div>
+                                    <div class="col order-1"><div class="grid-demo">Appears 1st</div></div>
+                                    <div class="col order-2"><div class="grid-demo">Appears 2nd</div></div>
+                                </div>
+                                
                                 <div class="row">
-                                    <div class="col-md-4 offset-md-2">
+                                    <div class="col-md-4 offset-md-4">
                                         <div class="grid-demo">Centered with offset</div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
+
+                    <div class="best-practice">
+                        <h6><i class="bi bi-lightbulb text-success me-2"></i>Grid Best Practices</h6>
+                        <ul class="mb-0">
+                            <li>Always wrap columns in rows</li>
+                            <li>Use container or container-fluid to wrap your rows</li>
+                            <li>Column content should be placed directly in columns</li>
+                            <li>Use breakpoint-specific classes for responsive design</li>
+                            <li>Remember that columns add up to 12 per row</li>
+                        </ul>
                     </div>
                 </section>
 
@@ -458,56 +783,71 @@ yarn add bootstrap</code></pre>
                         <span class="badge bg-primary ms-3 badge-level">Beginner</span>
                     </div>
 
+                    <p class="lead">Bootstrap provides excellent typography defaults and utility classes for creating beautiful, readable text.</p>
+
                     <h4>Headings</h4>
                     <div class="example-container">
                         <div class="code-block">
-                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                            <pre><code class="language-html"><!-- Standard headings -->
-<h1>h1. Bootstrap heading</h1>
-<h2>h2. Bootstrap heading</h2>
-<h3>h3. Bootstrap heading</h3>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="bi bi-clipboard"></i>Copy
+                            </button>
+                            <pre><code class="language-html">&lt;!-- Standard headings --&gt;
+&lt;h1&gt;h1. Bootstrap heading&lt;/h1&gt;
+&lt;h2&gt;h2. Bootstrap heading&lt;/h2&gt;
+&lt;h3&gt;h3. Bootstrap heading&lt;/h3&gt;
+&lt;h4&gt;h4. Bootstrap heading&lt;/h4&gt;
+&lt;h5&gt;h5. Bootstrap heading&lt;/h5&gt;
+&lt;h6&gt;h6. Bootstrap heading&lt;/h6&gt;
 
-<!-- Display headings (larger) -->
-<h1 class="display-1">Display 1</h1>
-<h1 class="display-4">Display 4</h1>
+&lt;!-- Display headings (larger) --&gt;
+&lt;h1 class="display-1"&gt;Display 1&lt;/h1&gt;
+&lt;h1 class="display-4"&gt;Display 4&lt;/h1&gt;
 
-<!-- Heading classes for non-heading elements -->
-<p class="h4">Paragraph styled as h4</p></code></pre>
+&lt;!-- Heading classes for non-heading elements --&gt;
+&lt;p class="h4"&gt;Paragraph styled as h4&lt;/p&gt;
+&lt;p class="lead"&gt;Lead paragraph with emphasis&lt;/p&gt;</code></pre>
                         </div>
                         <div class="example-output">
                             <h1>h1. Bootstrap heading</h1>
                             <h2>h2. Bootstrap heading</h2>
                             <h3>h3. Bootstrap heading</h3>
-                            <h1 class="display-4">Display 4</h1>
-                            <p class="h4 mb-0">Paragraph styled as h4</p>
+                            <h4>h4. Bootstrap heading</h4>
+                            <h5>h5. Bootstrap heading</h5>
+                            <h6>h6. Bootstrap heading</h6>
+                            <h1 class="display-4 mt-3">Display 4</h1>
+                            <p class="h4">Paragraph styled as h4</p>
+                            <p class="lead mb-0">Lead paragraph with emphasis</p>
                         </div>
                     </div>
 
-                    <h4>Text Utilities</h4>
+                    <h4 class="mt-4">Text Utilities</h4>
                     <div class="example-container">
                         <div class="code-block">
-                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                            <pre><code class="language-html"><!-- Text alignment -->
-<p class="text-start">Left aligned text</p>
-<p class="text-center">Center aligned text</p>
-<p class="text-end">Right aligned text</p>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="bi bi-clipboard"></i>Copy
+                            </button>
+                            <pre><code class="language-html">&lt;!-- Text alignment --&gt;
+&lt;p class="text-start"&gt;Left aligned text&lt;/p&gt;
+&lt;p class="text-center"&gt;Center aligned text&lt;/p&gt;
+&lt;p class="text-end"&gt;Right aligned text&lt;/p&gt;
 
-<!-- Text transforms -->
-<p class="text-lowercase">LOWERCASE TEXT</p>
-<p class="text-uppercase">uppercase text</p>
-<p class="text-capitalize">capitalize each word</p>
+&lt;!-- Text transforms --&gt;
+&lt;p class="text-lowercase"&gt;LOWERCASE TEXT&lt;/p&gt;
+&lt;p class="text-uppercase"&gt;uppercase text&lt;/p&gt;
+&lt;p class="text-capitalize"&gt;capitalize each word&lt;/p&gt;
 
-<!-- Font weights and styles -->
-<p class="fw-bold">Bold text</p>
-<p class="fw-light">Light weight text</p>
-<p class="fst-italic">Italic text</p>
+&lt;!-- Font weights and styles --&gt;
+&lt;p class="fw-bold"&gt;Bold text&lt;/p&gt;
+&lt;p class="fw-light"&gt;Light weight text&lt;/p&gt;
+&lt;p class="fst-italic"&gt;Italic text&lt;/p&gt;
+&lt;p class="text-decoration-underline"&gt;Underlined text&lt;/p&gt;
 
-<!-- Text colors -->
-<p class="text-primary">Primary text</p>
-<p class="text-success">Success text</p>
-<p class="text-warning">Warning text</p>
-<p class="text-danger">Danger text</p>
-<p class="text-muted">Muted text</p></code></pre>
+&lt;!-- Text colors --&gt;
+&lt;p class="text-primary"&gt;Primary text&lt;/p&gt;
+&lt;p class="text-success"&gt;Success text&lt;/p&gt;
+&lt;p class="text-warning"&gt;Warning text&lt;/p&gt;
+&lt;p class="text-danger"&gt;Danger text&lt;/p&gt;
+&lt;p class="text-muted"&gt;Muted text&lt;/p&gt;</code></pre>
                         </div>
                         <div class="example-output">
                             <p class="text-start">Left aligned text</p>
@@ -516,9 +856,12 @@ yarn add bootstrap</code></pre>
                             <p class="text-uppercase">uppercase text</p>
                             <p class="fw-bold">Bold text</p>
                             <p class="fst-italic">Italic text</p>
+                            <p class="text-decoration-underline">Underlined text</p>
                             <p class="text-primary">Primary text</p>
                             <p class="text-success">Success text</p>
-                            <p class="text-danger mb-0">Danger text</p>
+                            <p class="text-warning">Warning text</p>
+                            <p class="text-danger">Danger text</p>
+                            <p class="text-muted mb-0">Muted text</p>
                         </div>
                     </div>
                 </section>
@@ -530,12 +873,1420 @@ yarn add bootstrap</code></pre>
                         <span class="badge bg-warning ms-3 badge-level">Intermediate</span>
                     </div>
 
+                    <p class="lead">Bootstrap provides a comprehensive set of prebuilt components for common UI patterns.</p>
+
                     <h4>Buttons</h4>
                     <div class="example-container">
                         <div class="code-block">
-                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                            <pre><code class="language-html"><!-- Button styles -->
-<button type="button" class="btn btn-primary">Primary</button>
-<button type="button" class="btn btn-secondary">Secondary</button>
-<button type="button" class="btn btn-success">Success</button>
-<button type="button" class="
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="bi bi-clipboard"></i>Copy
+                            </button>
+                            <pre><code class="language-html">&lt;!-- Button styles --&gt;
+&lt;button type="button" class="btn btn-primary"&gt;Primary&lt;/button&gt;
+&lt;button type="button" class="btn btn-secondary"&gt;Secondary&lt;/button&gt;
+&lt;button type="button" class="btn btn-success"&gt;Success&lt;/button&gt;
+&lt;button type="button" class="btn btn-danger"&gt;Danger&lt;/button&gt;
+&lt;button type="button" class="btn btn-warning"&gt;Warning&lt;/button&gt;
+&lt;button type="button" class="btn btn-info"&gt;Info&lt;/button&gt;
+&lt;button type="button" class="btn btn-light"&gt;Light&lt;/button&gt;
+&lt;button type="button" class="btn btn-dark"&gt;Dark&lt;/button&gt;
+
+&lt;!-- Outline buttons --&gt;
+&lt;button type="button" class="btn btn-outline-primary"&gt;Primary&lt;/button&gt;
+&lt;button type="button" class="btn btn-outline-success"&gt;Success&lt;/button&gt;
+
+&lt;!-- Button sizes --&gt;
+&lt;button type="button" class="btn btn-primary btn-lg"&gt;Large&lt;/button&gt;
+&lt;button type="button" class="btn btn-primary"&gt;Default&lt;/button&gt;
+&lt;button type="button" class="btn btn-primary btn-sm"&gt;Small&lt;/button&gt;</code></pre>
+                        </div>
+                        <div class="example-output">
+                            <div class="mb-3">
+                                <button type="button" class="btn btn-primary btn-demo">Primary</button>
+                                <button type="button" class="btn btn-secondary btn-demo">Secondary</button>
+                                <button type="button" class="btn btn-success btn-demo">Success</button>
+                                <button type="button" class="btn btn-danger btn-demo">Danger</button>
+                                <button type="button" class="btn btn-warning btn-demo">Warning</button>
+                                <button type="button" class="btn btn-info btn-demo">Info</button>
+                                <button type="button" class="btn btn-light btn-demo">Light</button>
+                                <button type="button" class="btn btn-dark btn-demo">Dark</button>
+                            </div>
+                            <div class="mb-3">
+                                <button type="button" class="btn btn-outline-primary btn-demo">Outline Primary</button>
+                                <button type="button" class="btn btn-outline-success btn-demo">Outline Success</button>
+                            </div>
+                            <div>
+                                <button type="button" class="btn btn-primary btn-lg btn-demo">Large</button>
+                                <button type="button" class="btn btn-primary btn-demo">Default</button>
+                                <button type="button" class="btn btn-primary btn-sm btn-demo">Small</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4 class="mt-4">Cards</h4>
+                    <div class="example-container">
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="bi bi-clipboard"></i>Copy
+                            </button>
+                            <pre><code class="language-html">&lt;div class="card" style="width: 18rem;"&gt;
+    &lt;div class="card-header"&gt;
+        Featured
+    &lt;/div&gt;
+    &lt;div class="card-body"&gt;
+        &lt;h5 class="card-title"&gt;Card title&lt;/h5&gt;
+        &lt;p class="card-text"&gt;Some quick example text to build on the card title and make up the bulk of the card's content.&lt;/p&gt;
+        &lt;a href="#" class="btn btn-primary"&gt;Go somewhere&lt;/a&gt;
+    &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+                        </div>
+                        <div class="example-output">
+                            <div class="card" style="width: 18rem; margin: 0 auto;">
+                                <div class="card-header">
+                                    Featured
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title">Card title</h5>
+                                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4 class="mt-4">Alerts</h4>
+                    <div class="example-container">
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="bi bi-clipboard"></i>Copy
+                            </button>
+                            <pre><code class="language-html">&lt;div class="alert alert-primary" role="alert"&gt;
+    A simple primary alert—check it out!
+&lt;/div&gt;
+&lt;div class="alert alert-success" role="alert"&gt;
+    &lt;h4 class="alert-heading"&gt;Well done!&lt;/h4&gt;
+    &lt;p&gt;You successfully read this important alert message.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="alert alert-warning alert-dismissible fade show" role="alert"&gt;
+    &lt;strong&gt;Holy guacamole!&lt;/strong&gt; You should check in on some of those fields below.
+    &lt;button type="button" class="btn-close" data-bs-dismiss="alert"&gt;&lt;/button&gt;
+&lt;/div&gt;</code></pre>
+                        </div>
+                        <div class="example-output">
+                            <div class="alert alert-primary" role="alert">
+                                A simple primary alert—check it out!
+                            </div>
+                            <div class="alert alert-success" role="alert">
+                                <h4 class="alert-heading">Well done!</h4>
+                                <p class="mb-0">You successfully read this important alert message.</p>
+                            </div>
+                            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                <strong>Holy guacamole!</strong> You should check in on some of those fields below.
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4 class="mt-4">Navigation</h4>
+                    <div class="example-container">
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="bi bi-clipboard"></i>Copy
+                            </button>
+                            <pre><code class="language-html">&lt;nav class="navbar navbar-expand-lg navbar-dark bg-dark"&gt;
+    &lt;div class="container"&gt;
+        &lt;a class="navbar-brand" href="#"&gt;Navbar&lt;/a&gt;
+        &lt;button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"&gt;
+            &lt;span class="navbar-toggler-icon"&gt;&lt;/span&gt;
+        &lt;/button&gt;
+        &lt;div class="collapse navbar-collapse" id="navbarNav"&gt;
+            &lt;ul class="navbar-nav"&gt;
+                &lt;li class="nav-item"&gt;
+                    &lt;a class="nav-link active" href="#"&gt;Home&lt;/a&gt;
+                &lt;/li&gt;
+                &lt;li class="nav-item"&gt;
+                    &lt;a class="nav-link" href="#"&gt;Features&lt;/a&gt;
+                &lt;/li&gt;
+                &lt;li class="nav-item"&gt;
+                    &lt;a class="nav-link" href="#"&gt;Pricing&lt;/a&gt;
+                &lt;/li&gt;
+            &lt;/ul&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/nav&gt;</code></pre>
+                        </div>
+                        <div class="example-output">
+                            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                                <div class="container">
+                                    <a class="navbar-brand" href="#">Navbar</a>
+                                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavExample">
+                                        <span class="navbar-toggler-icon"></span>
+                                    </button>
+                                    <div class="collapse navbar-collapse" id="navbarNavExample">
+                                        <ul class="navbar-nav">
+                                            <li class="nav-item">
+                                                <a class="nav-link active" href="#">Home</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" href="#">Features</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" href="#">Pricing</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </nav>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Utilities -->
+                <section id="utilities" class="content-section">
+                    <div class="d-flex align-items-center mb-4">
+                        <h2 class="mb-0">Utility Classes</h2>
+                        <span class="badge bg-info ms-3 badge-level">Essential</span>
+                    </div>
+
+                    <p class="lead">Bootstrap's utility classes provide low-level styling options for rapid prototyping and customization.</p>
+
+                    <h4>Spacing Utilities</h4>
+                    <div class="example-container">
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="bi bi-clipboard"></i>Copy
+                            </button>
+                            <pre><code class="language-html">&lt;!-- Margin utilities --&gt;
+&lt;div class="m-0"&gt;Margin 0&lt;/div&gt;
+&lt;div class="m-3"&gt;Margin 3&lt;/div&gt;
+&lt;div class="mt-5"&gt;Margin top 5&lt;/div&gt;
+&lt;div class="mx-auto"&gt;Margin left and right auto&lt;/div&gt;
+
+&lt;!-- Padding utilities --&gt;
+&lt;div class="p-0"&gt;Padding 0&lt;/div&gt;
+&lt;div class="p-3"&gt;Padding 3&lt;/div&gt;
+&lt;div class="py-4"&gt;Padding top and bottom 4&lt;/div&gt;
+&lt;div class="px-2"&gt;Padding left and right 2&lt;/div&gt;
+
+&lt;!-- Responsive spacing --&gt;
+&lt;div class="m-2 m-md-4"&gt;Responsive margin&lt;/div&gt;</code></pre>
+                        </div>
+                        <div class="example-output">
+                            <div class="border p-2 mb-2">
+                                <div class="bg-light p-3 mb-2">Padding 3</div>
+                                <div class="bg-light mt-4 p-2">Margin top 4</div>
+                                <div class="bg-light mx-auto p-2" style="width: 200px;">Centered with mx-auto</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4 class="mt-4">Display Utilities</h4>
+                    <div class="example-container">
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="bi bi-clipboard"></i>Copy
+                            </button>
+                            <pre><code class="language-html">&lt;!-- Display values --&gt;
+&lt;div class="d-block"&gt;Block element&lt;/div&gt;
+&lt;span class="d-inline-block"&gt;Inline block&lt;/span&gt;
+&lt;div class="d-flex"&gt;Flex container&lt;/div&gt;
+&lt;div class="d-grid"&gt;Grid container&lt;/div&gt;
+
+&lt;!-- Responsive display --&gt;
+&lt;div class="d-none d-md-block"&gt;Hidden on small, visible on medium+&lt;/div&gt;
+&lt;div class="d-block d-md-none"&gt;Visible on small, hidden on medium+&lt;/div&gt;
+
+&lt;!-- Show/hide utilities --&gt;
+&lt;div class="d-print-none"&gt;Hidden when printing&lt;/div&gt;
+&lt;div class="d-none d-print-block"&gt;Only visible when printing&lt;/div&gt;</code></pre>
+                        </div>
+                    </div>
+
+                    <h4 class="mt-4">Flexbox Utilities</h4>
+                    <div class="example-container">
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="bi bi-clipboard"></i>Copy
+                            </button>
+                            <pre><code class="language-html">&lt;!-- Flex direction --&gt;
+&lt;div class="d-flex flex-row"&gt;Flex row&lt;/div&gt;
+&lt;div class="d-flex flex-column"&gt;Flex column&lt;/div&gt;
+
+&lt;!-- Justify content --&gt;
+&lt;div class="d-flex justify-content-start"&gt;...&lt;/div&gt;
+&lt;div class="d-flex justify-content-center"&gt;...&lt;/div&gt;
+&lt;div class="d-flex justify-content-end"&gt;...&lt;/div&gt;
+&lt;div class="d-flex justify-content-between"&gt;...&lt;/div&gt;
+
+&lt;!-- Align items --&gt;
+&lt;div class="d-flex align-items-start"&gt;...&lt;/div&gt;
+&lt;div class="d-flex align-items-center"&gt;...&lt;/div&gt;
+&lt;div class="d-flex align-items-end"&gt;...&lt;/div&gt;
+
+&lt;!-- Flex grow/shrink --&gt;
+&lt;div class="flex-grow-1"&gt;Grows to fill space&lt;/div&gt;
+&lt;div class="flex-shrink-1"&gt;Shrinks as needed&lt;/div&gt;</code></pre>
+                        </div>
+                        <div class="example-output">
+                            <div class="border p-2 mb-2">
+                                <div class="d-flex justify-content-between align-items-center bg-light p-2">
+                                    <div class="bg-primary text-white p-2">Item 1</div>
+                                    <div class="bg-success text-white p-2">Item 2</div>
+                                    <div class="bg-danger text-white p-2">Item 3</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="best-practice">
+                        <h6><i class="bi bi-lightbulb text-success me-2"></i>Utility Classes Best Practices</h6>
+                        <ul class="mb-0">
+                            <li>Use utilities for quick prototyping and one-off adjustments</li>
+                            <li>Combine utilities to create complex layouts without custom CSS</li>
+                            <li>Remember responsive variants (e.g., <code>d-md-block</code>)</li>
+                            <li>Don't overuse utilities; create custom classes for repeated patterns</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- Layout -->
+                <section id="layout" class="content-section">
+                    <div class="d-flex align-items-center mb-4">
+                        <h2 class="mb-0">Layout Components</h2>
+                        <span class="badge bg-secondary ms-3 badge-level">Intermediate</span>
+                    </div>
+
+                    <p class="lead">Bootstrap provides layout components for organizing page structure and content flow.</p>
+
+                    <h4>Containers</h4>
+                    <div class="example-container">
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="bi bi-clipboard"></i>Copy
+                            </button>
+                            <pre><code class="language-html">&lt;!-- Fixed-width container --&gt;
+&lt;div class="container"&gt;
+    &lt;!-- Content here --&gt;
+&lt;/div&gt;
+
+&lt;!-- Full-width container --&gt;
+&lt;div class="container-fluid"&gt;
+    &lt;!-- Content here --&gt;
+&lt;/div&gt;
+
+&lt;!-- Responsive containers --&gt;
+&lt;div class="container-sm"&gt;100% wide until sm breakpoint&lt;/div&gt;
+&lt;div class="container-md"&gt;100% wide until md breakpoint&lt;/div&gt;
+&lt;div class="container-lg"&gt;100% wide until lg breakpoint&lt;/div&gt;
+&lt;div class="container-xl"&gt;100% wide until xl breakpoint&lt;/div&gt;
+&lt;div class="container-xxl"&gt;100% wide until xxl breakpoint&lt;/div&gt;</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="info-box">
+                        <h6><i class="bi bi-info-circle text-info me-2"></i>Container Comparison</h6>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <strong>.container:</strong> Responsive fixed-width container with max-widths at each breakpoint
+                            </div>
+                            <div class="col-md-6">
+                                <strong>.container-fluid:</strong> Full-width container spanning the entire viewport width
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Forms -->
+                <section id="forms" class="content-section">
+                    <div class="d-flex align-items-center mb-4">
+                        <h2 class="mb-0">Forms</h2>
+                        <span class="badge bg-warning ms-3 badge-level">Intermediate</span>
+                    </div>
+
+                    <p class="lead">Bootstrap provides extensive form styling and layout options for creating accessible, responsive forms.</p>
+
+                    <h4>Basic Form</h4>
+                    <div class="example-container">
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="bi bi-clipboard"></i>Copy
+                            </button>
+                            <pre><code class="language-html">&lt;form&gt;
+    &lt;div class="mb-3"&gt;
+        &lt;label for="email" class="form-label"&gt;Email address&lt;/label&gt;
+        &lt;input type="email" class="form-control" id="email" placeholder="name@example.com"&gt;
+    &lt;/div&gt;
+    &lt;div class="mb-3"&gt;
+        &lt;label for="password" class="form-label"&gt;Password&lt;/label&gt;
+        &lt;input type="password" class="form-control" id="password"&gt;
+    &lt;/div&gt;
+    &lt;div class="mb-3 form-check"&gt;
+        &lt;input type="checkbox" class="form-check-input" id="remember"&gt;
+        &lt;label class="form-check-label" for="remember"&gt;
+            Remember me
+        &lt;/label&gt;
+    &lt;/div&gt;
+    &lt;button type="submit" class="btn btn-primary"&gt;Submit&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+                        </div>
+                        <div class="example-output">
+                            <form>
+                                <div class="mb-3">
+                                    <label for="emailExample" class="form-label">Email address</label>
+                                    <input type="email" class="form-control" id="emailExample" placeholder="name@example.com">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="passwordExample" class="form-label">Password</label>
+                                    <input type="password" class="form-control" id="passwordExample">
+                                </div>
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" class="form-check-input" id="rememberExample">
+                                    <label class="form-check-label" for="rememberExample">
+                                        Remember me
+                                    </label>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <h4 class="mt-4">Form Validation</h4>
+                    <div class="example-container">
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="bi bi-clipboard"></i>Copy
+                            </button>
+                            <pre><code class="language-html">&lt;form class="needs-validation" novalidate&gt;
+    &lt;div class="mb-3"&gt;
+        &lt;label for="validationCustom01" class="form-label"&gt;First name&lt;/label&gt;
+        &lt;input type="text" class="form-control is-valid" id="validationCustom01" value="Mark" required&gt;
+        &lt;div class="valid-feedback"&gt;
+            Looks good!
+        &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class="mb-3"&gt;
+        &lt;label for="validationCustom02" class="form-label"&gt;Email&lt;/label&gt;
+        &lt;input type="email" class="form-control is-invalid" id="validationCustom02" required&gt;
+        &lt;div class="invalid-feedback"&gt;
+            Please provide a valid email.
+        &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;button class="btn btn-primary" type="submit"&gt;Submit form&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+                        </div>
+                        <div class="example-output">
+                            <form class="needs-validation" novalidate>
+                                <div class="mb-3">
+                                    <label for="validationExample01" class="form-label">First name</label>
+                                    <input type="text" class="form-control is-valid" id="validationExample01" value="Mark" required>
+                                    <div class="valid-feedback">
+                                        Looks good!
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="validationExample02" class="form-label">Email</label>
+                                    <input type="email" class="form-control is-invalid" id="validationExample02" required>
+                                    <div class="invalid-feedback">
+                                        Please provide a valid email.
+                                    </div>
+                                </div>
+                                <button class="btn btn-primary" type="submit">Submit form</button>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- JavaScript -->
+                <section id="javascript" class="content-section">
+                    <div class="d-flex align-items-center mb-4">
+                        <h2 class="mb-0">JavaScript Components</h2>
+                        <span class="badge bg-danger ms-3 badge-level">Advanced</span>
+                    </div>
+
+                    <p class="lead">Bootstrap includes JavaScript plugins for interactive components like modals, tooltips, and dropdowns.</p>
+
+                    <h4>Modal</h4>
+                    <div class="example-container">
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="bi bi-clipboard"></i>Copy
+                            </button>
+                            <pre><code class="language-html">&lt;!-- Button trigger modal --&gt;
+&lt;button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal"&gt;
+    Launch demo modal
+&lt;/button&gt;
+
+&lt;!-- Modal --&gt;
+&lt;div class="modal fade" id="exampleModal" tabindex="-1"&gt;
+    &lt;div class="modal-dialog"&gt;
+        &lt;div class="modal-content"&gt;
+            &lt;div class="modal-header"&gt;
+                &lt;h1 class="modal-title fs-5" id="exampleModalLabel"&gt;Modal title&lt;/h1&gt;
+                &lt;button type="button" class="btn-close" data-bs-dismiss="modal"&gt;&lt;/button&gt;
+            &lt;/div&gt;
+            &lt;div class="modal-body"&gt;
+                Modal body content goes here.
+            &lt;/div&gt;
+            &lt;div class="modal-footer"&gt;
+                &lt;button type="button" class="btn btn-secondary" data-bs-dismiss="modal"&gt;Close&lt;/button&gt;
+                &lt;button type="button" class="btn btn-primary"&gt;Save changes&lt;/button&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+                        </div>
+                        <div class="example-output text-center">
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModalDemo">
+                                Launch demo modal
+                            </button>
+                            
+                            <!-- Modal -->
+                            <div class="modal fade" id="exampleModalDemo" tabindex="-1">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h1 class="modal-title fs-5">Demo Modal</h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            This is a working Bootstrap modal! You can interact with it to see how modals work.
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            <button type="button" class="btn btn-primary">Save changes</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4 class="mt-4">Dropdown</h4>
+                    <div class="example-container">
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="bi bi-clipboard"></i>Copy
+                            </button>
+                            <pre><code class="language-html">&lt;div class="dropdown"&gt;
+    &lt;button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"&gt;
+        Dropdown button
+    &lt;/button&gt;
+    &lt;ul class="dropdown-menu"&gt;
+        &lt;li&gt;&lt;a class="dropdown-item" href="#"&gt;Action&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a class="dropdown-item" href="#"&gt;Another action&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;hr class="dropdown-divider"&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a class="dropdown-item" href="#"&gt;Something else here&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+&lt;/div&gt;</code></pre>
+                        </div>
+                        <div class="example-output text-center">
+                            <div class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                    Dropdown button
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#">Action</a></li>
+                                    <li><a class="dropdown-item" href="#">Another action</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="#">Something else here</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4 class="mt-4">Tooltips</h4>
+                    <div class="example-container">
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="bi bi-clipboard"></i>Copy
+                            </button>
+                            <pre><code class="language-html">&lt;!-- Initialize tooltips in JavaScript --&gt;
+&lt;script&gt;
+var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+    return new bootstrap.Tooltip(tooltipTriggerEl);
+});
+&lt;/script&gt;
+
+&lt;!-- Tooltip examples --&gt;
+&lt;button type="button" class="btn btn-secondary" data-bs-toggle="tooltip" data-bs-placement="top" title="Tooltip on top"&gt;
+    Tooltip on top
+&lt;/button&gt;
+&lt;button type="button" class="btn btn-secondary" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Tooltip on bottom"&gt;
+    Tooltip on bottom
+&lt;/button&gt;</code></pre>
+                        </div>
+                        <div class="example-output text-center">
+                            <button type="button" class="btn btn-secondary me-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Tooltip on top">
+                                Tooltip on top
+                            </button>
+                            <button type="button" class="btn btn-secondary" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Tooltip on bottom">
+                                Tooltip on bottom
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="warning-box">
+                        <h6><i class="bi bi-exclamation-triangle text-warning me-2"></i>JavaScript Dependencies</h6>
+                        <p class="mb-0">Bootstrap's JavaScript components require the Bootstrap JavaScript bundle or individual component files. Some components also need to be initialized with JavaScript (like tooltips and popovers).</p>
+                    </div>
+                </section>
+
+                <!-- Customization -->
+                <section id="customization" class="content-section">
+                    <div class="d-flex align-items-center mb-4">
+                        <h2 class="mb-0">Customization</h2>
+                        <span class="badge bg-dark ms-3 badge-level">Advanced</span>
+                    </div>
+
+                    <p class="lead">Learn how to customize Bootstrap to match your brand and design requirements.</p>
+
+                    <h4>CSS Custom Properties</h4>
+                    <div class="example-container">
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="bi bi-clipboard"></i>Copy
+                            </button>
+                            <pre><code class="language-css">/* Override Bootstrap's CSS custom properties */
+:root {
+    --bs-primary: #custom-color;
+    --bs-secondary: #another-color;
+    --bs-font-sans-serif: 'Your Custom Font', system-ui, sans-serif;
+    --bs-border-radius: 0.5rem;
+    --bs-box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+/* Custom component styling */
+.btn-custom {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: #6f42c1;
+    --bs-btn-border-color: #6f42c1;
+    --bs-btn-hover-bg: #5a359a;
+    --bs-btn-hover-border-color: #5a359a;
+}</code></pre>
+                        </div>
+                    </div>
+
+                    <h4 class="mt-4">Sass Customization</h4>
+                    <div class="example-container">
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="bi bi-clipboard"></i>Copy
+                            </button>
+                            <pre><code class="language-scss">// Import Bootstrap's functions first
+@import "node_modules/bootstrap/scss/functions";
+
+// Define your custom variables
+$primary: #6f42c1;
+$secondary: #6c757d;
+$success: #198754;
+$info: #0dcaf0;
+$warning: #ffc107;
+$danger: #dc3545;
+$light: #f8f9fa;
+$dark: #212529;
+
+// Custom spacing
+$spacer: 1rem;
+$spacers: (
+  0: 0,
+  1: $spacer * .25,
+  2: $spacer * .5,
+  3: $spacer,
+  4: $spacer * 1.5,
+  5: $spacer * 3,
+  6: $spacer * 4,
+);
+
+// Import Bootstrap
+@import "node_modules/bootstrap/scss/bootstrap";</code></pre>
+                        </div>
+                    </div>
+
+                    <h4 class="mt-4">Custom Utility Classes</h4>
+                    <div class="example-container">
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="bi bi-clipboard"></i>Copy
+                            </button>
+                            <pre><code class="language-scss">// Add custom utilities to the utilities map
+$utilities: map-merge(
+  $utilities,
+  (
+    "cursor": (
+      property: cursor,
+      class: cursor,
+      responsive: true,
+      values: auto grab pointer,
+    ),
+    "user-select": (
+      property: user-select,
+      values: all auto none,
+    ),
+  )
+);
+
+// This generates classes like:
+// .cursor-auto, .cursor-grab, .cursor-pointer
+// .user-select-all, .user-select-auto, .user-select-none</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="best-practice">
+                        <h6><i class="bi bi-lightbulb text-success me-2"></i>Customization Best Practices</h6>
+                        <ul class="mb-0">
+                            <li>Use CSS custom properties for simple theme changes</li>
+                            <li>Use Sass for more complex customizations and builds</li>
+                            <li>Never modify Bootstrap source files directly</li>
+                            <li>Create a separate custom.scss file for your modifications</li>
+                            <li>Test customizations across different breakpoints</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- Best Practices -->
+                <section id="best-practices" class="content-section">
+                    <div class="d-flex align-items-center mb-4">
+                        <h2 class="mb-0">Best Practices</h2>
+                        <span class="badge bg-success ms-3 badge-level">Expert</span>
+                    </div>
+
+                    <p class="lead">Follow these best practices to build maintainable, accessible, and performant Bootstrap applications.</p>
+
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="mb-0"><i class="bi bi-speedometer2 me-2"></i>Performance</h5>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="mb-0">
+                                        <li>Use the CDN for faster loading</li>
+                                        <li>Only include components you need</li>
+                                        <li>Minimize custom CSS overrides</li>
+                                        <li>Optimize images and use responsive images</li>
+                                        <li>Use utility classes instead of custom CSS when possible</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-header bg-success text-white">
+                                    <h5 class="mb-0"><i class="bi bi-universal-access-circle me-2"></i>Accessibility</h5>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="mb-0">
+                                        <li>Use semantic HTML elements</li>
+                                        <li>Include proper ARIA attributes</li>
+                                        <li>Ensure sufficient color contrast</li>
+                                        <li>Test with keyboard navigation</li>
+                                        <li>Use screen reader testing tools</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-header bg-info text-white">
+                                    <h5 class="mb-0"><i class="bi bi-phone me-2"></i>Responsive Design</h5>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="mb-0">
+                                        <li>Design mobile-first</li>
+                                        <li>Test on multiple screen sizes</li>
+                                        <li>Use appropriate breakpoints</li>
+                                        <li>Consider touch-friendly interfaces</li>
+                                        <li>Optimize for different orientations</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-header bg-warning text-dark">
+                                    <h5 class="mb-0"><i class="bi bi-code-slash me-2"></i>Code Quality</h5>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="mb-0">
+                                        <li>Follow consistent naming conventions</li>
+                                        <li>Keep custom CSS organized</li>
+                                        <li>Document complex customizations</li>
+                                        <li>Use version control for your changes</li>
+                                        <li>Regular code reviews and testing</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4 class="mt-5">Common Mistakes to Avoid</h4>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="alert alert-danger">
+                                <h6 class="alert-heading">❌ Don't Do This</h6>
+                                <ul class="mb-0 small">
+                                    <li>Modify Bootstrap source files directly</li>
+                                    <li>Use too many custom CSS overrides</li>
+                                    <li>Ignore mobile responsiveness</li>
+                                    <li>Skip accessibility considerations</li>
+                                    <li>Use inline styles excessively</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="alert alert-success">
+                                <h6 class="alert-heading">✅ Do This Instead</h6>
+                                <ul class="mb-0 small">
+                                    <li>Create custom CSS files for modifications</li>
+                                    <li>Use Bootstrap's utility classes</li>
+                                    <li>Test on multiple devices</li>
+                                    <li>Follow WCAG guidelines</li>
+                                    <li>Use Bootstrap classes consistently</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-box">
+                        <h6><i class="bi bi-info-circle text-info me-2"></i>Learning Resources</h6>
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <strong>Official Documentation:</strong><br>
+                                <small>Complete reference and examples</small>
+                            </div>
+                            <div class="col-md-4">
+                                <strong>Bootstrap Examples:</strong><br>
+                                <small>Starter templates and layouts</small>
+                            </div>
+                            <div class="col-md-4">
+                                <strong>Community Resources:</strong><br>
+                                <small>Themes, tutorials, and tools</small>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Conclusion -->
+                <section class="content-section">
+                    <div class="text-center">
+                        <h3 class="mb-3">🎉 Congratulations!</h3>
+                        <p class="lead">You've completed the Bootstrap Learning Guide! You now have a comprehensive understanding of Bootstrap 5 and how to build responsive, modern websites.</p>
+                        
+                        <div class="row g-3 mt-4">
+                            <div class="col-md-4">
+                                <a href="bootstrap-playground.html" class="btn btn-primary w-100">
+                                    <i class="bi bi-bootstrap me-2"></i>Practice with Bootstrap Playground
+                                </a>
+                            </div>
+                            <div class="col-md-4">
+                                <a href="css-guide.html" class="btn btn-success w-100">
+                                    <i class="bi bi-palette me-2"></i>Learn CSS Fundamentals
+                                </a>
+                            </div>
+                            <div class="col-md-4">
+                                <a href="html-playground.html" class="btn btn-info w-100">
+                                    <i class="bi bi-code me-2"></i>Master HTML
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 p-4 bg-light rounded">
+                            <h5>Next Steps</h5>
+                            <p class="mb-0">Continue your learning journey by exploring advanced topics like custom Bootstrap builds, integrating with JavaScript frameworks, and creating your own component library.</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back to Top Button -->
+    <button class="back-to-top" id="back-to-top" onclick="scrollToTop()">
+        <i class="bi bi-arrow-up"></i>
+    </button>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" 
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" 
+            crossorigin="anonymous"></script>
+    
+    <!-- Prism.js for syntax highlighting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+    <!-- Security Utils (MUST be loaded before main script) -->
+    <script>
+        // Security utility functions
+        const SecurityUtils = {
+            // Input validation and sanitization
+            sanitizeHTML: function(input) {
+                if (typeof input !== 'string') return '';
+                
+                // Remove dangerous tags and attributes
+                const div = document.createElement('div');
+                div.textContent = input;
+                let sanitized = div.innerHTML;
+                
+                // Remove script tags and event handlers
+                sanitized = sanitized.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+                sanitized = sanitized.replace(/on\w+\s*=\s*"[^"]*"/gi, '');
+                sanitized = sanitized.replace(/on\w+\s*=\s*'[^']*'/gi, '');
+                sanitized = sanitized.replace(/javascript:/gi, '');
+                
+                return sanitized;
+            },
+
+            // Rate limiting for user actions
+            rateLimiter: {
+                actions: new Map(),
+                
+                isAllowed: function(action, limit = 10, window = 60000) {
+                    const now = Date.now();
+                    const key = action;
+                    
+                    if (!this.actions.has(key)) {
+                        this.actions.set(key, []);
+                    }
+                    
+                    const timestamps = this.actions.get(key);
+                    
+                    // Remove old timestamps
+                    while (timestamps.length > 0 && now - timestamps[0] > window) {
+                        timestamps.shift();
+                    }
+                    
+                    if (timestamps.length >= limit) {
+                        return false;
+                    }
+                    
+                    timestamps.push(now);
+                    return true;
+                }
+            },
+
+            // Error handling
+            handleError: function(error, context = '') {
+                console.error(`Security Error ${context}:`, error);
+                
+                // Log to a secure endpoint in production
+                if (typeof window.reportError === 'function') {
+                    window.reportError({
+                        error: error.message,
+                        context: context,
+                        timestamp: new Date().toISOString(),
+                        userAgent: navigator.userAgent
+                    });
+                }
+            }
+        };
+
+        // Global error handlers
+        window.addEventListener('error', function(event) {
+            SecurityUtils.handleError(event.error, 'Global Error Handler');
+        });
+
+        window.addEventListener('unhandledrejection', function(event) {
+            SecurityUtils.handleError(event.reason, 'Unhandled Promise Rejection');
+        });
+    </script>
+
+    <!-- Main Application Script -->
+    <script>
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                initializeNavigation();
+                initializeScrollEffects();
+                initializeTooltips();
+                updateProgress();
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Initialization');
+            }
+        });
+
+        // Navigation functionality with security
+        function initializeNavigation() {
+            try {
+                const navLinks = document.querySelectorAll('.guide-nav .nav-link');
+                const sections = document.querySelectorAll('.content-section');
+
+                // Add click handlers to navigation links
+                navLinks.forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        try {
+                            if (!SecurityUtils.rateLimiter.isAllowed('navClick', 30, 10000)) {
+                                console.warn('Rate limit exceeded for navigation');
+                                return;
+                            }
+
+                            e.preventDefault();
+                            const href = this.getAttribute('href');
+                            
+                            if (href && href.startsWith('#')) {
+                                const targetId = href.substring(1);
+                                const targetElement = document.getElementById(targetId);
+                                
+                                if (targetElement) {
+                                    // Update active navigation
+                                    navLinks.forEach(nav => nav.classList.remove('active'));
+                                    this.classList.add('active');
+                                    
+                                    // Smooth scroll to target
+                                    targetElement.scrollIntoView({
+                                        behavior: 'smooth',
+                                        block: 'start'
+                                    });
+                                    
+                                    // Update URL without triggering page reload
+                                    history.pushState(null, null, href);
+                                    
+                                    // Announce change for accessibility
+                                    announceChange(`Navigated to ${this.textContent.trim()}`);
+                                }
+                            }
+                        } catch (error) {
+                            SecurityUtils.handleError(error, 'Navigation Click');
+                        }
+                    });
+                });
+
+                // Handle browser back/forward buttons
+                window.addEventListener('popstate', function() {
+                    try {
+                        const hash = window.location.hash;
+                        if (hash) {
+                            const targetElement = document.querySelector(hash);
+                            if (targetElement) {
+                                targetElement.scrollIntoView({
+                                    behavior: 'smooth',
+                                    block: 'start'
+                                });
+                                updateActiveNavigation(hash);
+                            }
+                        }
+                    } catch (error) {
+                        SecurityUtils.handleError(error, 'Popstate Handler');
+                    }
+                });
+
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Initialize Navigation');
+            }
+        }
+
+        // Initialize tooltips
+        function initializeTooltips() {
+            try {
+                var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                    return new bootstrap.Tooltip(tooltipTriggerEl);
+                });
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Initialize Tooltips');
+            }
+        }
+
+        // Scroll effects and progress tracking
+        function initializeScrollEffects() {
+            try {
+                const progressIndicator = document.getElementById('progress-indicator');
+                const backToTopBtn = document.getElementById('back-to-top');
+                const navLinks = document.querySelectorAll('.guide-nav .nav-link');
+                const sections = document.querySelectorAll('.content-section');
+
+                window.addEventListener('scroll', function() {
+                    try {
+                        // Throttle scroll events for performance
+                        if (this.scrollThrottleTimer) return;
+                        this.scrollThrottleTimer = setTimeout(() => {
+                            this.scrollThrottleTimer = null;
+                            
+                            // Update progress indicator
+                            updateProgress();
+                            
+                            // Show/hide back to top button
+                            if (window.scrollY > 300) {
+                                backToTopBtn.classList.add('show');
+                            } else {
+                                backToTopBtn.classList.remove('show');
+                            }
+                            
+                            // Update active navigation based on scroll position
+                            updateActiveNavigationOnScroll(sections, navLinks);
+                            
+                        }, 16); // ~60fps
+                    } catch (error) {
+                        SecurityUtils.handleError(error, 'Scroll Handler');
+                    }
+                });
+
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Initialize Scroll Effects');
+            }
+        }
+
+        // Update progress indicator
+        function updateProgress() {
+            try {
+                const progressIndicator = document.getElementById('progress-indicator');
+                if (!progressIndicator) return;
+
+                const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+                const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                const scrolled = (winScroll / height) * 100;
+                
+                progressIndicator.style.width = Math.min(scrolled, 100) + '%';
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Update Progress');
+            }
+        }
+
+        // Update active navigation on scroll
+        function updateActiveNavigationOnScroll(sections, navLinks) {
+            try {
+                let currentSection = '';
+                const scrollPos = window.scrollY + 150; // Offset for header
+
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.offsetHeight;
+                    
+                    if (scrollPos >= sectionTop && scrollPos < sectionTop + sectionHeight) {
+                        currentSection = section.getAttribute('id');
+                    }
+                });
+
+                if (currentSection) {
+                    navLinks.forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href') === '#' + currentSection) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Update Active Navigation on Scroll');
+            }
+        }
+
+        // Update active navigation manually
+        function updateActiveNavigation(hash) {
+            try {
+                const navLinks = document.querySelectorAll('.guide-nav .nav-link');
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === hash) {
+                        link.classList.add('active');
+                    }
+                });
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Update Active Navigation');
+            }
+        }
+
+        // Copy code functionality with security
+        function copyCode(button) {
+            try {
+                if (!SecurityUtils.rateLimiter.isAllowed('copyCode', 10, 60000)) {
+                    console.warn('Rate limit exceeded for copy operations');
+                    return;
+                }
+
+                const codeBlock = button.parentElement.querySelector('code');
+                if (!codeBlock) return;
+
+                const codeText = codeBlock.textContent || codeBlock.innerText || '';
+                
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(codeText).then(() => {
+                        showCopySuccess(button);
+                    }).catch((error) => {
+                        SecurityUtils.handleError(error, 'Clipboard API');
+                        fallbackCopy(codeText, button);
+                    });
+                } else {
+                    fallbackCopy(codeText, button);
+                }
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Copy Code');
+            }
+        }
+
+        function fallbackCopy(text, button) {
+            try {
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                textArea.style.position = 'fixed';
+                textArea.style.opacity = '0';
+                textArea.style.left = '-9999px';
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showCopySuccess(button);
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Fallback Copy');
+            }
+        }
+
+        function showCopySuccess(button) {
+            try {
+                const originalHTML = button.innerHTML;
+                
+                button.classList.add('copied');
+                button.innerHTML = '<i class="bi bi-check"></i>Copied!';
+                
+                setTimeout(() => {
+                    button.classList.remove('copied');
+                    button.innerHTML = originalHTML;
+                }, 2000);
+                
+                showToast('Code copied to clipboard!', 'success');
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Copy Success Display');
+            }
+        }
+
+        // Scroll to top functionality
+        function scrollToTop() {
+            try {
+                if (!SecurityUtils.rateLimiter.isAllowed('scrollToTop', 10, 30000)) {
+                    console.warn('Rate limit exceeded for scroll to top');
+                    return;
+                }
+
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+                
+                // Update navigation to first item
+                const firstNavLink = document.querySelector('.guide-nav .nav-link');
+                if (firstNavLink) {
+                    document.querySelectorAll('.guide-nav .nav-link').forEach(link => 
+                        link.classList.remove('active')
+                    );
+                    firstNavLink.classList.add('active');
+                }
+                
+                announceChange('Scrolled to top of page');
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Scroll to Top');
+            }
+        }
+
+        // Toggle all examples visibility
+        function toggleAllExamples() {
+            try {
+                if (!SecurityUtils.rateLimiter.isAllowed('toggleExamples', 5, 30000)) {
+                    console.warn('Rate limit exceeded for toggle examples');
+                    return;
+                }
+
+                const examples = document.querySelectorAll('.example-container, .example-output');
+                const isVisible = examples[0] && examples[0].style.display !== 'none';
+                
+                examples.forEach(example => {
+                    example.style.display = isVisible ? 'none' : '';
+                });
+                
+                const toggleBtn = event.target;
+                const icon = toggleBtn.querySelector('i');
+                const text = toggleBtn.childNodes[toggleBtn.childNodes.length - 1];
+                
+                if (isVisible) {
+                    icon.className = 'bi bi-eye-slash me-1';
+                    text.textContent = 'Show Examples';
+                    showToast('Examples hidden', 'info');
+                } else {
+                    icon.className = 'bi bi-eye me-1';
+                    text.textContent = 'Hide Examples';
+                    showToast('Examples shown', 'info');
+                }
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Toggle Examples');
+            }
+        }
+
+        // Toast notification system
+        function showToast(message, type = 'info') {
+            try {
+                if (!SecurityUtils.rateLimiter.isAllowed('showToast', 20, 30000)) {
+                    return;
+                }
+
+                const toastContainer = document.getElementById('toast-container');
+                if (!toastContainer) return;
+
+                const toast = document.createElement('div');
+                toast.className = `toast-custom show`;
+                
+                const iconMap = {
+                    success: 'check-circle',
+                    warning: 'exclamation-triangle',
+                    error: 'x-circle',
+                    info: 'info-circle'
+                };
+
+                const colorMap = {
+                    success: '#28a745',
+                    warning: '#ffc107',
+                    error: '#dc3545',
+                    info: '#17a2b8'
+                };
+
+                toast.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-${iconMap[type]} me-2" style="color: ${colorMap[type]}; font-size: 1.2rem;"></i>
+                        <span>${SecurityUtils.sanitizeHTML(message)}</span>
+                    </div>
+                `;
+
+                toastContainer.appendChild(toast);
+
+                setTimeout(() => {
+                    toast.style.animation = 'slideIn 0.3s ease reverse';
+                    setTimeout(() => {
+                        if (toast.parentNode) {
+                            toastContainer.removeChild(toast);
+                        }
+                    }, 300);
+                }, 3000);
+
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Show Toast');
+            }
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            try {
+                // Ctrl/Cmd + K to focus search (placeholder)
+                if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                    e.preventDefault();
+                    showToast('Search functionality coming soon!', 'info');
+                }
+                
+                // Escape to scroll to top
+                if (e.key === 'Escape') {
+                    e.preventDefault();
+                    scrollToTop();
+                }
+                
+                // Arrow keys for navigation
+                if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+                    const activeLink = document.querySelector('.guide-nav .nav-link.active');
+                    if (activeLink) {
+                        const navLinks = Array.from(document.querySelectorAll('.guide-nav .nav-link'));
+                        const currentIndex = navLinks.indexOf(activeLink);
+                        let nextIndex;
+                        
+                        if (e.key === 'ArrowUp') {
+                            nextIndex = currentIndex > 0 ? currentIndex - 1 : navLinks.length - 1;
+                        } else {
+                            nextIndex = currentIndex < navLinks.length - 1 ? currentIndex + 1 : 0;
+                        }
+                        
+                        if (e.ctrlKey || e.metaKey) {
+                            e.preventDefault();
+                            navLinks[nextIndex].click();
+                        }
+                    }
+                }
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Keyboard Shortcuts');
+            }
+        });
+
+        // Accessibility announcements
+        function announceChange(message) {
+            try {
+                const announcement = document.createElement('div');
+                announcement.setAttribute('aria-live', 'polite');
+                announcement.setAttribute('aria-atomic', 'true');
+                announcement.className = 'visually-hidden';
+                announcement.textContent = SecurityUtils.sanitizeHTML(message);
+                document.body.appendChild(announcement);
+                
+                setTimeout(() => {
+                    if (announcement.parentNode) {
+                        document.body.removeChild(announcement);
+                    }
+                }, 1000);
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Accessibility Announcement');
+            }
+        }
+
+        // Performance monitoring
+        if ('performance' in window && 'mark' in performance) {
+            performance.mark('bootstrap-guide-loaded');
+        }
+    </script>
+
+    <!-- Error Boundary and Monitoring -->
+    <script>
+        // Additional security monitoring
+        (function() {
+            'use strict';
+            
+            // Monitor for suspicious activity
+            let suspiciousActivity = 0;
+            const MAX_SUSPICIOUS_ACTIVITY = 10;
+            
+            // Monitor DOM modifications
+            const observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    // Check for suspicious script injections
+                    if (mutation.type === 'childList') {
+                        mutation.addedNodes.forEach(function(node) {
+                            if (node.nodeType === Node.ELEMENT_NODE) {
+                                if (node.tagName === 'SCRIPT' || 
+                                    node.innerHTML.includes('<script') ||
+                                    node.innerHTML.includes('javascript:') ||
+                                    node.innerHTML.includes('data:text/html')) {
+                                    suspiciousActivity++;
+                                    console.warn('Suspicious content detected and blocked');
+                                    node.remove();
+                                    
+                                    if (suspiciousActivity >= MAX_SUSPICIOUS_ACTIVITY) {
+                                        console.error('Maximum suspicious activity threshold reached');
+                                        // Could implement additional security measures here
+                                    }
+                                }
+                            }
+                        });
+                    }
+                });
+            });
+
+            // Start observing
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true,
+                characterData: true
+            });
+
+            // Content Security Policy violation handler
+            document.addEventListener('securitypolicyviolation', function(event) {
+                SecurityUtils.handleError({
+                    message: 'CSP Violation',
+                    violatedDirective: event.violatedDirective,
+                    blockedURI: event.blockedURI,
+                    lineNumber: event.lineNumber,
+                    sourceFile: event.sourceFile
+                }, 'CSP Violation');
+            });
+
+            // Performance monitoring
+            if ('performance' in window && 'mark' in performance) {
+                performance.mark('bootstrap-guide-security-loaded');
+            }
+        })();
+    </script>
+</body>
+</html>

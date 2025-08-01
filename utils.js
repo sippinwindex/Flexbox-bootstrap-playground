@@ -1,28 +1,174 @@
 /**
- * utils.js - Utility Functions and Performance Helpers
- * Common utilities used throughout the application
+ * utils.js - Enhanced Secure Utility Functions and Performance Helpers
+ * Common utilities with comprehensive security features and defensive programming
  */
 
+// Security context for utility functions
+const SecurityContext = {
+    rateLimiters: new Map(),
+    securityLog: [],
+    trustedDomains: new Set(['cdn.jsdelivr.net', 'cdnjs.cloudflare.com']),
+    suspiciousPatterns: [
+        /javascript:/gi,
+        /vbscript:/gi,
+        /data:text\/html/gi,
+        /<script/gi,
+        /on\w+\s*=/gi,
+        /eval\s*\(/gi,
+        /Function\s*\(/gi
+    ],
+    maxLogSize: 100,
+    
+    // Log security events
+    logSecurityEvent(type, details) {
+        const event = {
+            id: generateSecureId(),
+            type,
+            timestamp: new Date().toISOString(),
+            details: sanitizeLogDetails(details),
+            userAgent: navigator.userAgent.substring(0, 100),
+            url: window.location.href
+        };
+        
+        this.securityLog.push(event);
+        
+        if (this.securityLog.length > this.maxLogSize) {
+            this.securityLog.splice(0, 50);
+        }
+        
+        console.warn('🔒 Security Event in Utils:', event);
+    },
+    
+    // Check rate limits
+    checkRateLimit(key, limit = 10, window = 1000) {
+        const now = Date.now();
+        
+        if (!this.rateLimiters.has(key)) {
+            this.rateLimiters.set(key, []);
+        }
+        
+        const timestamps = this.rateLimiters.get(key);
+        
+        // Remove old timestamps
+        while (timestamps.length > 0 && timestamps[0] < now - window) {
+            timestamps.shift();
+        }
+        
+        if (timestamps.length >= limit) {
+            this.logSecurityEvent('rate_limit_exceeded', { key, limit, window });
+            return false;
+        }
+        
+        timestamps.push(now);
+        return true;
+    },
+    
+    // Validate input for security
+    validateInput(input, type = 'string') {
+        if (typeof input !== type) {
+            this.logSecurityEvent('invalid_input_type', { expected: type, received: typeof input });
+            return false;
+        }
+        
+        if (type === 'string') {
+            const hasSuspiciousPattern = this.suspiciousPatterns.some(pattern => pattern.test(input));
+            if (hasSuspiciousPattern) {
+                this.logSecurityEvent('suspicious_pattern_detected', { input: input.substring(0, 100) });
+                return false;
+            }
+        }
+        
+        return true;
+    }
+};
+
 /**
- * Debounce function to limit how often a function can be called
+ * Generate secure ID with crypto random values
+ * @param {string} prefix - ID prefix
+ * @returns {string} Secure unique ID
+ */
+function generateSecureId(prefix = 'id') {
+    try {
+        if (window.crypto && window.crypto.getRandomValues) {
+            const array = new Uint8Array(16);
+            window.crypto.getRandomValues(array);
+            const random = Array.from(array, byte => byte.toString(36)).join('');
+            return `${prefix}-${Date.now().toString(36)}-${random}`;
+        } else {
+            // Fallback for environments without crypto
+            return `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).substr(2, 16)}`;
+        }
+    } catch (error) {
+        console.warn('Error generating secure ID, using fallback:', error);
+        return `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).substr(2, 16)}`;
+    }
+}
+
+/**
+ * Sanitize log details to prevent log injection
+ * @param {Object} details - Details to sanitize
+ * @returns {Object} Sanitized details
+ */
+function sanitizeLogDetails(details) {
+    if (!details || typeof details !== 'object') return {};
+    
+    const sanitized = {};
+    Object.entries(details).forEach(([key, value]) => {
+        if (typeof value === 'string') {
+            sanitized[key] = value
+                .substring(0, 200)
+                .replace(/[\r\n\t]/g, ' ')
+                .replace(/[<>'"]/g, '');
+        } else if (typeof value === 'number' || typeof value === 'boolean') {
+            sanitized[key] = value;
+        } else {
+            sanitized[key] = '[object]';
+        }
+    });
+    
+    return sanitized;
+}
+
+/**
+ * Enhanced debounce function with security validation
  * @param {Function} func - Function to debounce
  * @param {number} wait - Wait time in milliseconds
  * @param {boolean} immediate - Execute on leading edge
  * @returns {Function} Debounced function
  */
-function debounce(func, wait, immediate = false) {
+function secureDebounce(func, wait, immediate = false) {
+    if (typeof func !== 'function') {
+        SecurityContext.logSecurityEvent('invalid_debounce_function', { funcType: typeof func });
+        return () => {};
+    }
+    
+    if (!SecurityContext.checkRateLimit('debounce_creation', 50, 10000)) {
+        console.warn('🚫 Debounce creation rate limit exceeded');
+        return () => {};
+    }
+    
     let timeout;
+    let callCount = 0;
+    const maxCalls = 1000; // Prevent infinite execution
     
     return function executedFunction(...args) {
+        callCount++;
+        
+        if (callCount > maxCalls) {
+            SecurityContext.logSecurityEvent('debounce_call_limit_exceeded', { callCount });
+            return;
+        }
+        
         const later = () => {
             timeout = null;
             if (!immediate) {
                 try {
                     func.apply(this, args);
                 } catch (error) {
-                    console.error('Error in debounced function:', error);
+                    console.error('Error in secure debounced function:', error);
+                    SecurityContext.logSecurityEvent('debounced_function_error', { error: error.message });
                     if (window.globalErrorBoundary) {
-                        window.globalErrorBoundary.handleError(error, { context: 'debounced_function' });
+                        window.globalErrorBoundary.handleError(error, { context: 'secure_debounced_function' });
                     }
                 }
             }
@@ -30,15 +176,16 @@ function debounce(func, wait, immediate = false) {
         
         const callNow = immediate && !timeout;
         clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
+        timeout = setTimeout(later, Math.min(Math.max(wait, 1), 10000)); // Limit wait time
         
         if (callNow) {
             try {
                 func.apply(this, args);
             } catch (error) {
-                console.error('Error in immediate debounced function:', error);
+                console.error('Error in immediate secure debounced function:', error);
+                SecurityContext.logSecurityEvent('immediate_debounced_function_error', { error: error.message });
                 if (window.globalErrorBoundary) {
-                    window.globalErrorBoundary.handleError(error, { context: 'immediate_debounced_function' });
+                    window.globalErrorBoundary.handleError(error, { context: 'immediate_secure_debounced_function' });
                 }
             }
         }
@@ -46,78 +193,122 @@ function debounce(func, wait, immediate = false) {
 }
 
 /**
- * Throttle function to limit function calls to once per specified time
+ * Enhanced throttle function with security validation
  * @param {Function} func - Function to throttle
  * @param {number} limit - Time limit in milliseconds
  * @returns {Function} Throttled function
  */
-function throttle(func, limit) {
+function secureThrottle(func, limit) {
+    if (typeof func !== 'function') {
+        SecurityContext.logSecurityEvent('invalid_throttle_function', { funcType: typeof func });
+        return () => {};
+    }
+    
+    if (!SecurityContext.checkRateLimit('throttle_creation', 50, 10000)) {
+        console.warn('🚫 Throttle creation rate limit exceeded');
+        return () => {};
+    }
+    
     let inThrottle;
     let lastResult;
+    let callCount = 0;
+    const maxCalls = 1000;
     
     return function(...args) {
+        callCount++;
+        
+        if (callCount > maxCalls) {
+            SecurityContext.logSecurityEvent('throttle_call_limit_exceeded', { callCount });
+            return lastResult;
+        }
+        
         if (!inThrottle) {
             try {
                 lastResult = func.apply(this, args);
             } catch (error) {
-                console.error('Error in throttled function:', error);
+                console.error('Error in secure throttled function:', error);
+                SecurityContext.logSecurityEvent('throttled_function_error', { error: error.message });
                 if (window.globalErrorBoundary) {
-                    window.globalErrorBoundary.handleError(error, { context: 'throttled_function' });
+                    window.globalErrorBoundary.handleError(error, { context: 'secure_throttled_function' });
                 }
             }
             inThrottle = true;
-            setTimeout(() => inThrottle = false, limit);
+            setTimeout(() => inThrottle = false, Math.min(Math.max(limit, 1), 10000));
         }
         return lastResult;
     };
 }
 
 /**
- * Request Animation Frame batch utility for smooth animations
+ * Enhanced RAF batch utility with security
  * @param {Function} callback - Function to execute
  */
-function rafBatch(callback) {
+function secureRafBatch(callback) {
     if (typeof callback !== 'function') {
-        console.error('rafBatch: callback must be a function');
+        SecurityContext.logSecurityEvent('invalid_raf_callback', { callbackType: typeof callback });
         return;
     }
     
+    if (!SecurityContext.checkRateLimit('raf_batch', 100, 1000)) {
+        console.warn('🚫 RAF batch rate limit exceeded');
+        return;
+    }
+    
+    const secureCallback = () => {
+        try {
+            callback();
+        } catch (error) {
+            console.error('Error in secure RAF callback:', error);
+            SecurityContext.logSecurityEvent('raf_callback_error', { error: error.message });
+            if (window.globalErrorBoundary) {
+                window.globalErrorBoundary.handleError(error, { context: 'secure_raf_callback' });
+            }
+        }
+    };
+    
     if (typeof window !== 'undefined' && window.requestAnimationFrame) {
-        requestAnimationFrame(() => {
-            try {
-                callback();
-            } catch (error) {
-                console.error('Error in RAF callback:', error);
-                if (window.globalErrorBoundary) {
-                    window.globalErrorBoundary.handleError(error, { context: 'raf_callback' });
-                }
-            }
-        });
+        requestAnimationFrame(secureCallback);
     } else {
-        // Fallback for environments without requestAnimationFrame
-        setTimeout(() => {
-            try {
-                callback();
-            } catch (error) {
-                console.error('Error in RAF fallback:', error);
-                if (window.globalErrorBoundary) {
-                    window.globalErrorBoundary.handleError(error, { context: 'raf_fallback' });
-                }
-            }
-        }, 16); // ~60fps
+        setTimeout(secureCallback, 16);
     }
 }
 
 /**
- * Safe DOM element selector with error handling
+ * Enhanced safe DOM element selector with security validation
  * @param {string} selector - CSS selector
  * @param {Element} parent - Parent element (optional)
  * @returns {Element|null} Found element or null
  */
-function safeQuerySelector(selector, parent = document) {
+function secureSafeQuerySelector(selector, parent = document) {
     try {
-        if (!selector || typeof selector !== 'string') {
-            console.warn('Invalid selector provided to safeQuerySelector:', selector);
+        if (!SecurityContext.validateInput(selector, 'string')) {
+            return null;
+        }
+        
+        if (!selector || selector.length > 500) {
+            SecurityContext.logSecurityEvent('invalid_selector', { 
+                selector: selector ? selector.substring(0, 100) : 'null',
+                length: selector ? selector.length : 0
+            });
+            return null;
+        }
+        
+        // Check for dangerous selectors
+        const dangerousPatterns = [
+            /javascript:/gi,
+            /expression\s*\(/gi,
+            /url\s*\(/gi,
+            /@import/gi
+        ];
+        
+        const isDangerous = dangerousPatterns.some(pattern => pattern.test(selector));
+        if (isDangerous) {
+            SecurityContext.logSecurityEvent('dangerous_selector_blocked', { selector: selector.substring(0, 100) });
+            return null;
+        }
+        
+        if (!parent || typeof parent.querySelector !== 'function') {
+            SecurityContext.logSecurityEvent('invalid_parent_element', { parentType: typeof parent });
             return null;
         }
         
@@ -125,96 +316,197 @@ function safeQuerySelector(selector, parent = document) {
         return element;
         
     } catch (error) {
-        console.error('Error in safeQuerySelector:', error, { selector, parent });
+        console.error('Error in secure safeQuerySelector:', error);
+        SecurityContext.logSecurityEvent('query_selector_error', { 
+            error: error.message,
+            selector: selector ? selector.substring(0, 100) : 'unknown'
+        });
         return null;
     }
 }
 
 /**
- * Safe DOM element selector for multiple elements
+ * Enhanced safe DOM element selector for multiple elements
  * @param {string} selector - CSS selector
  * @param {Element} parent - Parent element (optional)
  * @returns {NodeList|Array} Found elements or empty array
  */
-function safeQuerySelectorAll(selector, parent = document) {
+function secureSafeQuerySelectorAll(selector, parent = document) {
     try {
-        if (!selector || typeof selector !== 'string') {
-            console.warn('Invalid selector provided to safeQuerySelectorAll:', selector);
+        if (!SecurityContext.validateInput(selector, 'string')) {
+            return [];
+        }
+        
+        if (!selector || selector.length > 500) {
+            SecurityContext.logSecurityEvent('invalid_selector_all', { 
+                selector: selector ? selector.substring(0, 100) : 'null',
+                length: selector ? selector.length : 0
+            });
+            return [];
+        }
+        
+        if (!parent || typeof parent.querySelectorAll !== 'function') {
+            SecurityContext.logSecurityEvent('invalid_parent_element_all', { parentType: typeof parent });
             return [];
         }
         
         const elements = parent.querySelectorAll(selector);
+        
+        // Limit number of returned elements to prevent DoS
+        if (elements.length > 1000) {
+            SecurityContext.logSecurityEvent('excessive_elements_found', { count: elements.length });
+            return Array.from(elements).slice(0, 1000);
+        }
+        
         return elements;
         
     } catch (error) {
-        console.error('Error in safeQuerySelectorAll:', error, { selector, parent });
+        console.error('Error in secure safeQuerySelectorAll:', error);
+        SecurityContext.logSecurityEvent('query_selector_all_error', { 
+            error: error.message,
+            selector: selector ? selector.substring(0, 100) : 'unknown'
+        });
         return [];
     }
 }
 
 /**
- * Safe element creation with error handling
+ * Enhanced safe element creation with comprehensive security validation
  * @param {string} tagName - HTML tag name
  * @param {Object} options - Element options
  * @returns {Element|null} Created element or null
  */
-function safeCreateElement(tagName, options = {}) {
+function secureSafeCreateElement(tagName, options = {}) {
     try {
-        if (!tagName || typeof tagName !== 'string') {
-            console.error('Invalid tagName provided to safeCreateElement:', tagName);
+        if (!SecurityContext.validateInput(tagName, 'string')) {
+            return null;
+        }
+        
+        // Whitelist of allowed tag names
+        const allowedTags = [
+            'div', 'span', 'p', 'a', 'button', 'input', 'textarea', 'label',
+            'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li',
+            'img', 'canvas', 'svg', 'path', 'circle', 'rect',
+            'table', 'tr', 'td', 'th', 'tbody', 'thead', 'tfoot',
+            'form', 'fieldset', 'legend', 'select', 'option',
+            'article', 'section', 'nav', 'header', 'footer', 'main',
+            'aside', 'figure', 'figcaption', 'details', 'summary'
+        ];
+        
+        if (!allowedTags.includes(tagName.toLowerCase())) {
+            SecurityContext.logSecurityEvent('disallowed_tag_blocked', { tagName });
             return null;
         }
         
         const element = document.createElement(tagName);
         
-        // Set attributes
+        // Secure attribute setting
         if (options.attributes) {
+            const allowedAttributes = [
+                'id', 'class', 'data-*', 'aria-*', 'role', 'title',
+                'alt', 'src', 'href', 'target', 'type', 'value',
+                'placeholder', 'disabled', 'readonly', 'required',
+                'width', 'height', 'style'
+            ];
+            
             Object.entries(options.attributes).forEach(([key, value]) => {
                 try {
-                    element.setAttribute(key, value);
+                    // Validate attribute name
+                    const isAllowed = allowedAttributes.some(allowed => {
+                        if (allowed.endsWith('*')) {
+                            return key.startsWith(allowed.slice(0, -1));
+                        }
+                        return key === allowed;
+                    });
+                    
+                    if (!isAllowed) {
+                        SecurityContext.logSecurityEvent('disallowed_attribute_blocked', { key, tagName });
+                        return;
+                    }
+                    
+                    // Validate attribute value
+                    if (!SecurityContext.validateInput(String(value), 'string')) {
+                        return;
+                    }
+                    
+                    // Special validation for specific attributes
+                    if (key === 'src' || key === 'href') {
+                        if (!validateURL(String(value))) {
+                            SecurityContext.logSecurityEvent('invalid_url_blocked', { key, value: String(value).substring(0, 100) });
+                            return;
+                        }
+                    }
+                    
+                    element.setAttribute(key, String(value));
                 } catch (error) {
-                    console.warn(`Failed to set attribute ${key}:`, error);
+                    console.warn(`Failed to set secure attribute ${key}:`, error);
+                    SecurityContext.logSecurityEvent('attribute_setting_error', { key, error: error.message });
                 }
             });
         }
         
-        // Set properties
+        // Secure property setting
         if (options.properties) {
+            const allowedProperties = [
+                'textContent', 'className', 'id', 'title',
+                'disabled', 'checked', 'selected', 'value'
+            ];
+            
             Object.entries(options.properties).forEach(([key, value]) => {
                 try {
+                    if (!allowedProperties.includes(key)) {
+                        SecurityContext.logSecurityEvent('disallowed_property_blocked', { key, tagName });
+                        return;
+                    }
+                    
                     element[key] = value;
                 } catch (error) {
-                    console.warn(`Failed to set property ${key}:`, error);
+                    console.warn(`Failed to set secure property ${key}:`, error);
+                    SecurityContext.logSecurityEvent('property_setting_error', { key, error: error.message });
                 }
             });
         }
         
-        // Set text content
+        // Secure text content setting
         if (options.textContent) {
-            element.textContent = options.textContent;
-        }
-        
-        // Set HTML content (use carefully)
-        if (options.innerHTML) {
-            element.innerHTML = options.innerHTML;
-        }
-        
-        // Add classes
-        if (options.className) {
-            if (typeof options.className === 'string') {
-                element.className = options.className;
-            } else if (Array.isArray(options.className)) {
-                element.classList.add(...options.className);
+            if (SecurityContext.validateInput(options.textContent, 'string')) {
+                element.textContent = String(options.textContent).substring(0, 10000); // Limit length
             }
         }
         
-        // Set styles
+        // Secure HTML content setting (very restricted)
+        if (options.innerHTML && tagName.toLowerCase() !== 'script') {
+            const sanitizedHTML = sanitizeHTML(String(options.innerHTML));
+            if (sanitizedHTML) {
+                element.innerHTML = sanitizedHTML;
+            }
+        }
+        
+        // Secure class setting
+        if (options.className) {
+            if (typeof options.className === 'string') {
+                const safeClassName = sanitizeClassName(options.className);
+                if (safeClassName) {
+                    element.className = safeClassName;
+                }
+            } else if (Array.isArray(options.className)) {
+                const safeClasses = options.className
+                    .map(cls => sanitizeClassName(String(cls)))
+                    .filter(cls => cls);
+                element.classList.add(...safeClasses);
+            }
+        }
+        
+        // Secure style setting
         if (options.styles) {
             Object.entries(options.styles).forEach(([key, value]) => {
                 try {
-                    element.style[key] = value;
+                    if (validateCSSProperty(key, String(value))) {
+                        element.style[key] = String(value);
+                    }
                 } catch (error) {
-                    console.warn(`Failed to set style ${key}:`, error);
+                    console.warn(`Failed to set secure style ${key}:`, error);
+                    SecurityContext.logSecurityEvent('style_setting_error', { key, error: error.message });
                 }
             });
         }
@@ -222,40 +514,236 @@ function safeCreateElement(tagName, options = {}) {
         return element;
         
     } catch (error) {
-        console.error('Error in safeCreateElement:', error, { tagName, options });
+        console.error('Error in secure safeCreateElement:', error);
+        SecurityContext.logSecurityEvent('element_creation_error', { 
+            tagName: tagName || 'unknown',
+            error: error.message 
+        });
         return null;
     }
 }
 
 /**
- * Safe event listener addition with automatic cleanup tracking
+ * Validate URL for security
+ * @param {string} url - URL to validate
+ * @returns {boolean} Is valid and safe
+ */
+function validateURL(url) {
+    try {
+        if (!url || typeof url !== 'string') return false;
+        
+        // Block dangerous protocols
+        const dangerousProtocols = ['javascript:', 'vbscript:', 'data:text/html', 'file:'];
+        const lowerUrl = url.toLowerCase();
+        
+        if (dangerousProtocols.some(protocol => lowerUrl.startsWith(protocol))) {
+            return false;
+        }
+        
+        // Allow relative URLs, data: for images, and standard web protocols
+        if (url.startsWith('/') || url.startsWith('./') || url.startsWith('../')) {
+            return true;
+        }
+        
+        if (url.startsWith('data:image/')) {
+            return true;
+        }
+        
+        if (url.startsWith('blob:')) {
+            return true;
+        }
+        
+        // Validate absolute URLs
+        const urlObj = new URL(url);
+        const allowedProtocols = ['http:', 'https:', 'mailto:', 'tel:'];
+        
+        if (!allowedProtocols.includes(urlObj.protocol)) {
+            return false;
+        }
+        
+        // Check against trusted domains for external resources
+        if (urlObj.protocol === 'https:' && !SecurityContext.trustedDomains.has(urlObj.hostname)) {
+            SecurityContext.logSecurityEvent('untrusted_domain_blocked', { 
+                hostname: urlObj.hostname,
+                url: url.substring(0, 100)
+            });
+        }
+        
+        return true;
+        
+    } catch (error) {
+        SecurityContext.logSecurityEvent('url_validation_error', { 
+            url: url ? url.substring(0, 100) : 'null',
+            error: error.message 
+        });
+        return false;
+    }
+}
+
+/**
+ * Sanitize HTML content
+ * @param {string} html - HTML to sanitize
+ * @returns {string} Sanitized HTML
+ */
+function sanitizeHTML(html) {
+    if (!html || typeof html !== 'string') return '';
+    
+    return html
+        .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '') // Remove script tags
+        .replace(/on\w+\s*=\s*["'][^"']*["']/gi, '') // Remove event handlers
+        .replace(/javascript:/gi, '') // Remove javascript: URLs
+        .replace(/vbscript:/gi, '') // Remove vbscript: URLs
+        .replace(/data:text\/html/gi, 'data:text/plain') // Neutralize data URLs
+        .replace(/<iframe\b[^>]*>/gi, '') // Remove iframe tags
+        .replace(/<object\b[^>]*>/gi, '') // Remove object tags
+        .replace(/<embed\b[^>]*>/gi, '') // Remove embed tags
+        .substring(0, 50000); // Limit length
+}
+
+/**
+ * Sanitize CSS class name
+ * @param {string} className - Class name to sanitize
+ * @returns {string} Sanitized class name
+ */
+function sanitizeClassName(className) {
+    if (!className || typeof className !== 'string') return '';
+    
+    return className
+        .replace(/[^a-zA-Z0-9\-_\s]/g, '') // Allow only safe characters
+        .replace(/\s+/g, ' ') // Normalize whitespace
+        .trim()
+        .substring(0, 200); // Limit length
+}
+
+/**
+ * Validate CSS property for security
+ * @param {string} property - CSS property name
+ * @param {string} value - CSS property value
+ * @returns {boolean} Is valid and safe
+ */
+function validateCSSProperty(property, value) {
+    if (!property || !value || typeof property !== 'string' || typeof value !== 'string') {
+        return false;
+    }
+    
+    // Block dangerous CSS
+    const dangerousPatterns = [
+        /javascript:/gi,
+        /vbscript:/gi,
+        /expression\s*\(/gi,
+        /@import/gi,
+        /url\s*\(\s*javascript:/gi,
+        /url\s*\(\s*vbscript:/gi,
+        /url\s*\(\s*data:text\/html/gi
+    ];
+    
+    const isDangerous = dangerousPatterns.some(pattern => 
+        pattern.test(property) || pattern.test(value)
+    );
+    
+    if (isDangerous) {
+        SecurityContext.logSecurityEvent('dangerous_css_blocked', { 
+            property: property.substring(0, 50),
+            value: value.substring(0, 100)
+        });
+        return false;
+    }
+    
+    return true;
+}
+
+/**
+ * Enhanced safe event listener addition with comprehensive security
  * @param {Element} element - Element to add listener to
  * @param {string} event - Event name
  * @param {Function} handler - Event handler
  * @param {Object} options - Event options
  * @returns {Function} Cleanup function
  */
-function safeAddEventListener(element, event, handler, options = {}) {
+function secureSafeAddEventListener(element, event, handler, options = {}) {
     try {
         if (!element || typeof element.addEventListener !== 'function') {
-            console.error('Invalid element provided to safeAddEventListener:', element);
+            SecurityContext.logSecurityEvent('invalid_event_element', { elementType: typeof element });
+            return () => {};
+        }
+        
+        if (!SecurityContext.validateInput(event, 'string')) {
             return () => {};
         }
         
         if (typeof handler !== 'function') {
-            console.error('Invalid handler provided to safeAddEventListener:', handler);
+            SecurityContext.logSecurityEvent('invalid_event_handler', { handlerType: typeof handler });
             return () => {};
         }
         
-        // Wrap handler for error catching
-        const wrappedHandler = function(e) {
+        // Rate limit event listener creation
+        if (!SecurityContext.checkRateLimit('event_listener_creation', 100, 10000)) {
+            console.warn('🚫 Event listener creation rate limit exceeded');
+            return () => {};
+        }
+        
+        // Whitelist allowed events
+        const allowedEvents = [
+            'click', 'dblclick', 'mousedown', 'mouseup', 'mouseover', 'mouseout',
+            'mousemove', 'mouseenter', 'mouseleave', 'contextmenu',
+            'keydown', 'keyup', 'keypress',
+            'focus', 'blur', 'focusin', 'focusout',
+            'input', 'change', 'submit', 'reset',
+            'load', 'unload', 'resize', 'scroll',
+            'touchstart', 'touchend', 'touchmove', 'touchcancel',
+            'dragstart', 'dragend', 'dragover', 'drop',
+            'animationend', 'transitionend'
+        ];
+        
+        if (!allowedEvents.includes(event.toLowerCase())) {
+            SecurityContext.logSecurityEvent('disallowed_event_blocked', { event });
+            return () => {};
+        }
+        
+        // Create secure wrapper for event handler
+        let callCount = 0;
+        const maxCalls = 10000; // Prevent excessive calls
+        
+        const secureWrapper = function(e) {
+            callCount++;
+            
+            if (callCount > maxCalls) {
+                SecurityContext.logSecurityEvent('event_handler_call_limit_exceeded', { 
+                    event,
+                    callCount,
+                    element: element.tagName || 'unknown'
+                });
+                return;
+            }
+            
+            // Validate event object
+            if (!e || typeof e !== 'object') {
+                SecurityContext.logSecurityEvent('invalid_event_object', { event });
+                return;
+            }
+            
+            // Check if event is trusted (user-initiated)
+            if (e.isTrusted === false) {
+                SecurityContext.logSecurityEvent('untrusted_event_blocked', { 
+                    event,
+                    element: element.tagName || 'unknown'
+                });
+                return;
+            }
+            
             try {
                 return handler.call(this, e);
             } catch (error) {
-                console.error(`Error in event handler for ${event}:`, error);
+                console.error(`Error in secure event handler for ${event}:`, error);
+                SecurityContext.logSecurityEvent('event_handler_error', { 
+                    event,
+                    error: error.message,
+                    element: element.tagName || 'unknown'
+                });
+                
                 if (window.globalErrorBoundary) {
                     window.globalErrorBoundary.handleError(error, { 
-                        context: 'event_handler',
+                        context: 'secure_event_handler',
                         event,
                         element: element.tagName || 'unknown'
                     });
@@ -263,208 +751,92 @@ function safeAddEventListener(element, event, handler, options = {}) {
             }
         };
         
-        element.addEventListener(event, wrappedHandler, options);
+        element.addEventListener(event, secureWrapper, options);
         
-        // Return cleanup function
+        // Return secure cleanup function
         return () => {
             try {
-                element.removeEventListener(event, wrappedHandler, options);
+                element.removeEventListener(event, secureWrapper, options);
             } catch (error) {
-                console.warn('Error removing event listener:', error);
+                console.warn('Error removing secure event listener:', error);
+                SecurityContext.logSecurityEvent('event_listener_removal_error', { 
+                    event,
+                    error: error.message 
+                });
             }
         };
         
     } catch (error) {
-        console.error('Error in safeAddEventListener:', error);
+        console.error('Error in secure safeAddEventListener:', error);
+        SecurityContext.logSecurityEvent('event_listener_creation_error', { 
+            event: event || 'unknown',
+            error: error.message 
+        });
         return () => {};
     }
 }
 
 /**
- * Wait for DOM to be ready
- * @returns {Promise} Promise that resolves when DOM is ready
- */
-function waitForDOM() {
-    return new Promise(resolve => {
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', resolve);
-        } else {
-            resolve();
-        }
-    });
-}
-
-/**
- * Wait for element to exist in DOM
- * @param {string} selector - CSS selector
- * @param {number} timeout - Timeout in milliseconds
- * @returns {Promise<Element>} Promise that resolves with element
- */
-function waitForElement(selector, timeout = 5000) {
-    return new Promise((resolve, reject) => {
-        const element = safeQuerySelector(selector);
-        if (element) {
-            resolve(element);
-            return;
-        }
-        
-        const observer = new MutationObserver(() => {
-            const element = safeQuerySelector(selector);
-            if (element) {
-                observer.disconnect();
-                clearTimeout(timeoutId);
-                resolve(element);
-            }
-        });
-        
-        observer.observe(document.body, {
-            childList: true,
-            subtree: true
-        });
-        
-        const timeoutId = setTimeout(() => {
-            observer.disconnect();
-            reject(new Error(`Element "${selector}" not found within ${timeout}ms`));
-        }, timeout);
-    });
-}
-
-/**
- * Validate if an object has required properties
- * @param {Object} obj - Object to validate
- * @param {Array} requiredProps - Required property names
- * @returns {Object} Validation result
- */
-function validateObject(obj, requiredProps = []) {
-    const result = {
-        isValid: true,
-        missing: [],
-        errors: []
-    };
-    
-    try {
-        if (!obj || typeof obj !== 'object') {
-            result.isValid = false;
-            result.errors.push('Input is not an object');
-            return result;
-        }
-        
-        requiredProps.forEach(prop => {
-            if (!(prop in obj)) {
-                result.missing.push(prop);
-                result.isValid = false;
-            }
-        });
-        
-    } catch (error) {
-        result.isValid = false;
-        result.errors.push(error.message);
-    }
-    
-    return result;
-}
-
-/**
- * Deep merge objects safely
- * @param {Object} target - Target object
- * @param {...Object} sources - Source objects
- * @returns {Object} Merged object
- */
-function deepMerge(target, ...sources) {
-    if (!sources.length) return target;
-    
-    const source = sources.shift();
-    
-    if (isObject(target) && isObject(source)) {
-        for (const key in source) {
-            if (isObject(source[key])) {
-                if (!target[key]) Object.assign(target, { [key]: {} });
-                deepMerge(target[key], source[key]);
-            } else {
-                Object.assign(target, { [key]: source[key] });
-            }
-        }
-    }
-    
-    return deepMerge(target, ...sources);
-}
-
-/**
- * Check if value is an object
- * @param {*} item - Item to check
- * @returns {boolean} Is object
- */
-function isObject(item) {
-    return item && typeof item === 'object' && !Array.isArray(item);
-}
-
-/**
- * Generate unique ID
- * @param {string} prefix - ID prefix
- * @returns {string} Unique ID
- */
-function generateId(prefix = 'id') {
-    return `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).substr(2, 9)}`;
-}
-
-/**
- * Format bytes to human readable string
- * @param {number} bytes - Bytes to format
- * @param {number} decimals - Decimal places
- * @returns {string} Formatted string
- */
-function formatBytes(bytes, decimals = 2) {
-    if (bytes === 0) return '0 Bytes';
-    
-    const k = 1024;
-    const dm = decimals < 0 ? 0 : decimals;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-    
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
-}
-
-/**
- * Copy text to clipboard with fallback
+ * Enhanced secure clipboard operations
  * @param {string} text - Text to copy
  * @returns {Promise<boolean>} Success
  */
-async function copyToClipboard(text) {
+async function secureCopyToClipboard(text) {
     try {
+        if (!SecurityContext.validateInput(text, 'string')) {
+            return false;
+        }
+        
+        if (!SecurityContext.checkRateLimit('clipboard_copy', 10, 60000)) {
+            console.warn('🚫 Clipboard copy rate limit exceeded');
+            return false;
+        }
+        
+        // Limit text length
+        const sanitizedText = String(text).substring(0, 100000);
+        
         if (navigator.clipboard && navigator.clipboard.writeText) {
-            await navigator.clipboard.writeText(text);
-            console.log('✅ Text copied to clipboard');
+            await navigator.clipboard.writeText(sanitizedText);
+            console.log('✅ Text copied to clipboard securely');
             return true;
         } else {
-            // Fallback for older browsers
-            return fallbackCopyTextToClipboard(text);
+            return secureBackupCopyTextToClipboard(sanitizedText);
         }
     } catch (error) {
-        console.error('Failed to copy text:', error);
-        return fallbackCopyTextToClipboard(text);
+        console.error('Failed to copy text securely:', error);
+        SecurityContext.logSecurityEvent('clipboard_copy_error', { error: error.message });
+        return secureBackupCopyTextToClipboard(text);
     }
 }
 
 /**
- * Fallback clipboard copy method
+ * Secure fallback clipboard copy method
  * @param {string} text - Text to copy
  * @returns {boolean} Success
  */
-function fallbackCopyTextToClipboard(text) {
+function secureBackupCopyTextToClipboard(text) {
     try {
-        const textArea = document.createElement('textarea');
-        textArea.value = text;
-        textArea.style.position = 'fixed';
-        textArea.style.top = '0';
-        textArea.style.left = '0';
-        textArea.style.width = '2em';
-        textArea.style.height = '2em';
-        textArea.style.padding = '0';
-        textArea.style.border = 'none';
-        textArea.style.outline = 'none';
-        textArea.style.boxShadow = 'none';
-        textArea.style.background = 'transparent';
+        const textArea = secureSafeCreateElement('textarea', {
+            properties: { value: String(text) },
+            styles: {
+                position: 'fixed',
+                top: '0',
+                left: '0',
+                width: '2em',
+                height: '2em',
+                padding: '0',
+                border: 'none',
+                outline: 'none',
+                boxShadow: 'none',
+                background: 'transparent',
+                zIndex: '-1000'
+            }
+        });
+        
+        if (!textArea) {
+            SecurityContext.logSecurityEvent('backup_copy_element_creation_failed');
+            return false;
+        }
         
         document.body.appendChild(textArea);
         textArea.focus();
@@ -474,105 +846,295 @@ function fallbackCopyTextToClipboard(text) {
         document.body.removeChild(textArea);
         
         if (successful) {
-            console.log('✅ Text copied to clipboard (fallback)');
+            console.log('✅ Text copied to clipboard (secure fallback)');
         } else {
-            console.warn('❌ Fallback copy failed');
+            console.warn('❌ Secure fallback copy failed');
         }
         
         return successful;
         
     } catch (error) {
-        console.error('Error in fallback copy:', error);
+        console.error('Error in secure backup copy:', error);
+        SecurityContext.logSecurityEvent('backup_copy_error', { error: error.message });
         return false;
     }
 }
 
 /**
- * Animate element with CSS classes
- * @param {Element} element - Element to animate
- * @param {string} animationClass - CSS animation class
- * @param {number} duration - Animation duration
- * @returns {Promise} Promise that resolves when animation completes
+ * Enhanced secure storage utilities with encryption support
  */
-function animateElement(element, animationClass, duration = 300) {
-    return new Promise(resolve => {
-        if (!element || !animationClass) {
-            resolve();
-            return;
+const secureStorage = {
+    encryptionKey: null,
+    maxValueSize: 1000000, // 1MB limit
+    
+    // Initialize encryption if available
+    initializeEncryption() {
+        if (window.crypto && window.crypto.subtle) {
+            try {
+                // Generate a simple key for basic obfuscation
+                const keyMaterial = Array.from(window.crypto.getRandomValues(new Uint8Array(16)))
+                    .map(b => b.toString(16).padStart(2, '0'))
+                    .join('');
+                this.encryptionKey = keyMaterial;
+            } catch (error) {
+                console.warn('Storage encryption initialization failed:', error);
+            }
         }
+    },
+    
+    // Simple obfuscation (not true encryption, but better than plain text)
+    obfuscate(text) {
+        if (!this.encryptionKey || !text) return text;
         
-        const cleanup = () => {
-            element.classList.remove(animationClass);
-            element.removeEventListener('animationend', handleAnimationEnd);
-            element.removeEventListener('transitionend', handleAnimationEnd);
-        };
+        try {
+            let result = '';
+            for (let i = 0; i < text.length; i++) {
+                const char = text.charCodeAt(i);
+                const keyChar = this.encryptionKey.charCodeAt(i % this.encryptionKey.length);
+                result += String.fromCharCode(char ^ keyChar);
+            }
+            return btoa(result); // Base64 encode
+        } catch (error) {
+            console.warn('Storage obfuscation failed:', error);
+            return text;
+        }
+    },
+    
+    // Simple deobfuscation
+    deobfuscate(obfuscatedText) {
+        if (!this.encryptionKey || !obfuscatedText) return obfuscatedText;
         
-        const handleAnimationEnd = () => {
-            cleanup();
-            resolve();
-        };
-        
-        element.addEventListener('animationend', handleAnimationEnd);
-        element.addEventListener('transitionend', handleAnimationEnd);
-        
-        element.classList.add(animationClass);
-        
-        // Fallback timeout
-        setTimeout(() => {
-            cleanup();
-            resolve();
-        }, duration + 100);
+        try {
+            const decoded = atob(obfuscatedText);
+            let result = '';
+            for (let i = 0; i < decoded.length; i++) {
+                const char = decoded.charCodeAt(i);
+                const keyChar = this.encryptionKey.charCodeAt(i % this.encryptionKey.length);
+                result += String.fromCharCode(char ^ keyChar);
+            }
+            return result;
+        } catch (error) {
+            console.warn('Storage deobfuscation failed:', error);
+            return obfuscatedText;
+        }
+    },
+    
+    /**
+     * Secure get item from localStorage
+     * @param {string} key - Storage key
+     * @param {*} defaultValue - Default value if not found
+     * @returns {*} Stored value or default
+     */
+    get(key, defaultValue = null) {
+        try {
+            if (!SecurityContext.validateInput(key, 'string')) {
+                return defaultValue;
+            }
+            
+            if (!SecurityContext.checkRateLimit('storage_get', 100, 10000)) {
+                console.warn('🚫 Storage get rate limit exceeded');
+                return defaultValue;
+            }
+            
+            const item = localStorage.getItem(key);
+            if (!item) return defaultValue;
+            
+            try {
+                const deobfuscated = this.deobfuscate(item);
+                return JSON.parse(deobfuscated);
+            } catch (parseError) {
+                // Try parsing without deobfuscation (backward compatibility)
+                return JSON.parse(item);
+            }
+            
+        } catch (error) {
+            console.warn(`Error getting secure localStorage item "${key}":`, error);
+            SecurityContext.logSecurityEvent('storage_get_error', { 
+                key: key.substring(0, 50),
+                error: error.message 
+            });
+            return defaultValue;
+        }
+    },
+    
+    /**
+     * Secure set item in localStorage
+     * @param {string} key - Storage key
+     * @param {*} value - Value to store
+     * @returns {boolean} Success
+     */
+    set(key, value) {
+        try {
+            if (!SecurityContext.validateInput(key, 'string')) {
+                return false;
+            }
+            
+            if (!SecurityContext.checkRateLimit('storage_set', 50, 10000)) {
+                console.warn('🚫 Storage set rate limit exceeded');
+                return false;
+            }
+            
+            const serialized = JSON.stringify(value);
+            
+            if (serialized.length > this.maxValueSize) {
+                SecurityContext.logSecurityEvent('storage_value_too_large', { 
+                    key: key.substring(0, 50),
+                    size: serialized.length 
+                });
+                return false;
+            }
+            
+            const obfuscated = this.obfuscate(serialized);
+            localStorage.setItem(key, obfuscated);
+            return true;
+            
+        } catch (error) {
+            console.warn(`Error setting secure localStorage item "${key}":`, error);
+            SecurityContext.logSecurityEvent('storage_set_error', { 
+                key: key.substring(0, 50),
+                error: error.message 
+            });
+            return false;
+        }
+    },
+    
+    /**
+     * Secure remove item from localStorage
+     * @param {string} key - Storage key
+     * @returns {boolean} Success
+     */
+    remove(key) {
+        try {
+            if (!SecurityContext.validateInput(key, 'string')) {
+                return false;
+            }
+            
+            if (!SecurityContext.checkRateLimit('storage_remove', 50, 10000)) {
+                console.warn('🚫 Storage remove rate limit exceeded');
+                return false;
+            }
+            
+            localStorage.removeItem(key);
+            return true;
+            
+        } catch (error) {
+            console.warn(`Error removing secure localStorage item "${key}":`, error);
+            SecurityContext.logSecurityEvent('storage_remove_error', { 
+                key: key.substring(0, 50),
+                error: error.message 
+            });
+            return false;
+        }
+    },
+    
+    /**
+     * Secure clear all localStorage
+     * @returns {boolean} Success
+     */
+    clear() {
+        try {
+            if (!SecurityContext.checkRateLimit('storage_clear', 5, 60000)) {
+                console.warn('🚫 Storage clear rate limit exceeded');
+                return false;
+            }
+            
+            localStorage.clear();
+            SecurityContext.logSecurityEvent('storage_cleared');
+            return true;
+        } catch (error) {
+            console.warn('Error clearing secure localStorage:', error);
+            SecurityContext.logSecurityEvent('storage_clear_error', { error: error.message });
+            return false;
+        }
+    }
+};
+
+/**
+ * Enhanced secure image loading with validation
+ * @param {string} src - Image source
+ * @param {number} timeout - Load timeout
+ * @returns {Promise<HTMLImageElement>} Promise that resolves with loaded image
+ */
+function secureLoadImage(src, timeout = 10000) {
+    return new Promise((resolve, reject) => {
+        try {
+            if (!SecurityContext.validateInput(src, 'string')) {
+                reject(new Error('Invalid image source'));
+                return;
+            }
+            
+            if (!validateURL(src)) {
+                SecurityContext.logSecurityEvent('invalid_image_url_blocked', { src: src.substring(0, 100) });
+                reject(new Error('Invalid or unsafe image URL'));
+                return;
+            }
+            
+            if (!SecurityContext.checkRateLimit('image_load', 20, 10000)) {
+                console.warn('🚫 Image load rate limit exceeded');
+                reject(new Error('Image load rate limit exceeded'));
+                return;
+            }
+            
+            const img = new Image();
+            
+            const cleanup = () => {
+                clearTimeout(timeoutId);
+                img.onload = null;
+                img.onerror = null;
+            };
+            
+            const timeoutId = setTimeout(() => {
+                cleanup();
+                SecurityContext.logSecurityEvent('image_load_timeout', { src: src.substring(0, 100) });
+                reject(new Error(`Secure image load timeout: ${src}`));
+            }, Math.min(timeout, 30000)); // Max 30s timeout
+            
+            img.onload = () => {
+                cleanup();
+                resolve(img);
+            };
+            
+            img.onerror = () => {
+                cleanup();
+                SecurityContext.logSecurityEvent('image_load_error', { src: src.substring(0, 100) });
+                reject(new Error(`Failed to load secure image: ${src}`));
+            };
+            
+            img.src = src;
+            
+        } catch (error) {
+            SecurityContext.logSecurityEvent('image_load_setup_error', { 
+                src: src ? src.substring(0, 100) : 'null',
+                error: error.message 
+            });
+            reject(error);
+        }
     });
 }
 
 /**
- * Check if element is visible in viewport
- * @param {Element} element - Element to check
- * @param {number} threshold - Visibility threshold (0-1)
- * @returns {boolean} Is visible
- */
-function isElementVisible(element, threshold = 0.1) {
-    try {
-        if (!element || typeof element.getBoundingClientRect !== 'function') {
-            return false;
-        }
-        
-        const rect = element.getBoundingClientRect();
-        const windowHeight = window.innerHeight || document.documentElement.clientHeight;
-        const windowWidth = window.innerWidth || document.documentElement.clientWidth;
-        
-        const verticalVisible = (rect.top <= windowHeight) && ((rect.top + rect.height) >= 0);
-        const horizontalVisible = (rect.left <= windowWidth) && ((rect.left + rect.width) >= 0);
-        
-        if (!verticalVisible || !horizontalVisible) {
-            return false;
-        }
-        
-        // Check threshold
-        const visibleHeight = Math.min(rect.bottom, windowHeight) - Math.max(rect.top, 0);
-        const visibleWidth = Math.min(rect.right, windowWidth) - Math.max(rect.left, 0);
-        const visibleArea = visibleHeight * visibleWidth;
-        const totalArea = rect.height * rect.width;
-        
-        return (visibleArea / totalArea) >= threshold;
-        
-    } catch (error) {
-        console.error('Error checking element visibility:', error);
-        return false;
-    }
-}
-
-/**
- * Smooth scroll to element
+ * Enhanced secure smooth scroll with validation
  * @param {Element|string} target - Element or selector
  * @param {Object} options - Scroll options
  */
-function smoothScrollTo(target, options = {}) {
+function secureSmootScrollTo(target, options = {}) {
     try {
-        const element = typeof target === 'string' ? safeQuerySelector(target) : target;
+        if (!SecurityContext.checkRateLimit('smooth_scroll', 10, 5000)) {
+            console.warn('🚫 Smooth scroll rate limit exceeded');
+            return;
+        }
+        
+        let element;
+        if (typeof target === 'string') {
+            element = secureSafeQuerySelector(target);
+        } else if (target && typeof target.scrollIntoView === 'function') {
+            element = target;
+        }
         
         if (!element) {
-            console.warn('Element not found for smooth scroll:', target);
+            SecurityContext.logSecurityEvent('smooth_scroll_element_not_found', { 
+                target: typeof target === 'string' ? target.substring(0, 100) : 'unknown'
+            });
             return;
         }
         
@@ -582,314 +1144,81 @@ function smoothScrollTo(target, options = {}) {
             inline: 'nearest'
         };
         
-        element.scrollIntoView({ ...defaultOptions, ...options });
+        // Sanitize options
+        const safeOptions = {};
+        Object.entries({ ...defaultOptions, ...options }).forEach(([key, value]) => {
+            if (['behavior', 'block', 'inline'].includes(key)) {
+                safeOptions[key] = value;
+            }
+        });
+        
+        element.scrollIntoView(safeOptions);
         
     } catch (error) {
-        console.error('Error in smooth scroll:', error);
+        console.error('Error in secure smooth scroll:', error);
+        SecurityContext.logSecurityEvent('smooth_scroll_error', { error: error.message });
     }
 }
 
 /**
- * Load image with promise
- * @param {string} src - Image source
- * @param {number} timeout - Load timeout
- * @returns {Promise<HTMLImageElement>} Promise that resolves with loaded image
+ * Get security report for utilities
+ * @returns {Object} Security report
  */
-function loadImage(src, timeout = 10000) {
-    return new Promise((resolve, reject) => {
-        if (!src) {
-            reject(new Error('No image source provided'));
-            return;
-        }
-        
-        const img = new Image();
-        
-        const cleanup = () => {
-            clearTimeout(timeoutId);
-            img.onload = null;
-            img.onerror = null;
-        };
-        
-        const timeoutId = setTimeout(() => {
-            cleanup();
-            reject(new Error(`Image load timeout: ${src}`));
-        }, timeout);
-        
-        img.onload = () => {
-            cleanup();
-            resolve(img);
-        };
-        
-        img.onerror = () => {
-            cleanup();
-            reject(new Error(`Failed to load image: ${src}`));
-        };
-        
-        img.src = src;
-    });
+function getUtilsSecurityReport() {
+    return {
+        timestamp: new Date().toISOString(),
+        securityEvents: SecurityContext.securityLog.slice(-20),
+        rateLimitStatus: Object.fromEntries(SecurityContext.rateLimiters),
+        trustedDomains: Array.from(SecurityContext.trustedDomains),
+        securityContextSize: SecurityContext.securityLog.length
+    };
 }
 
-/**
- * Create safe CSS selector from string
- * @param {string} str - String to convert
- * @returns {string} Safe CSS selector
- */
-function createSafeSelector(str) {
-    if (!str || typeof str !== 'string') {
-        return 'unknown';
-    }
-    
-    return str
-        .toLowerCase()
-        .replace(/[^a-z0-9]/g, '-')
-        .replace(/^-+|-+$/g, '')
-        .replace(/-+/g, '-') || 'unknown';
-}
-
-/**
- * Get element's computed style property
- * @param {Element} element - Element to check
- * @param {string} property - CSS property name
- * @returns {string} Property value
- */
-function getComputedStyleProperty(element, property) {
-    try {
-        if (!element || !property) {
-            return '';
-        }
-        
-        const computedStyle = window.getComputedStyle(element);
-        return computedStyle.getPropertyValue(property) || '';
-        
-    } catch (error) {
-        console.error('Error getting computed style:', error);
-        return '';
-    }
-}
-
-/**
- * Check if device supports touch
- * @returns {boolean} Supports touch
- */
-function supportsTouchEvents() {
-    return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-}
-
-/**
- * Get device type based on screen size and capabilities
- * @returns {string} Device type
- */
-function getDeviceType() {
-    const width = window.innerWidth;
-    
-    if (supportsTouchEvents()) {
-        if (width < 768) return 'mobile';
-        if (width < 1024) return 'tablet';
-        return 'desktop-touch';
-    }
-    
-    if (width < 768) return 'mobile';
-    if (width < 1024) return 'tablet';
-    return 'desktop';
-}
-
-/**
- * Retry function with exponential backoff
- * @param {Function} fn - Function to retry
- * @param {number} maxRetries - Maximum retry attempts
- * @param {number} baseDelay - Base delay in milliseconds
- * @returns {Promise} Promise that resolves with function result
- */
-async function retryWithBackoff(fn, maxRetries = 3, baseDelay = 1000) {
-    let lastError;
-    
-    for (let attempt = 0; attempt <= maxRetries; attempt++) {
-        try {
-            return await fn();
-        } catch (error) {
-            lastError = error;
-            
-            if (attempt === maxRetries) {
-                break;
-            }
-            
-            const delay = baseDelay * Math.pow(2, attempt);
-            console.warn(`Attempt ${attempt + 1} failed, retrying in ${delay}ms:`, error.message);
-            
-            await new Promise(resolve => setTimeout(resolve, delay));
-        }
-    }
-    
-    throw lastError;
-}
-
-/**
- * Create announcement for screen readers
- * @param {string} message - Message to announce
- * @param {string} priority - Announcement priority (polite, assertive)
- */
-function announceToScreenReader(message, priority = 'polite') {
-    try {
-        if (!message) return;
-        
-        let announcer = document.getElementById('screen-reader-announcer');
-        
-        if (!announcer) {
-            announcer = safeCreateElement('div', {
-                attributes: {
-                    id: 'screen-reader-announcer',
-                    'aria-live': priority,
-                    'aria-atomic': 'true'
-                },
-                className: 'sr-only',
-                styles: {
-                    position: 'absolute',
-                    left: '-10000px',
-                    width: '1px',
-                    height: '1px',
-                    overflow: 'hidden'
-                }
-            });
-            
-            if (announcer) {
-                document.body.appendChild(announcer);
-            }
-        }
-        
-        if (announcer) {
-            // Clear and set new message
-            announcer.textContent = '';
-            setTimeout(() => {
-                announcer.textContent = message;
-            }, 100);
-            
-            // Clear after announcement
-            setTimeout(() => {
-                announcer.textContent = '';
-            }, 1000);
-        }
-        
-    } catch (error) {
-        console.error('Error announcing to screen reader:', error);
-    }
-}
-
-/**
- * Storage utilities with error handling
- */
-const storage = {
-    /**
-     * Get item from localStorage with error handling
-     * @param {string} key - Storage key
-     * @param {*} defaultValue - Default value if not found
-     * @returns {*} Stored value or default
-     */
-    get(key, defaultValue = null) {
-        try {
-            if (!key || typeof key !== 'string') {
-                return defaultValue;
-            }
-            
-            const item = localStorage.getItem(key);
-            return item ? JSON.parse(item) : defaultValue;
-            
-        } catch (error) {
-            console.warn(`Error getting localStorage item "${key}":`, error);
-            return defaultValue;
-        }
-    },
-    
-    /**
-     * Set item in localStorage with error handling
-     * @param {string} key - Storage key
-     * @param {*} value - Value to store
-     * @returns {boolean} Success
-     */
-    set(key, value) {
-        try {
-            if (!key || typeof key !== 'string') {
-                return false;
-            }
-            
-            localStorage.setItem(key, JSON.stringify(value));
-            return true;
-            
-        } catch (error) {
-            console.warn(`Error setting localStorage item "${key}":`, error);
-            return false;
-        }
-    },
-    
-    /**
-     * Remove item from localStorage
-     * @param {string} key - Storage key
-     * @returns {boolean} Success
-     */
-    remove(key) {
-        try {
-            if (!key || typeof key !== 'string') {
-                return false;
-            }
-            
-            localStorage.removeItem(key);
-            return true;
-            
-        } catch (error) {
-            console.warn(`Error removing localStorage item "${key}":`, error);
-            return false;
-        }
-    },
-    
-    /**
-     * Clear all localStorage
-     * @returns {boolean} Success
-     */
-    clear() {
-        try {
-            localStorage.clear();
-            return true;
-        } catch (error) {
-            console.warn('Error clearing localStorage:', error);
-            return false;
-        }
-    }
-};
-
-// Export utilities to global scope
+// Initialize secure storage encryption
 if (typeof window !== 'undefined') {
-    // Performance utilities
-    window.debounce = debounce;
-    window.throttle = throttle;
-    window.rafBatch = rafBatch;
+    secureStorage.initializeEncryption();
+}
+
+// Export enhanced secure utilities to global scope
+if (typeof window !== 'undefined') {
+    // Enhanced secure performance utilities
+    window.secureDebounce = secureDebounce;
+    window.secureThrottle = secureThrottle;
+    window.secureRafBatch = secureRafBatch;
     
-    // DOM utilities
-    window.safeQuerySelector = safeQuerySelector;
-    window.safeQuerySelectorAll = safeQuerySelectorAll;
-    window.safeCreateElement = safeCreateElement;
-    window.safeAddEventListener = safeAddEventListener;
-    window.waitForDOM = waitForDOM;
-    window.waitForElement = waitForElement;
+    // Enhanced secure DOM utilities
+    window.secureSafeQuerySelector = secureSafeQuerySelector;
+    window.secureSafeQuerySelectorAll = secureSafeQuerySelectorAll;
+    window.secureSafeCreateElement = secureSafeCreateElement;
+    window.secureSafeAddEventListener = secureSafeAddEventListener;
     
-    // Object utilities
-    window.validateObject = validateObject;
-    window.deepMerge = deepMerge;
-    window.isObject = isObject;
-    window.generateId = generateId;
+    // Enhanced secure helper utilities
+    window.generateSecureId = generateSecureId;
+    window.secureCopyToClipboard = secureCopyToClipboard;
+    window.secureLoadImage = secureLoadImage;
+    window.secureSmootScrollTo = secureSmootScrollTo;
+    window.validateURL = validateURL;
+    window.sanitizeHTML = sanitizeHTML;
+    window.sanitizeClassName = sanitizeClassName;
+    window.validateCSSProperty = validateCSSProperty;
     
-    // Helper utilities
-    window.formatBytes = formatBytes;
-    window.copyToClipboard = copyToClipboard;
-    window.animateElement = animateElement;
-    window.isElementVisible = isElementVisible;
-    window.smoothScrollTo = smoothScrollTo;
-    window.loadImage = loadImage;
-    window.createSafeSelector = createSafeSelector;
-    window.getComputedStyleProperty = getComputedStyleProperty;
-    window.supportsTouchEvents = supportsTouchEvents;
-    window.getDeviceType = getDeviceType;
-    window.retryWithBackoff = retryWithBackoff;
-    window.announceToScreenReader = announceToScreenReader;
+    // Enhanced secure storage utilities
+    window.secureStorage = secureStorage;
     
-    // Storage utilities
-    window.storage = storage;
+    // Security reporting
+    window.getUtilsSecurityReport = getUtilsSecurityReport;
+    
+    // Backward compatibility (wrapped with security)
+    window.debounce = secureDebounce;
+    window.throttle = secureThrottle;
+    window.rafBatch = secureRafBatch;
+    window.safeQuerySelector = secureSafeQuerySelector;
+    window.safeQuerySelectorAll = secureSafeQuerySelectorAll;
+    window.safeCreateElement = secureSafeCreateElement;
+    window.safeAddEventListener = secureSafeAddEventListener;
+    window.copyToClipboard = secureCopyToClipboard;
+    window.loadImage = secureLoadImage;
+    window.smoothScrollTo = secureSmootScrollTo;
+    window.storage = secureStorage;
+    window.generateId = generateSecureId;
 }

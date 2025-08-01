@@ -3,10 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HTML Interactive Playground</title>
+    <meta name="description" content="Interactive HTML playground for learning HTML elements and attributes">
+    <meta name="keywords" content="HTML, playground, learning, interactive, web development">
+    <title>HTML Interactive Playground - Secure Edition</title>
+    
+    <!-- Security Headers -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" 
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <style>
         :root {
@@ -279,7 +287,7 @@
                         <div class="p-3">
                             <div class="mb-3" id="text-content-group">
                                 <label class="form-label">Text Content:</label>
-                                <textarea class="form-control form-control-sm" id="textContent" rows="3" oninput="updateHTML()" placeholder="Enter your text content...">Hello World!</textarea>
+                                <textarea class="form-control form-control-sm" id="textContent" rows="3" oninput="updateHTML()" placeholder="Enter your text content..." maxlength="1000">Hello World!</textarea>
                             </div>
 
                             <div class="mb-3" id="tag-type-group" style="display: none;">
@@ -336,47 +344,47 @@ Item 3</textarea>
                         <div class="p-3">
                             <div class="mb-3">
                                 <label class="form-label">ID:</label>
-                                <input type="text" class="form-control form-control-sm" id="elementId" oninput="updateHTML()" placeholder="my-element">
+                                <input type="text" class="form-control form-control-sm" id="elementId" oninput="updateHTML()" placeholder="my-element" maxlength="50">
                             </div>
 
                             <div class="mb-3">
                                 <label class="form-label">Class:</label>
-                                <input type="text" class="form-control form-control-sm" id="elementClass" oninput="updateHTML()" placeholder="my-class another-class">
+                                <input type="text" class="form-control form-control-sm" id="elementClass" oninput="updateHTML()" placeholder="my-class another-class" maxlength="100">
                             </div>
 
                             <div class="mb-3">
                                 <label class="form-label">Title:</label>
-                                <input type="text" class="form-control form-control-sm" id="elementTitle" oninput="updateHTML()" placeholder="Tooltip text">
+                                <input type="text" class="form-control form-control-sm" id="elementTitle" oninput="updateHTML()" placeholder="Tooltip text" maxlength="100">
                             </div>
 
                             <div class="mb-3" id="href-group" style="display: none;">
                                 <label class="form-label">Link URL:</label>
-                                <input type="text" class="form-control form-control-sm" id="hrefValue" oninput="updateHTML()" placeholder="https://example.com" value="https://example.com">
+                                <input type="url" class="form-control form-control-sm" id="hrefValue" oninput="updateHTML()" placeholder="https://example.com" value="https://example.com">
                             </div>
 
                             <div class="mb-3" id="src-group" style="display: none;">
                                 <label class="form-label">Image URL:</label>
-                                <input type="text" class="form-control form-control-sm" id="srcValue" oninput="updateHTML()" placeholder="https://via.placeholder.com/200x150" value="https://via.placeholder.com/200x150">
+                                <input type="url" class="form-control form-control-sm" id="srcValue" oninput="updateHTML()" placeholder="https://via.placeholder.com/200x150" value="https://via.placeholder.com/200x150">
                             </div>
 
                             <div class="mb-3" id="alt-group" style="display: none;">
                                 <label class="form-label">Alt Text:</label>
-                                <input type="text" class="form-control form-control-sm" id="altValue" oninput="updateHTML()" placeholder="Description of image" value="Sample image">
+                                <input type="text" class="form-control form-control-sm" id="altValue" oninput="updateHTML()" placeholder="Description of image" value="Sample image" maxlength="100">
                             </div>
 
                             <div class="mb-3" id="placeholder-group" style="display: none;">
                                 <label class="form-label">Placeholder:</label>
-                                <input type="text" class="form-control form-control-sm" id="placeholderValue" oninput="updateHTML()" placeholder="Enter placeholder text" value="Enter text here...">
+                                <input type="text" class="form-control form-control-sm" id="placeholderValue" oninput="updateHTML()" placeholder="Enter placeholder text" value="Enter text here..." maxlength="100">
                             </div>
 
                             <div class="mb-3" id="value-group" style="display: none;">
                                 <label class="form-label">Value:</label>
-                                <input type="text" class="form-control form-control-sm" id="valueAttribute" oninput="updateHTML()" placeholder="Default value">
+                                <input type="text" class="form-control form-control-sm" id="valueAttribute" oninput="updateHTML()" placeholder="Default value" maxlength="100">
                             </div>
 
                             <div class="mb-3" id="name-group" style="display: none;">
                                 <label class="form-label">Name:</label>
-                                <input type="text" class="form-control form-control-sm" id="nameAttribute" oninput="updateHTML()" placeholder="field-name">
+                                <input type="text" class="form-control form-control-sm" id="nameAttribute" oninput="updateHTML()" placeholder="field-name" maxlength="50">
                             </div>
                         </div>
                     </div>
@@ -569,8 +577,115 @@ Item 3</textarea>
     </div>
 
     <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" 
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" 
+            crossorigin="anonymous"></script>
 
+    <!-- Security Utils (MUST be loaded before main script) -->
+    <script>
+        // Security utility functions
+        const SecurityUtils = {
+            // Input validation and sanitization
+            sanitizeHTML: function(input) {
+                if (typeof input !== 'string') return '';
+                
+                // Remove dangerous tags and attributes
+                const div = document.createElement('div');
+                div.textContent = input;
+                let sanitized = div.innerHTML;
+                
+                // Remove script tags and event handlers
+                sanitized = sanitized.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+                sanitized = sanitized.replace(/on\w+\s*=\s*"[^"]*"/gi, '');
+                sanitized = sanitized.replace(/on\w+\s*=\s*'[^']*'/gi, '');
+                sanitized = sanitized.replace(/javascript:/gi, '');
+                
+                return sanitized;
+            },
+
+            // URL validation
+            validateURL: function(url) {
+                if (!url || typeof url !== 'string') return false;
+                
+                try {
+                    const urlObj = new URL(url);
+                    return ['http:', 'https:'].includes(urlObj.protocol);
+                } catch {
+                    return false;
+                }
+            },
+
+            // Attribute name validation
+            validateAttributeName: function(name) {
+                if (!name || typeof name !== 'string') return false;
+                
+                // Only allow safe attribute names
+                const safePattern = /^[a-zA-Z][a-zA-Z0-9-]*$/;
+                const dangerousAttrs = ['onload', 'onerror', 'onclick', 'onmouseover', 'onfocus', 'onblur'];
+                
+                return safePattern.test(name) && !dangerousAttrs.includes(name.toLowerCase());
+            },
+
+            // Content length validation
+            validateLength: function(input, maxLength) {
+                return typeof input === 'string' && input.length <= maxLength;
+            },
+
+            // Rate limiting for user actions
+            rateLimiter: {
+                actions: new Map(),
+                
+                isAllowed: function(action, limit = 10, window = 60000) {
+                    const now = Date.now();
+                    const key = action;
+                    
+                    if (!this.actions.has(key)) {
+                        this.actions.set(key, []);
+                    }
+                    
+                    const timestamps = this.actions.get(key);
+                    
+                    // Remove old timestamps
+                    while (timestamps.length > 0 && now - timestamps[0] > window) {
+                        timestamps.shift();
+                    }
+                    
+                    if (timestamps.length >= limit) {
+                        return false;
+                    }
+                    
+                    timestamps.push(now);
+                    return true;
+                }
+            },
+
+            // Error handling
+            handleError: function(error, context = '') {
+                console.error(`Security Error ${context}:`, error);
+                
+                // Log to a secure endpoint in production
+                if (typeof window.reportError === 'function') {
+                    window.reportError({
+                        error: error.message,
+                        context: context,
+                        timestamp: new Date().toISOString(),
+                        userAgent: navigator.userAgent
+                    });
+                }
+            }
+        };
+
+        // Global error handlers
+        window.addEventListener('error', function(event) {
+            SecurityUtils.handleError(event.error, 'Global Error Handler');
+        });
+
+        window.addEventListener('unhandledrejection', function(event) {
+            SecurityUtils.handleError(event.reason, 'Unhandled Promise Rejection');
+        });
+    </script>
+
+    <!-- Main Application Script -->
     <script>
         let currentElement = 'heading';
         let documentElements = [];
@@ -664,439 +779,877 @@ Item 3</textarea>
             }
         };
 
-        // Initialize
+        // Initialize on DOM load
         document.addEventListener('DOMContentLoaded', function() {
-            updateHTML();
-            rotateTips();
-            updateElementCount();
+            try {
+                updateHTML();
+                rotateTips();
+                updateElementCount();
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Initialization');
+            }
         });
 
-        // Element selection
+        // Element selection with security checks
         function selectElement(type) {
-            currentElement = type;
-            
-            // Update button states
-            document.querySelectorAll('.element-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById(`btn-${type}`).classList.add('active');
-            
-            // Show/hide appropriate controls
-            updateControlsVisibility();
-            
-            // Reset content based on element type
-            const config = elementConfigs[type];
-            if (config.showTextContent && config.content) {
-                document.getElementById('textContent').value = config.content;
+            try {
+                if (!SecurityUtils.rateLimiter.isAllowed('selectElement', 30, 10000)) {
+                    console.warn('Rate limit exceeded for element selection');
+                    return;
+                }
+
+                if (!elementConfigs[type]) {
+                    throw new Error('Invalid element type');
+                }
+
+                currentElement = type;
+                
+                // Update button states
+                document.querySelectorAll('.element-btn').forEach(btn => btn.classList.remove('active'));
+                const targetBtn = document.getElementById(`btn-${type}`);
+                if (targetBtn) {
+                    targetBtn.classList.add('active');
+                }
+                
+                // Show/hide appropriate controls
+                updateControlsVisibility();
+                
+                // Reset content based on element type
+                const config = elementConfigs[type];
+                if (config.showTextContent && config.content) {
+                    const textContentEl = document.getElementById('textContent');
+                    if (textContentEl) {
+                        textContentEl.value = SecurityUtils.sanitizeHTML(config.content);
+                    }
+                }
+                
+                if (config.showTagType) {
+                    const tagTypeEl = document.getElementById('tagType');
+                    if (tagTypeEl) {
+                        tagTypeEl.value = config.tag;
+                    }
+                }
+                
+                updateHTML();
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Element Selection');
             }
-            
-            if (config.showTagType) {
-                document.getElementById('tagType').value = config.tag;
-            }
-            
-            updateHTML();
         }
 
         function updateControlsVisibility() {
-            const config = elementConfigs[currentElement];
-            
-            // Hide all conditional groups first
-            const conditionalGroups = [
-                'text-content-group', 'tag-type-group', 'input-type-group', 
-                'list-type-group', 'list-items-group', 'href-group', 'src-group', 
-                'alt-group', 'placeholder-group', 'value-group', 'name-group',
-                'required-group', 'disabled-group', 'readonly-group', 
-                'checked-group', 'selected-group', 'target-blank-group'
-            ];
-            
-            conditionalGroups.forEach(groupId => {
-                const element = document.getElementById(groupId);
-                if (element) element.style.display = 'none';
-            });
-            
-            // Show relevant groups
-            if (config.showTextContent) document.getElementById('text-content-group').style.display = 'block';
-            if (config.showTagType) document.getElementById('tag-type-group').style.display = 'block';
-            if (config.showInputType) document.getElementById('input-type-group').style.display = 'block';
-            if (config.showListType) document.getElementById('list-type-group').style.display = 'block';
-            if (config.showListItems) document.getElementById('list-items-group').style.display = 'block';
-            if (config.showHref) document.getElementById('href-group').style.display = 'block';
-            if (config.showSrc) document.getElementById('src-group').style.display = 'block';
-            if (config.showAlt) document.getElementById('alt-group').style.display = 'block';
-            if (config.showPlaceholder) document.getElementById('placeholder-group').style.display = 'block';
-            if (config.showValue) document.getElementById('value-group').style.display = 'block';
-            if (config.showName) document.getElementById('name-group').style.display = 'block';
-            if (config.showRequired) document.getElementById('required-group').style.display = 'block';
-            if (config.showDisabled) document.getElementById('disabled-group').style.display = 'block';
-            if (config.showReadonly) document.getElementById('readonly-group').style.display = 'block';
-            if (config.showChecked) document.getElementById('checked-group').style.display = 'block';
-            if (config.showTargetBlank) document.getElementById('target-blank-group').style.display = 'block';
+            try {
+                const config = elementConfigs[currentElement];
+                if (!config) return;
+                
+                // Hide all conditional groups first
+                const conditionalGroups = [
+                    'text-content-group', 'tag-type-group', 'input-type-group', 
+                    'list-type-group', 'list-items-group', 'href-group', 'src-group', 
+                    'alt-group', 'placeholder-group', 'value-group', 'name-group',
+                    'required-group', 'disabled-group', 'readonly-group', 
+                    'checked-group', 'selected-group', 'target-blank-group'
+                ];
+                
+                conditionalGroups.forEach(groupId => {
+                    const element = document.getElementById(groupId);
+                    if (element) element.style.display = 'none';
+                });
+                
+                // Show relevant groups
+                if (config.showTextContent) {
+                    const element = document.getElementById('text-content-group');
+                    if (element) element.style.display = 'block';
+                }
+                if (config.showTagType) {
+                    const element = document.getElementById('tag-type-group');
+                    if (element) element.style.display = 'block';
+                }
+                if (config.showInputType) {
+                    const element = document.getElementById('input-type-group');
+                    if (element) element.style.display = 'block';
+                }
+                if (config.showListType) {
+                    const element = document.getElementById('list-type-group');
+                    if (element) element.style.display = 'block';
+                }
+                if (config.showListItems) {
+                    const element = document.getElementById('list-items-group');
+                    if (element) element.style.display = 'block';
+                }
+                if (config.showHref) {
+                    const element = document.getElementById('href-group');
+                    if (element) element.style.display = 'block';
+                }
+                if (config.showSrc) {
+                    const element = document.getElementById('src-group');
+                    if (element) element.style.display = 'block';
+                }
+                if (config.showAlt) {
+                    const element = document.getElementById('alt-group');
+                    if (element) element.style.display = 'block';
+                }
+                if (config.showPlaceholder) {
+                    const element = document.getElementById('placeholder-group');
+                    if (element) element.style.display = 'block';
+                }
+                if (config.showValue) {
+                    const element = document.getElementById('value-group');
+                    if (element) element.style.display = 'block';
+                }
+                if (config.showName) {
+                    const element = document.getElementById('name-group');
+                    if (element) element.style.display = 'block';
+                }
+                if (config.showRequired) {
+                    const element = document.getElementById('required-group');
+                    if (element) element.style.display = 'block';
+                }
+                if (config.showDisabled) {
+                    const element = document.getElementById('disabled-group');
+                    if (element) element.style.display = 'block';
+                }
+                if (config.showReadonly) {
+                    const element = document.getElementById('readonly-group');
+                    if (element) element.style.display = 'block';
+                }
+                if (config.showChecked) {
+                    const element = document.getElementById('checked-group');
+                    if (element) element.style.display = 'block';
+                }
+                if (config.showTargetBlank) {
+                    const element = document.getElementById('target-blank-group');
+                    if (element) element.style.display = 'block';
+                }
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Controls Visibility Update');
+            }
         }
 
-        // Main HTML update function
+        // Main HTML update function with security
         function updateHTML() {
-            const config = elementConfigs[currentElement];
-            let tagName = config.tag;
-            
-            // Handle special cases
-            if (currentElement === 'heading') {
-                tagName = document.getElementById('tagType').value;
-            } else if (currentElement === 'list') {
-                tagName = document.getElementById('listType').value;
-            }
-            
-            // Build attributes
-            const attributes = buildAttributes();
-            const attributeString = Object.entries(attributes)
-                .filter(([key, value]) => value !== '' && value !== null)
-                .map(([key, value]) => `${key}="${value}"`)
-                .join(' ');
-            
-            // Build element content
-            let content = '';
-            let htmlString = '';
-            
-            if (config.selfClosing) {
-                // Self-closing tags
-                htmlString = `<${tagName}${attributeString ? ' ' + attributeString : ''}>`;
-            } else {
-                // Regular tags with content
-                if (currentElement === 'list') {
-                    const items = document.getElementById('listItems').value
-                        .split('\n')
-                        .filter(item => item.trim())
-                        .map(item => `  <li>${item.trim()}</li>`)
-                        .join('\n');
-                    content = items ? '\n' + items + '\n' : '';
-                } else if (config.showTextContent) {
-                    content = document.getElementById('textContent').value;
-                } else if (config.content) {
-                    content = config.content;
+            try {
+                if (!SecurityUtils.rateLimiter.isAllowed('updateHTML', 50, 10000)) {
+                    console.warn('Rate limit exceeded for HTML updates');
+                    return;
+                }
+
+                const config = elementConfigs[currentElement];
+                if (!config) return;
+
+                let tagName = config.tag;
+                
+                // Handle special cases
+                if (currentElement === 'heading') {
+                    const tagTypeEl = document.getElementById('tagType');
+                    if (tagTypeEl) {
+                        tagName = tagTypeEl.value;
+                    }
+                } else if (currentElement === 'list') {
+                    const listTypeEl = document.getElementById('listType');
+                    if (listTypeEl) {
+                        tagName = listTypeEl.value;
+                    }
                 }
                 
-                htmlString = `<${tagName}${attributeString ? ' ' + attributeString : ''}>${content}</${tagName}>`;
+                // Build attributes with validation
+                const attributes = buildAttributes();
+                const attributeString = Object.entries(attributes)
+                    .filter(([key, value]) => {
+                        return SecurityUtils.validateAttributeName(key) && 
+                               value !== '' && 
+                               value !== null &&
+                               SecurityUtils.validateLength(value, 200);
+                    })
+                    .map(([key, value]) => `${key}="${SecurityUtils.sanitizeHTML(value)}"`)
+                    .join(' ');
+                
+                // Build element content
+                let content = '';
+                let htmlString = '';
+                
+                if (config.selfClosing) {
+                    // Self-closing tags
+                    htmlString = `<${tagName}${attributeString ? ' ' + attributeString : ''}>`;
+                } else {
+                    // Regular tags with content
+                    if (currentElement === 'list') {
+                        const listItemsEl = document.getElementById('listItems');
+                        if (listItemsEl) {
+                            const items = listItemsEl.value
+                                .split('\n')
+                                .filter(item => item.trim())
+                                .slice(0, 20) // Limit number of items
+                                .map(item => `  <li>${SecurityUtils.sanitizeHTML(item.trim())}</li>`)
+                                .join('\n');
+                            content = items ? '\n' + items + '\n' : '';
+                        }
+                    } else if (config.showTextContent) {
+                        const textContentEl = document.getElementById('textContent');
+                        if (textContentEl) {
+                            content = SecurityUtils.sanitizeHTML(textContentEl.value);
+                        }
+                    } else if (config.content) {
+                        content = SecurityUtils.sanitizeHTML(config.content);
+                    }
+                    
+                    htmlString = `<${tagName}${attributeString ? ' ' + attributeString : ''}>${content}</${tagName}>`;
+                }
+                
+                // Update preview safely
+                updatePreview(htmlString);
+                
+                // Update HTML output with syntax highlighting
+                updateHTMLOutput(htmlString);
+                
+            } catch (error) {
+                SecurityUtils.handleError(error, 'HTML Update');
             }
-            
-            // Update preview
-            const previewArea = document.getElementById('preview-area');
-            const demoElement = document.getElementById('demo-element');
-            
-            if (demoElement) {
-                demoElement.remove();
+        }
+
+        function updatePreview(htmlString) {
+            try {
+                const previewArea = document.getElementById('preview-area');
+                const demoElement = document.getElementById('demo-element');
+                
+                if (!previewArea) return;
+                
+                if (demoElement) {
+                    demoElement.remove();
+                }
+                
+                // Create new element safely
+                const newElement = document.createElement('div');
+                newElement.id = 'demo-element';
+                
+                // Sanitize before setting innerHTML
+                newElement.innerHTML = SecurityUtils.sanitizeHTML(htmlString);
+                previewArea.appendChild(newElement);
+                
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Preview Update');
             }
-            
-            // Create new element
-            const newElement = document.createElement('div');
-            newElement.id = 'demo-element';
-            newElement.innerHTML = htmlString;
-            previewArea.appendChild(newElement);
-            
-            // Update HTML output with syntax highlighting
-            updateHTMLOutput(htmlString);
         }
 
         function buildAttributes() {
             const attributes = {};
             
-            // Common attributes
-            const id = document.getElementById('elementId').value.trim();
-            const className = document.getElementById('elementClass').value.trim();
-            const title = document.getElementById('elementTitle').value.trim();
-            
-            if (id) attributes.id = id;
-            if (className) attributes.class = className;
-            if (title) attributes.title = title;
-            
-            // Element-specific attributes
-            const config = elementConfigs[currentElement];
-            
-            if (config.showHref) {
-                const href = document.getElementById('hrefValue').value.trim();
-                if (href) attributes.href = href;
-            }
-            
-            if (config.showSrc) {
-                const src = document.getElementById('srcValue').value.trim();
-                if (src) attributes.src = src;
-            }
-            
-            if (config.showAlt) {
-                const alt = document.getElementById('altValue').value.trim();
-                if (alt) attributes.alt = alt;
-            }
-            
-            if (config.showPlaceholder) {
-                const placeholder = document.getElementById('placeholderValue').value.trim();
-                if (placeholder) attributes.placeholder = placeholder;
-            }
-            
-            if (config.showValue) {
-                const value = document.getElementById('valueAttribute').value.trim();
-                if (value) attributes.value = value;
-            }
-            
-            if (config.showName) {
-                const name = document.getElementById('nameAttribute').value.trim();
-                if (name) attributes.name = name;
-            }
-            
-            if (config.showInputType) {
-                attributes.type = document.getElementById('inputType').value;
-            }
-            
-            // Boolean attributes
-            if (config.showRequired && document.getElementById('requiredAttr').checked) {
-                attributes.required = 'required';
-            }
-            
-            if (config.showDisabled && document.getElementById('disabledAttr').checked) {
-                attributes.disabled = 'disabled';
-            }
-            
-            if (config.showReadonly && document.getElementById('readonlyAttr').checked) {
-                attributes.readonly = 'readonly';
-            }
-            
-            if (config.showChecked && document.getElementById('checkedAttr').checked) {
-                attributes.checked = 'checked';
-            }
-            
-            if (config.showTargetBlank && document.getElementById('targetBlankAttr').checked) {
-                attributes.target = '_blank';
-            }
-            
-            // Custom attributes
-            const customAttrs = document.querySelectorAll('.custom-attr-name');
-            customAttrs.forEach((nameInput, index) => {
-                const valueInput = document.querySelectorAll('.custom-attr-value')[index];
-                const name = nameInput.value.trim();
-                const value = valueInput.value.trim();
-                if (name && value) {
-                    attributes[name] = value;
+            try {
+                // Common attributes with validation
+                const id = document.getElementById('elementId')?.value?.trim() || '';
+                const className = document.getElementById('elementClass')?.value?.trim() || '';
+                const title = document.getElementById('elementTitle')?.value?.trim() || '';
+                
+                if (id && SecurityUtils.validateLength(id, 50)) attributes.id = id;
+                if (className && SecurityUtils.validateLength(className, 100)) attributes.class = className;
+                if (title && SecurityUtils.validateLength(title, 100)) attributes.title = title;
+                
+                // Element-specific attributes
+                const config = elementConfigs[currentElement];
+                if (!config) return attributes;
+                
+                if (config.showHref) {
+                    const href = document.getElementById('hrefValue')?.value?.trim() || '';
+                    if (href && SecurityUtils.validateURL(href)) {
+                        attributes.href = href;
+                    }
                 }
-            });
+                
+                if (config.showSrc) {
+                    const src = document.getElementById('srcValue')?.value?.trim() || '';
+                    if (src && SecurityUtils.validateURL(src)) {
+                        attributes.src = src;
+                    }
+                }
+                
+                if (config.showAlt) {
+                    const alt = document.getElementById('altValue')?.value?.trim() || '';
+                    if (alt && SecurityUtils.validateLength(alt, 100)) {
+                        attributes.alt = alt;
+                    }
+                }
+                
+                if (config.showPlaceholder) {
+                    const placeholder = document.getElementById('placeholderValue')?.value?.trim() || '';
+                    if (placeholder && SecurityUtils.validateLength(placeholder, 100)) {
+                        attributes.placeholder = placeholder;
+                    }
+                }
+                
+                if (config.showValue) {
+                    const value = document.getElementById('valueAttribute')?.value?.trim() || '';
+                    if (value && SecurityUtils.validateLength(value, 100)) {
+                        attributes.value = value;
+                    }
+                }
+                
+                if (config.showName) {
+                    const name = document.getElementById('nameAttribute')?.value?.trim() || '';
+                    if (name && SecurityUtils.validateLength(name, 50)) {
+                        attributes.name = name;
+                    }
+                }
+                
+                if (config.showInputType) {
+                    const inputTypeEl = document.getElementById('inputType');
+                    if (inputTypeEl) {
+                        attributes.type = inputTypeEl.value;
+                    }
+                }
+                
+                // Boolean attributes
+                if (config.showRequired && document.getElementById('requiredAttr')?.checked) {
+                    attributes.required = 'required';
+                }
+                
+                if (config.showDisabled && document.getElementById('disabledAttr')?.checked) {
+                    attributes.disabled = 'disabled';
+                }
+                
+                if (config.showReadonly && document.getElementById('readonlyAttr')?.checked) {
+                    attributes.readonly = 'readonly';
+                }
+                
+                if (config.showChecked && document.getElementById('checkedAttr')?.checked) {
+                    attributes.checked = 'checked';
+                }
+                
+                if (config.showTargetBlank && document.getElementById('targetBlankAttr')?.checked) {
+                    attributes.target = '_blank';
+                }
+                
+                // Custom attributes with validation
+                const customAttrs = document.querySelectorAll('.custom-attr-name');
+                customAttrs.forEach((nameInput, index) => {
+                    const valueInputs = document.querySelectorAll('.custom-attr-value');
+                    if (valueInputs[index]) {
+                        const name = nameInput.value.trim();
+                        const value = valueInputs[index].value.trim();
+                        if (name && value && 
+                            SecurityUtils.validateAttributeName(name) &&
+                            SecurityUtils.validateLength(value, 100)) {
+                            attributes[name] = value;
+                        }
+                    }
+                });
+                
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Attribute Building');
+            }
             
             return attributes;
         }
 
         // Update HTML output with syntax highlighting
         function updateHTMLOutput(htmlString) {
-            let highlightedHTML = htmlString
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/&lt;(\/?[a-zA-Z][a-zA-Z0-9]*)/g, '&lt;<span class="html-tag">$1</span>')
-                .replace(/([a-zA-Z-]+)=&quot;([^&quot;]*)&quot;/g, '<span class="html-attr">$1</span>=<span class="html-value">&quot;$2&quot;</span>')
-                .replace(/&gt;([^&lt;]+)&lt;/g, '&gt;<span class="html-text">$1</span>&lt;');
-            
-            document.getElementById('html-output').innerHTML = highlightedHTML;
-        }
-
-        // Copy HTML to clipboard
-        function copyHTML() {
-            const htmlContent = document.getElementById('html-output').textContent;
-            
-            navigator.clipboard.writeText(htmlContent).then(() => {
-                showCopySuccess();
-            }).catch(() => {
-                fallbackCopy(htmlContent);
-                showCopySuccess();
-            });
-        }
-
-        function copyFullDocument() {
-            const fullContent = document.getElementById('full-document-output').textContent;
-            
-            navigator.clipboard.writeText(fullContent).then(() => {
-                showCopySuccess();
-            }).catch(() => {
-                fallbackCopy(fullContent);
-                showCopySuccess();
-            });
-        }
-
-        function fallbackCopy(text) {
-            const textArea = document.createElement('textarea');
-            textArea.value = text;
-            document.body.appendChild(textArea);
-            textArea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textArea);
-        }
-
-        function showCopySuccess() {
-            const button = document.getElementById('copy-html-btn');
-            const originalHTML = button.innerHTML;
-            
-            button.classList.add('copied');
-            button.innerHTML = '<i class="bi bi-check me-1"></i>Copied!';
-            
-            setTimeout(() => {
-                button.classList.remove('copied');
-                button.innerHTML = originalHTML;
-            }, 2000);
-            
-            const toast = new bootstrap.Toast(document.getElementById('copy-toast'));
-            toast.show();
-        }
-
-        // Add custom attribute
-        function addCustomAttribute() {
-            customAttributeCounter++;
-            const container = document.getElementById('custom-attributes');
-            
-            const attrDiv = document.createElement('div');
-            attrDiv.className = 'attribute-input d-flex gap-2 align-items-center mb-2';
-            attrDiv.id = `custom-attr-${customAttributeCounter}`;
-            
-            attrDiv.innerHTML = `
-                <input type="text" class="form-control form-control-sm custom-attr-name" placeholder="attribute" oninput="updateHTML()">
-                <input type="text" class="form-control form-control-sm custom-attr-value" placeholder="value" oninput="updateHTML()">
-                <button class="remove-attr-btn" onclick="removeCustomAttribute(${customAttributeCounter})">
-                    <i class="bi bi-x"></i>
-                </button>
-            `;
-            
-            container.appendChild(attrDiv);
-        }
-
-        function removeCustomAttribute(id) {
-            const element = document.getElementById(`custom-attr-${id}`);
-            if (element) {
-                element.remove();
-                updateHTML();
+            try {
+                let highlightedHTML = htmlString
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/&lt;(\/?[a-zA-Z][a-zA-Z0-9]*)/g, '&lt;<span class="html-tag">$1</span>')
+                    .replace(/([a-zA-Z-]+)=&quot;([^&quot;]*)&quot;/g, '<span class="html-attr">$1</span>=<span class="html-value">&quot;$2&quot;</span>')
+                    .replace(/&gt;([^&lt;]+)&lt;/g, '&gt;<span class="html-text">$1</span>&lt;');
+                
+                const outputEl = document.getElementById('html-output');
+                if (outputEl) {
+                    outputEl.innerHTML = highlightedHTML;
+                }
+            } catch (error) {
+                SecurityUtils.handleError(error, 'HTML Output Update');
             }
         }
 
-        // Add element to document
+        // Copy HTML to clipboard with security
+        function copyHTML() {
+            try {
+                if (!SecurityUtils.rateLimiter.isAllowed('copyHTML', 10, 60000)) {
+                    console.warn('Rate limit exceeded for copy operations');
+                    return;
+                }
+
+                const htmlContent = document.getElementById('html-output')?.textContent || '';
+                
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(htmlContent).then(() => {
+                        showCopySuccess();
+                    }).catch((error) => {
+                        SecurityUtils.handleError(error, 'Clipboard API');
+                        fallbackCopy(htmlContent);
+                    });
+                } else {
+                    fallbackCopy(htmlContent);
+                }
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Copy HTML');
+            }
+        }
+
+        function copyFullDocument() {
+            try {
+                if (!SecurityUtils.rateLimiter.isAllowed('copyFullDocument', 5, 60000)) {
+                    console.warn('Rate limit exceeded for full document copy');
+                    return;
+                }
+
+                const fullContent = document.getElementById('full-document-output')?.textContent || '';
+                
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(fullContent).then(() => {
+                        showCopySuccess();
+                    }).catch((error) => {
+                        SecurityUtils.handleError(error, 'Clipboard API Full Document');
+                        fallbackCopy(fullContent);
+                    });
+                } else {
+                    fallbackCopy(fullContent);
+                }
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Copy Full Document');
+            }
+        }
+
+        function fallbackCopy(text) {
+            try {
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                textArea.style.position = 'fixed';
+                textArea.style.opacity = '0';
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showCopySuccess();
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Fallback Copy');
+            }
+        }
+
+        function showCopySuccess() {
+            try {
+                const button = document.getElementById('copy-html-btn');
+                if (!button) return;
+                
+                const originalHTML = button.innerHTML;
+                
+                button.classList.add('copied');
+                button.innerHTML = '<i class="bi bi-check me-1"></i>Copied!';
+                
+                setTimeout(() => {
+                    button.classList.remove('copied');
+                    button.innerHTML = originalHTML;
+                }, 2000);
+                
+                const toast = new bootstrap.Toast(document.getElementById('copy-toast'));
+                toast.show();
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Copy Success Display');
+            }
+        }
+
+        // Add custom attribute with validation
+        function addCustomAttribute() {
+            try {
+                if (!SecurityUtils.rateLimiter.isAllowed('addCustomAttribute', 10, 60000)) {
+                    console.warn('Rate limit exceeded for adding custom attributes');
+                    return;
+                }
+
+                if (customAttributeCounter >= 10) {
+                    console.warn('Maximum custom attributes limit reached');
+                    return;
+                }
+
+                customAttributeCounter++;
+                const container = document.getElementById('custom-attributes');
+                if (!container) return;
+                
+                const attrDiv = document.createElement('div');
+                attrDiv.className = 'attribute-input d-flex gap-2 align-items-center mb-2';
+                attrDiv.id = `custom-attr-${customAttributeCounter}`;
+                
+                attrDiv.innerHTML = `
+                    <input type="text" class="form-control form-control-sm custom-attr-name" placeholder="attribute" oninput="updateHTML()" maxlength="30">
+                    <input type="text" class="form-control form-control-sm custom-attr-value" placeholder="value" oninput="updateHTML()" maxlength="100">
+                    <button class="remove-attr-btn" onclick="removeCustomAttribute(${customAttributeCounter})">
+                        <i class="bi bi-x"></i>
+                    </button>
+                `;
+                
+                container.appendChild(attrDiv);
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Add Custom Attribute');
+            }
+        }
+
+        function removeCustomAttribute(id) {
+            try {
+                const element = document.getElementById(`custom-attr-${id}`);
+                if (element) {
+                    element.remove();
+                    updateHTML();
+                }
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Remove Custom Attribute');
+            }
+        }
+
+        // Add element to document with validation
         function addToDocument() {
-            const htmlContent = document.getElementById('html-output').textContent;
-            documentElements.push({
-                type: currentElement,
-                html: htmlContent,
-                timestamp: Date.now()
-            });
-            
-            updateElementCount();
-            
-            // Show success feedback
-            const toast = document.createElement('div');
-            toast.className = 'toast';
-            toast.innerHTML = `
-                <div class="toast-header bg-primary text-white">
-                    <i class="bi bi-plus-circle me-2"></i>
-                    <strong class="me-auto">Added</strong>
-                </div>
-                <div class="toast-body">
-                    Element added to document!
-                </div>
-            `;
-            
-            document.querySelector('.toast-container').appendChild(toast);
-            const toastInstance = new bootstrap.Toast(toast);
-            toastInstance.show();
-            
-            setTimeout(() => toast.remove(), 3000);
+            try {
+                if (!SecurityUtils.rateLimiter.isAllowed('addToDocument', 20, 60000)) {
+                    console.warn('Rate limit exceeded for adding to document');
+                    return;
+                }
+
+                if (documentElements.length >= 50) {
+                    console.warn('Maximum document elements limit reached');
+                    return;
+                }
+
+                const htmlContent = document.getElementById('html-output')?.textContent || '';
+                
+                if (htmlContent && htmlContent.trim() !== '<!-- HTML will appear here -->') {
+                    documentElements.push({
+                        type: currentElement,
+                        html: SecurityUtils.sanitizeHTML(htmlContent),
+                        timestamp: Date.now()
+                    });
+                    
+                    updateElementCount();
+                    showToast('Element added to document!');
+                }
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Add To Document');
+            }
         }
 
         function updateElementCount() {
-            document.getElementById('element-count').textContent = documentElements.length;
+            try {
+                const countEl = document.getElementById('element-count');
+                if (countEl) {
+                    countEl.textContent = documentElements.length;
+                }
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Update Element Count');
+            }
         }
 
         function clearDocument() {
-            documentElements = [];
-            updateElementCount();
+            try {
+                documentElements = [];
+                updateElementCount();
+                showToast('Document cleared!');
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Clear Document');
+            }
         }
 
         function viewFullDocument() {
-            const fullHTML = `<!DOCTYPE html>
+            try {
+                const fullHTML = `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My HTML Document</title>
 </head>
 <body>
-${documentElements.map(element => '    ' + element.html).join('\n')}
+${documentElements.map(element => '    ' + SecurityUtils.sanitizeHTML(element.html)).join('\n')}
 </body>
 </html>`;
 
-            let highlightedHTML = fullHTML
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/&lt;(\/?[a-zA-Z][a-zA-Z0-9]*)/g, '&lt;<span class="html-tag">$1</span>')
-                .replace(/([a-zA-Z-]+)=&quot;([^&quot;]*)&quot;/g, '<span class="html-attr">$1</span>=<span class="html-value">&quot;$2&quot;</span>')
-                .replace(/&gt;([^&lt;]+)&lt;/g, '&gt;<span class="html-text">$1</span>&lt;');
+                let highlightedHTML = fullHTML
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/&lt;(\/?[a-zA-Z][a-zA-Z0-9]*)/g, '&lt;<span class="html-tag">$1</span>')
+                    .replace(/([a-zA-Z-]+)=&quot;([^&quot;]*)&quot;/g, '<span class="html-attr">$1</span>=<span class="html-value">&quot;$2&quot;</span>')
+                    .replace(/&gt;([^&lt;]+)&lt;/g, '&gt;<span class="html-text">$1</span>&lt;');
 
-            document.getElementById('full-document-output').innerHTML = highlightedHTML;
-            
-            const modal = new bootstrap.Modal(document.getElementById('fullDocumentModal'));
-            modal.show();
-        }
-
-        // Reset HTML
-        function resetHTML() {
-            // Reset all form values
-            document.getElementById('elementId').value = '';
-            document.getElementById('elementClass').value = '';
-            document.getElementById('elementTitle').value = '';
-            document.getElementById('textContent').value = 'Hello World!';
-            document.getElementById('hrefValue').value = 'https://example.com';
-            document.getElementById('srcValue').value = 'https://via.placeholder.com/200x150';
-            document.getElementById('altValue').value = 'Sample image';
-            document.getElementById('placeholderValue').value = 'Enter text here...';
-            document.getElementById('valueAttribute').value = '';
-            document.getElementById('nameAttribute').value = '';
-            
-            // Reset checkboxes
-            document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
-            
-            // Reset selects
-            document.getElementById('tagType').value = 'h1';
-            document.getElementById('inputType').value = 'text';
-            document.getElementById('listType').value = 'ul';
-            
-            // Clear custom attributes
-            document.getElementById('custom-attributes').innerHTML = '';
-            customAttributeCounter = 0;
-            
-            updateHTML();
-        }
-
-        // Generate random element
-        function generateRandomElement() {
-            const elements = Object.keys(elementConfigs);
-            const randomElement = elements[Math.floor(Math.random() * elements.length)];
-            
-            // Select the random element
-            selectElement(randomElement);
-            
-            // Randomize some attributes
-            const randomTexts = [
-                'Welcome to our website', 'Click here to learn more', 'Amazing content awaits',
-                'Discover something new', 'Join our community', 'Get started today',
-                'Explore the possibilities', 'Your journey begins here'
-            ];
-            
-            if (elementConfigs[randomElement].showTextContent) {
-                const randomText = randomTexts[Math.floor(Math.random() * randomTexts.length)];
-                document.getElementById('textContent').value = randomText;
+                const outputEl = document.getElementById('full-document-output');
+                if (outputEl) {
+                    outputEl.innerHTML = highlightedHTML;
+                }
+                
+                const modal = new bootstrap.Modal(document.getElementById('fullDocumentModal'));
+                modal.show();
+            } catch (error) {
+                SecurityUtils.handleError(error, 'View Full Document');
             }
-            
-            // Random ID and class
-            document.getElementById('elementId').value = 'element-' + Math.floor(Math.random() * 1000);
-            document.getElementById('elementClass').value = ['primary', 'secondary', 'success', 'info', 'warning'][Math.floor(Math.random() * 5)];
-            
-            updateHTML();
         }
 
-        // Rotate tips
-        function rotateTips() {
-            const tipsElement = document.getElementById('html-tips');
-            let currentTipIndex = 0;
-            
-            setInterval(() => {
-                currentTipIndex = (currentTipIndex + 1) % htmlTips.length;
-                tipsElement.innerHTML = `<strong>${htmlTips[currentTipIndex]}</strong>`;
-            }, 4000);
+        // Reset HTML with validation
+        function resetHTML() {
+            try {
+                if (!SecurityUtils.rateLimiter.isAllowed('resetHTML', 10, 60000)) {
+                    console.warn('Rate limit exceeded for reset operations');
+                    return;
+                }
+
+                // Reset all form values safely
+                const elementsToReset = [
+                    'elementId', 'elementClass', 'elementTitle', 'textContent',
+                    'hrefValue', 'srcValue', 'altValue', 'placeholderValue',
+                    'valueAttribute', 'nameAttribute'
+                ];
+                
+                elementsToReset.forEach(id => {
+                    const element = document.getElementById(id);
+                    if (element) {
+                        element.value = '';
+                    }
+                });
+                
+                // Reset specific values
+                const textContentEl = document.getElementById('textContent');
+                if (textContentEl) textContentEl.value = 'Hello World!';
+                
+                const hrefValueEl = document.getElementById('hrefValue');
+                if (hrefValueEl) hrefValueEl.value = 'https://example.com';
+                
+                const srcValueEl = document.getElementById('srcValue');
+                if (srcValueEl) srcValueEl.value = 'https://via.placeholder.com/200x150';
+                
+                const altValueEl = document.getElementById('altValue');
+                if (altValueEl) altValueEl.value = 'Sample image';
+                
+                const placeholderValueEl = document.getElementById('placeholderValue');
+                if (placeholderValueEl) placeholderValueEl.value = 'Enter text here...';
+                
+                // Reset checkboxes
+                document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+                
+                // Reset selects
+                const selectsToReset = [
+                    { id: 'tagType', value: 'h1' },
+                    { id: 'inputType', value: 'text' },
+                    { id: 'listType', value: 'ul' }
+                ];
+                
+                selectsToReset.forEach(({ id, value }) => {
+                    const element = document.getElementById(id);
+                    if (element) element.value = value;
+                });
+                
+                // Clear custom attributes
+                const customAttrsContainer = document.getElementById('custom-attributes');
+                if (customAttrsContainer) {
+                    customAttrsContainer.innerHTML = '';
+                }
+                customAttributeCounter = 0;
+                
+                updateHTML();
+                showToast('All settings reset!');
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Reset HTML');
+            }
         }
+
+        // Generate random element with validation
+        function generateRandomElement() {
+            try {
+                if (!SecurityUtils.rateLimiter.isAllowed('generateRandomElement', 20, 60000)) {
+                    console.warn('Rate limit exceeded for random generation');
+                    return;
+                }
+
+                const elements = Object.keys(elementConfigs);
+                const randomElement = elements[Math.floor(Math.random() * elements.length)];
+                
+                // Select the random element
+                selectElement(randomElement);
+                
+                // Randomize some attributes
+                const randomTexts = [
+                    'Welcome to our website', 'Click here to learn more', 'Amazing content awaits',
+                    'Discover something new', 'Join our community', 'Get started today',
+                    'Explore the possibilities', 'Your journey begins here'
+                ];
+                
+                if (elementConfigs[randomElement].showTextContent) {
+                    const randomText = randomTexts[Math.floor(Math.random() * randomTexts.length)];
+                    const textContentEl = document.getElementById('textContent');
+                    if (textContentEl) {
+                        textContentEl.value = randomText;
+                    }
+                }
+                
+                // Random ID and class
+                const elementIdEl = document.getElementById('elementId');
+                if (elementIdEl) {
+                    elementIdEl.value = 'element-' + Math.floor(Math.random() * 1000);
+                }
+                
+                const elementClassEl = document.getElementById('elementClass');
+                if (elementClassEl) {
+                    const classes = ['primary', 'secondary', 'success', 'info', 'warning'];
+                    elementClassEl.value = classes[Math.floor(Math.random() * classes.length)];
+                }
+                
+                updateHTML();
+                showToast('Random element generated!');
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Generate Random Element');
+            }
+        }
+
+        // Rotate tips with error handling
+        function rotateTips() {
+            try {
+                const tipsElement = document.getElementById('html-tips');
+                if (!tipsElement) return;
+                
+                let currentTipIndex = 0;
+                
+                const rotateTip = () => {
+                    try {
+                        currentTipIndex = (currentTipIndex + 1) % htmlTips.length;
+                        tipsElement.innerHTML = `<strong>${SecurityUtils.sanitizeHTML(htmlTips[currentTipIndex])}</strong>`;
+                    } catch (error) {
+                        SecurityUtils.handleError(error, 'Tip Rotation');
+                    }
+                };
+                
+                setInterval(rotateTip, 4000);
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Initialize Tip Rotation');
+            }
+        }
+
+        // Toast notification with rate limiting
+        function showToast(message) {
+            try {
+                if (!SecurityUtils.rateLimiter.isAllowed('showToast', 10, 30000)) {
+                    return;
+                }
+
+                const toastEl = document.getElementById('copy-toast');
+                if (toastEl) {
+                    const toastBodyEl = toastEl.querySelector('.toast-body');
+                    if (toastBodyEl) {
+                        toastBodyEl.textContent = SecurityUtils.sanitizeHTML(message);
+                    }
+                    const toast = new bootstrap.Toast(toastEl);
+                    toast.show();
+                }
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Show Toast');
+            }
+        }
+
+        // Keyboard navigation support with security
+        document.addEventListener('keydown', function(e) {
+            try {
+                // Ctrl/Cmd + Enter to generate HTML
+                if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                    e.preventDefault();
+                    updateHTML();
+                }
+                
+                // Escape to clear preview
+                if (e.key === 'Escape') {
+                    const previewArea = document.getElementById('preview-area');
+                    if (previewArea) {
+                        previewArea.innerHTML = `
+                            <h1 id="demo-element">Hello World!</h1>
+                        `;
+                    }
+                    const outputEl = document.getElementById('html-output');
+                    if (outputEl) {
+                        outputEl.textContent = '<!-- HTML will appear here -->';
+                    }
+                }
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Keyboard Navigation');
+            }
+        });
+
+        // Accessibility enhancements
+        function announceChange(message) {
+            try {
+                const announcement = document.createElement('div');
+                announcement.setAttribute('aria-live', 'polite');
+                announcement.setAttribute('aria-atomic', 'true');
+                announcement.className = 'visually-hidden';
+                announcement.textContent = SecurityUtils.sanitizeHTML(message);
+                document.body.appendChild(announcement);
+                
+                setTimeout(() => {
+                    if (announcement.parentNode) {
+                        document.body.removeChild(announcement);
+                    }
+                }, 1000);
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Accessibility Announcement');
+            }
+        }
+
+        // Initialize default element
+        document.addEventListener('DOMContentLoaded', function() {
+            selectElement('heading');
+        });
+    </script>
+
+    <!-- Error Boundary and Monitoring -->
+    <script>
+        // Additional security monitoring
+        (function() {
+            'use strict';
+            
+            // Monitor for suspicious activity
+            let suspiciousActivity = 0;
+            const MAX_SUSPICIOUS_ACTIVITY = 10;
+            
+            // Monitor DOM modifications
+            const observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    // Check for suspicious script injections
+                    if (mutation.type === 'childList') {
+                        mutation.addedNodes.forEach(function(node) {
+                            if (node.nodeType === Node.ELEMENT_NODE) {
+                                if (node.tagName === 'SCRIPT' || 
+                                    node.innerHTML.includes('<script') ||
+                                    node.innerHTML.includes('javascript:') ||
+                                    node.innerHTML.includes('data:text/html')) {
+                                    suspiciousActivity++;
+                                    console.warn('Suspicious content detected and blocked');
+                                    node.remove();
+                                    
+                                    if (suspiciousActivity >= MAX_SUSPICIOUS_ACTIVITY) {
+                                        console.error('Maximum suspicious activity threshold reached');
+                                        // Could implement additional security measures here
+                                    }
+                                }
+                            }
+                        });
+                    }
+                });
+            });
+
+            // Start observing
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true,
+                characterData: true
+            });
+
+            // Content Security Policy violation handler
+            document.addEventListener('securitypolicyviolation', function(event) {
+                SecurityUtils.handleError({
+                    message: 'CSP Violation',
+                    violatedDirective: event.violatedDirective,
+                    blockedURI: event.blockedURI,
+                    lineNumber: event.lineNumber,
+                    sourceFile: event.sourceFile
+                }, 'CSP Violation');
+            });
+
+            // Performance monitoring
+            if ('performance' in window && 'mark' in performance) {
+                performance.mark('html-playground-loaded');
+            }
+        })();
     </script>
 </body>
 </html>

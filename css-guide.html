@@ -2,28 +2,41 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CSS Learning Guide - Complete Reference</title>
+    <meta name="description" content="Complete CSS learning guide with interactive examples and modern best practices">
+    <meta name="keywords" content="CSS, learning, guide, tutorial, flexbox, grid, responsive design">
+    <title>CSS Learning Guide - Complete Secure Edition</title>
+    
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" 
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <!-- Prism.js for syntax highlighting -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    
     <style>
         :root {
             --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             --success-gradient: linear-gradient(135deg, #28a745, #20c997);
+            --warning-gradient: linear-gradient(135deg, #ffc107, #ff8c00);
+            --info-gradient: linear-gradient(135deg, #17a2b8, #20c997);
+            --danger-gradient: linear-gradient(135deg, #dc3545, #fd79a8);
             --bg-light: #f8f9fa;
             --border-color: #dee2e6;
             --text-muted: #6c757d;
             --shadow-sm: 0 2px 8px rgba(0,0,0,0.1);
             --shadow-md: 0 4px 15px rgba(0,0,0,0.15);
+            --shadow-lg: 0 8px 25px rgba(0,0,0,0.2);
         }
 
         body {
             font-family: system-ui, -apple-system, sans-serif;
             line-height: 1.6;
+            scroll-behavior: smooth;
         }
 
         .hero-section {
@@ -34,55 +47,122 @@
 
         .guide-nav {
             background: white;
-            border-radius: 8px;
+            border-radius: 12px;
             box-shadow: var(--shadow-sm);
             position: sticky;
             top: 100px;
             max-height: calc(100vh - 120px);
             overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #667eea #f1f1f1;
+        }
+
+        .guide-nav::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .guide-nav::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .guide-nav::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 3px;
         }
 
         .guide-nav .nav-link {
             color: #495057;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            margin: 2px 0;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            margin: 3px 0;
             transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            position: relative;
         }
 
-        .guide-nav .nav-link:hover,
+        .guide-nav .nav-link:hover {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            transform: translateX(5px);
+        }
+
         .guide-nav .nav-link.active {
             background: var(--primary-gradient);
             color: white;
+            transform: translateX(5px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .guide-nav .nav-link.active::after {
+            content: '';
+            position: absolute;
+            right: -8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-left: 8px solid #667eea;
         }
 
         .content-section {
             background: white;
-            border-radius: 8px;
+            border-radius: 12px;
             box-shadow: var(--shadow-sm);
-            padding: 2rem;
+            padding: 2.5rem;
             margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .content-section:hover {
+            box-shadow: var(--shadow-md);
         }
 
         .example-container {
             background: #f8f9fa;
             border: 1px solid var(--border-color);
-            border-radius: 8px;
+            border-radius: 12px;
             padding: 1.5rem;
-            margin: 1rem 0;
+            margin: 1.5rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .example-container::before {
+            content: 'Live Example';
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            background: #28a745;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
         }
 
         .example-output {
             background: white;
             border: 2px dashed #dee2e6;
-            border-radius: 6px;
-            padding: 1rem;
+            border-radius: 8px;
+            padding: 1.5rem;
             margin-top: 1rem;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
         }
 
         .code-block {
             position: relative;
-            margin: 1rem 0;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
         }
 
         .copy-btn {
@@ -92,18 +172,22 @@
             background: #28a745;
             color: white;
             border: none;
-            border-radius: 4px;
-            padding: 5px 10px;
+            border-radius: 6px;
+            padding: 6px 12px;
             font-size: 0.8rem;
             cursor: pointer;
             opacity: 0.8;
-            transition: all 0.2s;
+            transition: all 0.3s ease;
             z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
         }
 
         .copy-btn:hover {
             opacity: 1;
             transform: scale(1.05);
+            background: #218838;
         }
 
         .copy-btn.copied {
@@ -112,25 +196,62 @@
 
         .badge-level {
             font-size: 0.7rem;
-            padding: 0.25rem 0.5rem;
+            padding: 0.35rem 0.7rem;
+            border-radius: 12px;
         }
 
         .best-practice {
-            background: #d4edda;
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
             border-left: 4px solid #28a745;
-            padding: 1rem;
-            margin: 1rem 0;
-            border-radius: 0 6px 6px 0;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+            position: relative;
+        }
+
+        .best-practice::before {
+            content: '💡';
+            position: absolute;
+            left: -2px;
+            top: -2px;
+            font-size: 1.2rem;
         }
 
         .warning-box {
-            background: #fff3cd;
+            background: linear-gradient(135deg, #fff3cd, #ffeaa7);
             border-left: 4px solid #ffc107;
-            padding: 1rem;
-            margin: 1rem 0;
-            border-radius: 0 6px 6px 0;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+            position: relative;
         }
 
+        .warning-box::before {
+            content: '⚠️';
+            position: absolute;
+            left: -2px;
+            top: -2px;
+            font-size: 1.2rem;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #d1ecf1, #bee5eb);
+            border-left: 4px solid #17a2b8;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+            position: relative;
+        }
+
+        .info-box::before {
+            content: 'ℹ️';
+            position: absolute;
+            left: -2px;
+            top: -2px;
+            font-size: 1.2rem;
+        }
+
+        /* Interactive Demo Elements */
         .demo-box {
             width: 100px;
             height: 100px;
@@ -142,6 +263,14 @@
             color: white;
             font-weight: bold;
             margin: 10px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .demo-box:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-lg);
         }
 
         .demo-text {
@@ -150,9 +279,10 @@
             padding: 1rem;
             border-radius: 6px;
             margin: 10px 0;
+            transition: all 0.3s ease;
         }
 
-        /* Live examples for demonstrations */
+        /* Live CSS Demonstrations */
         .css-demo-transform {
             transition: transform 0.3s ease;
         }
@@ -180,7 +310,8 @@
             justify-content: space-around;
             background: #f8f9fa;
             padding: 1rem;
-            border-radius: 6px;
+            border-radius: 8px;
+            border: 2px dashed #dee2e6;
         }
 
         .css-demo-grid {
@@ -189,7 +320,8 @@
             gap: 10px;
             background: #f8f9fa;
             padding: 1rem;
-            border-radius: 6px;
+            border-radius: 8px;
+            border: 2px dashed #dee2e6;
         }
 
         .css-demo-grid-item {
@@ -197,11 +329,151 @@
             color: white;
             padding: 1rem;
             text-align: center;
-            border-radius: 4px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .css-demo-grid-item:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+        }
+
+        .selector-demo {
+            padding: 1rem;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            margin: 0.5rem 0;
+        }
+
+        .selector-demo.class-demo {
+            background: #e7f3ff;
+            border-color: #0066cc;
+        }
+
+        .selector-demo.id-demo {
+            background: #fff0f0;
+            border-color: #cc0000;
+        }
+
+        .selector-demo.element-demo {
+            background: #f0fff0;
+            border-color: #00cc00;
+        }
+
+        /* Progress indicator */
+        .progress-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 3px;
+            background: var(--primary-gradient);
+            z-index: 9999;
+            transition: width 0.3s ease;
+        }
+
+        /* Toast notifications */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1050;
+        }
+
+        .toast-custom {
+            background: white;
+            border-radius: 8px;
+            box-shadow: var(--shadow-lg);
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            display: none;
+            min-width: 300px;
+        }
+
+        .toast-custom.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .guide-nav {
+                position: static;
+                max-height: none;
+                margin-bottom: 2rem;
+            }
+            
+            .content-section {
+                padding: 1.5rem;
+            }
+            
+            .example-container {
+                padding: 1rem;
+            }
+        }
+
+        /* Code syntax highlighting enhancements */
+        pre[class*="language-"] {
+            margin: 0;
+            border-radius: 8px;
+        }
+
+        code[class*="language-"] {
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        /* Interactive elements */
+        .interactive-element {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .interactive-element:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Back to top button */
+        .back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .back-to-top:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .back-to-top.show {
+            display: flex;
         }
     </style>
 </head>
 <body>
+    <!-- Progress Indicator -->
+    <div class="progress-indicator" id="progress-indicator"></div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
 
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
@@ -212,8 +484,8 @@
             <div class="navbar-nav ms-auto">
                 <a class="nav-link" href="index.html"><i class="bi bi-house me-1"></i>Home</a>
                 <a class="nav-link" href="css-playground.html"><i class="bi bi-palette me-1"></i>CSS Playground</a>
-                <a class="nav-link" href="html-guide.html"><i class="bi bi-code-slash me-1"></i>HTML Guide</a>
-                <a class="nav-link" href="bootstrap-guide.html"><i class="bi bi-bootstrap me-1"></i>Bootstrap Guide</a>
+                <a class="nav-link" href="flexbox-playground.html"><i class="bi bi-grid-3x3 me-1"></i>Flexbox</a>
+                <a class="nav-link" href="html-playground.html"><i class="bi bi-code me-1"></i>HTML</a>
             </div>
         </div>
     </nav>
@@ -223,19 +495,25 @@
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-8">
-                    <h1 class="display-5 fw-bold mb-3">CSS Learning Guide</h1>
-                    <p class="lead mb-4">Master CSS from fundamentals to advanced techniques with interactive examples and modern best practices.</p>
-                    <div class="d-flex gap-3">
-                        <a href="css-playground.html" class="btn btn-light">
+                    <h1 class="display-5 fw-bold mb-3">
+                        <i class="bi bi-palette me-3"></i>CSS Learning Guide
+                    </h1>
+                    <p class="lead mb-4">Master CSS from fundamentals to advanced techniques with interactive examples, live demos, and modern best practices. Learn by doing!</p>
+                    <div class="d-flex gap-3 flex-wrap">
+                        <a href="css-playground.html" class="btn btn-light btn-lg">
                             <i class="bi bi-play-fill me-2"></i>Try CSS Playground
                         </a>
-                        <a href="#getting-started" class="btn btn-outline-light">
+                        <a href="#getting-started" class="btn btn-outline-light btn-lg">
                             <i class="bi bi-book me-2"></i>Start Learning
                         </a>
                     </div>
                 </div>
                 <div class="col-lg-4 text-center">
-                    <i class="bi bi-palette display-1 opacity-75"></i>
+                    <div class="d-flex justify-content-center align-items-center" style="height: 200px;">
+                        <div class="css-demo-gradient demo-box" style="width: 150px; height: 150px; font-size: 1.2rem;">
+                            CSS Magic
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -246,8 +524,10 @@
             <!-- Navigation Sidebar -->
             <div class="col-lg-3">
                 <div class="guide-nav p-3">
-                    <h6 class="text-muted small text-uppercase mb-3">Table of Contents</h6>
-                    <nav class="nav flex-column">
+                    <h6 class="text-muted small text-uppercase mb-3 fw-bold">
+                        <i class="bi bi-list me-2"></i>Table of Contents
+                    </h6>
+                    <nav class="nav flex-column" id="guide-navigation">
                         <a class="nav-link active" href="#getting-started">
                             <i class="bi bi-play-circle me-2"></i>Getting Started
                         </a>
@@ -286,64 +566,1686 @@
             <div class="col-lg-9">
                 <!-- Getting Started -->
                 <section id="getting-started" class="content-section">
-                    <div class="d-flex align-items-center mb-4">
-                        <h2 class="mb-0">Getting Started with CSS</h2>
-                        <span class="badge bg-success ms-3 badge-level">Beginner</span>
+                    <div class="d-flex align-items-center justify-content-between mb-4">
+                        <div class="d-flex align-items-center">
+                            <h2 class="mb-0">Getting Started with CSS</h2>
+                            <span class="badge bg-success ms-3 badge-level">Beginner</span>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-outline-primary btn-sm" onclick="toggleAllExamples()">
+                                <i class="bi bi-eye me-1"></i>Toggle Examples
+                            </button>
+                        </div>
                     </div>
                     
-                    <p class="lead">CSS (Cascading Style Sheets) controls the visual presentation of HTML elements. It defines colors, layouts, fonts, spacing, and animations.</p>
+                    <p class="lead">CSS (Cascading Style Sheets) controls the visual presentation of HTML elements. It defines colors, layouts, fonts, spacing, animations, and much more.</p>
 
                     <div class="best-practice">
-                        <h6><i class="bi bi-lightbulb text-success me-2"></i>What You'll Learn</h6>
+                        <h6><i class="bi bi-lightbulb text-success me-2"></i>What You'll Master</h6>
                         <ul class="mb-0">
-                            <li>CSS syntax, selectors, and specificity</li>
-                            <li>Box model, layout systems (Flexbox & Grid)</li>
-                            <li>Responsive design and mobile-first approach</li>
-                            <li>Modern CSS features and best practices</li>
+                            <li><strong>CSS Fundamentals:</strong> Syntax, selectors, specificity, and the cascade</li>
+                            <li><strong>Layout Systems:</strong> Box model, Flexbox, CSS Grid, and positioning</li>
+                            <li><strong>Modern CSS:</strong> Custom properties, responsive design, and animations</li>
+                            <li><strong>Best Practices:</strong> Performance, accessibility, and maintainable code</li>
                         </ul>
                     </div>
 
-                    <h4 class="mt-4">Ways to Add CSS</h4>
+                    <h4 class="mt-4 mb-3">Three Ways to Add CSS</h4>
                     <div class="row g-4">
                         <div class="col-md-4">
-                            <h6>Inline CSS</h6>
-                            <div class="code-block">
-                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                                <pre><code class="language-html"><p style="color: blue; font-size: 18px;">
+                            <div class="h-100">
+                                <h6 class="text-primary"><i class="bi bi-1-circle me-2"></i>Inline CSS</h6>
+                                <p class="small text-muted">Styles applied directly to HTML elements using the style attribute.</p>
+                                <div class="code-block">
+                                    <button class="copy-btn" onclick="copyCode(this)">
+                                        <i class="bi bi-clipboard"></i>Copy
+                                    </button>
+                                    <pre><code class="language-html">&lt;p style="color: blue; font-size: 18px;"&gt;
     Styled text
-</p></code></pre>
+&lt;/p&gt;</code></pre>
+                                </div>
+                                <div class="warning-box">
+                                    <small><strong>Use Case:</strong> Quick testing only. Avoid in production.</small>
+                                </div>
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <h6>Internal CSS</h6>
-                            <div class="code-block">
-                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                                <pre><code class="language-html"><head>
-    <style>
+                            <div class="h-100">
+                                <h6 class="text-success"><i class="bi bi-2-circle me-2"></i>Internal CSS</h6>
+                                <p class="small text-muted">Styles defined in the &lt;head&gt; section using &lt;style&gt; tags.</p>
+                                <div class="code-block">
+                                    <button class="copy-btn" onclick="copyCode(this)">
+                                        <i class="bi bi-clipboard"></i>Copy
+                                    </button>
+                                    <pre><code class="language-html">&lt;head&gt;
+    &lt;style&gt;
         p {
             color: blue;
             font-size: 18px;
         }
-    </style>
-</head></code></pre>
+    &lt;/style&gt;
+&lt;/head&gt;</code></pre>
+                                </div>
+                                <div class="info-box">
+                                    <small><strong>Use Case:</strong> Single-page applications or page-specific styles.</small>
+                                </div>
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <h6>External CSS</h6>
-                            <div class="code-block">
-                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                                <pre><code class="language-html"><!-- In HTML -->
-<link rel="stylesheet" href="styles.css">
+                            <div class="h-100">
+                                <h6 class="text-info"><i class="bi bi-3-circle me-2"></i>External CSS</h6>
+                                <p class="small text-muted">Styles defined in separate .css files and linked to HTML.</p>
+                                <div class="code-block">
+                                    <button class="copy-btn" onclick="copyCode(this)">
+                                        <i class="bi bi-clipboard"></i>Copy
+                                    </button>
+                                    <pre><code class="language-html">&lt;!-- In HTML --&gt;
+&lt;link rel="stylesheet" href="styles.css"&gt;
 
 /* In styles.css */
 p {
     color: blue;
     font-size: 18px;
 }</code></pre>
+                                </div>
+                                <div class="best-practice">
+                                    <small><strong>Best Practice:</strong> Use for production websites. Enables caching and separation of concerns.</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4 class="mt-5 mb-3">CSS Syntax</h4>
+                    <div class="example-container">
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="bi bi-clipboard"></i>Copy
+                            </button>
+                            <pre><code class="language-css">/* CSS Rule Structure */
+selector {
+    property: value;
+    property: value;
+}
+
+/* Example */
+h1 {
+    color: #333;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}</code></pre>
+                        </div>
+                        <div class="example-output">
+                            <h1 style="color: #333; font-size: 2rem; margin-bottom: 1rem;">This is a styled heading</h1>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Selectors -->
+                <section id="selectors" class="content-section">
+                    <div class="d-flex align-items-center mb-4">
+                        <h2 class="mb-0">CSS Selectors</h2>
+                        <span class="badge bg-primary ms-3 badge-level">Beginner</span>
+                    </div>
+                    
+                    <p class="lead">Selectors determine which HTML elements your CSS styles will be applied to. Understanding selectors is crucial for effective CSS.</p>
+
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <h5 class="text-primary">Basic Selectors</h5>
+                            
+                            <h6 class="mt-3">Element Selector</h6>
+                            <div class="code-block">
+                                <button class="copy-btn" onclick="copyCode(this)">
+                                    <i class="bi bi-clipboard"></i>Copy
+                                </button>
+                                <pre><code class="language-css">/* Targets all paragraph elements */
+p {
+    color: green;
+    font-size: 16px;
+}</code></pre>
+                            </div>
+                            <div class="example-output">
+                                <div class="selector-demo element-demo">
+                                    <p style="color: green; font-size: 16px; margin: 0;">This paragraph is styled with element selector</p>
+                                </div>
+                            </div>
+
+                            <h6 class="mt-3">Class Selector</h6>
+                            <div class="code-block">
+                                <button class="copy-btn" onclick="copyCode(this)">
+                                    <i class="bi bi-clipboard"></i>Copy
+                                </button>
+                                <pre><code class="language-css">/* Targets elements with class="highlight" */
+.highlight {
+    background-color: yellow;
+    padding: 10px;
+}</code></pre>
+                            </div>
+                            <div class="example-output">
+                                <div class="selector-demo class-demo">
+                                    <div style="background-color: yellow; padding: 10px; border-radius: 4px;">This div has class="highlight"</div>
+                                </div>
+                            </div>
+
+                            <h6 class="mt-3">ID Selector</h6>
+                            <div class="code-block">
+                                <button class="copy-btn" onclick="copyCode(this)">
+                                    <i class="bi bi-clipboard"></i>Copy
+                                </button>
+                                <pre><code class="language-css">/* Targets element with id="header" */
+#header {
+    background-color: #333;
+    color: white;
+    text-align: center;
+}</code></pre>
+                            </div>
+                            <div class="example-output">
+                                <div class="selector-demo id-demo">
+                                    <div style="background-color: #333; color: white; text-align: center; padding: 10px; border-radius: 4px;">This div has id="header"</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <h5 class="text-success">Advanced Selectors</h5>
+                            
+                            <h6 class="mt-3">Descendant Selector</h6>
+                            <div class="code-block">
+                                <button class="copy-btn" onclick="copyCode(this)">
+                                    <i class="bi bi-clipboard"></i>Copy
+                                </button>
+                                <pre><code class="language-css">/* Targets spans inside divs */
+div span {
+    font-weight: bold;
+    color: red;
+}</code></pre>
+                            </div>
+
+                            <h6 class="mt-3">Child Selector</h6>
+                            <div class="code-block">
+                                <button class="copy-btn" onclick="copyCode(this)">
+                                    <i class="bi bi-clipboard"></i>Copy
+                                </button>
+                                <pre><code class="language-css">/* Targets direct children only */
+ul > li {
+    list-style-type: square;
+    margin-bottom: 5px;
+}</code></pre>
+                            </div>
+
+                            <h6 class="mt-3">Pseudo-classes</h6>
+                            <div class="code-block">
+                                <button class="copy-btn" onclick="copyCode(this)">
+                                    <i class="bi bi-clipboard"></i>Copy
+                                </button>
+                                <pre><code class="language-css">/* Interactive states */
+a:hover {
+    color: red;
+    text-decoration: underline;
+}
+
+input:focus {
+    border-color: blue;
+    outline: none;
+}
+
+li:nth-child(odd) {
+    background-color: #f0f0f0;
+}</code></pre>
+                            </div>
+
+                            <div class="best-practice">
+                                <h6><i class="bi bi-lightbulb text-success me-2"></i>Selector Best Practices</h6>
+                                <ul class="mb-0 small">
+                                    <li>Use classes for reusable styles</li>
+                                    <li>Use IDs sparingly (only for unique elements)</li>
+                                    <li>Avoid overly specific selectors</li>
+                                    <li>Use semantic class names (e.g., .warning instead of .red)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Box Model -->
+                <section id="box-model" class="content-section">
+                    <div class="d-flex align-items-center mb-4">
+                        <h2 class="mb-0">The CSS Box Model</h2>
+                        <span class="badge bg-warning ms-3 badge-level">Important</span>
+                    </div>
+                    
+                    <p class="lead">Every HTML element is essentially a box. The CSS box model describes how these boxes are rendered, including content, padding, borders, and margins.</p>
+
+                    <div class="example-container">
+                        <div class="row align-items-center">
+                            <div class="col-md-6">
+                                <div class="code-block">
+                                    <button class="copy-btn" onclick="copyCode(this)">
+                                        <i class="bi bi-clipboard"></i>Copy
+                                    </button>
+                                    <pre><code class="language-css">.box-model-demo {
+    width: 200px;
+    height: 100px;
+    padding: 20px;
+    border: 5px solid #333;
+    margin: 15px;
+    background-color: #e3f2fd;
+}</code></pre>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="example-output">
+                                    <div style="
+                                        width: 200px; 
+                                        height: 100px; 
+                                        padding: 20px; 
+                                        border: 5px solid #333; 
+                                        margin: 15px auto; 
+                                        background-color: #e3f2fd;
+                                        display: flex;
+                                        align-items: center;
+                                        justify-content: center;
+                                        font-weight: bold;
+                                    ">
+                                        Content Area
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-box">
+                        <h6><i class="bi bi-info-circle text-info me-2"></i>Box Model Components</h6>
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <strong>Content:</strong> The actual content (text, images, etc.)
+                            </div>
+                            <div class="col-md-3">
+                                <strong>Padding:</strong> Space between content and border
+                            </div>
+                            <div class="col-md-3">
+                                <strong>Border:</strong> Line around the padding and content
+                            </div>
+                            <div class="col-md-3">
+                                <strong>Margin:</strong> Space outside the border
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4 class="mt-4">Box-sizing Property</h4>
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <h6>content-box (default)</h6>
+                            <div class="code-block">
+                                <button class="copy-btn" onclick="copyCode(this)">
+                                    <i class="bi bi-clipboard"></i>Copy
+                                </button>
+                                <pre><code class="language-css">.content-box {
+    box-sizing: content-box;
+    width: 200px;
+    padding: 20px;
+    border: 10px solid blue;
+    /* Total width = 200 + 40 + 20 = 260px */
+}</code></pre>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>border-box (recommended)</h6>
+                            <div class="code-block">
+                                <button class="copy-btn" onclick="copyCode(this)">
+                                    <i class="bi bi-clipboard"></i>Copy
+                                </button>
+                                <pre><code class="language-css">.border-box {
+    box-sizing: border-box;
+    width: 200px;
+    padding: 20px;
+    border: 10px solid blue;
+    /* Total width = 200px exactly */
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="best-practice">
+                        <h6><i class="bi bi-lightbulb text-success me-2"></i>Universal Box Sizing</h6>
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="bi bi-clipboard"></i>Copy
+                            </button>
+                            <pre><code class="language-css">/* Apply border-box to all elements */
+*, *::before, *::after {
+    box-sizing: border-box;
+}</code></pre>
+                        </div>
+                        <p class="mb-0 small">This makes width and height calculations much more predictable!</p>
+                    </div>
+                </section>
+
+                <!-- Colors & Typography -->
+                <section id="colors-typography" class="content-section">
+                    <div class="d-flex align-items-center mb-4">
+                        <h2 class="mb-0">Colors & Typography</h2>
+                        <span class="badge bg-info ms-3 badge-level">Essential</span>
+                    </div>
+                    
+                    <p class="lead">Master colors and typography to create visually appealing and readable designs.</p>
+
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <h4>Color Properties</h4>
+                            
+                            <h6>Color Values</h6>
+                            <div class="code-block">
+                                <button class="copy-btn" onclick="copyCode(this)">
+                                    <i class="bi bi-clipboard"></i>Copy
+                                </button>
+                                <pre><code class="language-css">/* Different color formats */
+.color-examples {
+    /* Named colors */
+    color: red;
+    
+    /* Hexadecimal */
+    background-color: #3498db;
+    
+    /* RGB */
+    border-color: rgb(255, 99, 71);
+    
+    /* RGBA (with opacity) */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    
+    /* HSL (Hue, Saturation, Lightness) */
+    outline-color: hsl(120, 50%, 50%);
+}</code></pre>
+                            </div>
+
+                            <div class="example-output">
+                                <div class="row g-2 text-center">
+                                    <div class="col-6">
+                                        <div style="background-color: #3498db; color: white; padding: 1rem; border-radius: 4px;">
+                                            #3498db
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div style="background-color: rgb(255, 99, 71); color: white; padding: 1rem; border-radius: 4px;">
+                                            rgb(255, 99, 71)
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <h4>Typography Properties</h4>
+                            
+                            <div class="code-block">
+                                <button class="copy-btn" onclick="copyCode(this)">
+                                    <i class="bi bi-clipboard"></i>Copy
+                                </button>
+                                <pre><code class="language-css">.typography-example {
+    font-family: 'Arial', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.6;
+    letter-spacing: 0.5px;
+    text-align: center;
+    text-transform: uppercase;
+    text-decoration: underline;
+}</code></pre>
+                            </div>
+
+                            <div class="example-output">
+                                <p style="
+                                    font-family: Arial, sans-serif;
+                                    font-size: 18px;
+                                    font-weight: 600;
+                                    line-height: 1.6;
+                                    letter-spacing: 0.5px;
+                                    text-align: center;
+                                    text-transform: uppercase;
+                                    text-decoration: underline;
+                                    margin: 0;
+                                ">Typography Example</p>
                             </div>
                         </div>
                     </div>
 
                     <div class="warning-box mt-4">
-                        <h6><i class="bi bi-exclamation-triangle text-warning me-2"></i>Best Practice</h6>
-                        <p class="mb-0">Use external CSS files for
+                        <h6><i class="bi bi-exclamation-triangle text-warning me-2"></i>Accessibility Note</h6>
+                        <p class="mb-0">Always ensure sufficient color contrast for text readability. Use tools like WebAIM's contrast checker to verify your color combinations meet WCAG guidelines (4.5:1 ratio for normal text).</p>
+                    </div>
+                </section>
+
+                <!-- Layout & Positioning -->
+                <section id="layout-positioning" class="content-section">
+                    <div class="d-flex align-items-center mb-4">
+                        <h2 class="mb-0">Layout & Positioning</h2>
+                        <span class="badge bg-secondary ms-3 badge-level">Intermediate</span>
+                    </div>
+                    
+                    <p class="lead">Control how elements are positioned and laid out on the page using various CSS properties.</p>
+
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <h4>Position Property</h4>
+                            <div class="code-block">
+                                <button class="copy-btn" onclick="copyCode(this)">
+                                    <i class="bi bi-clipboard"></i>Copy
+                                </button>
+                                <pre><code class="language-css">/* Static (default) */
+.static {
+    position: static;
+}
+
+/* Relative - offset from normal position */
+.relative {
+    position: relative;
+    top: 10px;
+    left: 20px;
+}
+
+/* Absolute - positioned relative to parent */
+.absolute {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+/* Fixed - positioned relative to viewport */
+.fixed {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+}
+
+/* Sticky - toggles between relative and fixed */
+.sticky {
+    position: sticky;
+    top: 0;
+}</code></pre>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <h4>Display Property</h4>
+                            <div class="code-block">
+                                <button class="copy-btn" onclick="copyCode(this)">
+                                    <i class="bi bi-clipboard"></i>Copy
+                                </button>
+                                <pre><code class="language-css">/* Block elements */
+.block {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+/* Inline elements */
+.inline {
+    display: inline;
+    /* width and height have no effect */
+}
+
+/* Inline-block */
+.inline-block {
+    display: inline-block;
+    width: 100px;
+    height: 50px;
+}
+
+/* Modern layout methods */
+.flex-container {
+    display: flex;
+}
+
+.grid-container {
+    display: grid;
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="example-container">
+                        <h6>Position Examples</h6>
+                        <div style="position: relative; height: 200px; border: 2px dashed #ccc; padding: 20px;">
+                            <div style="position: static; background: #e3f2fd; padding: 10px; margin-bottom: 10px;">Static positioning (normal flow)</div>
+                            <div style="position: relative; background: #f3e5f5; padding: 10px; left: 20px; top: -5px;">Relative positioning (offset from normal)</div>
+                            <div style="position: absolute; background: #e8f5e8; padding: 10px; top: 10px; right: 10px;">Absolute positioning</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Flexbox -->
+                <section id="flexbox" class="content-section">
+                    <div class="d-flex align-items-center mb-4">
+                        <h2 class="mb-0">Flexbox Layout</h2>
+                        <span class="badge bg-primary ms-3 badge-level">Modern</span>
+                    </div>
+                    
+                    <p class="lead">Flexbox provides an efficient way to arrange, distribute, and align elements in a container, even when their size is unknown or dynamic.</p>
+
+                    <div class="best-practice">
+                        <h6><i class="bi bi-lightbulb text-success me-2"></i>When to Use Flexbox</h6>
+                        <ul class="mb-0">
+                            <li>One-dimensional layouts (row or column)</li>
+                            <li>Centering content vertically and horizontally</li>
+                            <li>Distributing space between items</li>
+                            <li>Creating flexible navigation bars</li>
+                        </ul>
+                    </div>
+
+                    <h4 class="mt-4">Flex Container Properties</h4>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <i class="bi bi-clipboard"></i>Copy
+                        </button>
+                        <pre><code class="language-css">.flex-container {
+    display: flex;
+    flex-direction: row; /* row | row-reverse | column | column-reverse */
+    flex-wrap: nowrap; /* nowrap | wrap | wrap-reverse */
+    justify-content: flex-start; /* flex-start | center | flex-end | space-between | space-around | space-evenly */
+    align-items: stretch; /* stretch | flex-start | center | flex-end | baseline */
+    align-content: stretch; /* stretch | flex-start | center | flex-end | space-between | space-around */
+    gap: 10px; /* Space between items */
+}</code></pre>
+                    </div>
+
+                    <div class="example-container">
+                        <h6>Flexbox Demo</h6>
+                        <div class="css-demo-flex">
+                            <div class="demo-box" style="width: 80px; height: 80px; font-size: 0.9rem;">1</div>
+                            <div class="demo-box" style="width: 80px; height: 80px; font-size: 0.9rem;">2</div>
+                            <div class="demo-box" style="width: 80px; height: 80px; font-size: 0.9rem;">3</div>
+                        </div>
+                        <p class="text-muted small mt-2">This container uses: <code>display: flex; justify-content: space-around; align-items: center;</code></p>
+                    </div>
+
+                    <h4 class="mt-4">Flex Item Properties</h4>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <i class="bi bi-clipboard"></i>Copy
+                        </button>
+                        <pre><code class="language-css">.flex-item {
+    flex-grow: 0; /* How much to grow */
+    flex-shrink: 1; /* How much to shrink */
+    flex-basis: auto; /* Initial size */
+    align-self: auto; /* Override container's align-items */
+    order: 0; /* Change visual order */
+}
+
+/* Shorthand */
+.flex-item {
+    flex: 1; /* flex-grow: 1, flex-shrink: 1, flex-basis: 0% */
+}</code></pre>
+                    </div>
+
+                    <div class="info-box">
+                        <h6><i class="bi bi-info-circle text-info me-2"></i>Common Flexbox Patterns</h6>
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <strong>Perfect Centering:</strong><br>
+                                <code>justify-content: center;<br>align-items: center;</code>
+                            </div>
+                            <div class="col-md-4">
+                                <strong>Space Between:</strong><br>
+                                <code>justify-content: space-between;</code>
+                            </div>
+                            <div class="col-md-4">
+                                <strong>Equal Width Items:</strong><br>
+                                <code>flex: 1;</code> on items
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- CSS Grid -->
+                <section id="grid" class="content-section">
+                    <div class="d-flex align-items-center mb-4">
+                        <h2 class="mb-0">CSS Grid Layout</h2>
+                        <span class="badge bg-success ms-3 badge-level">Modern</span>
+                    </div>
+                    
+                    <p class="lead">CSS Grid is a powerful two-dimensional layout system that allows you to create complex layouts with rows and columns.</p>
+
+                    <div class="best-practice">
+                        <h6><i class="bi bi-lightbulb text-success me-2"></i>When to Use CSS Grid</h6>
+                        <ul class="mb-0">
+                            <li>Two-dimensional layouts (rows and columns)</li>
+                            <li>Complex page layouts with multiple areas</li>
+                            <li>Card-based designs and image galleries</li>
+                            <li>When you need precise control over item placement</li>
+                        </ul>
+                    </div>
+
+                    <h4 class="mt-4">Grid Container Properties</h4>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <i class="bi bi-clipboard"></i>Copy
+                        </button>
+                        <pre><code class="language-css">.grid-container {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr; /* Three columns */
+    grid-template-rows: 100px auto 50px; /* Three rows */
+    gap: 20px; /* Space between grid items */
+    
+    /* Alternative syntax */
+    grid-template-columns: repeat(3, 1fr); /* Three equal columns */
+    grid-template-columns: 200px 1fr 100px; /* Mixed units */
+}</code></pre>
+                    </div>
+
+                    <div class="example-container">
+                        <h6>CSS Grid Demo</h6>
+                        <div class="css-demo-grid">
+                            <div class="css-demo-grid-item">1</div>
+                            <div class="css-demo-grid-item">2</div>
+                            <div class="css-demo-grid-item">3</div>
+                            <div class="css-demo-grid-item">4</div>
+                            <div class="css-demo-grid-item">5</div>
+                            <div class="css-demo-grid-item">6</div>
+                        </div>
+                        <p class="text-muted small mt-2">This grid uses: <code>display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;</code></p>
+                    </div>
+
+                    <h4 class="mt-4">Grid Item Properties</h4>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <i class="bi bi-clipboard"></i>Copy
+                        </button>
+                        <pre><code class="language-css">.grid-item {
+    grid-column-start: 1;
+    grid-column-end: 3; /* Span from column 1 to 3 */
+    grid-row-start: 1;
+    grid-row-end: 2;
+    
+    /* Shorthand */
+    grid-column: 1 / 3; /* Same as above */
+    grid-row: 1 / 2;
+    
+    /* Span syntax */
+    grid-column: span 2; /* Span 2 columns */
+    grid-area: header; /* Use named grid areas */
+}</code></pre>
+                    </div>
+
+                    <div class="warning-box">
+                        <h6><i class="bi bi-exclamation-triangle text-warning me-2"></i>Browser Support</h6>
+                        <p class="mb-0">CSS Grid is supported in all modern browsers. For older browser support, consider using Flexbox as a fallback or CSS feature queries (@supports).</p>
+                    </div>
+                </section>
+
+                <!-- Responsive Design -->
+                <section id="responsive" class="content-section">
+                    <div class="d-flex align-items-center mb-4">
+                        <h2 class="mb-0">Responsive Design</h2>
+                        <span class="badge bg-info ms-3 badge-level">Essential</span>
+                    </div>
+                    
+                    <p class="lead">Create websites that work beautifully on all devices using responsive design techniques and media queries.</p>
+
+                    <h4>Media Queries</h4>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <i class="bi bi-clipboard"></i>Copy
+                        </button>
+                        <pre><code class="language-css">/* Mobile First Approach */
+.container {
+    width: 100%;
+    padding: 1rem;
+}
+
+/* Tablet */
+@media (min-width: 768px) {
+    .container {
+        max-width: 750px;
+        margin: 0 auto;
+    }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+    .container {
+        max-width: 1200px;
+        padding: 2rem;
+    }
+}
+
+/* Large Desktop */
+@media (min-width: 1200px) {
+    .container {
+        max-width: 1400px;
+    }
+}</code></pre>
+                    </div>
+
+                    <div class="best-practice">
+                        <h6><i class="bi bi-lightbulb text-success me-2"></i>Responsive Design Best Practices</h6>
+                        <ul class="mb-0">
+                            <li><strong>Mobile First:</strong> Start with mobile styles, then enhance for larger screens</li>
+                            <li><strong>Flexible Units:</strong> Use relative units (%, em, rem, vw, vh) instead of fixed pixels</li>
+                            <li><strong>Flexible Images:</strong> Use <code>max-width: 100%</code> and <code>height: auto</code></li>
+                            <li><strong>Touch-Friendly:</strong> Make interactive elements at least 44px for touch targets</li>
+                        </ul>
+                    </div>
+
+                    <h4 class="mt-4">Common Breakpoints</h4>
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <div class="card text-center">
+                                <div class="card-body">
+                                    <h6 class="card-title">Mobile</h6>
+                                    <p class="card-text"><code>&lt; 768px</code></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-center">
+                                <div class="card-body">
+                                    <h6 class="card-title">Tablet</h6>
+                                    <p class="card-text"><code>768px - 1024px</code></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-center">
+                                <div class="card-body">
+                                    <h6 class="card-title">Desktop</h6>
+                                    <p class="card-text"><code>1024px - 1200px</code></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-center">
+                                <div class="card-body">
+                                    <h6 class="card-title">Large</h6>
+                                    <p class="card-text"><code>&gt; 1200px</code></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Animations -->
+                <section id="animations" class="content-section">
+                    <div class="d-flex align-items-center mb-4">
+                        <h2 class="mb-0">CSS Animations & Transitions</h2>
+                        <span class="badge bg-warning ms-3 badge-level">Advanced</span>
+                    </div>
+                    
+                    <p class="lead">Add life to your designs with smooth transitions and engaging animations.</p>
+
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <h4>CSS Transitions</h4>
+                            <div class="code-block">
+                                <button class="copy-btn" onclick="copyCode(this)">
+                                    <i class="bi bi-clipboard"></i>Copy
+                                </button>
+                                <pre><code class="language-css">.transition-example {
+    background-color: blue;
+    transform: scale(1);
+    transition: all 0.3s ease;
+}
+
+.transition-example:hover {
+    background-color: red;
+    transform: scale(1.1);
+}
+
+/* Individual properties */
+.detailed-transition {
+    transition-property: background-color, transform;
+    transition-duration: 0.3s, 0.5s;
+    transition-timing-function: ease, ease-in-out;
+    transition-delay: 0s, 0.1s;
+}</code></pre>
+                            </div>
+
+                            <div class="example-output">
+                                <div class="css-demo-transform demo-box" style="width: 100px; height: 100px; margin: 0 auto;">
+                                    Hover Me!
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <h4>CSS Animations</h4>
+                            <div class="code-block">
+                                <button class="copy-btn" onclick="copyCode(this)">
+                                    <i class="bi bi-clipboard"></i>Copy
+                                </button>
+                                <pre><code class="language-css">@keyframes slideIn {
+    0% {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.animated-element {
+    animation: slideIn 0.5s ease-out;
+}
+
+/* Advanced animation */
+.complex-animation {
+    animation-name: slideIn;
+    animation-duration: 2s;
+    animation-timing-function: ease-in-out;
+    animation-delay: 0.5s;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}</code></pre>
+                            </div>
+
+                            <div class="example-output">
+                                <div class="css-demo-gradient demo-box" style="width: 100px; height: 100px; margin: 0 auto;">
+                                    Animated!
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-box">
+                        <h6><i class="bi bi-info-circle text-info me-2"></i>Animation Performance Tips</h6>
+                        <ul class="mb-0">
+                            <li>Animate <code>transform</code> and <code>opacity</code> for best performance</li>
+                            <li>Use <code>will-change</code> property to hint browser optimization</li>
+                            <li>Avoid animating layout properties (width, height, position)</li>
+                            <li>Use CSS animations instead of JavaScript for simple effects</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- Advanced CSS -->
+                <section id="advanced" class="content-section">
+                    <div class="d-flex align-items-center mb-4">
+                        <h2 class="mb-0">Advanced CSS Techniques</h2>
+                        <span class="badge bg-dark ms-3 badge-level">Expert</span>
+                    </div>
+                    
+                    <p class="lead">Explore cutting-edge CSS features and advanced techniques for modern web development.</p>
+
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <h4>CSS Custom Properties (Variables)</h4>
+                            <div class="code-block">
+                                <button class="copy-btn" onclick="copyCode(this)">
+                                    <i class="bi bi-clipboard"></i>Copy
+                                </button>
+                                <pre><code class="language-css">:root {
+    --primary-color: #007bff;
+    --secondary-color: #6c757d;
+    --border-radius: 8px;
+    --box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.card {
+    background-color: var(--primary-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    
+    /* Fallback value */
+    color: var(--text-color, #333);
+}</code></pre>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <h4>CSS Functions</h4>
+                            <div class="code-block">
+                                <button class="copy-btn" onclick="copyCode(this)">
+                                    <i class="bi bi-clipboard"></i>Copy
+                                </button>
+                                <pre><code class="language-css">.advanced-functions {
+    /* Mathematical calculations */
+    width: calc(100% - 40px);
+    font-size: clamp(1rem, 2.5vw, 2rem);
+    
+    /* Minimum and maximum */
+    height: min(50vh, 400px);
+    margin: max(1rem, 5%);
+    
+    /* Color functions */
+    background: hsl(200, 50%, 50%);
+    border-color: color-mix(in srgb, blue 30%, red);
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4 class="mt-4">Container Queries</h4>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <i class="bi bi-clipboard"></i>Copy
+                        </button>
+                        <pre><code class="language-css">.card-container {
+    container-type: inline-size;
+    container-name: card;
+}
+
+@container card (min-width: 300px) {
+    .card {
+        display: flex;
+        flex-direction: row;
+    }
+}
+
+@container card (max-width: 299px) {
+    .card {
+        display: flex;
+        flex-direction: column;
+    }
+}</code></pre>
+                    </div>
+
+                    <div class="best-practice">
+                        <h6><i class="bi bi-lightbulb text-success me-2"></i>Modern CSS Features</h6>
+                        <ul class="mb-0">
+                            <li><strong>CSS Subgrid:</strong> Create nested grids that align with parent grid</li>
+                            <li><strong>CSS Scroll Snap:</strong> Create smooth scrolling experiences</li>
+                            <li><strong>CSS Logical Properties:</strong> Support for different writing modes</li>
+                            <li><strong>CSS Cascade Layers:</strong> Better control over CSS specificity</li>
+                        </ul>
+                    </div>
+
+                    <h4 class="mt-4">CSS Best Practices Summary</h4>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h6 class="card-title text-primary">Performance</h6>
+                                    <ul class="card-text small mb-0">
+                                        <li>Minimize CSS file size</li>
+                                        <li>Use efficient selectors</li>
+                                        <li>Avoid @import</li>
+                                        <li>Optimize animations</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h6 class="card-title text-success">Maintainability</h6>
+                                    <ul class="card-text small mb-0">
+                                        <li>Use consistent naming</li>
+                                        <li>Organize with comments</li>
+                                        <li>Avoid deep nesting</li>
+                                        <li>Use CSS variables</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h6 class="card-title text-info">Accessibility</h6>
+                                    <ul class="card-text small mb-0">
+                                        <li>Ensure color contrast</li>
+                                        <li>Support keyboard navigation</li>
+                                        <li>Use semantic HTML</li>
+                                        <li>Test with screen readers</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Conclusion -->
+                <section class="content-section">
+                    <div class="text-center">
+                        <h3 class="mb-3">🎉 Congratulations!</h3>
+                        <p class="lead">You've completed the CSS Learning Guide! You now have a solid foundation in CSS from basics to advanced techniques.</p>
+                        
+                        <div class="row g-3 mt-4">
+                            <div class="col-md-4">
+                                <a href="css-playground.html" class="btn btn-primary w-100">
+                                    <i class="bi bi-palette me-2"></i>Practice with CSS Playground
+                                </a>
+                            </div>
+                            <div class="col-md-4">
+                                <a href="flexbox-playground.html" class="btn btn-success w-100">
+                                    <i class="bi bi-grid-3x3 me-2"></i>Master Flexbox
+                                </a>
+                            </div>
+                            <div class="col-md-4">
+                                <a href="html-playground.html" class="btn btn-info w-100">
+                                    <i class="bi bi-code me-2"></i>Learn HTML
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back to Top Button -->
+    <button class="back-to-top" id="back-to-top" onclick="scrollToTop()">
+        <i class="bi bi-arrow-up"></i>
+    </button>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" 
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" 
+            crossorigin="anonymous"></script>
+    
+    <!-- Prism.js for syntax highlighting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+    <!-- Security Utils (MUST be loaded before main script) -->
+    <script>
+        // Security utility functions
+        const SecurityUtils = {
+            // Input validation and sanitization
+            sanitizeHTML: function(input) {
+                if (typeof input !== 'string') return '';
+                
+                // Remove dangerous tags and attributes
+                const div = document.createElement('div');
+                div.textContent = input;
+                let sanitized = div.innerHTML;
+                
+                // Remove script tags and event handlers
+                sanitized = sanitized.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+                sanitized = sanitized.replace(/on\w+\s*=\s*"[^"]*"/gi, '');
+                sanitized = sanitized.replace(/on\w+\s*=\s*'[^']*'/gi, '');
+                sanitized = sanitized.replace(/javascript:/gi, '');
+                
+                return sanitized;
+            },
+
+            // Rate limiting for user actions
+            rateLimiter: {
+                actions: new Map(),
+                
+                isAllowed: function(action, limit = 10, window = 60000) {
+                    const now = Date.now();
+                    const key = action;
+                    
+                    if (!this.actions.has(key)) {
+                        this.actions.set(key, []);
+                    }
+                    
+                    const timestamps = this.actions.get(key);
+                    
+                    // Remove old timestamps
+                    while (timestamps.length > 0 && now - timestamps[0] > window) {
+                        timestamps.shift();
+                    }
+                    
+                    if (timestamps.length >= limit) {
+                        return false;
+                    }
+                    
+                    timestamps.push(now);
+                    return true;
+                }
+            },
+
+            // Error handling
+            handleError: function(error, context = '') {
+                console.error(`Security Error ${context}:`, error);
+                
+                // Log to a secure endpoint in production
+                if (typeof window.reportError === 'function') {
+                    window.reportError({
+                        error: error.message,
+                        context: context,
+                        timestamp: new Date().toISOString(),
+                        userAgent: navigator.userAgent
+                    });
+                }
+            }
+        };
+
+        // Global error handlers
+        window.addEventListener('error', function(event) {
+            SecurityUtils.handleError(event.error, 'Global Error Handler');
+        });
+
+        window.addEventListener('unhandledrejection', function(event) {
+            SecurityUtils.handleError(event.reason, 'Unhandled Promise Rejection');
+        });
+    </script>
+
+    <!-- Main Application Script -->
+    <script>
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                initializeNavigation();
+                initializeScrollEffects();
+                updateProgress();
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Initialization');
+            }
+        });
+
+        // Navigation functionality with security
+        function initializeNavigation() {
+            try {
+                const navLinks = document.querySelectorAll('.guide-nav .nav-link');
+                const sections = document.querySelectorAll('.content-section');
+
+                // Add click handlers to navigation links
+                navLinks.forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        try {
+                            if (!SecurityUtils.rateLimiter.isAllowed('navClick', 30, 10000)) {
+                                console.warn('Rate limit exceeded for navigation');
+                                return;
+                            }
+
+                            e.preventDefault();
+                            const href = this.getAttribute('href');
+                            
+                            if (href && href.startsWith('#')) {
+                                const targetId = href.substring(1);
+                                const targetElement = document.getElementById(targetId);
+                                
+                                if (targetElement) {
+                                    // Update active navigation
+                                    navLinks.forEach(nav => nav.classList.remove('active'));
+                                    this.classList.add('active');
+                                    
+                                    // Smooth scroll to target
+                                    targetElement.scrollIntoView({
+                                        behavior: 'smooth',
+                                        block: 'start'
+                                    });
+                                    
+                                    // Update URL without triggering page reload
+                                    history.pushState(null, null, href);
+                                    
+                                    // Announce change for accessibility
+                                    announceChange(`Navigated to ${this.textContent.trim()}`);
+                                }
+                            }
+                        } catch (error) {
+                            SecurityUtils.handleError(error, 'Navigation Click');
+                        }
+                    });
+                });
+
+                // Handle browser back/forward buttons
+                window.addEventListener('popstate', function() {
+                    try {
+                        const hash = window.location.hash;
+                        if (hash) {
+                            const targetElement = document.querySelector(hash);
+                            if (targetElement) {
+                                targetElement.scrollIntoView({
+                                    behavior: 'smooth',
+                                    block: 'start'
+                                });
+                                updateActiveNavigation(hash);
+                            }
+                        }
+                    } catch (error) {
+                        SecurityUtils.handleError(error, 'Popstate Handler');
+                    }
+                });
+
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Initialize Navigation');
+            }
+        }
+
+        // Scroll effects and progress tracking
+        function initializeScrollEffects() {
+            try {
+                const progressIndicator = document.getElementById('progress-indicator');
+                const backToTopBtn = document.getElementById('back-to-top');
+                const navLinks = document.querySelectorAll('.guide-nav .nav-link');
+                const sections = document.querySelectorAll('.content-section');
+
+                window.addEventListener('scroll', function() {
+                    try {
+                        // Throttle scroll events for performance
+                        if (this.scrollThrottleTimer) return;
+                        this.scrollThrottleTimer = setTimeout(() => {
+                            this.scrollThrottleTimer = null;
+                            
+                            // Update progress indicator
+                            updateProgress();
+                            
+                            // Show/hide back to top button
+                            if (window.scrollY > 300) {
+                                backToTopBtn.classList.add('show');
+                            } else {
+                                backToTopBtn.classList.remove('show');
+                            }
+                            
+                            // Update active navigation based on scroll position
+                            updateActiveNavigationOnScroll(sections, navLinks);
+                            
+                        }, 16); // ~60fps
+                    } catch (error) {
+                        SecurityUtils.handleError(error, 'Scroll Handler');
+                    }
+                });
+
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Initialize Scroll Effects');
+            }
+        }
+
+        // Update progress indicator
+        function updateProgress() {
+            try {
+                const progressIndicator = document.getElementById('progress-indicator');
+                if (!progressIndicator) return;
+
+                const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+                const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                const scrolled = (winScroll / height) * 100;
+                
+                progressIndicator.style.width = Math.min(scrolled, 100) + '%';
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Update Progress');
+            }
+        }
+
+        // Update active navigation on scroll
+        function updateActiveNavigationOnScroll(sections, navLinks) {
+            try {
+                let currentSection = '';
+                const scrollPos = window.scrollY + 150; // Offset for header
+
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.offsetHeight;
+                    
+                    if (scrollPos >= sectionTop && scrollPos < sectionTop + sectionHeight) {
+                        currentSection = section.getAttribute('id');
+                    }
+                });
+
+                if (currentSection) {
+                    navLinks.forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href') === '#' + currentSection) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Update Active Navigation on Scroll');
+            }
+        }
+
+        // Update active navigation manually
+        function updateActiveNavigation(hash) {
+            try {
+                const navLinks = document.querySelectorAll('.guide-nav .nav-link');
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === hash) {
+                        link.classList.add('active');
+                    }
+                });
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Update Active Navigation');
+            }
+        }
+
+        // Copy code functionality with security
+        function copyCode(button) {
+            try {
+                if (!SecurityUtils.rateLimiter.isAllowed('copyCode', 10, 60000)) {
+                    console.warn('Rate limit exceeded for copy operations');
+                    return;
+                }
+
+                const codeBlock = button.parentElement.querySelector('code');
+                if (!codeBlock) return;
+
+                const codeText = codeBlock.textContent || codeBlock.innerText || '';
+                
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(codeText).then(() => {
+                        showCopySuccess(button);
+                    }).catch((error) => {
+                        SecurityUtils.handleError(error, 'Clipboard API');
+                        fallbackCopy(codeText, button);
+                    });
+                } else {
+                    fallbackCopy(codeText, button);
+                }
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Copy Code');
+            }
+        }
+
+        function fallbackCopy(text, button) {
+            try {
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                textArea.style.position = 'fixed';
+                textArea.style.opacity = '0';
+                textArea.style.left = '-9999px';
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showCopySuccess(button);
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Fallback Copy');
+            }
+        }
+
+        function showCopySuccess(button) {
+            try {
+                const originalHTML = button.innerHTML;
+                
+                button.classList.add('copied');
+                button.innerHTML = '<i class="bi bi-check"></i>Copied!';
+                
+                setTimeout(() => {
+                    button.classList.remove('copied');
+                    button.innerHTML = originalHTML;
+                }, 2000);
+                
+                showToast('Code copied to clipboard!', 'success');
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Copy Success Display');
+            }
+        }
+
+        // Scroll to top functionality
+        function scrollToTop() {
+            try {
+                if (!SecurityUtils.rateLimiter.isAllowed('scrollToTop', 10, 30000)) {
+                    console.warn('Rate limit exceeded for scroll to top');
+                    return;
+                }
+
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+                
+                // Update navigation to first item
+                const firstNavLink = document.querySelector('.guide-nav .nav-link');
+                if (firstNavLink) {
+                    document.querySelectorAll('.guide-nav .nav-link').forEach(link => 
+                        link.classList.remove('active')
+                    );
+                    firstNavLink.classList.add('active');
+                }
+                
+                announceChange('Scrolled to top of page');
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Scroll to Top');
+            }
+        }
+
+        // Toggle all examples visibility
+        function toggleAllExamples() {
+            try {
+                if (!SecurityUtils.rateLimiter.isAllowed('toggleExamples', 5, 30000)) {
+                    console.warn('Rate limit exceeded for toggle examples');
+                    return;
+                }
+
+                const examples = document.querySelectorAll('.example-container, .example-output');
+                const isVisible = examples[0] && examples[0].style.display !== 'none';
+                
+                examples.forEach(example => {
+                    example.style.display = isVisible ? 'none' : '';
+                });
+                
+                const toggleBtn = event.target;
+                const icon = toggleBtn.querySelector('i');
+                const text = toggleBtn.childNodes[toggleBtn.childNodes.length - 1];
+                
+                if (isVisible) {
+                    icon.className = 'bi bi-eye-slash me-1';
+                    text.textContent = 'Show Examples';
+                    showToast('Examples hidden', 'info');
+                } else {
+                    icon.className = 'bi bi-eye me-1';
+                    text.textContent = 'Hide Examples';
+                    showToast('Examples shown', 'info');
+                }
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Toggle Examples');
+            }
+        }
+
+        // Toast notification system
+        function showToast(message, type = 'info') {
+            try {
+                if (!SecurityUtils.rateLimiter.isAllowed('showToast', 20, 30000)) {
+                    return;
+                }
+
+                const toastContainer = document.getElementById('toast-container');
+                if (!toastContainer) return;
+
+                const toast = document.createElement('div');
+                toast.className = `toast-custom show`;
+                
+                const iconMap = {
+                    success: 'check-circle',
+                    warning: 'exclamation-triangle',
+                    error: 'x-circle',
+                    info: 'info-circle'
+                };
+
+                const colorMap = {
+                    success: '#28a745',
+                    warning: '#ffc107',
+                    error: '#dc3545',
+                    info: '#17a2b8'
+                };
+
+                toast.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-${iconMap[type]} me-2" style="color: ${colorMap[type]}; font-size: 1.2rem;"></i>
+                        <span>${SecurityUtils.sanitizeHTML(message)}</span>
+                    </div>
+                `;
+
+                toastContainer.appendChild(toast);
+
+                setTimeout(() => {
+                    toast.style.animation = 'slideIn 0.3s ease reverse';
+                    setTimeout(() => {
+                        if (toast.parentNode) {
+                            toastContainer.removeChild(toast);
+                        }
+                    }, 300);
+                }, 3000);
+
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Show Toast');
+            }
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            try {
+                // Ctrl/Cmd + K to focus search (if implemented)
+                if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                    e.preventDefault();
+                    showToast('Search functionality coming soon!', 'info');
+                }
+                
+                // Escape to scroll to top
+                if (e.key === 'Escape') {
+                    e.preventDefault();
+                    scrollToTop();
+                }
+                
+                // Arrow keys for navigation
+                if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+                    const activeLink = document.querySelector('.guide-nav .nav-link.active');
+                    if (activeLink) {
+                        const navLinks = Array.from(document.querySelectorAll('.guide-nav .nav-link'));
+                        const currentIndex = navLinks.indexOf(activeLink);
+                        let nextIndex;
+                        
+                        if (e.key === 'ArrowUp') {
+                            nextIndex = currentIndex > 0 ? currentIndex - 1 : navLinks.length - 1;
+                        } else {
+                            nextIndex = currentIndex < navLinks.length - 1 ? currentIndex + 1 : 0;
+                        }
+                        
+                        if (e.ctrlKey || e.metaKey) {
+                            e.preventDefault();
+                            navLinks[nextIndex].click();
+                        }
+                    }
+                }
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Keyboard Shortcuts');
+            }
+        });
+
+        // Accessibility announcements
+        function announceChange(message) {
+            try {
+                const announcement = document.createElement('div');
+                announcement.setAttribute('aria-live', 'polite');
+                announcement.setAttribute('aria-atomic', 'true');
+                announcement.className = 'visually-hidden';
+                announcement.textContent = SecurityUtils.sanitizeHTML(message);
+                document.body.appendChild(announcement);
+                
+                setTimeout(() => {
+                    if (announcement.parentNode) {
+                        document.body.removeChild(announcement);
+                    }
+                }, 1000);
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Accessibility Announcement');
+            }
+        }
+
+        // Enhanced interactive features
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                // Add hover effects to demo boxes
+                const demoBoxes = document.querySelectorAll('.demo-box');
+                demoBoxes.forEach(box => {
+                    box.addEventListener('mouseenter', function() {
+                        this.style.transform = 'scale(1.05) translateY(-5px)';
+                    });
+                    
+                    box.addEventListener('mouseleave', function() {
+                        this.style.transform = '';
+                    });
+                });
+
+                // Add click effects to cards
+                const cards = document.querySelectorAll('.card');
+                cards.forEach(card => {
+                    card.addEventListener('click', function(e) {
+                        if (e.target.tagName !== 'A' && e.target.tagName !== 'BUTTON') {
+                            this.style.transform = 'scale(0.98)';
+                            setTimeout(() => {
+                                this.style.transform = '';
+                            }, 150);
+                        }
+                    });
+                });
+
+                // Lazy load code highlighting for performance
+                const codeBlocks = document.querySelectorAll('pre code');
+                const observerOptions = {
+                    root: null,
+                    rootMargin: '50px',
+                    threshold: 0.1
+                };
+
+                const codeObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            // Code highlighting is handled by Prism.js automatically
+                            codeObserver.unobserve(entry.target);
+                        }
+                    });
+                }, observerOptions);
+
+                codeBlocks.forEach(block => {
+                    codeObserver.observe(block.parentElement);
+                });
+
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Enhanced Features');
+            }
+        });
+
+        // Performance monitoring
+        if ('performance' in window && 'mark' in performance) {
+            performance.mark('css-guide-loaded');
+        }
+    </script>
+
+    <!-- Error Boundary and Monitoring -->
+    <script>
+        // Additional security monitoring
+        (function() {
+            'use strict';
+            
+            // Monitor for suspicious activity
+            let suspiciousActivity = 0;
+            const MAX_SUSPICIOUS_ACTIVITY = 10;
+            
+            // Monitor DOM modifications
+            const observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    // Check for suspicious script injections
+                    if (mutation.type === 'childList') {
+                        mutation.addedNodes.forEach(function(node) {
+                            if (node.nodeType === Node.ELEMENT_NODE) {
+                                if (node.tagName === 'SCRIPT' || 
+                                    node.innerHTML.includes('<script') ||
+                                    node.innerHTML.includes('javascript:') ||
+                                    node.innerHTML.includes('data:text/html')) {
+                                    suspiciousActivity++;
+                                    console.warn('Suspicious content detected and blocked');
+                                    node.remove();
+                                    
+                                    if (suspiciousActivity >= MAX_SUSPICIOUS_ACTIVITY) {
+                                        console.error('Maximum suspicious activity threshold reached');
+                                        // Could implement additional security measures here
+                                    }
+                                }
+                            }
+                        });
+                    }
+                });
+            });
+
+            // Start observing
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true,
+                characterData: true
+            });
+
+            // Content Security Policy violation handler
+            document.addEventListener('securitypolicyviolation', function(event) {
+                SecurityUtils.handleError({
+                    message: 'CSP Violation',
+                    violatedDirective: event.violatedDirective,
+                    blockedURI: event.blockedURI,
+                    lineNumber: event.lineNumber,
+                    sourceFile: event.sourceFile
+                }, 'CSP Violation');
+            });
+
+            // Performance monitoring
+            if ('performance' in window && 'mark' in performance) {
+                performance.mark('css-guide-security-loaded');
+            }
+        })();
+    </script>
+</body>
+</html>

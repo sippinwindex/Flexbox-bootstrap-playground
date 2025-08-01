@@ -1,482 +1,696 @@
 /**
- * error-boundary.js - Global Error Handling and Performance Monitoring
- * Handles all application errors with user-friendly feedback
+ * error-boundary.js - Enhanced Global Error Handling and Security Monitoring
+ * Comprehensive error handling with security features and threat detection
  */
 
-class GlobalErrorBoundary {
+class EnhancedGlobalErrorBoundary {
     constructor() {
         this.errorLog = [];
-        this.maxErrors = 50;
+        this.securityLog = [];
+        this.performanceMetrics = new Map();
+        this.maxErrors = 100;
+        this.maxSecurityEvents = 50;
+        this.suspiciousActivityThreshold = 10;
+        this.rateLimiter = new Map();
+        
         this.setupErrorHandling();
+        this.setupSecurityMonitoring();
         this.notificationContainer = this.createNotificationContainer();
+        this.initializeSecurityUtils();
+        
+        console.log('🛡️ Enhanced Error Boundary initialized with security monitoring');
     }
     
     setupErrorHandling() {
-        // Catch JavaScript errors
+        // Enhanced JavaScript error handling
         window.addEventListener('error', (event) => {
             this.handleError(event.error, {
                 type: 'javascript_error',
                 source: event.filename,
                 line: event.lineno,
                 column: event.colno,
-                message: event.message
+                message: event.message,
+                userAgent: navigator.userAgent,
+                timestamp: Date.now()
             });
         });
         
-        // Catch unhandled promise rejections
+        // Enhanced promise rejection handling
         window.addEventListener('unhandledrejection', (event) => {
             this.handleError(event.reason, {
                 type: 'unhandled_promise_rejection',
-                promise: event.promise
+                promise: event.promise,
+                timestamp: Date.now()
             });
         });
         
-        // Catch resource loading errors
+        // Resource loading error handling with security checks
         window.addEventListener('error', (event) => {
             if (event.target !== window) {
                 this.handleResourceError(event);
             }
         }, true);
+
+        // CSP violation detection
+        document.addEventListener('securitypolicyviolation', (event) => {
+            this.handleSecurityViolation(event);
+        });
     }
-    
+
+    setupSecurityMonitoring() {
+        // DOM mutation monitoring for security threats
+        if (window.MutationObserver) {
+            this.mutationObserver = new MutationObserver((mutations) => {
+                this.checkDOMMutations(mutations);
+            });
+            
+            this.mutationObserver.observe(document.body, {
+                childList: true,
+                subtree: true,
+                attributes: true,
+                attributeFilter: ['onclick', 'onload', 'onerror', 'src', 'href']
+            });
+        }
+
+        // Monitor console for suspicious activity
+        this.monitorConsole();
+
+        // Performance monitoring
+        this.setupPerformanceMonitoring();
+
+        // Network request monitoring
+        this.monitorNetworkRequests();
+    }
+
+    initializeSecurityUtils() {
+        // Rate limiting for various actions
+        this.actionLimits = {
+            error_notifications: { max: 20, window: 60000 }, // 20 per minute
+            security_violations: { max: 5, window: 30000 },  // 5 per 30 seconds
+            dom_mutations: { max: 100, window: 10000 },      // 100 per 10 seconds
+            console_warnings: { max: 50, window: 60000 }     // 50 per minute
+        };
+    }
+
+    // Enhanced error handling with security context
     handleError(error, context = {}) {
         try {
+            // Check for rate limiting
+            if (!this.checkRateLimit('error_notifications')) {
+                return false;
+            }
+
             const errorInfo = {
-                id: this.generateErrorId(),
+                id: this.generateSecureId(),
                 timestamp: new Date().toISOString(),
-                message: error?.message || String(error) || 'Unknown error',
-                stack: error?.stack || 'No stack trace available',
-                context,
+                message: this.sanitizeErrorMessage(error?.message || String(error) || 'Unknown error'),
+                stack: this.sanitizeStackTrace(error?.stack || 'No stack trace available'),
+                context: this.sanitizeContext(context),
                 userAgent: navigator.userAgent,
                 url: window.location.href,
-                userId: this.getUserId() // For debugging user-specific issues
+                userId: this.getUserId(),
+                sessionId: this.getSessionId(),
+                severity: this.calculateErrorSeverity(error, context),
+                securityRisk: this.assessSecurityRisk(error, context)
             };
             
-            // Add to error log
-            this.errorLog.push(errorInfo);
-            if (this.errorLog.length > this.maxErrors) {
-                this.errorLog.shift();
+            // Add to error log with size management
+            this.addToErrorLog(errorInfo);
+            
+            // Enhanced console logging with security context
+            if (errorInfo.securityRisk > 0.7) {
+                console.error('🚨 High Security Risk Error:', errorInfo);
+            } else if (errorInfo.severity === 'critical') {
+                console.error('❌ Critical Error:', errorInfo);
+            } else {
+                console.warn('⚠️ Application Error:', errorInfo);
             }
             
-            // Log to console for development
-            console.error('🚨 Application Error:', errorInfo);
+            // Show user notification with enhanced security
+            this.showSecureNotification(error, errorInfo);
             
-            // Show user notification
-            this.showUserNotification(error, errorInfo);
+            // Send to monitoring service with security classification
+            this.sendToSecureMonitoring(errorInfo);
             
-            // Send to monitoring service in production
-            this.sendToMonitoring(errorInfo);
+            // Check for attack patterns
+            this.analyzeForAttackPatterns(errorInfo);
+            
+            return true;
             
         } catch (handlerError) {
-            console.error('Error in error handler:', handlerError);
+            console.error('Error in enhanced error handler:', handlerError);
+            this.fallbackErrorHandling(error, handlerError);
         }
     }
-    
+
+    // Security violation handling
+    handleSecurityViolation(event) {
+        if (!this.checkRateLimit('security_violations')) {
+            return;
+        }
+
+        const violationInfo = {
+            id: this.generateSecureId(),
+            timestamp: new Date().toISOString(),
+            type: 'csp_violation',
+            violatedDirective: event.violatedDirective,
+            blockedURI: event.blockedURI,
+            originalPolicy: event.originalPolicy,
+            sourceFile: event.sourceFile,
+            lineNumber: event.lineNumber,
+            columnNumber: event.columnNumber,
+            disposition: event.disposition,
+            severity: 'high',
+            securityRisk: 0.9
+        };
+
+        this.addToSecurityLog(violationInfo);
+        console.error('🚨 Security Policy Violation:', violationInfo);
+        
+        // Show critical security notification
+        this.showSecurityAlert(violationInfo);
+        
+        // Immediate security response
+        this.handleSecurityIncident(violationInfo);
+    }
+
+    // DOM mutation security checking
+    checkDOMMutations(mutations) {
+        if (!this.checkRateLimit('dom_mutations')) {
+            return;
+        }
+
+        const suspiciousPatterns = [
+            /javascript:/i,
+            /vbscript:/i,
+            /data:text\/html/i,
+            /<script/i,
+            /on\w+\s*=/i,
+            /eval\s*\(/i,
+            /document\.write/i
+        ];
+
+        mutations.forEach(mutation => {
+            if (mutation.type === 'childList') {
+                mutation.addedNodes.forEach(node => {
+                    if (node.nodeType === Node.ELEMENT_NODE) {
+                        this.scanElementForThreats(node, suspiciousPatterns);
+                    }
+                });
+            } else if (mutation.type === 'attributes') {
+                this.scanAttributeForThreats(mutation.target, mutation.attributeName);
+            }
+        });
+    }
+
+    // Scan elements for security threats
+    scanElementForThreats(element, patterns) {
+        try {
+            // Check element content
+            const content = element.innerHTML || element.textContent || '';
+            const hasThreats = patterns.some(pattern => pattern.test(content));
+            
+            if (hasThreats) {
+                this.reportSecurityThreat({
+                    type: 'suspicious_dom_content',
+                    element: element.tagName,
+                    content: content.substring(0, 200), // Limited for security
+                    location: window.location.href
+                });
+                
+                // Neutralize threat
+                this.neutralizeThreat(element);
+            }
+
+            // Check attributes
+            if (element.attributes) {
+                Array.from(element.attributes).forEach(attr => {
+                    if (patterns.some(pattern => pattern.test(attr.value))) {
+                        this.reportSecurityThreat({
+                            type: 'suspicious_attribute',
+                            element: element.tagName,
+                            attribute: attr.name,
+                            value: attr.value.substring(0, 100)
+                        });
+                        
+                        // Remove suspicious attribute
+                        element.removeAttribute(attr.name);
+                    }
+                });
+            }
+        } catch (error) {
+            console.warn('Error scanning element for threats:', error);
+        }
+    }
+
+    // Enhanced resource error handling
     handleResourceError(event) {
         const element = event.target;
         const errorInfo = {
             type: 'resource_error',
             tagName: element.tagName,
-            src: element.src || element.href,
-            message: `Failed to load ${element.tagName.toLowerCase()}: ${element.src || element.href}`,
-            timestamp: new Date().toISOString()
+            src: this.sanitizeURL(element.src || element.href),
+            message: `Failed to load ${element.tagName.toLowerCase()}`,
+            timestamp: new Date().toISOString(),
+            securityRisk: this.assessResourceSecurityRisk(element)
         };
         
-        console.warn('Resource loading error:', errorInfo);
+        console.warn('📦 Resource loading error:', errorInfo);
+        this.addToErrorLog(errorInfo);
         
-        // Handle specific resource types
+        // Handle specific resource types with security considerations
         if (element.tagName === 'IMG') {
-            this.handleImageError(element);
+            this.handleSecureImageError(element);
         } else if (element.tagName === 'SCRIPT') {
-            this.handleScriptError(element);
+            this.handleSecureScriptError(element);
+        } else if (element.tagName === 'LINK') {
+            this.handleSecureLinkError(element);
         }
     }
-    
-    handleImageError(imgElement) {
-        // Replace broken image with placeholder
-        imgElement.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgZmlsbD0iI2Y4ZjlmYSIgc3Ryb2tlPSIjZGVlMmU2IiBzdHJva2Utd2lkdGg9IjIiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzZjNzU3ZCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiPkltYWdlIE5vdCBGb3VuZDwvdGV4dD48L3N2Zz4=';
+
+    // Secure image error handling
+    handleSecureImageError(imgElement) {
+        // Replace with secure placeholder
+        const secureplaceholder = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgZmlsbD0iI2Y4ZjlmYSIgc3Ryb2tlPSIjZGVlMmU2IiBzdHJva2Utd2lkdGg9IjIiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzZjNzU3ZCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiPkltYWdlIE5vdCBGb3VuZDwvdGV4dD48L3N2Zz4=';
+        
+        imgElement.src = secureplaceholder;
         imgElement.alt = 'Image failed to load';
-        imgElement.classList.add('error-image');
+        imgElement.classList.add('error-image', 'security-safe');
+        imgElement.onerror = null; // Prevent infinite loops
     }
-    
-    handleScriptError(scriptElement) {
-        console.error(`Failed to load script: ${scriptElement.src}`);
-        this.showUserNotification(
-            new Error('Failed to load required script'),
-            { type: 'script_error', src: scriptElement.src }
+
+    // Secure script error handling
+    handleSecureScriptError(scriptElement) {
+        const errorInfo = {
+            type: 'script_load_failure',
+            src: this.sanitizeURL(scriptElement.src),
+            async: scriptElement.async,
+            defer: scriptElement.defer,
+            crossOrigin: scriptElement.crossOrigin
+        };
+        
+        console.error('📜 Script loading failed:', errorInfo);
+        
+        // Remove failed script to prevent security issues
+        if (scriptElement.parentNode) {
+            scriptElement.parentNode.removeChild(scriptElement);
+        }
+        
+        this.showSecureNotification(
+            new Error('Required script failed to load'),
+            { type: 'script_error', ...errorInfo }
         );
     }
-    
-    showUserNotification(error, errorInfo) {
+
+    // Performance monitoring with security context
+    setupPerformanceMonitoring() {
+        if (window.PerformanceObserver) {
+            try {
+                // Monitor various performance metrics
+                const perfObserver = new PerformanceObserver((list) => {
+                    list.getEntries().forEach(entry => {
+                        this.recordPerformanceMetric(entry);
+                    });
+                });
+                
+                perfObserver.observe({ 
+                    entryTypes: ['paint', 'largest-contentful-paint', 'first-input', 'layout-shift'] 
+                });
+                
+            } catch (error) {
+                console.warn('Performance observer setup failed:', error);
+            }
+        }
+
+        // Memory monitoring with leak detection
+        if (performance.memory) {
+            this.memoryMonitorInterval = setInterval(() => {
+                this.checkMemoryUsage();
+            }, 30000);
+        }
+    }
+
+    // Enhanced notification system with security features
+    showSecureNotification(error, errorInfo) {
         try {
-            const notification = this.createNotificationElement(error, errorInfo);
+            if (!this.checkRateLimit('error_notifications')) {
+                return;
+            }
+
+            const notification = this.createSecureNotificationElement(error, errorInfo);
             this.notificationContainer.appendChild(notification);
             
-            // Show notification
-            setTimeout(() => notification.classList.add('show'), 100);
+            // Animate in
+            requestAnimationFrame(() => {
+                notification.classList.add('show');
+            });
             
-            // Auto-dismiss after 5 seconds for non-critical errors
-            if (!this.isCriticalError(error)) {
-                setTimeout(() => this.dismissNotification(notification), 5000);
+            // Auto-dismiss based on severity
+            const dismissTime = this.calculateDismissTime(errorInfo);
+            if (dismissTime > 0) {
+                setTimeout(() => this.dismissNotification(notification), dismissTime);
             }
             
         } catch (notificationError) {
-            console.error('Error showing notification:', notificationError);
-            // Fallback to alert for critical errors
-            if (this.isCriticalError(error)) {
-                alert(`Something went wrong: ${error.message || 'Unknown error'}`);
-            }
+            console.error('Error showing secure notification:', notificationError);
+            this.fallbackNotification(error);
         }
     }
-    
+
+    // Create enhanced notification container
     createNotificationContainer() {
-        let container = document.getElementById('notification-container');
+        let container = document.getElementById('secure-notification-container');
         if (!container) {
             container = document.createElement('div');
-            container.id = 'notification-container';
-            container.className = 'notification-container';
+            container.id = 'secure-notification-container';
+            container.className = 'secure-notification-container';
             container.style.cssText = `
                 position: fixed;
                 top: 20px;
                 right: 20px;
-                z-index: 10000;
+                z-index: 999999;
                 pointer-events: none;
-                max-width: 400px;
+                max-width: 420px;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             `;
-            document.body.appendChild(container);
+            
+            // Security: Only append if body exists
+            if (document.body) {
+                document.body.appendChild(container);
+            } else {
+                document.addEventListener('DOMContentLoaded', () => {
+                    document.body.appendChild(container);
+                });
+            }
         }
         return container;
     }
-    
-    createNotificationElement(error, errorInfo) {
-        const notification = document.createElement('div');
-        notification.className = `notification ${this.getNotificationSeverity(error)}`;
-        notification.style.cssText = `
-            background: white;
-            border: 1px solid #dee2e6;
-            border-radius: 8px;
-            padding: 16px;
-            margin-bottom: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            transform: translateX(100%);
-            transition: transform 0.3s ease;
-            pointer-events: auto;
-            position: relative;
-        `;
+
+    // Utility methods for security
+    sanitizeErrorMessage(message) {
+        if (typeof message !== 'string') return 'Invalid error message';
         
-        const severity = this.getNotificationSeverity(error);
-        const severityColors = {
-            error: '#dc3545',
-            warning: '#ffc107',
-            info: '#17a2b8'
+        // Remove potentially sensitive information
+        return message
+            .replace(/password\s*[=:]\s*[^\s]+/gi, 'password=***')
+            .replace(/token\s*[=:]\s*[^\s]+/gi, 'token=***')
+            .replace(/key\s*[=:]\s*[^\s]+/gi, 'key=***')
+            .replace(/secret\s*[=:]\s*[^\s]+/gi, 'secret=***')
+            .substring(0, 500); // Limit length
+    }
+
+    sanitizeStackTrace(stack) {
+        if (typeof stack !== 'string') return 'No stack trace';
+        
+        // Remove sensitive paths and limit size
+        return stack
+            .replace(/file:\/\/[^\s]+/g, '[local-file]')
+            .replace(/C:\\[^\s]+/g, '[local-path]')
+            .replace(/\/Users\/[^\s]+/g, '[user-path]')
+            .substring(0, 2000);
+    }
+
+    sanitizeURL(url) {
+        if (!url || typeof url !== 'string') return '';
+        
+        try {
+            const urlObj = new URL(url);
+            return `${urlObj.protocol}//${urlObj.host}${urlObj.pathname}`;
+        } catch {
+            return url.replace(/[<>'"]/g, ''); // Basic sanitization
+        }
+    }
+
+    sanitizeContext(context) {
+        if (!context || typeof context !== 'object') return {};
+        
+        const sanitized = {};
+        Object.keys(context).forEach(key => {
+            if (typeof context[key] === 'string') {
+                sanitized[key] = context[key].substring(0, 200);
+            } else if (typeof context[key] === 'number') {
+                sanitized[key] = context[key];
+            } else {
+                sanitized[key] = '[object]';
+            }
+        });
+        
+        return sanitized;
+    }
+
+    // Rate limiting implementation
+    checkRateLimit(action) {
+        const now = Date.now();
+        const limit = this.actionLimits[action];
+        
+        if (!limit) return true;
+        
+        if (!this.rateLimiter.has(action)) {
+            this.rateLimiter.set(action, []);
+        }
+        
+        const timestamps = this.rateLimiter.get(action);
+        
+        // Remove old timestamps
+        while (timestamps.length > 0 && timestamps[0] < now - limit.window) {
+            timestamps.shift();
+        }
+        
+        // Check if limit exceeded
+        if (timestamps.length >= limit.max) {
+            console.warn(`Rate limit exceeded for action: ${action}`);
+            return false;
+        }
+        
+        // Add current timestamp
+        timestamps.push(now);
+        return true;
+    }
+
+    // Security risk assessment
+    assessSecurityRisk(error, context) {
+        let risk = 0;
+        
+        const message = error?.message?.toLowerCase() || '';
+        const stack = error?.stack?.toLowerCase() || '';
+        
+        // High-risk patterns
+        if (message.includes('script') || message.includes('eval')) risk += 0.3;
+        if (message.includes('injection') || message.includes('xss')) risk += 0.4;
+        if (stack.includes('javascript:') || stack.includes('data:')) risk += 0.3;
+        if (context.type === 'csp_violation') risk += 0.5;
+        
+        return Math.min(risk, 1.0);
+    }
+
+    // Generate secure IDs
+    generateSecureId() {
+        const timestamp = Date.now().toString(36);
+        const random = Math.random().toString(36).substring(2);
+        const counter = (this.errorLog.length + this.securityLog.length).toString(36);
+        return `${timestamp}-${random}-${counter}`;
+    }
+
+    // Enhanced error logging with size management
+    addToErrorLog(errorInfo) {
+        this.errorLog.push(errorInfo);
+        
+        // Manage log size
+        if (this.errorLog.length > this.maxErrors) {
+            this.errorLog.splice(0, this.errorLog.length - this.maxErrors);
+        }
+    }
+
+    // Security event logging
+    addToSecurityLog(securityInfo) {
+        this.securityLog.push(securityInfo);
+        
+        if (this.securityLog.length > this.maxSecurityEvents) {
+            this.securityLog.splice(0, this.securityLog.length - this.maxSecurityEvents);
+        }
+    }
+
+    // Public API for security monitoring
+    getSecurityReport() {
+        return {
+            timestamp: new Date().toISOString(),
+            errorCount: this.errorLog.length,
+            securityEventCount: this.securityLog.length,
+            highRiskEvents: this.securityLog.filter(event => event.securityRisk > 0.7).length,
+            recentErrors: this.errorLog.slice(-5),
+            recentSecurityEvents: this.securityLog.slice(-5),
+            performanceMetrics: Object.fromEntries(this.performanceMetrics),
+            memoryUsage: this.getCurrentMemoryInfo()
         };
-        
-        notification.style.borderLeftColor = severityColors[severity];
-        notification.style.borderLeftWidth = '4px';
-        
-        const title = this.getErrorTitle(error);
-        const message = this.getErrorMessage(error);
-        const actions = this.getErrorActions(error, errorInfo);
-        
-        notification.innerHTML = `
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
-                <h4 style="margin: 0; color: #495057; font-size: 14px; font-weight: 600;">${title}</h4>
-                <button onclick="this.parentElement.parentElement.remove()" 
-                        style="background: none; border: none; font-size: 18px; cursor: pointer; padding: 0; color: #6c757d;"
-                        aria-label="Dismiss notification">×</button>
-            </div>
-            <p style="margin: 0 0 8px 0; color: #6c757d; font-size: 13px; line-height: 1.4;">${message}</p>
-            ${actions ? `<div style="margin-top: 12px;">${actions}</div>` : ''}
-        `;
-        
-        return notification;
     }
-    
-    getNotificationSeverity(error) {
-        const message = error?.message?.toLowerCase() || '';
-        
-        if (message.includes('network') || message.includes('fetch')) {
-            return 'warning';
-        }
-        
-        if (this.isCriticalError(error)) {
-            return 'error';
-        }
-        
-        return 'info';
-    }
-    
-    isCriticalError(error) {
-        const criticalPatterns = [
-            'cannot read properties of undefined',
-            'is not a function',
-            'script error',
-            'out of memory',
-            'maximum call stack'
-        ];
-        
-        const message = error?.message?.toLowerCase() || '';
-        return criticalPatterns.some(pattern => message.includes(pattern));
-    }
-    
-    getErrorTitle(error) {
-        if (this.isCriticalError(error)) {
-            return '⚠️ Something went wrong';
-        }
-        return '🔧 Minor issue detected';
-    }
-    
-    getErrorMessage(error) {
-        const message = error?.message || 'An unknown error occurred';
-        
-        if (message.includes('Cannot read properties of undefined')) {
-            return 'A component is trying to access data that isn\'t ready yet. The app should recover automatically.';
-        }
-        
-        if (message.includes('is not a function')) {
-            return 'A feature may be temporarily unavailable. Try refreshing if the issue persists.';
-        }
-        
-        if (message.includes('Failed to fetch') || message.includes('NetworkError')) {
-            return 'Having trouble loading external content. Check your internet connection.';
-        }
-        
-        return 'The application will try to recover automatically. You can continue using other features.';
-    }
-    
-    getErrorActions(error, errorInfo) {
-        if (this.isCriticalError(error)) {
-            return `
-                <button onclick="location.reload()" 
-                        style="background: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; margin-right: 8px;">
-                    Refresh Page
-                </button>
-                <button onclick="this.parentElement.parentElement.remove()" 
-                        style="background: #6c757d; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px;">
-                    Dismiss
-                </button>
-            `;
-        }
-        
-        return null;
-    }
-    
-    dismissNotification(notification) {
+
+    // Cleanup with security considerations
+    cleanup() {
         try {
-            notification.style.transform = 'translateX(100%)';
-            setTimeout(() => {
-                if (notification.parentElement) {
-                    notification.parentElement.removeChild(notification);
-                }
-            }, 300);
-        } catch (error) {
-            console.error('Error dismissing notification:', error);
-        }
-    }
-    
-    generateErrorId() {
-        return Date.now().toString(36) + Math.random().toString(36).substr(2);
-    }
-    
-    getUserId() {
-        // Generate a session-based user ID for debugging
-        let userId = sessionStorage.getItem('debug-user-id');
-        if (!userId) {
-            userId = 'user-' + Date.now().toString(36) + Math.random().toString(36).substr(2);
-            sessionStorage.setItem('debug-user-id', userId);
-        }
-        return userId;
-    }
-    
-    sendToMonitoring(errorInfo) {
-        // Only send in production environment
-        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-            return;
-        }
-        
-        try {
-            // Example monitoring service integration
-            if (window.gtag) {
-                window.gtag('event', 'exception', {
-                    description: errorInfo.message,
-                    fatal: this.isCriticalError({ message: errorInfo.message })
-                });
+            // Clear intervals
+            if (this.memoryMonitorInterval) {
+                clearInterval(this.memoryMonitorInterval);
             }
             
-            // Could also send to services like Sentry, LogRocket, etc.
+            // Disconnect observers
+            if (this.mutationObserver) {
+                this.mutationObserver.disconnect();
+            }
             
-        } catch (monitoringError) {
-            console.error('Error sending to monitoring service:', monitoringError);
+            // Clear sensitive data
+            this.errorLog = [];
+            this.securityLog = [];
+            this.rateLimiter.clear();
+            this.performanceMetrics.clear();
+            
+            console.log('🧹 Enhanced Error Boundary cleaned up securely');
+            
+        } catch (error) {
+            console.error('Error in enhanced cleanup:', error);
         }
     }
-    
-    // Public API methods
-    getErrorLog() {
-        return [...this.errorLog];
+
+    // Fallback methods for critical failures
+    fallbackErrorHandling(originalError, handlerError) {
+        try {
+            console.error('Fallback error handling activated:', {
+                original: originalError?.message,
+                handler: handlerError?.message
+            });
+            
+            // Simple notification without dependencies
+            if (window.alert && this.calculateErrorSeverity(originalError) === 'critical') {
+                alert('A critical error occurred. Please refresh the page.');
+            }
+        } catch (fallbackError) {
+            // Last resort - log to console only
+            console.error('Total error handling failure:', fallbackError);
+        }
     }
-    
-    clearErrorLog() {
-        this.errorLog = [];
-        console.log('Error log cleared');
-    }
-    
-    reportCustomError(message, context = {}) {
-        this.handleError(new Error(message), { type: 'custom', ...context });
+
+    getCurrentMemoryInfo() {
+        if (!performance.memory) return null;
+        
+        return {
+            used: Math.round(performance.memory.usedJSHeapSize / 1048576),
+            total: Math.round(performance.memory.totalJSHeapSize / 1048576),
+            limit: Math.round(performance.memory.jsHeapSizeLimit / 1048576)
+        };
     }
 }
 
-// Performance monitoring utilities
-class PerformanceMonitor {
+// Enhanced Performance Monitor with security features
+class SecurePerformanceMonitor {
     constructor() {
         this.metrics = new Map();
         this.memorySnapshots = [];
+        this.securityMetrics = new Map();
         this.observers = [];
-        this.startMonitoring();
+        this.thresholds = {
+            memoryGrowth: 1048576, // 1MB per minute
+            slowOperation: 100,     // 100ms
+            excessiveErrors: 10     // 10 errors per minute
+        };
+        
+        this.startSecureMonitoring();
     }
     
-    startMonitoring() {
-        // Memory monitoring (if available)
+    startSecureMonitoring() {
+        // Secure memory monitoring
         if (performance.memory) {
             this.memoryInterval = setInterval(() => {
-                this.captureMemorySnapshot();
-            }, 30000); // Every 30 seconds
+                this.captureSecureMemorySnapshot();
+            }, 30000);
         }
         
-        // Performance Observer for paint metrics
-        if (window.PerformanceObserver) {
-            try {
-                const paintObserver = new PerformanceObserver((list) => {
-                    for (const entry of list.getEntries()) {
-                        console.log(`🎨 ${entry.name}: ${Math.round(entry.startTime)}ms`);
-                    }
+        // Performance observers with security validation
+        this.setupSecureObservers();
+    }
+    
+    setupSecureObservers() {
+        if (!window.PerformanceObserver) return;
+        
+        try {
+            // Paint timing observer
+            const paintObserver = new PerformanceObserver((list) => {
+                list.getEntries().forEach(entry => {
+                    console.log(`🎨 ${entry.name}: ${Math.round(entry.startTime)}ms`);
+                    this.recordSecureMetric('paint', entry.name, entry.startTime);
                 });
-                paintObserver.observe({ entryTypes: ['paint'] });
-                this.observers.push(paintObserver);
-            } catch (error) {
-                console.warn('Paint observer not supported:', error);
-            }
+            });
+            paintObserver.observe({ entryTypes: ['paint'] });
+            this.observers.push(paintObserver);
+            
+        } catch (error) {
+            console.warn('Secure observer setup failed:', error);
         }
     }
     
-    captureMemorySnapshot() {
+    recordSecureMetric(category, name, value) {
+        if (!this.metrics.has(category)) {
+            this.metrics.set(category, new Map());
+        }
+        
+        const categoryMetrics = this.metrics.get(category);
+        if (!categoryMetrics.has(name)) {
+            categoryMetrics.set(name, []);
+        }
+        
+        const metrics = categoryMetrics.get(name);
+        metrics.push({
+            value,
+            timestamp: Date.now()
+        });
+        
+        // Limit metric history
+        if (metrics.length > 100) {
+            metrics.splice(0, 50);
+        }
+    }
+    
+    captureSecureMemorySnapshot() {
         if (!performance.memory) return;
         
         const snapshot = {
             timestamp: Date.now(),
-            usedJSHeapSize: performance.memory.usedJSHeapSize,
-            totalJSHeapSize: performance.memory.totalJSHeapSize,
-            jsHeapSizeLimit: performance.memory.jsHeapSizeLimit
+            used: performance.memory.usedJSHeapSize,
+            total: performance.memory.totalJSHeapSize,
+            limit: performance.memory.jsHeapSizeLimit
         };
         
         this.memorySnapshots.push(snapshot);
         
-        // Keep only last 100 snapshots
-        if (this.memorySnapshots.length > 100) {
+        if (this.memorySnapshots.length > 50) {
             this.memorySnapshots.shift();
         }
         
-        this.checkForMemoryLeaks();
+        this.analyzeMemoryTrends();
     }
     
-    checkForMemoryLeaks() {
-        if (this.memorySnapshots.length < 10) return;
+    analyzeMemoryTrends() {
+        if (this.memorySnapshots.length < 3) return;
         
-        const recent = this.memorySnapshots.slice(-10);
-        const first = recent[0];
-        const last = recent[recent.length - 1];
+        const recent = this.memorySnapshots.slice(-3);
+        const growth = recent[2].used - recent[0].used;
+        const timeSpan = recent[2].timestamp - recent[0].timestamp;
         
-        const memoryGrowth = last.usedJSHeapSize - first.usedJSHeapSize;
-        const timeElapsed = last.timestamp - first.timestamp;
-        const growthRate = memoryGrowth / timeElapsed; // bytes per millisecond
-        
-        // Alert if growing more than 1MB per minute
-        if (growthRate > 17.3) { // ~1MB per minute
-            console.warn('🚨 Potential memory leak detected:', {
-                growthRate: `${(growthRate * 60000 / 1048576).toFixed(2)} MB/min`,
-                currentMemory: `${(last.usedJSHeapSize / 1048576).toFixed(2)} MB`
+        if (growth > this.thresholds.memoryGrowth && timeSpan < 60000) {
+            console.warn('🚨 Memory leak detected:', {
+                growth: `${(growth / 1048576).toFixed(2)} MB`,
+                timeSpan: `${timeSpan / 1000}s`
             });
-        }
-    }
-    
-    measureOperation(name, operation) {
-        const startTime = performance.now();
-        const startMemory = performance.memory?.usedJSHeapSize || 0;
-        
-        let result;
-        try {
-            result = operation();
-        } catch (error) {
-            console.error(`Operation "${name}" failed:`, error);
-            throw error;
-        }
-        
-        const endTime = performance.now();
-        const endMemory = performance.memory?.usedJSHeapSize || 0;
-        
-        const metric = {
-            duration: endTime - startTime,
-            memoryDelta: endMemory - startMemory,
-            timestamp: Date.now()
-        };
-        
-        if (!this.metrics.has(name)) {
-            this.metrics.set(name, []);
-        }
-        this.metrics.get(name).push(metric);
-        
-        // Log slow operations
-        if (metric.duration > 100) {
-            console.warn(`⏱️ Slow operation: "${name}" took ${metric.duration.toFixed(2)}ms`);
-        }
-        
-        return result;
-    }
-    
-    getPerformanceReport() {
-        const report = {
-            metrics: {},
-            memoryTrend: this.getMemoryTrend(),
-            currentMemory: this.getCurrentMemoryUsage(),
-            recommendations: []
-        };
-        
-        this.metrics.forEach((measurements, name) => {
-            const durations = measurements.map(m => m.duration);
-            const avgDuration = durations.reduce((a, b) => a + b, 0) / durations.length;
             
-            report.metrics[name] = {
-                count: measurements.length,
-                avgDuration: Math.round(avgDuration * 100) / 100,
-                maxDuration: Math.round(Math.max(...durations) * 100) / 100,
-                minDuration: Math.round(Math.min(...durations) * 100) / 100
-            };
-            
-            if (avgDuration > 50) {
-                report.recommendations.push(`Consider optimizing "${name}" operation (avg: ${avgDuration.toFixed(2)}ms)`);
-            }
-        });
-        
-        return report;
+            this.recordSecureMetric('security', 'memory_leak_warning', growth);
+        }
     }
     
-    getMemoryTrend() {
-        if (this.memorySnapshots.length < 2) return 'insufficient_data';
-        
-        const recent = this.memorySnapshots.slice(-5);
-        const growth = recent[recent.length - 1].usedJSHeapSize - recent[0].usedJSHeapSize;
-        
-        if (growth > 1048576) return 'increasing'; // More than 1MB growth
-        if (growth < -1048576) return 'decreasing';
-        return 'stable';
-    }
-    
-    getCurrentMemoryUsage() {
-        if (!performance.memory) return null;
-        
+    getSecurePerformanceReport() {
         return {
-            used: `${(performance.memory.usedJSHeapSize / 1048576).toFixed(2)} MB`,
-            total: `${(performance.memory.totalJSHeapSize / 1048576).toFixed(2)} MB`,
-            limit: `${(performance.memory.jsHeapSizeLimit / 1048576).toFixed(2)} MB`
+            timestamp: new Date().toISOString(),
+            memoryUsage: this.getCurrentMemoryUsage(),
+            metricsCount: this.metrics.size,
+            securityMetrics: Object.fromEntries(this.securityMetrics),
+            recentSnapshots: this.memorySnapshots.slice(-5)
         };
     }
     
@@ -489,18 +703,25 @@ class PerformanceMonitor {
             try {
                 observer.disconnect();
             } catch (error) {
-                console.error('Error disconnecting observer:', error);
+                console.error('Error disconnecting secure observer:', error);
             }
         });
         
         this.observers = [];
         this.metrics.clear();
+        this.securityMetrics.clear();
         this.memorySnapshots = [];
     }
 }
 
-// Export classes
+// Export enhanced classes with security features
 if (typeof window !== 'undefined') {
-    window.GlobalErrorBoundary = GlobalErrorBoundary;
-    window.PerformanceMonitor = PerformanceMonitor;
+    window.EnhancedGlobalErrorBoundary = EnhancedGlobalErrorBoundary;
+    window.SecurePerformanceMonitor = SecurePerformanceMonitor;
+    
+    // Auto-initialize if not in a module environment
+    if (!window.globalErrorBoundary) {
+        window.globalErrorBoundary = new EnhancedGlobalErrorBoundary();
+        window.performanceMonitor = new SecurePerformanceMonitor();
+    }
 }

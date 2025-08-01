@@ -2,28 +2,41 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HTML Learning Guide - Complete Reference</title>
+    <meta name="description" content="Complete HTML learning guide with interactive examples and modern security practices">
+    <meta name="keywords" content="HTML, learning, guide, tutorial, web development, security">
+    <title>HTML Learning Guide - Complete Secure Edition</title>
+    
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" 
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <!-- Prism.js for syntax highlighting -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    
     <style>
         :root {
             --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             --success-gradient: linear-gradient(135deg, #28a745, #20c997);
+            --warning-gradient: linear-gradient(135deg, #ffc107, #ff8c00);
+            --info-gradient: linear-gradient(135deg, #17a2b8, #20c997);
+            --danger-gradient: linear-gradient(135deg, #dc3545, #fd79a8);
             --bg-light: #f8f9fa;
             --border-color: #dee2e6;
             --text-muted: #6c757d;
             --shadow-sm: 0 2px 8px rgba(0,0,0,0.1);
             --shadow-md: 0 4px 15px rgba(0,0,0,0.15);
+            --shadow-lg: 0 8px 25px rgba(0,0,0,0.2);
         }
 
         body {
             font-family: system-ui, -apple-system, sans-serif;
             line-height: 1.6;
+            scroll-behavior: smooth;
         }
 
         .hero-section {
@@ -34,55 +47,118 @@
 
         .guide-nav {
             background: white;
-            border-radius: 8px;
+            border-radius: 12px;
             box-shadow: var(--shadow-sm);
             position: sticky;
             top: 100px;
             max-height: calc(100vh - 120px);
             overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #667eea #f1f1f1;
+        }
+
+        .guide-nav::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .guide-nav::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .guide-nav::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 3px;
         }
 
         .guide-nav .nav-link {
             color: #495057;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            margin: 2px 0;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            margin: 3px 0;
             transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            position: relative;
         }
 
-        .guide-nav .nav-link:hover,
+        .guide-nav .nav-link:hover {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            transform: translateX(5px);
+        }
+
         .guide-nav .nav-link.active {
             background: var(--primary-gradient);
             color: white;
+            transform: translateX(5px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .guide-nav .nav-link.active::after {
+            content: '';
+            position: absolute;
+            right: -8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-left: 8px solid #667eea;
         }
 
         .content-section {
             background: white;
-            border-radius: 8px;
+            border-radius: 12px;
             box-shadow: var(--shadow-sm);
-            padding: 2rem;
+            padding: 2.5rem;
             margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .content-section:hover {
+            box-shadow: var(--shadow-md);
         }
 
         .example-container {
             background: #f8f9fa;
             border: 1px solid var(--border-color);
-            border-radius: 8px;
+            border-radius: 12px;
             padding: 1.5rem;
-            margin: 1rem 0;
+            margin: 1.5rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .example-container::before {
+            content: 'Live Example';
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            background: #28a745;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
         }
 
         .example-output {
             background: white;
             border: 2px dashed #dee2e6;
-            border-radius: 6px;
-            padding: 1rem;
+            border-radius: 8px;
+            padding: 1.5rem;
             margin-top: 1rem;
+            min-height: 50px;
         }
 
         .code-block {
             position: relative;
-            margin: 1rem 0;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
         }
 
         .copy-btn {
@@ -92,18 +168,22 @@
             background: #28a745;
             color: white;
             border: none;
-            border-radius: 4px;
-            padding: 5px 10px;
+            border-radius: 6px;
+            padding: 6px 12px;
             font-size: 0.8rem;
             cursor: pointer;
             opacity: 0.8;
-            transition: all 0.2s;
+            transition: all 0.3s ease;
             z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
         }
 
         .copy-btn:hover {
             opacity: 1;
             transform: scale(1.05);
+            background: #218838;
         }
 
         .copy-btn.copied {
@@ -112,48 +192,193 @@
 
         .badge-level {
             font-size: 0.7rem;
-            padding: 0.25rem 0.5rem;
+            padding: 0.35rem 0.7rem;
+            border-radius: 12px;
         }
 
+        .best-practice {
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            border-left: 4px solid #28a745;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+            position: relative;
+        }
+
+        .best-practice::before {
+            content: '💡';
+            position: absolute;
+            left: -2px;
+            top: -2px;
+            font-size: 1.2rem;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+            border-left: 4px solid #ffc107;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+            position: relative;
+        }
+
+        .warning-box::before {
+            content: '⚠️';
+            position: absolute;
+            left: -2px;
+            top: -2px;
+            font-size: 1.2rem;
+        }
+
+        .error-box {
+            background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+            border-left: 4px solid #dc3545;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+            position: relative;
+        }
+
+        .error-box::before {
+            content: '❌';
+            position: absolute;
+            left: -2px;
+            top: -2px;
+            font-size: 1.2rem;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #d1ecf1, #bee5eb);
+            border-left: 4px solid #17a2b8;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+            position: relative;
+        }
+
+        .info-box::before {
+            content: 'ℹ️';
+            position: absolute;
+            left: -2px;
+            top: -2px;
+            font-size: 1.2rem;
+        }
+
+        /* Progress indicator */
         .progress-indicator {
-            height: 4px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 3px;
             background: var(--primary-gradient);
-            border-radius: 2px;
+            z-index: 9999;
             transition: width 0.3s ease;
         }
 
+        /* Toast notifications */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1050;
+        }
+
+        .toast-custom {
+            background: white;
+            border-radius: 8px;
+            box-shadow: var(--shadow-lg);
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            display: none;
+            min-width: 300px;
+        }
+
+        .toast-custom.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Back to top button */
+        .back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .back-to-top:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .back-to-top.show {
+            display: flex;
+        }
+
+        /* Table responsive styling */
         .table-responsive {
             border-radius: 8px;
             overflow: hidden;
             box-shadow: var(--shadow-sm);
         }
 
-        .best-practice {
-            background: #d4edda;
-            border-left: 4px solid #28a745;
-            padding: 1rem;
+        /* Component spacing */
+        .component-demo {
             margin: 1rem 0;
-            border-radius: 0 6px 6px 0;
         }
 
-        .warning-box {
-            background: #fff3cd;
-            border-left: 4px solid #ffc107;
-            padding: 1rem;
-            margin: 1rem 0;
-            border-radius: 0 6px 6px 0;
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .guide-nav {
+                position: static;
+                max-height: none;
+                margin-bottom: 2rem;
+            }
+            
+            .content-section {
+                padding: 1.5rem;
+            }
+            
+            .example-container {
+                padding: 1rem;
+            }
         }
 
-        .error-box {
-            background: #f8d7da;
-            border-left: 4px solid #dc3545;
-            padding: 1rem;
-            margin: 1rem 0;
-            border-radius: 0 6px 6px 0;
+        /* Code syntax highlighting enhancements */
+        pre[class*="language-"] {
+            margin: 0;
+            border-radius: 8px;
+        }
+
+        code[class*="language-"] {
+            font-size: 0.9rem;
+            line-height: 1.4;
         }
     </style>
 </head>
 <body>
+    <!-- Progress Indicator -->
+    <div class="progress-indicator" id="progress-indicator"></div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
 
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
@@ -175,19 +400,23 @@
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-8">
-                    <h1 class="display-5 fw-bold mb-3">HTML Learning Guide</h1>
-                    <p class="lead mb-4">Master HTML from basics to advanced semantic structures with practical examples and best practices.</p>
-                    <div class="d-flex gap-3">
-                        <a href="html-playground.html" class="btn btn-light">
+                    <h1 class="display-5 fw-bold mb-3">
+                        <i class="bi bi-code-slash me-3"></i>HTML Learning Guide
+                    </h1>
+                    <p class="lead mb-4">Master HTML from basics to advanced semantic structures with practical examples and modern security practices.</p>
+                    <div class="d-flex gap-3 flex-wrap">
+                        <a href="html-playground.html" class="btn btn-light btn-lg">
                             <i class="bi bi-play-fill me-2"></i>Try HTML Playground
                         </a>
-                        <a href="#getting-started" class="btn btn-outline-light">
+                        <a href="#getting-started" class="btn btn-outline-light btn-lg">
                             <i class="bi bi-book me-2"></i>Start Learning
                         </a>
                     </div>
                 </div>
                 <div class="col-lg-4 text-center">
-                    <i class="bi bi-code-slash display-1 opacity-75"></i>
+                    <div class="d-flex justify-content-center align-items-center" style="height: 200px;">
+                        <i class="bi bi-code-slash display-1 opacity-75"></i>
+                    </div>
                 </div>
             </div>
         </div>
@@ -198,8 +427,10 @@
             <!-- Navigation Sidebar -->
             <div class="col-lg-3">
                 <div class="guide-nav p-3">
-                    <h6 class="text-muted small text-uppercase mb-3">Table of Contents</h6>
-                    <nav class="nav flex-column">
+                    <h6 class="text-muted small text-uppercase mb-3 fw-bold">
+                        <i class="bi bi-list me-2"></i>Table of Contents
+                    </h6>
+                    <nav class="nav flex-column" id="guide-navigation">
                         <a class="nav-link active" href="#getting-started">
                             <i class="bi bi-play-circle me-2"></i>Getting Started
                         </a>
@@ -238,9 +469,16 @@
             <div class="col-lg-9">
                 <!-- Getting Started -->
                 <section id="getting-started" class="content-section">
-                    <div class="d-flex align-items-center mb-4">
-                        <h2 class="mb-0">Getting Started with HTML</h2>
-                        <span class="badge bg-success ms-3 badge-level">Beginner</span>
+                    <div class="d-flex align-items-center justify-content-between mb-4">
+                        <div class="d-flex align-items-center">
+                            <h2 class="mb-0">Getting Started with HTML</h2>
+                            <span class="badge bg-success ms-3 badge-level">Beginner</span>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-outline-primary btn-sm" onclick="toggleAllExamples()">
+                                <i class="bi bi-eye me-1"></i>Toggle Examples
+                            </button>
+                        </div>
                     </div>
                     
                     <p class="lead">HTML (HyperText Markup Language) is the foundation of web development. It provides structure and meaning to web content through elements and attributes.</p>
@@ -252,16 +490,22 @@
                             <li>Essential elements for text, media, and forms</li>
                             <li>Semantic HTML for accessibility and SEO</li>
                             <li>Modern HTML5 features and best practices</li>
+                            <li>Security considerations for HTML development</li>
                         </ul>
                     </div>
 
-                    <h4 class="mt-4">Your First HTML Document</h4>
+                    <h4 class="mt-4 mb-3">Your First HTML Document</h4>
                     <div class="code-block">
-                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <i class="bi bi-clipboard"></i>Copy
+                        </button>
                         <pre><code class="language-html"><!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My First Web Page</title>
 </head>
@@ -284,14 +528,18 @@
 
                     <h4>Document Declaration</h4>
                     <div class="code-block">
-                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <i class="bi bi-clipboard"></i>Copy
+                        </button>
                         <pre><code class="language-html"><!DOCTYPE html></code></pre>
                     </div>
                     <p>The DOCTYPE declaration tells the browser this is an HTML5 document.</p>
 
                     <h4>HTML Element</h4>
                     <div class="code-block">
-                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <i class="bi bi-clipboard"></i>Copy
+                        </button>
                         <pre><code class="language-html"><html lang="en">
     <!-- All content goes here -->
 </html></code></pre>
@@ -300,9 +548,14 @@
 
                     <h4>Head Section</h4>
                     <div class="code-block">
-                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <i class="bi bi-clipboard"></i>Copy
+                        </button>
                         <pre><code class="language-html"><head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Page description for SEO">
     <title>Page Title - Shows in Browser Tab</title>
@@ -311,7 +564,7 @@
                     </div>
 
                     <div class="table-responsive mt-4">
-                        <table class="table table-striped">
+                        <table class="table table-striped table-hover">
                             <thead class="table-dark">
                                 <tr>
                                     <th>Element</th>
@@ -357,7 +610,9 @@
                     
                     <div class="example-container">
                         <div class="code-block">
-                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="bi bi-clipboard"></i>Copy
+                            </button>
                             <pre><code class="language-html"><h1>Main Page Title</h1>
 <h2>Section Heading</h2>
 <h3>Subsection Heading</h3>
@@ -378,7 +633,9 @@
                     <h4>Paragraphs and Text Formatting</h4>
                     <div class="example-container">
                         <div class="code-block">
-                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="bi bi-clipboard"></i>Copy
+                            </button>
                             <pre><code class="language-html"><p>This is a regular paragraph with some <strong>bold text</strong> and <em>italic text</em>.</p>
 
 <p>You can also use <mark>highlighted text</mark>, <small>small text</small>, and <code>inline code</code>.</p>
@@ -414,7 +671,9 @@
                     <h4>Links</h4>
                     <div class="example-container">
                         <div class="code-block">
-                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="bi bi-clipboard"></i>Copy
+                            </button>
                             <pre><code class="language-html"><!-- External link -->
 <a href="https://example.com" target="_blank" rel="noopener">
     Visit Example.com
@@ -440,7 +699,9 @@
                     <h4>Images</h4>
                     <div class="example-container">
                         <div class="code-block">
-                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="bi bi-clipboard"></i>Copy
+                            </button>
                             <pre><code class="language-html"><!-- Basic image -->
 <img src="https://via.placeholder.com/300x200" 
      alt="Description of the image" 
@@ -483,7 +744,9 @@
                     <h4>Lists</h4>
                     <div class="example-container">
                         <div class="code-block">
-                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="bi bi-clipboard"></i>Copy
+                            </button>
                             <pre><code class="language-html"><!-- Unordered List -->
 <ul>
     <li>First item</li>
@@ -540,7 +803,9 @@
                     <h4>Tables</h4>
                     <div class="example-container">
                         <div class="code-block">
-                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="bi bi-clipboard"></i>Copy
+                            </button>
                             <pre><code class="language-html"><table>
     <caption>Student Grades</caption>
     <thead>
@@ -602,7 +867,9 @@
 
                     <div class="example-container">
                         <div class="code-block">
-                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="bi bi-clipboard"></i>Copy
+                            </button>
                             <pre><code class="language-html"><form action="/submit" method="POST">
     <!-- Text Input -->
     <label for="name">Full Name:</label>
@@ -692,6 +959,7 @@
                             <li>Include <code>required</code> attribute for mandatory fields</li>
                             <li>Use appropriate input types (email, tel, date, etc.)</li>
                             <li>Group related inputs with <code>&lt;fieldset&gt;</code> and <code>&lt;legend&gt;</code></li>
+                            <li>Validate input on both client and server side for security</li>
                         </ul>
                     </div>
                 </section>
@@ -707,11 +975,16 @@
 
                     <div class="example-container">
                         <div class="code-block">
-                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="bi bi-clipboard"></i>Copy
+                            </button>
                             <pre><code class="language-html"><!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
     <title>Semantic HTML Example</title>
 </head>
 <body>
@@ -750,7 +1023,7 @@
                     </div>
 
                     <div class="table-responsive mt-4">
-                        <table class="table table-striped">
+                        <table class="table table-striped table-hover">
                             <thead class="table-dark">
                                 <tr>
                                     <th>Element</th>
@@ -811,7 +1084,9 @@
                     <h4>ARIA Attributes</h4>
                     <div class="example-container">
                         <div class="code-block">
-                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="bi bi-clipboard"></i>Copy
+                            </button>
                             <pre><code class="language-html"><!-- Screen reader descriptions -->
 <button aria-label="Close dialog">×</button>
 
@@ -836,7 +1111,9 @@
                     <h4>Keyboard Navigation</h4>
                     <div class="example-container">
                         <div class="code-block">
-                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="bi bi-clipboard"></i>Copy
+                            </button>
                             <pre><code class="language-html"><!-- Tab order control -->
 <input type="text" tabindex="1" placeholder="First field">
 <input type="text" tabindex="2" placeholder="Second field">
@@ -871,22 +1148,82 @@
                         <span class="badge bg-danger ms-3 badge-level">Advanced</span>
                     </div>
 
-                    <h4>Code Organization</h4>
-                    <div class="best-practice">
-                        <h6><i class="bi bi-check-circle text-success me-2"></i>HTML Structure</h6>
-                        <ul class="mb-0">
-                            <li>Use consistent indentation (2 or 4 spaces)</li>
-                            <li>Close all tags properly</li>
-                            <li>Use lowercase for element and attribute names</li>
-                            <li>Quote all attribute values</li>
-                            <li>Include alt attributes for images</li>
-                        </ul>
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="mb-0"><i class="bi bi-code-slash me-2"></i>Code Quality</h5>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="mb-0">
+                                        <li>Use consistent indentation (2 or 4 spaces)</li>
+                                        <li>Close all tags properly</li>
+                                        <li>Use lowercase for element and attribute names</li>
+                                        <li>Quote all attribute values</li>
+                                        <li>Include alt attributes for images</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-header bg-success text-white">
+                                    <h5 class="mb-0"><i class="bi bi-speedometer2 me-2"></i>Performance</h5>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="mb-0">
+                                        <li>Optimize images and use modern formats</li>
+                                        <li>Use lazy loading for images</li>
+                                        <li>Minimize HTTP requests</li>
+                                        <li>Preload critical resources</li>
+                                        <li>Defer non-critical scripts</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-header bg-warning text-dark">
+                                    <h5 class="mb-0"><i class="bi bi-shield-check me-2"></i>Security</h5>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="mb-0">
+                                        <li>Include security headers (CSP, X-Frame-Options)</li>
+                                        <li>Validate and sanitize all user inputs</li>
+                                        <li>Use HTTPS for all resources</li>
+                                        <li>Implement proper authentication</li>
+                                        <li>Avoid inline scripts and styles</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-header bg-info text-white">
+                                    <h5 class="mb-0"><i class="bi bi-search me-2"></i>SEO</h5>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="mb-0">
+                                        <li>Use semantic HTML structure</li>
+                                        <li>Include meta descriptions and titles</li>
+                                        <li>Implement structured data</li>
+                                        <li>Optimize for mobile devices</li>
+                                        <li>Use proper heading hierarchy</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <h4>Performance Optimization</h4>
+                    <h4 class="mt-5">Performance Optimization</h4>
                     <div class="example-container">
                         <div class="code-block">
-                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="bi bi-clipboard"></i>Copy
+                            </button>
                             <pre><code class="language-html"><!-- Optimize images -->
 <img src="image.webp" 
      alt="Description" 
@@ -906,10 +1243,15 @@
                     <h4>SEO Optimization</h4>
                     <div class="example-container">
                         <div class="code-block">
-                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="bi bi-clipboard"></i>Copy
+                            </button>
                             <pre><code class="language-html"><head>
     <!-- Essential meta tags -->
     <meta charset="UTF-8">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Page Title - Keep Under 60 Characters</title>
     <meta name="description" content="Page description under 160 characters">
@@ -944,7 +1286,9 @@
                     <h4>HTML5 Input Types</h4>
                     <div class="example-container">
                         <div class="code-block">
-                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="bi bi-clipboard"></i>Copy
+                            </button>
                             <pre><code class="language-html"><!-- Date and time inputs -->
 <input type="date" name="birthday">
 <input type="time" name="appointment">
@@ -987,7 +1331,9 @@
                     <h4>Web Components</h4>
                     <div class="example-container">
                         <div class="code-block">
-                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="bi bi-clipboard"></i>Copy
+                            </button>
                             <pre><code class="language-html"><!-- Details/Summary for collapsible content -->
 <details>
     <summary>Click to expand</summary>
@@ -1043,82 +1389,636 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Exercise 3: Semantic Layout</h5>
+                                    <p class="card-text">Create a semantic HTML5 layout with header, nav, main, aside, and footer.</p>
+                                    <a href="html-playground.html" class="btn btn-primary btn-sm">Try in Playground</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Exercise 4: Accessible Table</h5>
+                                    <p class="card-text">Build an accessible data table with proper headers and captions.</p>
+                                    <a href="html-playground.html" class="btn btn-primary btn-sm">Try in Playground</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info mt-4">
+                        <h6><i class="bi bi-lightbulb me-2"></i>Ready for More?</h6>
+                        <p class="mb-0">Try our interactive <a href="html-playground.html" class="alert-link">HTML Playground</a> to experiment with all these concepts hands-on, or check out the <a href="css-guide.html" class="alert-link">CSS Guide</a> to learn how to style your HTML.</p>
+                    </div>
+                </section>
+
+                <!-- Conclusion -->
+                <section class="content-section">
+                    <div class="text-center">
+                        <h3 class="mb-3">🎉 Congratulations!</h3>
+                        <p class="lead">You've completed the HTML Learning Guide! You now have a solid foundation in HTML and can create semantic, accessible web pages.</p>
+                        
+                        <div class="row g-3 mt-4">
+                            <div class="col-md-4">
+                                <a href="html-playground.html" class="btn btn-primary w-100">
+                                    <i class="bi bi-code-slash me-2"></i>Practice with HTML Playground
+                                </a>
+                            </div>
+                            <div class="col-md-4">
+                                <a href="css-guide.html" class="btn btn-success w-100">
+                                    <i class="bi bi-palette me-2"></i>Learn CSS Styling
+                                </a>
+                            </div>
+                            <div class="col-md-4">
+                                <a href="bootstrap-guide.html" class="btn btn-info w-100">
+                                    <i class="bi bi-bootstrap me-2"></i>Try Bootstrap Framework
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 p-4 bg-light rounded">
+                            <h5>Next Steps</h5>
+                            <p class="mb-0">Continue your web development journey by learning CSS to style your HTML, JavaScript for interactivity, and modern frameworks like Bootstrap for rapid development.</p>
+                        </div>
                     </div>
                 </section>
             </div>
         </div>
     </div>
 
+    <!-- Back to Top Button -->
+    <button class="back-to-top" id="back-to-top" onclick="scrollToTop()">
+        <i class="bi bi-arrow-up"></i>
+    </button>
+
     <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" 
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" 
+            crossorigin="anonymous"></script>
+    
     <!-- Prism.js for syntax highlighting -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
 
+    <!-- Security Utils (MUST be loaded before main script) -->
     <script>
-        // Copy code functionality
-        function copyCode(button) {
-            const codeBlock = button.nextElementSibling.textContent;
-            
-            navigator.clipboard.writeText(codeBlock).then(() => {
-                const originalText = button.innerHTML;
-                button.classList.add('copied');
-                button.innerHTML = '<i class="bi bi-check me-1"></i>Copied!';
+        // Security utility functions
+        const SecurityUtils = {
+            // Input validation and sanitization
+            sanitizeHTML: function(input) {
+                if (typeof input !== 'string') return '';
                 
-                setTimeout(() => {
-                    button.classList.remove('copied');
-                    button.innerHTML = originalText;
-                }, 2000);
-            }).catch(() => {
-                // Fallback for older browsers
+                // Remove dangerous tags and attributes
+                const div = document.createElement('div');
+                div.textContent = input;
+                let sanitized = div.innerHTML;
+                
+                // Remove script tags and event handlers
+                sanitized = sanitized.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+                sanitized = sanitized.replace(/on\w+\s*=\s*"[^"]*"/gi, '');
+                sanitized = sanitized.replace(/on\w+\s*=\s*'[^']*'/gi, '');
+                sanitized = sanitized.replace(/javascript:/gi, '');
+                
+                return sanitized;
+            },
+
+            // Rate limiting for user actions
+            rateLimiter: {
+                actions: new Map(),
+                
+                isAllowed: function(action, limit = 10, window = 60000) {
+                    const now = Date.now();
+                    const key = action;
+                    
+                    if (!this.actions.has(key)) {
+                        this.actions.set(key, []);
+                    }
+                    
+                    const timestamps = this.actions.get(key);
+                    
+                    // Remove old timestamps
+                    while (timestamps.length > 0 && now - timestamps[0] > window) {
+                        timestamps.shift();
+                    }
+                    
+                    if (timestamps.length >= limit) {
+                        return false;
+                    }
+                    
+                    timestamps.push(now);
+                    return true;
+                }
+            },
+
+            // Error handling
+            handleError: function(error, context = '') {
+                console.error(`Security Error ${context}:`, error);
+                
+                // Log to a secure endpoint in production
+                if (typeof window.reportError === 'function') {
+                    window.reportError({
+                        error: error.message,
+                        context: context,
+                        timestamp: new Date().toISOString(),
+                        userAgent: navigator.userAgent
+                    });
+                }
+            }
+        };
+
+        // Global error handlers
+        window.addEventListener('error', function(event) {
+            SecurityUtils.handleError(event.error, 'Global Error Handler');
+        });
+
+        window.addEventListener('unhandledrejection', function(event) {
+            SecurityUtils.handleError(event.reason, 'Unhandled Promise Rejection');
+        });
+    </script>
+
+    <!-- Main Application Script -->
+    <script>
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                initializeNavigation();
+                initializeScrollEffects();
+                updateProgress();
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Initialization');
+            }
+        });
+
+        // Navigation functionality with security
+        function initializeNavigation() {
+            try {
+                const navLinks = document.querySelectorAll('.guide-nav .nav-link');
+                const sections = document.querySelectorAll('.content-section');
+
+                // Add click handlers to navigation links
+                navLinks.forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        try {
+                            if (!SecurityUtils.rateLimiter.isAllowed('navClick', 30, 10000)) {
+                                console.warn('Rate limit exceeded for navigation');
+                                return;
+                            }
+
+                            e.preventDefault();
+                            const href = this.getAttribute('href');
+                            
+                            if (href && href.startsWith('#')) {
+                                const targetId = href.substring(1);
+                                const targetElement = document.getElementById(targetId);
+                                
+                                if (targetElement) {
+                                    // Update active navigation
+                                    navLinks.forEach(nav => nav.classList.remove('active'));
+                                    this.classList.add('active');
+                                    
+                                    // Smooth scroll to target
+                                    targetElement.scrollIntoView({
+                                        behavior: 'smooth',
+                                        block: 'start'
+                                    });
+                                    
+                                    // Update URL without triggering page reload
+                                    history.pushState(null, null, href);
+                                    
+                                    // Announce change for accessibility
+                                    announceChange(`Navigated to ${this.textContent.trim()}`);
+                                }
+                            }
+                        } catch (error) {
+                            SecurityUtils.handleError(error, 'Navigation Click');
+                        }
+                    });
+                });
+
+                // Handle browser back/forward buttons
+                window.addEventListener('popstate', function() {
+                    try {
+                        const hash = window.location.hash;
+                        if (hash) {
+                            const targetElement = document.querySelector(hash);
+                            if (targetElement) {
+                                targetElement.scrollIntoView({
+                                    behavior: 'smooth',
+                                    block: 'start'
+                                });
+                                updateActiveNavigation(hash);
+                            }
+                        }
+                    } catch (error) {
+                        SecurityUtils.handleError(error, 'Popstate Handler');
+                    }
+                });
+
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Initialize Navigation');
+            }
+        }
+
+        // Scroll effects and progress tracking
+        function initializeScrollEffects() {
+            try {
+                const progressIndicator = document.getElementById('progress-indicator');
+                const backToTopBtn = document.getElementById('back-to-top');
+                const navLinks = document.querySelectorAll('.guide-nav .nav-link');
+                const sections = document.querySelectorAll('.content-section');
+
+                window.addEventListener('scroll', function() {
+                    try {
+                        // Throttle scroll events for performance
+                        if (this.scrollThrottleTimer) return;
+                        this.scrollThrottleTimer = setTimeout(() => {
+                            this.scrollThrottleTimer = null;
+                            
+                            // Update progress indicator
+                            updateProgress();
+                            
+                            // Show/hide back to top button
+                            if (window.scrollY > 300) {
+                                backToTopBtn.classList.add('show');
+                            } else {
+                                backToTopBtn.classList.remove('show');
+                            }
+                            
+                            // Update active navigation based on scroll position
+                            updateActiveNavigationOnScroll(sections, navLinks);
+                            
+                        }, 16); // ~60fps
+                    } catch (error) {
+                        SecurityUtils.handleError(error, 'Scroll Handler');
+                    }
+                });
+
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Initialize Scroll Effects');
+            }
+        }
+
+        // Update progress indicator
+        function updateProgress() {
+            try {
+                const progressIndicator = document.getElementById('progress-indicator');
+                if (!progressIndicator) return;
+
+                const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+                const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                const scrolled = (winScroll / height) * 100;
+                
+                progressIndicator.style.width = Math.min(scrolled, 100) + '%';
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Update Progress');
+            }
+        }
+
+        // Update active navigation on scroll
+        function updateActiveNavigationOnScroll(sections, navLinks) {
+            try {
+                let currentSection = '';
+                const scrollPos = window.scrollY + 150; // Offset for header
+
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.offsetHeight;
+                    
+                    if (scrollPos >= sectionTop && scrollPos < sectionTop + sectionHeight) {
+                        currentSection = section.getAttribute('id');
+                    }
+                });
+
+                if (currentSection) {
+                    navLinks.forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href') === '#' + currentSection) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Update Active Navigation on Scroll');
+            }
+        }
+
+        // Update active navigation manually
+        function updateActiveNavigation(hash) {
+            try {
+                const navLinks = document.querySelectorAll('.guide-nav .nav-link');
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === hash) {
+                        link.classList.add('active');
+                    }
+                });
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Update Active Navigation');
+            }
+        }
+
+        // Copy code functionality with security
+        function copyCode(button) {
+            try {
+                if (!SecurityUtils.rateLimiter.isAllowed('copyCode', 10, 60000)) {
+                    console.warn('Rate limit exceeded for copy operations');
+                    return;
+                }
+
+                const codeBlock = button.parentElement.querySelector('code');
+                if (!codeBlock) return;
+
+                const codeText = codeBlock.textContent || codeBlock.innerText || '';
+                
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(codeText).then(() => {
+                        showCopySuccess(button);
+                    }).catch((error) => {
+                        SecurityUtils.handleError(error, 'Clipboard API');
+                        fallbackCopy(codeText, button);
+                    });
+                } else {
+                    fallbackCopy(codeText, button);
+                }
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Copy Code');
+            }
+        }
+
+        function fallbackCopy(text, button) {
+            try {
                 const textArea = document.createElement('textarea');
-                textArea.value = codeBlock;
+                textArea.value = text;
+                textArea.style.position = 'fixed';
+                textArea.style.opacity = '0';
+                textArea.style.left = '-9999px';
                 document.body.appendChild(textArea);
                 textArea.select();
                 document.execCommand('copy');
                 document.body.removeChild(textArea);
-                
-                button.innerHTML = '<i class="bi bi-check me-1"></i>Copied!';
-                setTimeout(() => {
-                    button.innerHTML = '<i class="bi bi-clipboard me-1"></i>Copy';
-                }, 2000);
-            });
+                showCopySuccess(button);
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Fallback Copy');
+            }
         }
 
-        // Smooth scrolling for navigation
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
+        function showCopySuccess(button) {
+            try {
+                const originalHTML = button.innerHTML;
+                
+                button.classList.add('copied');
+                button.innerHTML = '<i class="bi bi-check"></i>Copied!';
+                
+                setTimeout(() => {
+                    button.classList.remove('copied');
+                    button.innerHTML = originalHTML;
+                }, 2000);
+                
+                showToast('Code copied to clipboard!', 'success');
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Copy Success Display');
+            }
+        }
+
+        // Scroll to top functionality
+        function scrollToTop() {
+            try {
+                if (!SecurityUtils.rateLimiter.isAllowed('scrollToTop', 10, 30000)) {
+                    console.warn('Rate limit exceeded for scroll to top');
+                    return;
                 }
-            });
+
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+                
+                // Update navigation to first item
+                const firstNavLink = document.querySelector('.guide-nav .nav-link');
+                if (firstNavLink) {
+                    document.querySelectorAll('.guide-nav .nav-link').forEach(link => 
+                        link.classList.remove('active')
+                    );
+                    firstNavLink.classList.add('active');
+                }
+                
+                announceChange('Scrolled to top of page');
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Scroll to Top');
+            }
+        }
+
+        // Toggle all examples visibility
+        function toggleAllExamples() {
+            try {
+                if (!SecurityUtils.rateLimiter.isAllowed('toggleExamples', 5, 30000)) {
+                    console.warn('Rate limit exceeded for toggle examples');
+                    return;
+                }
+
+                const examples = document.querySelectorAll('.example-container, .example-output');
+                const isVisible = examples[0] && examples[0].style.display !== 'none';
+                
+                examples.forEach(example => {
+                    example.style.display = isVisible ? 'none' : '';
+                });
+                
+                const toggleBtn = event.target;
+                const icon = toggleBtn.querySelector('i');
+                const text = toggleBtn.childNodes[toggleBtn.childNodes.length - 1];
+                
+                if (isVisible) {
+                    icon.className = 'bi bi-eye-slash me-1';
+                    text.textContent = 'Show Examples';
+                    showToast('Examples hidden', 'info');
+                } else {
+                    icon.className = 'bi bi-eye me-1';
+                    text.textContent = 'Hide Examples';
+                    showToast('Examples shown', 'info');
+                }
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Toggle Examples');
+            }
+        }
+
+        // Toast notification system
+        function showToast(message, type = 'info') {
+            try {
+                if (!SecurityUtils.rateLimiter.isAllowed('showToast', 20, 30000)) {
+                    return;
+                }
+
+                const toastContainer = document.getElementById('toast-container');
+                if (!toastContainer) return;
+
+                const toast = document.createElement('div');
+                toast.className = `toast-custom show`;
+                
+                const iconMap = {
+                    success: 'check-circle',
+                    warning: 'exclamation-triangle',
+                    error: 'x-circle',
+                    info: 'info-circle'
+                };
+
+                const colorMap = {
+                    success: '#28a745',
+                    warning: '#ffc107',
+                    error: '#dc3545',
+                    info: '#17a2b8'
+                };
+
+                toast.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-${iconMap[type]} me-2" style="color: ${colorMap[type]}; font-size: 1.2rem;"></i>
+                        <span>${SecurityUtils.sanitizeHTML(message)}</span>
+                    </div>
+                `;
+
+                toastContainer.appendChild(toast);
+
+                setTimeout(() => {
+                    toast.style.animation = 'slideIn 0.3s ease reverse';
+                    setTimeout(() => {
+                        if (toast.parentNode) {
+                            toastContainer.removeChild(toast);
+                        }
+                    }, 300);
+                }, 3000);
+
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Show Toast');
+            }
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            try {
+                // Ctrl/Cmd + K to focus search (placeholder)
+                if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                    e.preventDefault();
+                    showToast('Search functionality coming soon!', 'info');
+                }
+                
+                // Escape to scroll to top
+                if (e.key === 'Escape') {
+                    e.preventDefault();
+                    scrollToTop();
+                }
+                
+                // Arrow keys for navigation
+                if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+                    const activeLink = document.querySelector('.guide-nav .nav-link.active');
+                    if (activeLink) {
+                        const navLinks = Array.from(document.querySelectorAll('.guide-nav .nav-link'));
+                        const currentIndex = navLinks.indexOf(activeLink);
+                        let nextIndex;
+                        
+                        if (e.key === 'ArrowUp') {
+                            nextIndex = currentIndex > 0 ? currentIndex - 1 : navLinks.length - 1;
+                        } else {
+                            nextIndex = currentIndex < navLinks.length - 1 ? currentIndex + 1 : 0;
+                        }
+                        
+                        if (e.ctrlKey || e.metaKey) {
+                            e.preventDefault();
+                            navLinks[nextIndex].click();
+                        }
+                    }
+                }
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Keyboard Shortcuts');
+            }
         });
 
-        // Update active navigation item
-        window.addEventListener('scroll', () => {
-            const sections = document.querySelectorAll('section[id]');
-            const navLinks = document.querySelectorAll('.guide-nav .nav-link');
+        // Accessibility announcements
+        function announceChange(message) {
+            try {
+                const announcement = document.createElement('div');
+                announcement.setAttribute('aria-live', 'polite');
+                announcement.setAttribute('aria-atomic', 'true');
+                announcement.className = 'visually-hidden';
+                announcement.textContent = SecurityUtils.sanitizeHTML(message);
+                document.body.appendChild(announcement);
+                
+                setTimeout(() => {
+                    if (announcement.parentNode) {
+                        document.body.removeChild(announcement);
+                    }
+                }, 1000);
+            } catch (error) {
+                SecurityUtils.handleError(error, 'Accessibility Announcement');
+            }
+        }
+
+        // Performance monitoring
+        if ('performance' in window && 'mark' in performance) {
+            performance.mark('html-guide-loaded');
+        }
+    </script>
+
+    <!-- Error Boundary and Monitoring -->
+    <script>
+        // Additional security monitoring
+        (function() {
+            'use strict';
             
-            let current = '';
-            sections.forEach(section => {
-                const sectionTop = section.offsetTop - 150;
-                if (window.scrollY >= sectionTop) {
-                    current = section.getAttribute('id');
-                }
+            // Monitor for suspicious activity
+            let suspiciousActivity = 0;
+            const MAX_SUSPICIOUS_ACTIVITY = 10;
+            
+            // Monitor DOM modifications
+            const observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    // Check for suspicious script injections
+                    if (mutation.type === 'childList') {
+                        mutation.addedNodes.forEach(function(node) {
+                            if (node.nodeType === Node.ELEMENT_NODE) {
+                                if (node.tagName === 'SCRIPT' || 
+                                    node.innerHTML.includes('<script') ||
+                                    node.innerHTML.includes('javascript:') ||
+                                    node.innerHTML.includes('data:text/html')) {
+                                    suspiciousActivity++;
+                                    console.warn('Suspicious content detected and blocked');
+                                    node.remove();
+                                    
+                                    if (suspiciousActivity >= MAX_SUSPICIOUS_ACTIVITY) {
+                                        console.error('Maximum suspicious activity threshold reached');
+                                        // Could implement additional security measures here
+                                    }
+                                }
+                            }
+                        });
+                    }
+                });
             });
 
-            navLinks.forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('href') === `#${current}`) {
-                    link.classList.add('active');
-                }
+            // Start observing
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true,
+                characterData: true
             });
-        });
+
+            // Content Security Policy violation handler
+            document.addEventListener('securitypolicyviolation', function(event) {
+                SecurityUtils.handleError({
+                    message: 'CSP Violation',
+                    violatedDirective: event.violatedDirective,
+                    blockedURI: event.blockedURI,
+                    lineNumber: event.lineNumber,
+                    sourceFile: event.sourceFile
+                }, 'CSP Violation');
+            });
+
+            // Performance monitoring
+            if ('performance' in window && 'mark' in performance) {
+                performance.mark('html-guide-security-loaded');
+            }
+        })();
     </script>
 </body>
 </html>
