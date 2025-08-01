@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Interactive Flexbox playground with nested containers for learning CSS Flexbox layout">
-    <title>Enhanced Flexbox Playground - Nested Containers</title>
+    <meta name="description" content="Interactive Flexbox playground with drag & drop nested containers for learning CSS Flexbox layout">
+    <title>Enhanced Flexbox Playground - Drag & Drop Nested Containers</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -93,7 +93,7 @@
         }
 
         .flex-container::before {
-            content: 'Main Container';
+            content: 'Main Container (Drop Zone)';
             position: absolute;
             top: -12px;
             left: 20px;
@@ -121,7 +121,7 @@
         }
 
         .nested-container::before {
-            content: 'Container Group';
+            content: 'Container Group (Drop Zone)';
             position: absolute;
             top: -10px;
             left: 15px;
@@ -136,18 +136,27 @@
         }
 
         .nested-container.selected::before {
-            content: 'Container Group (Selected)';
+            content: 'Container Group (Selected - Drop Zone)';
             background: #ffc107;
             color: #000;
         }
 
-        /* Flex items */
+        /* Flex items - Enhanced for drag & drop */
         .flex-item {
             position: relative;
             transition: all 0.3s ease;
-            cursor: pointer;
+            cursor: move;
             border-radius: 8px;
             margin: 5px;
+            user-select: none;
+        }
+
+        .flex-item[draggable="true"] {
+            cursor: grab;
+        }
+
+        .flex-item[draggable="true"]:active {
+            cursor: grabbing;
         }
 
         .flex-item.selected {
@@ -161,7 +170,7 @@
             background: rgba(255, 193, 7, 0.1);
         }
 
-        .flex-item:hover:not(.nested-container) {
+        .flex-item:hover:not(.nested-container):not(.dragging) {
             transform: translateY(-2px);
             box-shadow: var(--shadow-md);
         }
@@ -181,6 +190,7 @@
             justify-content: center;
             box-shadow: var(--shadow-md);
             z-index: 20;
+            cursor: pointer;
         }
 
         .flex-item:hover .item-controls {
@@ -211,28 +221,80 @@
             opacity: 1;
         }
 
-        /* Drag and drop styles */
-        .drag-over {
-            background: rgba(40, 167, 69, 0.1) !important;
-            border-color: #28a745 !important;
-        }
-
+        /* Enhanced drag and drop styles */
         .dragging {
-            opacity: 0.5;
-            transform: rotate(2deg);
+            opacity: 0.6;
+            transform: rotate(5deg) scale(1.05);
+            z-index: 1000;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+            cursor: grabbing;
         }
 
+        .drag-over {
+            background: rgba(40, 167, 69, 0.2) !important;
+            border-color: #28a745 !important;
+            border-style: solid !important;
+            transform: scale(1.02);
+        }
+
+        .drag-over::before {
+            background: #28a745 !important;
+            content: 'Drop Here!' !important;
+        }
+
+        /* Drop indicators */
         .drop-indicator {
-            background: #28a745;
-            height: 3px;
+            background: linear-gradient(90deg, #28a745, #20c997);
+            height: 4px;
             border-radius: 2px;
             margin: 2px 0;
             opacity: 0;
-            transition: opacity 0.3s ease;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .drop-indicator::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
+            animation: shimmer 1.5s infinite;
         }
 
         .drop-indicator.active {
             opacity: 1;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        /* Placeholder for empty containers */
+        .empty-placeholder {
+            text-align: center;
+            color: #6c757d;
+            padding: 2rem;
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .empty-placeholder:hover {
+            border-color: #28a745;
+            background: rgba(40, 167, 69, 0.05);
+        }
+
+        .empty-placeholder.drag-over {
+            border-color: #28a745;
+            background: rgba(40, 167, 69, 0.1);
+            border-style: solid;
         }
 
         /* Specific element styles */
@@ -455,6 +517,65 @@
             color: #007bff;
             text-decoration: underline;
         }
+
+        /* Drag feedback */
+        .drag-helper {
+            position: absolute;
+            pointer-events: none;
+            z-index: 9999;
+            background: rgba(102, 126, 234, 0.9);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        /* Mobile responsiveness for drag */
+        @media (max-width: 768px) {
+            .flex-item {
+                margin: 10px 5px;
+                min-width: 120px;
+            }
+            
+            .item-controls,
+            .delete-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 1rem;
+            }
+        }
+
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+
+        .toast {
+            background: #28a745;
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            animation: slideIn 0.3s ease;
+        }
+
+        .toast.error {
+            background: #dc3545;
+        }
+
+        .toast.info {
+            background: #17a2b8;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
     </style>
 </head>
 <body>
@@ -462,55 +583,23 @@
 <!-- Navigation -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
     <div class="container-fluid">
-        <a class="navbar-brand" href="#" onclick="showToast('Welcome to Live Coding Playground!', 'info')">
-            <i class="bi bi-code-square me-2"></i>Live Coding Playground
+        <a class="navbar-brand" href="#">
+            <i class="bi bi-code-square me-2"></i>Enhanced Flexbox Playground
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <div class="navbar-nav ms-auto">
-                <a class="nav-link" href="#" onclick="loadPreset('basic-page')">
+                <a class="nav-link" href="#">
                     <i class="bi bi-house me-1"></i>Home
                 </a>
-                <a class="nav-link" href="#" onclick="loadPreset('flexbox-demo')">
-                    <i class="bi bi-grid-3x3 me-1"></i>Flexbox
+                <a class="nav-link active" href="#">
+                    <i class="bi bi-grid-3x3 me-1"></i>Flexbox Playground
                 </a>
-                <a class="nav-link" href="#" onclick="switchTab('html')">
-                    <i class="bi bi-code me-1"></i>HTML
+                <a class="nav-link" href="#">
+                    <i class="bi bi-code me-1"></i>Documentation
                 </a>
-                <a class="nav-link" href="#" onclick="switchTab('bootstrap')">
-                    <i class="bi bi-bootstrap me-1"></i>Bootstrap
-                </a>
-                <a class="nav-link active" href="#" onclick="showToast('You are here!', 'info')">
-                    <i class="bi bi-play-circle me-1"></i>Live Coding
-                </a>
-                <div class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="bi bi-grid-3x3-gap me-1"></i>Templates
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#" onclick="loadPreset('landing-page')">
-                            <i class="bi bi-layout-text-window me-2"></i>Landing Page
-                        </a></li>
-                        <li><a class="dropdown-item" href="#" onclick="loadPreset('card-layout')">
-                            <i class="bi bi-card-list me-2"></i>Card Layout
-                        </a></li>
-                        <li><a class="dropdown-item" href="#" onclick="loadPreset('form-design')">
-                            <i class="bi bi-ui-checks me-2"></i>Form Design
-                        </a></li>
-                        <li><a class="dropdown-item" href="#" onclick="loadPreset('navigation')">
-                            <i class="bi bi-menu-button-wide me-2"></i>Navigation
-                        </a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="#" onclick="loadPreset('animation-demo')">
-                            <i class="bi bi-stars me-2"></i>Animations
-                        </a></li>
-                        <li><a class="dropdown-item" href="#" onclick="loadPreset('grid-system')">
-                            <i class="bi bi-grid me-2"></i>Grid System
-                        </a></li>
-                    </ul>
-                </div>
             </div>
         </div>
     </div>
@@ -524,22 +613,23 @@
                     <h1 class="display-6 fw-bold mb-3">
                         <i class="bi bi-grid-3x3 me-3"></i>Enhanced Flexbox Playground
                     </h1>
-                    <p class="lead mb-0">Build complex layouts with nested containers! Create navbar columns with card rows, and more.</p>
+                    <p class="lead mb-0">Build complex layouts with nested containers! Drag & drop elements, reorder them dynamically, and watch the code update in real-time.</p>
                     <div class="mt-3">
-                        <span class="badge bg-light text-dark me-2"><i class="bi bi-plus-circle me-1"></i>Nested Containers</span>
                         <span class="badge bg-light text-dark me-2"><i class="bi bi-arrows-move me-1"></i>Drag & Drop</span>
-                        <span class="badge bg-light text-dark"><i class="bi bi-code me-1"></i>Live Code</span>
+                        <span class="badge bg-light text-dark me-2"><i class="bi bi-arrow-repeat me-1"></i>Reorder Elements</span>
+                        <span class="badge bg-light text-dark me-2"><i class="bi bi-plus-circle me-1"></i>Nested Containers</span>
+                        <span class="badge bg-light text-dark"><i class="bi bi-code me-1"></i>Live Code Updates</span>
                     </div>
                 </div>
                 <div class="col-lg-4 text-center">
                     <div class="d-flex justify-content-center align-items-center" style="height: 120px;">
                         <div class="d-flex flex-column align-items-center">
                             <div class="d-flex gap-2 mb-2">
-                                <div style="width: 20px; height: 20px; background: #ff6b6b; border-radius: 4px;"></div>
-                                <div style="width: 20px; height: 20px; background: #4ecdc4; border-radius: 4px;"></div>
-                                <div style="width: 20px; height: 20px; background: #45b7d1; border-radius: 4px;"></div>
+                                <div style="width: 20px; height: 20px; background: #ff6b6b; border-radius: 4px; cursor: move;"></div>
+                                <div style="width: 20px; height: 20px; background: #4ecdc4; border-radius: 4px; cursor: move;"></div>
+                                <div style="width: 20px; height: 20px; background: #45b7d1; border-radius: 4px; cursor: move;"></div>
                             </div>
-                            <small class="opacity-75">Nested Layout Builder</small>
+                            <small class="opacity-75">Drag & Drop Layout Builder</small>
                         </div>
                     </div>
                 </div>
@@ -573,6 +663,11 @@
                         <h5 class="text-center mb-3">
                             <i class="bi bi-plus-square me-2"></i>Add Elements
                         </h5>
+
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle me-2"></i>
+                            <strong>Drag & Drop:</strong> After adding elements, drag them to reorder or move between containers!
+                        </div>
 
                         <!-- Container Elements -->
                         <div class="control-group">
@@ -916,20 +1011,21 @@
                 <div class="playground-container">
                     <div class="playground-header">
                         <h5 class="mb-0">
-                            <i class="bi bi-eye me-2"></i>Live Nested Flexbox Builder
+                            <i class="bi bi-eye me-2"></i>Live Drag & Drop Builder
                         </h5>
-                        <small>Click containers/elements to select. Drag & drop to move (coming soon).</small>
+                        <small>✨ Drag elements to reorder or move between containers. Click to select and configure.</small>
                         <div class="live-indicator">LIVE</div>
                     </div>
                     
                     <div class="p-3">
                         <div class="flex-container" id="flex-container" onclick="selectContainer('main-container')">
-                            <!-- Elements will be added here dynamically -->
-                            <div class="text-center text-muted py-5">
+                            <!-- Empty placeholder -->
+                            <div class="empty-placeholder" id="empty-placeholder">
                                 <i class="bi bi-plus-circle fs-1 mb-3"></i>
                                 <h5>Start Building!</h5>
                                 <p class="mb-2">Add a <strong>Container Group</strong> first, then add elements inside it</p>
                                 <p class="small">Or add elements directly to the main container</p>
+                                <p class="small text-success"><i class="bi bi-arrows-move me-1"></i>Drag & drop ready!</p>
                             </div>
                         </div>
                     </div>
@@ -993,6 +1089,12 @@
         </div>
     </div>
 
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    
     <script>
         let elementCounter = 0;
         let containerCounter = 0;
@@ -1014,12 +1116,288 @@
             }
         };
 
+        // Drag and drop state
+        let draggedElement = null;
+        let dragHelper = null;
+        let dropIndicators = [];
+
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
             containers['main-container'].element = document.getElementById('flex-container');
+            setupDragAndDrop();
             updateActiveContainer();
             generateCode();
         });
+
+        // ===== DRAG AND DROP FUNCTIONALITY =====
+
+        function setupDragAndDrop() {
+            // Setup drop zones for existing containers
+            setupContainerDropZone(document.getElementById('flex-container'));
+        }
+
+        function setupContainerDropZone(container) {
+            if (!container) return;
+
+            container.addEventListener('dragover', handleDragOver);
+            container.addEventListener('drop', handleDrop);
+            container.addEventListener('dragenter', handleDragEnter);
+            container.addEventListener('dragleave', handleDragLeave);
+        }
+
+        function makeDraggable(element) {
+            element.draggable = true;
+            element.addEventListener('dragstart', handleDragStart);
+            element.addEventListener('dragend', handleDragEnd);
+        }
+
+        function handleDragStart(e) {
+            draggedElement = e.target;
+            e.target.classList.add('dragging');
+            
+            // Create drag helper
+            createDragHelper(e);
+            
+            // Set drag data
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/html', e.target.outerHTML);
+            
+            // Hide default drag image
+            const dragImage = document.createElement('div');
+            dragImage.style.opacity = '0';
+            dragImage.style.position = 'absolute';
+            dragImage.style.top = '-1000px';
+            document.body.appendChild(dragImage);
+            e.dataTransfer.setDragImage(dragImage, 0, 0);
+            
+            setTimeout(() => document.body.removeChild(dragImage), 0);
+            
+            showToast('Dragging element - drop it in any container!', 'info');
+        }
+
+        function handleDragEnd(e) {
+            e.target.classList.remove('dragging');
+            draggedElement = null;
+            
+            // Remove drag helper
+            if (dragHelper) {
+                document.body.removeChild(dragHelper);
+                dragHelper = null;
+            }
+            
+            // Clear all drop indicators
+            clearDropIndicators();
+            
+            // Remove drag-over classes
+            document.querySelectorAll('.drag-over').forEach(el => {
+                el.classList.remove('drag-over');
+            });
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            
+            // Update drag helper position
+            if (dragHelper) {
+                dragHelper.style.left = e.clientX + 10 + 'px';
+                dragHelper.style.top = e.clientY - 10 + 'px';
+            }
+            
+            // Find the exact drop position
+            updateDropIndicators(e);
+        }
+
+        function handleDragEnter(e) {
+            e.preventDefault();
+            if (e.target.classList.contains('flex-container') || e.target.classList.contains('nested-container') || e.target.classList.contains('empty-placeholder')) {
+                e.target.classList.add('drag-over');
+            }
+        }
+
+        function handleDragLeave(e) {
+            if (e.target.classList.contains('flex-container') || e.target.classList.contains('nested-container') || e.target.classList.contains('empty-placeholder')) {
+                // Only remove if we're actually leaving the container
+                if (!e.target.contains(e.relatedTarget)) {
+                    e.target.classList.remove('drag-over');
+                }
+            }
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            
+            if (!draggedElement) return;
+            
+            const dropTarget = e.target.closest('.flex-container, .nested-container');
+            if (!dropTarget) return;
+            
+            // Find drop position
+            const dropPosition = findDropPosition(dropTarget, e.clientY, e.clientX);
+            
+            // Move the element
+            moveElement(draggedElement, dropTarget, dropPosition);
+            
+            // Clean up
+            dropTarget.classList.remove('drag-over');
+            clearDropIndicators();
+            
+            showToast('Element moved successfully!', 'success');
+        }
+
+        function createDragHelper(e) {
+            dragHelper = document.createElement('div');
+            dragHelper.className = 'drag-helper';
+            
+            const elementType = getElementType(e.target);
+            dragHelper.textContent = `Moving ${elementType}`;
+            
+            dragHelper.style.left = e.clientX + 10 + 'px';
+            dragHelper.style.top = e.clientY - 10 + 'px';
+            
+            document.body.appendChild(dragHelper);
+        }
+
+        function updateDropIndicators(e) {
+            clearDropIndicators();
+            
+            const containers = document.querySelectorAll('.flex-container, .nested-container');
+            containers.forEach(container => {
+                if (container === draggedElement) return; // Can't drop on itself
+                
+                const rect = container.getBoundingClientRect();
+                if (e.clientX >= rect.left && e.clientX <= rect.right &&
+                    e.clientY >= rect.top && e.clientY <= rect.bottom) {
+                    
+                    createDropIndicators(container);
+                }
+            });
+        }
+
+        function createDropIndicators(container) {
+            const children = Array.from(container.children).filter(child => 
+                child.classList.contains('flex-item') && child !== draggedElement && !child.classList.contains('empty-placeholder')
+            );
+            
+            if (children.length === 0) {
+                // Empty container - just show one indicator
+                const indicator = document.createElement('div');
+                indicator.className = 'drop-indicator active';
+                container.appendChild(indicator);
+                dropIndicators.push(indicator);
+                return;
+            }
+            
+            // Add indicators between and around elements
+            children.forEach((child, index) => {
+                if (index === 0) {
+                    // Before first element
+                    const indicator = document.createElement('div');
+                    indicator.className = 'drop-indicator';
+                    container.insertBefore(indicator, child);
+                    dropIndicators.push(indicator);
+                }
+                
+                // After each element
+                const indicator = document.createElement('div');
+                indicator.className = 'drop-indicator';
+                if (index === children.length - 1) {
+                    container.appendChild(indicator);
+                } else {
+                    container.insertBefore(indicator, children[index + 1]);
+                }
+                dropIndicators.push(indicator);
+            });
+        }
+
+        function clearDropIndicators() {
+            dropIndicators.forEach(indicator => {
+                if (indicator.parentNode) {
+                    indicator.parentNode.removeChild(indicator);
+                }
+            });
+            dropIndicators = [];
+        }
+
+        function findDropPosition(container, clientY, clientX) {
+            const children = Array.from(container.children).filter(child => 
+                child.classList.contains('flex-item') && child !== draggedElement && !child.classList.contains('empty-placeholder')
+            );
+            
+            if (children.length === 0) return 0;
+            
+            for (let i = 0; i < children.length; i++) {
+                const rect = children[i].getBoundingClientRect();
+                const isColumn = getComputedStyle(container).flexDirection.includes('column');
+                
+                if (isColumn) {
+                    if (clientY < rect.top + rect.height / 2) {
+                        return i;
+                    }
+                } else {
+                    if (clientX < rect.left + rect.width / 2) {
+                        return i;
+                    }
+                }
+            }
+            
+            return children.length;
+        }
+
+        function moveElement(element, targetContainer, position) {
+            const elementId = element.id;
+            const targetContainerId = getContainerId(targetContainer);
+            
+            // Update element data
+            const elementData = elements.find(el => el.id === elementId);
+            if (elementData) {
+                elementData.parentContainer = targetContainerId;
+            }
+            
+            // Remove empty placeholder if exists
+            const placeholder = targetContainer.querySelector('.empty-placeholder');
+            if (placeholder) {
+                placeholder.remove();
+            }
+            
+            // Move DOM element
+            const children = Array.from(targetContainer.children).filter(child => 
+                child.classList.contains('flex-item') && !child.classList.contains('empty-placeholder')
+            );
+            
+            if (position >= children.length) {
+                targetContainer.appendChild(element);
+            } else {
+                targetContainer.insertBefore(element, children[position]);
+            }
+            
+            // Update container selection if needed
+            if (targetContainerId !== activeContainer) {
+                selectContainer(targetContainerId);
+            }
+            
+            // Regenerate code to reflect new order
+            generateCode();
+        }
+
+        function getContainerId(container) {
+            if (container.id === 'flex-container') return 'main-container';
+            return container.id;
+        }
+
+        function getElementType(element) {
+            const className = element.className;
+            if (className.includes('navbar')) return 'Navigation Bar';
+            if (className.includes('card')) return 'Card';
+            if (className.includes('image')) return 'Image';
+            if (className.includes('button')) return 'Button';
+            if (className.includes('text')) return 'Text Block';
+            if (className.includes('sidebar')) return 'Sidebar';
+            if (className.includes('nested-container')) return 'Container Group';
+            return 'Element';
+        }
+
+        // ===== EXISTING FUNCTIONALITY (ENHANCED) =====
 
         // Tab switching
         function switchTab(tabName) {
@@ -1030,7 +1408,7 @@
             document.getElementById(tabName + '-tab').classList.add('active');
         }
 
-        // Add element to container
+        // Add element to container (enhanced with drag & drop)
         function addElement(type) {
             if (type === 'container') {
                 addNestedContainer();
@@ -1039,13 +1417,8 @@
 
             const targetContainer = getTargetContainer();
             
-            // Clear placeholder if it exists in main container
-            if (targetContainer.id === 'flex-container') {
-                const placeholder = targetContainer.querySelector('.text-center.text-muted');
-                if (placeholder) {
-                    placeholder.remove();
-                }
-            }
+            // Clear placeholder if it exists
+            clearPlaceholder(targetContainer);
 
             elementCounter++;
             const elementId = `element-${elementCounter}`;
@@ -1074,6 +1447,9 @@
 
             targetContainer.appendChild(element);
             
+            // Make draggable
+            makeDraggable(element);
+            
             // Store element data
             elements.push({
                 id: elementId,
@@ -1085,19 +1461,15 @@
 
             selectElement(elementId);
             generateCode();
+            showToast(`Added ${type} element - now drag to reorder!`, 'success');
         }
 
-        // Add nested container
+        // Add nested container (enhanced with drag & drop)
         function addNestedContainer() {
             const targetContainer = getTargetContainer();
             
-            // Clear placeholder if it exists in main container
-            if (targetContainer.id === 'flex-container') {
-                const placeholder = targetContainer.querySelector('.text-center.text-muted');
-                if (placeholder) {
-                    placeholder.remove();
-                }
-            }
+            // Clear placeholder if it exists
+            clearPlaceholder(targetContainer);
 
             containerCounter++;
             const containerId = `container-${containerCounter}`;
@@ -1118,7 +1490,7 @@
                 <button class="delete-btn" onclick="event.stopPropagation(); deleteContainer('${containerId}');">
                     <i class="bi bi-x"></i>
                 </button>
-                <div class="text-center text-muted py-3" style="width: 100%;">
+                <div class="empty-placeholder">
                     <i class="bi bi-plus-circle fs-4 mb-2"></i>
                     <div>Drop elements here</div>
                     <small>This container can have its own flex properties</small>
@@ -1126,6 +1498,12 @@
             `;
 
             targetContainer.appendChild(container);
+            
+            // Make draggable
+            makeDraggable(container);
+            
+            // Setup as drop zone
+            setupContainerDropZone(container);
             
             // Store container data
             containers[containerId] = {
@@ -1144,9 +1522,16 @@
 
             selectContainer(containerId);
             generateCode();
+            showToast('Added container group - now drag elements into it!', 'success');
         }
 
-        // Get target container for new elements
+        function clearPlaceholder(container) {
+            const placeholder = container.querySelector('.empty-placeholder');
+            if (placeholder) {
+                placeholder.remove();
+            }
+        }
+
         function getTargetContainer() {
             if (activeContainer === 'main-container') {
                 return document.getElementById('flex-container');
@@ -1344,7 +1729,14 @@
                     document.getElementById('item-controls-panel').style.display = 'none';
                 }
                 
+                // Check if container is now empty and show placeholder
+                const parentContainer = element.parentNode;
+                if (parentContainer && parentContainer.children.length === 0) {
+                    addEmptyPlaceholder(parentContainer);
+                }
+                
                 generateCode();
+                showToast('Element deleted', 'info');
             }
         }
 
@@ -1352,6 +1744,19 @@
         function deleteContainer(containerId) {
             const container = document.getElementById(containerId);
             if (container) {
+                // Move all child elements to main container before deleting
+                const childElements = container.querySelectorAll('.flex-item:not(.nested-container)');
+                const mainContainer = document.getElementById('flex-container');
+                
+                childElements.forEach(child => {
+                    mainContainer.appendChild(child);
+                    // Update element data
+                    const elementData = elements.find(el => el.id === child.id);
+                    if (elementData) {
+                        elementData.parentContainer = 'main-container';
+                    }
+                });
+                
                 container.remove();
                 delete containers[containerId];
                 
@@ -1363,6 +1768,30 @@
                 }
                 
                 generateCode();
+                showToast('Container deleted, elements moved to main container', 'info');
+            }
+        }
+
+        // Add empty placeholder to container
+        function addEmptyPlaceholder(container) {
+            if (container.id === 'flex-container') {
+                container.innerHTML = `
+                    <div class="empty-placeholder" id="empty-placeholder">
+                        <i class="bi bi-plus-circle fs-1 mb-3"></i>
+                        <h5>Start Building!</h5>
+                        <p class="mb-2">Add a <strong>Container Group</strong> first, then add elements inside it</p>
+                        <p class="small">Or add elements directly to the main container</p>
+                        <p class="small text-success"><i class="bi bi-arrows-move me-1"></i>Drag & drop ready!</p>
+                    </div>
+                `;
+            } else {
+                container.innerHTML += `
+                    <div class="empty-placeholder">
+                        <i class="bi bi-plus-circle fs-4 mb-2"></i>
+                        <div>Drop elements here</div>
+                        <small>This container can have its own flex properties</small>
+                    </div>
+                `;
             }
         }
 
@@ -1370,14 +1799,17 @@
         function clearContainer() {
             const container = document.getElementById('flex-container');
             container.innerHTML = `
-                <div class="text-center text-muted py-5">
+                <div class="empty-placeholder" id="empty-placeholder">
                     <i class="bi bi-plus-circle fs-1 mb-3"></i>
                     <h5>Start Building!</h5>
                     <p class="mb-2">Add a <strong>Container Group</strong> first, then add elements inside it</p>
                     <p class="small">Or add elements directly to the main container</p>
+                    <p class="small text-success"><i class="bi bi-arrows-move me-1"></i>Drag & drop ready!</p>
                 </div>
             `;
             elements = [];
+            elementCounter = 0;
+            containerCounter = 0;
             
             // Reset containers (keep main container)
             containers = {
@@ -1398,6 +1830,7 @@
             selectedElement = null;
             selectContainer('main-container');
             generateCode();
+            showToast('All elements cleared!', 'info');
         }
 
         // Update active container properties
@@ -1568,17 +2001,19 @@
                     
                     // Select the new container and set it to row
                     const newContainer = document.querySelector('.nested-container');
-                    selectContainer(newContainer.id);
-                    document.getElementById('flex-direction').value = 'row';
-                    document.getElementById('justify-content').value = 'space-around';
-                    document.getElementById('gap').value = '15';
-                    updateGapValue();
-                    updateActiveContainer();
-                    
-                    // Add cards to the nested container
-                    addElement('card');
-                    addElement('card');
-                    addElement('card');
+                    if (newContainer) {
+                        selectContainer(newContainer.id);
+                        document.getElementById('flex-direction').value = 'row';
+                        document.getElementById('justify-content').value = 'space-around';
+                        document.getElementById('gap').value = '15';
+                        updateGapValue();
+                        updateActiveContainer();
+                        
+                        // Add cards to the nested container
+                        addElement('card');
+                        addElement('card');
+                        addElement('card');
+                    }
                     break;
                     
                 case 'sidebar-content':
@@ -1595,15 +2030,17 @@
                     
                     // Select content container and set it to column
                     const contentContainer = document.querySelector('.nested-container');
-                    selectContainer(contentContainer.id);
-                    document.getElementById('flex-direction').value = 'column';
-                    document.getElementById('gap').value = '20';
-                    updateGapValue();
-                    updateActiveContainer();
-                    
-                    // Add content elements
-                    addElement('text');
-                    addElement('card');
+                    if (contentContainer) {
+                        selectContainer(contentContainer.id);
+                        document.getElementById('flex-direction').value = 'column';
+                        document.getElementById('gap').value = '20';
+                        updateGapValue();
+                        updateActiveContainer();
+                        
+                        // Add content elements
+                        addElement('text');
+                        addElement('card');
+                    }
                     break;
                     
                 case 'hero-cards':
@@ -1614,33 +2051,37 @@
                     // Add hero section container
                     addElement('container');
                     let heroContainer = document.querySelector('.nested-container');
-                    selectContainer(heroContainer.id);
-                    document.getElementById('justify-content').value = 'center';
-                    document.getElementById('align-items').value = 'center';
-                    document.getElementById('container-height').value = '200';
-                    updateContainerHeight();
-                    updateActiveContainer();
-                    
-                    // Add hero content
-                    addElement('text');
-                    addElement('button');
-                    
-                    // Go back to main container
-                    selectContainer('main-container');
-                    
-                    // Add cards container
-                    addElement('container');
-                    const cardsContainer = document.querySelectorAll('.nested-container')[1];
-                    selectContainer(cardsContainer.id);
-                    document.getElementById('flex-direction').value = 'row';
-                    document.getElementById('flex-wrap').value = 'wrap';
-                    document.getElementById('justify-content').value = 'space-around';
-                    updateActiveContainer();
-                    
-                    // Add cards
-                    addElement('card');
-                    addElement('card');
-                    addElement('card');
+                    if (heroContainer) {
+                        selectContainer(heroContainer.id);
+                        document.getElementById('justify-content').value = 'center';
+                        document.getElementById('align-items').value = 'center';
+                        document.getElementById('container-height').value = '200';
+                        updateContainerHeight();
+                        updateActiveContainer();
+                        
+                        // Add hero content
+                        addElement('text');
+                        addElement('button');
+                        
+                        // Go back to main container
+                        selectContainer('main-container');
+                        
+                        // Add cards container
+                        addElement('container');
+                        const cardsContainer = document.querySelectorAll('.nested-container')[1];
+                        if (cardsContainer) {
+                            selectContainer(cardsContainer.id);
+                            document.getElementById('flex-direction').value = 'row';
+                            document.getElementById('flex-wrap').value = 'wrap';
+                            document.getElementById('justify-content').value = 'space-around';
+                            updateActiveContainer();
+                            
+                            // Add cards
+                            addElement('card');
+                            addElement('card');
+                            addElement('card');
+                        }
+                    }
                     break;
                     
                 case 'complex-layout':
@@ -1651,41 +2092,49 @@
                     // Header container
                     addElement('container');
                     let headerContainer = document.querySelector('.nested-container');
-                    selectContainer(headerContainer.id);
-                    document.getElementById('flex-direction').value = 'row';
-                    document.getElementById('justify-content').value = 'space-between';
-                    document.getElementById('align-items').value = 'center';
-                    updateActiveContainer();
-                    
-                    // Add header content
-                    addElement('navbar');
-                    addElement('button');
-                    
-                    // Back to main, add main content container
-                    selectContainer('main-container');
-                    addElement('container');
-                    const mainContainer = document.querySelectorAll('.nested-container')[1];
-                    selectContainer(mainContainer.id);
-                    document.getElementById('flex-direction').value = 'row';
-                    document.getElementById('container-height').value = '300';
-                    updateContainerHeight();
-                    updateActiveContainer();
-                    
-                    // Add sidebar and content area
-                    addElement('sidebar');
-                    addElement('container');
-                    
-                    // Configure content area
-                    const contentArea = document.querySelectorAll('.nested-container')[2];
-                    selectContainer(contentArea.id);
-                    document.getElementById('flex-direction').value = 'column';
-                    updateActiveContainer();
-                    
-                    // Add content
-                    addElement('card');
-                    addElement('card');
+                    if (headerContainer) {
+                        selectContainer(headerContainer.id);
+                        document.getElementById('flex-direction').value = 'row';
+                        document.getElementById('justify-content').value = 'space-between';
+                        document.getElementById('align-items').value = 'center';
+                        updateActiveContainer();
+                        
+                        // Add header content
+                        addElement('navbar');
+                        addElement('button');
+                        
+                        // Back to main, add main content container
+                        selectContainer('main-container');
+                        addElement('container');
+                        const mainContainer = document.querySelectorAll('.nested-container')[1];
+                        if (mainContainer) {
+                            selectContainer(mainContainer.id);
+                            document.getElementById('flex-direction').value = 'row';
+                            document.getElementById('container-height').value = '300';
+                            updateContainerHeight();
+                            updateActiveContainer();
+                            
+                            // Add sidebar and content area
+                            addElement('sidebar');
+                            addElement('container');
+                            
+                            // Configure content area
+                            const contentArea = document.querySelectorAll('.nested-container')[2];
+                            if (contentArea) {
+                                selectContainer(contentArea.id);
+                                document.getElementById('flex-direction').value = 'column';
+                                updateActiveContainer();
+                                
+                                // Add content
+                                addElement('card');
+                                addElement('card');
+                            }
+                        }
+                    }
                     break;
             }
+            
+            showToast(`Loaded ${exampleType} example!`, 'success');
         }
 
         // Generate code
@@ -1720,38 +2169,69 @@
             css += '  padding: 20px;\n';
             css += '}\n\n';
 
-            // Add nested container styles
-            Object.values(containers).forEach(containerData => {
-                if (containerData.id === 'main-container') return;
-                
-                css += `/* ${containerData.id.replace('-', ' ').toUpperCase()} */\n`;
-                css += `.nested-container {\n`;
+            // Add nested container styles if any exist
+            const nestedContainers = Object.values(containers).filter(c => c.id !== 'main-container');
+            if (nestedContainers.length > 0) {
+                css += `/* Nested Containers */\n.nested-container {\n`;
                 css += '  display: flex;\n';
                 
-                if (containerData.properties.flexDirection !== 'row') {
-                    css += `  flex-direction: ${containerData.properties.flexDirection};\n`;
+                // Use properties from the first nested container as default
+                const firstNested = nestedContainers[0];
+                if (firstNested.properties.flexDirection !== 'row') {
+                    css += `  flex-direction: ${firstNested.properties.flexDirection};\n`;
                 }
-                if (containerData.properties.justifyContent !== 'flex-start') {
-                    css += `  justify-content: ${containerData.properties.justifyContent};\n`;
+                if (firstNested.properties.justifyContent !== 'flex-start') {
+                    css += `  justify-content: ${firstNested.properties.justifyContent};\n`;
                 }
-                if (containerData.properties.alignItems !== 'stretch') {
-                    css += `  align-items: ${containerData.properties.alignItems};\n`;
+                if (firstNested.properties.alignItems !== 'stretch') {
+                    css += `  align-items: ${firstNested.properties.alignItems};\n`;
                 }
-                if (containerData.properties.flexWrap !== 'nowrap') {
-                    css += `  flex-wrap: ${containerData.properties.flexWrap};\n`;
+                if (firstNested.properties.flexWrap !== 'nowrap') {
+                    css += `  flex-wrap: ${firstNested.properties.flexWrap};\n`;
                 }
-                if (containerData.properties.gap !== '0') {
-                    css += `  gap: ${containerData.properties.gap}px;\n`;
+                if (firstNested.properties.gap !== '0') {
+                    css += `  gap: ${firstNested.properties.gap}px;\n`;
                 }
                 
-                css += `  min-height: ${containerData.properties.minHeight}px;\n`;
+                css += `  min-height: ${firstNested.properties.minHeight}px;\n`;
                 css += '  padding: 15px;\n';
                 css += '  margin: 5px;\n';
                 css += '}\n\n';
                 
-                // Only add one nested-container style block
-                return;
-            });
+                // Add individual container styles if they differ
+                nestedContainers.forEach(containerData => {
+                    const props = containerData.properties;
+                    const hasUniqueProps = Object.entries(props).some(([key, value]) => {
+                        return value !== firstNested.properties[key];
+                    });
+                    
+                    if (hasUniqueProps) {
+                        css += `/* ${containerData.id.replace('-', ' ').toUpperCase()} */\n`;
+                        css += `#${containerData.id} {\n`;
+                        
+                        if (props.flexDirection !== firstNested.properties.flexDirection) {
+                            css += `  flex-direction: ${props.flexDirection};\n`;
+                        }
+                        if (props.justifyContent !== firstNested.properties.justifyContent) {
+                            css += `  justify-content: ${props.justifyContent};\n`;
+                        }
+                        if (props.alignItems !== firstNested.properties.alignItems) {
+                            css += `  align-items: ${props.alignItems};\n`;
+                        }
+                        if (props.flexWrap !== firstNested.properties.flexWrap) {
+                            css += `  flex-wrap: ${props.flexWrap};\n`;
+                        }
+                        if (props.gap !== firstNested.properties.gap) {
+                            css += `  gap: ${props.gap}px;\n`;
+                        }
+                        if (props.minHeight !== firstNested.properties.minHeight) {
+                            css += `  min-height: ${props.minHeight}px;\n`;
+                        }
+                        
+                        css += '}\n\n';
+                    }
+                });
+            }
 
             // Add element-specific styles
             const elementTypes = [...new Set(elements.map(el => el.type))];
@@ -1818,28 +2298,32 @@
                 if (containerId === 'main-container') {
                     html += `${indent}<div class="flex-container">\n`;
                 } else {
-                    html += `${indent}<div class="nested-container">\n`;
+                    html += `${indent}<div class="nested-container" id="${containerId}">\n`;
                 }
                 
-                // Get elements in this container
-                const containerElements = elements.filter(el => el.parentContainer === containerId);
-                const childContainers = Object.values(containers).filter(c => c.parentContainer === containerId);
+                // Get elements and containers in this container in DOM order
+                const container = containerId === 'main-container' 
+                    ? document.getElementById('flex-container')
+                    : document.getElementById(containerId);
                 
-                // Add elements and child containers
-                [...containerElements, ...childContainers].sort((a, b) => {
-                    // Sort by DOM order (simplified)
-                    return 0;
-                }).forEach(item => {
-                    if (item.type) {
-                        // It's an element
-                        html += `${indent}  <div class="${item.type}-element">\n`;
-                        html += `${indent}    ${getCleanHTML(document.getElementById(item.id))}\n`;
-                        html += `${indent}  </div>\n`;
-                    } else {
-                        // It's a container
-                        html += generateContainerHTML(item.id, depth + 1);
-                    }
-                });
+                if (container) {
+                    const children = Array.from(container.children).filter(child => 
+                        child.classList.contains('flex-item') && !child.classList.contains('empty-placeholder')
+                    );
+                    
+                    children.forEach(child => {
+                        if (child.classList.contains('nested-container')) {
+                            // It's a nested container
+                            html += generateContainerHTML(child.id, depth + 1);
+                        } else {
+                            // It's an element
+                            const elementType = getElementTypeFromClass(child.className);
+                            html += `${indent}  <div class="${elementType}-element" id="${child.id}">\n`;
+                            html += `${indent}    ${getCleanHTML(child)}\n`;
+                            html += `${indent}  </div>\n`;
+                        }
+                    });
+                }
                 
                 html += `${indent}</div>\n`;
                 return html;
@@ -1852,10 +2336,21 @@
                 .replace(/</g, '&lt;')
                 .replace(/>/g, '&gt;')
                 .replace(/&lt;(\/?[a-zA-Z][a-zA-Z0-9]*)/g, '&lt;<span class="html-tag">$1</span>')
-                .replace(/class=&quot;([^&quot;]*)&quot;/g, '<span class="html-attr">class</span>=<span class="css-value">&quot;$1&quot;</span>')
+                .replace(/(class|id)=&quot;([^&quot;]*)&quot;/g, '<span class="html-attr">$1</span>=<span class="css-value">&quot;$2&quot;</span>')
                 .replace(/&gt;([^&lt;]+)&lt;/g, '&gt;<span class="css-value">$1</span>&lt;');
 
             document.getElementById('html-output').innerHTML = highlightedHTML;
+        }
+
+        // Get element type from class name
+        function getElementTypeFromClass(className) {
+            if (className.includes('navbar-element')) return 'navbar';
+            if (className.includes('card-element')) return 'card';
+            if (className.includes('image-element')) return 'image';
+            if (className.includes('button-element')) return 'button';
+            if (className.includes('text-element')) return 'text';
+            if (className.includes('sidebar-element')) return 'sidebar';
+            return 'element';
         }
 
         // Get clean HTML content without controls
@@ -1865,7 +2360,7 @@
             // Remove control elements
             const controls = clone.querySelectorAll('.item-controls, .delete-btn');
             controls.forEach(control => control.remove());
-            return clone.innerHTML;
+            return clone.innerHTML.replace(/^\s+|\s+$/g, '').replace(/\n\s+/g, ' ');
         }
 
         // Get default styles for element types
@@ -1926,14 +2421,14 @@
         function copyCSS() {
             const cssContent = document.getElementById('css-output').textContent;
             navigator.clipboard.writeText(cssContent).then(() => {
-                showToast('CSS copied to clipboard!');
+                showToast('CSS copied to clipboard!', 'success');
             });
         }
 
         function copyHTML() {
             const htmlContent = document.getElementById('html-output').textContent;
             navigator.clipboard.writeText(htmlContent).then(() => {
-                showToast('HTML copied to clipboard!');
+                showToast('HTML copied to clipboard!', 'success');
             });
         }
 
@@ -1956,7 +2451,7 @@ ${cssContent}
 </html>`;
             
             navigator.clipboard.writeText(fullCode).then(() => {
-                showToast('Complete code copied to clipboard!');
+                showToast('Complete code copied to clipboard!', 'success');
             });
         }
 
@@ -2018,20 +2513,21 @@ ${cssContent}
             URL.revokeObjectURL(url);
         }
 
-        // Toast notification
-        function showToast(message) {
+        // Toast notification system
+        function showToast(message, type = 'success') {
+            const toastContainer = document.getElementById('toast-container');
             const toast = document.createElement('div');
-            toast.className = 'position-fixed top-0 end-0 m-3 alert alert-success alert-dismissible';
-            toast.style.zIndex = '9999';
+            toast.className = `toast ${type}`;
             toast.innerHTML = `
+                <i class="bi bi-${type === 'success' ? 'check-circle' : type === 'error' ? 'x-circle' : 'info-circle'} me-2"></i>
                 ${message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             `;
-            document.body.appendChild(toast);
+            
+            toastContainer.appendChild(toast);
             
             setTimeout(() => {
                 if (toast.parentNode) {
-                    document.body.removeChild(toast);
+                    toastContainer.removeChild(toast);
                 }
             }, 3000);
         }
@@ -2039,7 +2535,7 @@ ${cssContent}
         // Generate full code
         function generateFullCode() {
             generateCode();
-            showToast('Code generated successfully!');
+            showToast('Code generated successfully!', 'success');
         }
     </script>
 </body>

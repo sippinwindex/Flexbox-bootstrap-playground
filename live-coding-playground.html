@@ -36,17 +36,64 @@
             --transition-base: 0.3s ease-out;
         }
 
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             background: var(--bg-light);
             font-family: system-ui, -apple-system, sans-serif;
+            margin: 0;
+            padding: 0;
             overflow-x: hidden;
         }
 
+        /* Fullscreen styles */
+        .fullscreen-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: var(--bg-light);
+            z-index: 9999;
+            display: none;
+        }
+
+        .fullscreen-container.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .fullscreen-header {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .fullscreen-content {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* Main container styles */
         .main-container {
             height: calc(100vh - 140px);
             display: flex;
             gap: 1rem;
             padding: 1rem;
+            min-height: 600px;
+        }
+
+        .main-container.fullscreen {
+            height: 100%;
+            padding: 0;
+            gap: 0;
         }
 
         .editor-section {
@@ -57,6 +104,12 @@
             border-radius: 12px;
             box-shadow: var(--shadow-md);
             overflow: hidden;
+            min-width: 300px;
+        }
+
+        .fullscreen .editor-section {
+            border-radius: 0;
+            box-shadow: none;
         }
 
         .preview-section {
@@ -67,6 +120,12 @@
             border-radius: 12px;
             box-shadow: var(--shadow-md);
             overflow: hidden;
+            min-width: 300px;
+        }
+
+        .fullscreen .preview-section {
+            border-radius: 0;
+            box-shadow: none;
         }
 
         .editor-tabs {
@@ -76,6 +135,7 @@
             align-items: center;
             padding: 0;
             margin: 0;
+            flex-shrink: 0;
         }
 
         .tab-btn {
@@ -135,6 +195,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-shrink: 0;
         }
 
         .preview-frame {
@@ -167,6 +228,7 @@
             align-items: center;
             flex-wrap: wrap;
             gap: 8px;
+            flex-shrink: 0;
         }
 
         .toolbar-group {
@@ -186,6 +248,7 @@
             display: flex;
             align-items: center;
             gap: 4px;
+            white-space: nowrap;
         }
 
         .toolbar-btn:hover {
@@ -197,6 +260,16 @@
             background: #667eea;
             color: white;
             border-color: #667eea;
+        }
+
+        .fullscreen-btn {
+            background: var(--info-gradient) !important;
+            color: white !important;
+            border-color: transparent !important;
+        }
+
+        .fullscreen-btn:hover {
+            background: var(--primary-gradient) !important;
         }
 
         .theme-selector {
@@ -216,6 +289,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-shrink: 0;
         }
 
         .error-indicator {
@@ -305,49 +379,73 @@
             font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
             font-size: 12px;
             padding: 12px;
-            max-height: 150px;
+            max-height: 200px;
             overflow-y: auto;
             border-top: 1px solid var(--border-color);
             display: none;
+            flex-shrink: 0;
         }
 
         .console-panel.show {
             display: block;
         }
 
+        .console-filters {
+            display: flex;
+            gap: 4px;
+        }
+
+        .filter-btn {
+            background: #333;
+            color: #ccc;
+            border: 1px solid #555;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-btn.active,
+        .filter-btn:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
         .console-log {
             margin: 4px 0;
             padding: 2px 0;
+            border-left: 3px solid transparent;
+            padding-left: 8px;
         }
 
         .console-error {
             color: #ff6b6b;
+            border-left-color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.1);
         }
 
         .console-warn {
             color: #feca57;
+            border-left-color: #feca57;
+            background: rgba(254, 202, 87, 0.1);
         }
 
         .console-info {
             color: #48cae4;
+            border-left-color: #48cae4;
+            background: rgba(72, 202, 228, 0.1);
         }
 
-        .shortcuts-modal .modal-body {
-            font-family: monospace;
+        .console-log.console-log {
+            color: #e6e6e6;
+            border-left-color: #666;
         }
 
-        .shortcut-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid #f8f9fa;
-        }
-
-        .shortcut-key {
-            background: #f8f9fa;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 0.8rem;
+        .console-time {
+            color: #888;
+            font-size: 10px;
         }
 
         .resize-handle {
@@ -356,16 +454,39 @@
             cursor: col-resize;
             transition: background 0.2s;
             position: relative;
+            flex-shrink: 0;
         }
 
         .resize-handle:hover {
             background: #667eea;
         }
 
+        .fullscreen .resize-handle {
+            display: block;
+        }
+
+        .exit-fullscreen {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .exit-fullscreen:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
         @media (max-width: 768px) {
             .main-container {
                 flex-direction: column;
                 height: auto;
+                min-height: auto;
             }
             
             .editor-section,
@@ -382,6 +503,20 @@
             
             .toolbar-group {
                 justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            .resize-handle {
+                display: none;
+            }
+
+            .fullscreen-content {
+                flex-direction: column;
+            }
+
+            .fullscreen .editor-section,
+            .fullscreen .preview-section {
+                flex: 1;
             }
         }
 
@@ -416,12 +551,20 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        /* Improved focus styles */
+        .toolbar-btn:focus,
+        .tab-btn:focus,
+        .responsive-btn:focus {
+            outline: 2px solid #667eea;
+            outline-offset: 2px;
+        }
     </style>
 </head>
 <body>
 
 <!-- Navigation -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top" id="main-nav">
     <div class="container-fluid">
         <a class="navbar-brand" href="#" onclick="showToast('Welcome to Live Coding Playground!', 'info')">
             <i class="bi bi-code-square me-2"></i>Live Coding Playground
@@ -478,7 +621,7 @@
 </nav>
 
 <!-- Hero Section -->
-<section class="bg-gradient text-white py-3" style="background: var(--primary-gradient);">
+<section class="bg-gradient text-white py-3" style="background: var(--primary-gradient);" id="hero-section">
     <div class="container-fluid">
         <div class="row align-items-center">
             <div class="col-lg-8">
@@ -498,10 +641,28 @@
     </div>
 </section>
 
+<!-- Fullscreen Container -->
+<div class="fullscreen-container" id="fullscreen-container">
+    <div class="fullscreen-header">
+        <div>
+            <h5 class="mb-0">
+                <i class="bi bi-arrows-fullscreen me-2"></i>Fullscreen Coding Mode
+            </h5>
+        </div>
+        <button class="exit-fullscreen" onclick="exitFullscreen()">
+            <i class="bi bi-fullscreen-exit"></i>
+            Exit Fullscreen
+        </button>
+    </div>
+    <div class="fullscreen-content" id="fullscreen-content">
+        <!-- Content will be moved here when fullscreen -->
+    </div>
+</div>
+
 <!-- Main Content -->
-<div class="main-container">
+<div class="main-container" id="main-container">
     <!-- Editor Section -->
-    <div class="editor-section">
+    <div class="editor-section" id="editor-section">
         <!-- Toolbar -->
         <div class="toolbar">
             <div class="toolbar-group">
@@ -555,6 +716,10 @@
                 
                 <button class="toolbar-btn" onclick="formatCode()">
                     <i class="bi bi-code"></i>Format
+                </button>
+
+                <button class="toolbar-btn fullscreen-btn" onclick="enterFullscreen()">
+                    <i class="bi bi-arrows-fullscreen"></i>Fullscreen
                 </button>
             </div>
             
@@ -717,13 +882,28 @@ Copy and paste these classes into your HTML to see them in action!</textarea>
             </div>
         </div>
 
-        <!-- Console Panel -->
+        <!-- Enhanced Console Panel -->
         <div class="console-panel" id="console-panel">
             <div class="d-flex justify-content-between align-items-center mb-2">
-                <strong>Console Output</strong>
-                <button class="btn btn-sm btn-outline-light" onclick="clearConsole()">Clear</button>
+                <div class="d-flex align-items-center gap-3">
+                    <strong>Console Output</strong>
+                    <div class="console-filters">
+                        <button class="filter-btn active" data-filter="all" onclick="filterConsole('all')">All</button>
+                        <button class="filter-btn" data-filter="log" onclick="filterConsole('log')">Logs</button>
+                        <button class="filter-btn" data-filter="error" onclick="filterConsole('error')">Errors</button>
+                        <button class="filter-btn" data-filter="warn" onclick="filterConsole('warn')">Warnings</button>
+                    </div>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-sm btn-outline-light" onclick="testConsole()">Test</button>
+                    <button class="btn btn-sm btn-outline-light" onclick="clearConsole()">Clear</button>
+                </div>
             </div>
-            <div id="console-output"></div>
+            <div id="console-output">
+                <div class="console-log console-info">
+                    [${new Date().toLocaleTimeString()}] Console ready - Try adding JavaScript to your HTML!
+                </div>
+            </div>
         </div>
     </div>
 
@@ -731,7 +911,7 @@ Copy and paste these classes into your HTML to see them in action!</textarea>
     <div class="resize-handle" id="resize-handle"></div>
 
     <!-- Preview Section -->
-    <div class="preview-section">
+    <div class="preview-section" id="preview-section">
         <div class="preview-header">
             <div>
                 <h6 class="mb-0">
@@ -774,41 +954,51 @@ Copy and paste these classes into your HTML to see them in action!</textarea>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <div class="shortcut-item">
-                    <span>Run Code</span>
-                    <kbd class="shortcut-key">Ctrl + Enter</kbd>
-                </div>
-                <div class="shortcut-item">
-                    <span>Format Code</span>
-                    <kbd class="shortcut-key">Ctrl + Shift + F</kbd>
-                </div>
-                <div class="shortcut-item">
-                    <span>Save</span>
-                    <kbd class="shortcut-key">Ctrl + S</kbd>
-                </div>
-                <div class="shortcut-item">
-                    <span>Find</span>
-                    <kbd class="shortcut-key">Ctrl + F</kbd>
-                </div>
-                <div class="shortcut-item">
-                    <span>Replace</span>
-                    <kbd class="shortcut-key">Ctrl + H</kbd>
-                </div>
-                <div class="shortcut-item">
-                    <span>Switch to HTML</span>
-                    <kbd class="shortcut-key">Alt + 1</kbd>
-                </div>
-                <div class="shortcut-item">
-                    <span>Switch to CSS</span>
-                    <kbd class="shortcut-key">Alt + 2</kbd>
-                </div>
-                <div class="shortcut-item">
-                    <span>Switch to Bootstrap</span>
-                    <kbd class="shortcut-key">Alt + 3</kbd>
-                </div>
-                <div class="shortcut-item">
-                    <span>Toggle Console</span>
-                    <kbd class="shortcut-key">Ctrl + `</kbd>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Run Code</span>
+                            <kbd class="bg-light text-dark px-2 py-1 rounded">Ctrl + Enter</kbd>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Format Code</span>
+                            <kbd class="bg-light text-dark px-2 py-1 rounded">Ctrl + Shift + F</kbd>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Save</span>
+                            <kbd class="bg-light text-dark px-2 py-1 rounded">Ctrl + S</kbd>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Find</span>
+                            <kbd class="bg-light text-dark px-2 py-1 rounded">Ctrl + F</kbd>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Replace</span>
+                            <kbd class="bg-light text-dark px-2 py-1 rounded">Ctrl + H</kbd>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Switch to HTML</span>
+                            <kbd class="bg-light text-dark px-2 py-1 rounded">Alt + 1</kbd>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Switch to CSS</span>
+                            <kbd class="bg-light text-dark px-2 py-1 rounded">Alt + 2</kbd>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Switch to Bootstrap</span>
+                            <kbd class="bg-light text-dark px-2 py-1 rounded">Alt + 3</kbd>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Toggle Console</span>
+                            <kbd class="bg-light text-dark px-2 py-1 rounded">Ctrl + `</kbd>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Fullscreen</span>
+                            <kbd class="bg-light text-dark px-2 py-1 rounded">F11</kbd>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -854,55 +1044,9 @@ Copy and paste these classes into your HTML to see them in action!</textarea>
     let currentTab = 'html';
     let autoSaveInterval;
     let updateTimeout;
+    let isFullscreen = false;
 
-    // Security utility functions
-    const SecurityUtils = {
-        sanitizeHTML: function(input) {
-            if (typeof input !== 'string') return '';
-            
-            const div = document.createElement('div');
-            div.textContent = input;
-            let sanitized = div.innerHTML;
-            
-            // Remove dangerous patterns while allowing basic HTML for preview
-            sanitized = sanitized.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
-            
-            return sanitized;
-        },
-
-        rateLimiter: {
-            actions: new Map(),
-            
-            isAllowed: function(action, limit = 20, window = 1000) {
-                const now = Date.now();
-                const key = action;
-                
-                if (!this.actions.has(key)) {
-                    this.actions.set(key, []);
-                }
-                
-                const timestamps = this.actions.get(key);
-                
-                while (timestamps.length > 0 && now - timestamps[0] > window) {
-                    timestamps.shift();
-                }
-                
-                if (timestamps.length >= limit) {
-                    return false;
-                }
-                
-                timestamps.push(now);
-                return true;
-            }
-        },
-
-        handleError: function(error, context = '') {
-            console.error(`Error ${context}:`, error);
-            showToast('An error occurred: ' + error.message, 'error');
-        }
-    };
-
-    // Initialize editors
+    // Initialize on page load
     document.addEventListener('DOMContentLoaded', function() {
         try {
             initializeEditors();
@@ -911,7 +1055,8 @@ Copy and paste these classes into your HTML to see them in action!</textarea>
             updatePreview();
             startAutoSave();
         } catch (error) {
-            SecurityUtils.handleError(error, 'Initialization');
+            console.error('Initialization error:', error);
+            showToast('Initialization failed: ' + error.message, 'error');
         }
     });
 
@@ -935,7 +1080,8 @@ Copy and paste these classes into your HTML to see them in action!</textarea>
                 "Alt-1": () => switchTab('html'),
                 "Alt-2": () => switchTab('css'),
                 "Alt-3": () => switchTab('bootstrap'),
-                "Ctrl-`": toggleConsole
+                "Ctrl-`": toggleConsole,
+                "F11": toggleFullscreen
             }
         });
 
@@ -957,11 +1103,12 @@ Copy and paste these classes into your HTML to see them in action!</textarea>
                 "Alt-1": () => switchTab('html'),
                 "Alt-2": () => switchTab('css'),
                 "Alt-3": () => switchTab('bootstrap'),
-                "Ctrl-`": toggleConsole
+                "Ctrl-`": toggleConsole,
+                "F11": toggleFullscreen
             }
         });
 
-        // Bootstrap Editor (text mode for reference)
+        // Bootstrap Editor
         bootstrapEditor = CodeMirror.fromTextArea(document.getElementById('bootstrap-editor'), {
             mode: 'htmlmixed',
             theme: 'monokai',
@@ -973,7 +1120,8 @@ Copy and paste these classes into your HTML to see them in action!</textarea>
                 "Ctrl-Enter": runCode,
                 "Alt-1": () => switchTab('html'),
                 "Alt-2": () => switchTab('css'),
-                "Alt-3": () => switchTab('bootstrap')
+                "Alt-3": () => switchTab('bootstrap'),
+                "F11": toggleFullscreen
             }
         });
 
@@ -987,10 +1135,6 @@ Copy and paste these classes into your HTML to see them in action!</textarea>
     }
 
     function debounceUpdate() {
-        if (!SecurityUtils.rateLimiter.isAllowed('update', 30, 1000)) {
-            return;
-        }
-        
         clearTimeout(updateTimeout);
         updateTimeout = setTimeout(() => {
             updatePreview();
@@ -1014,6 +1158,12 @@ Copy and paste these classes into your HTML to see them in action!</textarea>
 
         // Auto-save on beforeunload
         window.addEventListener('beforeunload', saveToLocalStorage);
+
+        // Fullscreen API events
+        document.addEventListener('fullscreenchange', handleFullscreenChange);
+        document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+        document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+        document.addEventListener('MSFullscreenChange', handleFullscreenChange);
     }
 
     function setupResizeHandle() {
@@ -1058,20 +1208,111 @@ Copy and paste these classes into your HTML to see them in action!</textarea>
     }
 
     function handleKeyboardShortcuts(e) {
-        // Prevent default browser shortcuts we're overriding
+        // F11 for fullscreen toggle
+        if (e.key === 'F11') {
+            e.preventDefault();
+            toggleFullscreen();
+        }
+        
+        // Ctrl+Enter for run
         if (e.ctrlKey && e.key === 'Enter') {
             e.preventDefault();
             runCode();
         }
         
+        // Ctrl+Shift+F for format
         if (e.ctrlKey && e.shiftKey && e.key === 'F') {
             e.preventDefault();
             formatCode();
         }
         
+        // Ctrl+S for save
         if (e.ctrlKey && e.key === 's') {
             e.preventDefault();
             saveCode();
+        }
+    }
+
+    // Fullscreen functionality
+    function enterFullscreen() {
+        const container = document.getElementById('fullscreen-container');
+        const content = document.getElementById('fullscreen-content');
+        const mainContainer = document.getElementById('main-container');
+        
+        // Move content to fullscreen container
+        content.appendChild(mainContainer);
+        
+        // Show fullscreen container
+        container.classList.add('active');
+        mainContainer.classList.add('fullscreen');
+        
+        // Hide main nav and hero
+        document.getElementById('main-nav').style.display = 'none';
+        document.getElementById('hero-section').style.display = 'none';
+        
+        isFullscreen = true;
+        
+        // Refresh editors
+        setTimeout(() => {
+            htmlEditor.refresh();
+            cssEditor.refresh();
+            bootstrapEditor.refresh();
+        }, 100);
+        
+        showToast('Entered fullscreen mode', 'info');
+    }
+
+    function exitFullscreen() {
+        const container = document.getElementById('fullscreen-container');
+        const mainContainer = document.getElementById('main-container');
+        const originalParent = document.body;
+        
+        // Move content back to original position
+        originalParent.appendChild(mainContainer);
+        
+        // Hide fullscreen container
+        container.classList.remove('active');
+        mainContainer.classList.remove('fullscreen');
+        
+        // Show main nav and hero
+        document.getElementById('main-nav').style.display = 'block';
+        document.getElementById('hero-section').style.display = 'block';
+        
+        // Reset flex styles
+        document.querySelector('.editor-section').style.flex = '';
+        document.querySelector('.preview-section').style.flex = '';
+        
+        isFullscreen = false;
+        
+        // Refresh editors
+        setTimeout(() => {
+            htmlEditor.refresh();
+            cssEditor.refresh();
+            bootstrapEditor.refresh();
+        }, 100);
+        
+        showToast('Exited fullscreen mode', 'info');
+    }
+
+    function toggleFullscreen() {
+        if (isFullscreen) {
+            exitFullscreen();
+        } else {
+            enterFullscreen();
+        }
+    }
+
+    function handleFullscreenChange() {
+        // Handle browser fullscreen API
+        const isInFullscreen = document.fullscreenElement || 
+                              document.webkitFullscreenElement || 
+                              document.mozFullScreenElement || 
+                              document.msFullscreenElement;
+        
+        if (!isInFullscreen && isFullscreen) {
+            // Browser exited fullscreen, but we're still in app fullscreen
+            // User might have pressed ESC, so we should exit our fullscreen too
+            exitFullscreen();
         }
     }
 
@@ -1096,7 +1337,8 @@ Copy and paste these classes into your HTML to see them in action!</textarea>
             }, 100);
             
         } catch (error) {
-            SecurityUtils.handleError(error, 'Tab Switching');
+            console.error('Tab switching error:', error);
+            showToast('Failed to switch tab', 'error');
         }
     }
 
@@ -1120,7 +1362,7 @@ Copy and paste these classes into your HTML to see them in action!</textarea>
             
         } catch (error) {
             showError('Preview Error: ' + error.message);
-            SecurityUtils.handleError(error, 'Preview Update');
+            console.error('Preview update error:', error);
         }
     }
 
@@ -1147,69 +1389,153 @@ Copy and paste these classes into your HTML to see them in action!</textarea>
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"><\/script>
     <script>
-        // Capture console output and send to parent
+        // Enhanced console capture
         const originalConsole = { ...console };
         
-        ['log', 'error', 'warn', 'info'].forEach(method => {
+        function sendToParent(type, method, args) {
+            try {
+                parent.postMessage({
+                    type: type,
+                    method: method,
+                    args: args,
+                    timestamp: new Date().toISOString()
+                }, '*');
+            } catch (e) {
+                // Ignore cross-origin errors
+            }
+        }
+        
+        // Capture all console methods
+        ['log', 'error', 'warn', 'info', 'debug', 'table', 'group', 'groupEnd'].forEach(method => {
             console[method] = function(...args) {
                 originalConsole[method](...args);
                 
-                try {
-                    parent.postMessage({
-                        type: 'console',
-                        method: method,
-                        args: args.map(arg => 
-                            typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
-                        )
-                    }, '*');
-                } catch (e) {
-                    // Ignore cross-origin errors
-                }
+                const formattedArgs = args.map(arg => {
+                    if (typeof arg === 'object') {
+                        try {
+                            return JSON.stringify(arg, null, 2);
+                        } catch (e) {
+                            return '[Object object]';
+                        }
+                    }
+                    return String(arg);
+                });
+                
+                sendToParent('console', method === 'debug' ? 'log' : method, formattedArgs);
             };
         });
         
         // Capture errors
         window.addEventListener('error', function(e) {
-            try {
-                parent.postMessage({
-                    type: 'error',
-                    message: e.message,
-                    filename: e.filename,
-                    lineno: e.lineno,
-                    colno: e.colno
-                }, '*');
-            } catch (err) {
-                // Ignore cross-origin errors
+            sendToParent('error', 'error', [
+                \`\${e.message} at \${e.filename}:\${e.lineno}:\${e.colno}\`
+            ]);
+        });
+        
+        // Capture unhandled promise rejections
+        window.addEventListener('unhandledrejection', function(e) {
+            sendToParent('error', 'error', [
+                'Unhandled Promise Rejection: ' + e.reason
+            ]);
+        });
+        
+        // Performance monitoring
+        window.addEventListener('load', function() {
+            const loadTime = performance.now();
+            if (loadTime > 100) {
+                sendToParent('console', 'warn', [
+                    \`Page load time: \${loadTime.toFixed(2)}ms\`
+                ]);
             }
         });
+        
+        // Add helper functions for testing
+        window.testConsole = function() {
+            console.log('Test log from preview');
+            console.warn('Test warning from preview');
+            console.error('Test error from preview');
+            console.info('Test info from preview');
+        };
     <\/script>
 </body>
 </html>`;
     }
 
-    // Listen for console messages from iframe
+    // Enhanced message handling from iframe
     window.addEventListener('message', function(e) {
         if (e.data.type === 'console') {
             addConsoleMessage(e.data.method, e.data.args.join(' '));
         } else if (e.data.type === 'error') {
-            addConsoleMessage('error', `${e.data.message} at line ${e.data.lineno}`);
-            showError(`Runtime Error: ${e.data.message}`);
+            addConsoleMessage('error', e.data.args ? e.data.args[0] : `${e.data.message} at line ${e.data.lineno}`);
+            showError(`Runtime Error: ${e.data.message || e.data.args[0]}`);
         }
     });
 
+    // Enhanced console functionality
+    let consoleFilter = 'all';
+    let consoleMessages = [];
+
     function addConsoleMessage(type, message) {
-        const consoleOutput = document.getElementById('console-output');
-        const logEntry = document.createElement('div');
-        logEntry.className = `console-log console-${type}`;
-        logEntry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+        const timestamp = new Date().toLocaleTimeString();
+        const messageObj = { type, message, timestamp };
+        consoleMessages.push(messageObj);
         
-        consoleOutput.appendChild(logEntry);
-        consoleOutput.scrollTop = consoleOutput.scrollHeight;
-        
-        // Limit console entries
-        while (consoleOutput.children.length > 100) {
-            consoleOutput.removeChild(consoleOutput.firstChild);
+        // Limit to last 100 messages
+        if (consoleMessages.length > 100) {
+            consoleMessages.shift();
         }
+        
+        updateConsoleDisplay();
+    }
+
+    function updateConsoleDisplay() {
+        const consoleOutput = document.getElementById('console-output');
+        if (!consoleOutput) return;
+        
+        // Filter messages based on current filter
+        const filteredMessages = consoleMessages.filter(msg => 
+            consoleFilter === 'all' || msg.type === consoleFilter
+        );
+        
+        // Clear and rebuild console
+        consoleOutput.innerHTML = '';
+        
+        filteredMessages.forEach(msg => {
+            const logEntry = document.createElement('div');
+            logEntry.className = `console-log console-${msg.type}`;
+            logEntry.innerHTML = `<span class="console-time">[${msg.timestamp}]</span> ${msg.message}`;
+            consoleOutput.appendChild(logEntry);
+        });
+        
+        consoleOutput.scrollTop = consoleOutput.scrollHeight;
+    }
+
+    function filterConsole(filter) {
+        consoleFilter = filter;
+        
+        // Update filter buttons
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.filter === filter);
+        });
+        
+        updateConsoleDisplay();
+    }
+
+    function testConsole() {
+        // Add test messages to demonstrate console functionality
+        addConsoleMessage('log', 'This is a test log message');
+        addConsoleMessage('info', 'Bootstrap and JavaScript are loaded successfully');
+        addConsoleMessage('warn', 'This is a warning message example');
+        addConsoleMessage('error', 'This is an error message example');
+        
+        showToast('Console test messages added!', 'info');
+    }
+
+    function clearConsole() {
+        consoleMessages = [];
+        document.getElementById('console-output').innerHTML = '';
+        addConsoleMessage('info', 'Console cleared');
+        showToast('Console cleared!', 'info');
     }
 
     // Toolbar functions
@@ -1223,7 +1549,8 @@ Copy and paste these classes into your HTML to see them in action!</textarea>
             }, 200);
         } catch (error) {
             hideLoading();
-            SecurityUtils.handleError(error, 'Run Code');
+            console.error('Run code error:', error);
+            showToast('Failed to run code', 'error');
         }
     }
 
@@ -1255,7 +1582,8 @@ Copy and paste these classes into your HTML to see them in action!</textarea>
             showToast('Code formatted!', 'success');
             
         } catch (error) {
-            SecurityUtils.handleError(error, 'Format Code');
+            console.error('Format code error:', error);
+            showToast('Failed to format code', 'error');
         }
     }
 
@@ -1268,10 +1596,6 @@ Copy and paste these classes into your HTML to see them in action!</textarea>
             .map((line, index, arr) => {
                 const trimmed = line.trim();
                 if (!trimmed) return '';
-                
-                const openTags = (trimmed.match(/<[^\/][^>]*>/g) || []).length;
-                const closeTags = (trimmed.match(/<\/[^>]*>/g) || []).length;
-                const selfClosing = (trimmed.match(/<[^>]*\/>/g) || []).length;
                 
                 let indent = 0;
                 for (let i = 0; i < index; i++) {
@@ -1383,422 +1707,6 @@ Copy and paste these classes into your HTML to see them in action!</textarea>
     padding: 12px 30px;
 }`
             },
-            'landing-page': {
-                html: `<div class="hero-section">
-    <div class="container">
-        <div class="row min-vh-100 align-items-center">
-            <div class="col-lg-6">
-                <h1 class="hero-title">Build Amazing Things</h1>
-                <p class="hero-subtitle">Create beautiful, responsive websites with modern tools and technologies.</p>
-                <div class="hero-buttons">
-                    <button class="btn btn-primary btn-lg me-3">Get Started</button>
-                    <button class="btn btn-outline-primary btn-lg">Learn More</button>
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="hero-image">
-                    <div class="placeholder-image"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>`,
-                css: `.hero-section {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-}
-
-.hero-title {
-    font-size: 3.5rem;
-    font-weight: 700;
-    margin-bottom: 1.5rem;
-    background: linear-gradient(45deg, #fff, #e0e0e0);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-.hero-subtitle {
-    font-size: 1.25rem;
-    margin-bottom: 2rem;
-    opacity: 0.9;
-}
-
-.hero-buttons .btn {
-    border-radius: 30px;
-    padding: 12px 30px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.placeholder-image {
-    width: 100%;
-    height: 400px;
-    background: rgba(255,255,255,0.1);
-    border-radius: 20px;
-    border: 2px dashed rgba(255,255,255,0.3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.placeholder-image::before {
-    content: "Image Placeholder";
-    color: rgba(255,255,255,0.7);
-    font-size: 1.2rem;
-}`
-            },
-            'card-layout': {
-                html: `<div class="container py-5">
-    <div class="row">
-        <div class="col-12 text-center mb-5">
-            <h2 class="section-title">Our Services</h2>
-            <p class="section-subtitle">Discover what we can do for you</p>
-        </div>
-    </div>
-    <div class="row g-4">
-        <div class="col-md-4">
-            <div class="service-card">
-                <div class="card-icon">
-                    <i class="bi bi-code-slash"></i>
-                </div>
-                <h4>Web Development</h4>
-                <p>Create modern, responsive websites with clean code and best practices.</p>
-                <a href="#" class="card-link">Learn More →</a>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="service-card">
-                <div class="card-icon">
-                    <i class="bi bi-palette"></i>
-                </div>
-                <h4>UI/UX Design</h4>
-                <p>Design beautiful, user-friendly interfaces that engage and delight users.</p>
-                <a href="#" class="card-link">Learn More →</a>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="service-card">
-                <div class="card-icon">
-                    <i class="bi bi-rocket"></i>
-                </div>
-                <h4>Performance</h4>
-                <p>Optimize your website for speed, accessibility, and search engines.</p>
-                <a href="#" class="card-link">Learn More →</a>
-            </div>
-        </div>
-    </div>
-</div>`,
-                css: `body {
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-}
-
-.section-title {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: #2d3748;
-    margin-bottom: 1rem;
-}
-
-.section-subtitle {
-    font-size: 1.1rem;
-    color: #718096;
-}
-
-.service-card {
-    background: white;
-    padding: 2.5rem 2rem;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    transition: all 0.3s ease;
-    text-align: center;
-    height: 100%;
-    border: none;
-}
-
-.service-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-}
-
-.card-icon {
-    width: 80px;
-    height: 80px;
-    margin: 0 auto 1.5rem;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2rem;
-    color: white;
-}
-
-.service-card h4 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #2d3748;
-    margin-bottom: 1rem;
-}
-
-.service-card p {
-    color: #718096;
-    margin-bottom: 1.5rem;
-    line-height: 1.6;
-}
-
-.card-link {
-    color: #667eea;
-    text-decoration: none;
-    font-weight: 600;
-    transition: color 0.2s;
-}
-
-.card-link:hover {
-    color: #764ba2;
-}`
-            },
-            'form-design': {
-                html: `<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-6">
-            <div class="contact-form">
-                <div class="form-header">
-                    <h2>Get In Touch</h2>
-                    <p>We'd love to hear from you. Send us a message!</p>
-                </div>
-                <form>
-                    <div class="form-group">
-                        <label for="name">Full Name</label>
-                        <input type="text" class="form-control" id="name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="email">Email Address</label>
-                        <input type="email" class="form-control" id="email" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="subject">Subject</label>
-                        <select class="form-select" id="subject">
-                            <option>General Inquiry</option>
-                            <option>Support Request</option>
-                            <option>Business Partnership</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="message">Message</label>
-                        <textarea class="form-control" id="message" rows="5" required></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-lg w-100">Send Message</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>`,
-                css: `body {
-    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
-}
-
-.contact-form {
-    background: white;
-    padding: 3rem;
-    border-radius: 20px;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-}
-
-.form-header {
-    text-align: center;
-    margin-bottom: 2.5rem;
-}
-
-.form-header h2 {
-    color: #1976d2;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-}
-
-.form-header p {
-    color: #666;
-    font-size: 1.1rem;
-}
-
-.form-group {
-    margin-bottom: 1.5rem;
-}
-
-.form-group label {
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 0.5rem;
-    display: block;
-}
-
-.form-control, .form-select {
-    border: 2px solid #e0e0e0;
-    border-radius: 10px;
-    padding: 0.75rem 1rem;
-    font-size: 1rem;
-    transition: all 0.3s ease;
-}
-
-.form-control:focus, .form-select:focus {
-    border-color: #1976d2;
-    box-shadow: 0 0 0 3px rgba(25,118,210,0.1);
-}
-
-.btn-primary {
-    background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
-    border: none;
-    border-radius: 10px;
-    padding: 1rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    transition: all 0.3s ease;
-}
-
-.btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(25,118,210,0.4);
-}`
-            },
-            'navigation': {
-                html: `<nav class="navbar navbar-expand-lg custom-navbar">
-    <div class="container">
-        <a class="navbar-brand" href="#">
-            <span class="brand-text">YourBrand</span>
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#demoNavbar">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="demoNavbar">
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item">
-                    <a class="nav-link active" href="#">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">About</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Services</a>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                        Portfolio
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#">Web Design</a></li>
-                        <li><a class="dropdown-item" href="#">Mobile Apps</a></li>
-                        <li><a class="dropdown-item" href="#">Branding</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="#">View All</a></li>
-                    </ul>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Contact</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link btn-cta" href="#">Get Quote</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
-
-<div class="hero-content">
-    <div class="container text-center py-5">
-        <h1>Beautiful Navigation Design</h1>
-        <p class="lead">This navigation bar demonstrates modern styling with Bootstrap and custom CSS.</p>
-    </div>
-</div>`,
-                css: `.custom-navbar {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    box-shadow: 0 2px 20px rgba(0,0,0,0.1);
-    transition: all 0.3s ease;
-    padding: 1rem 0;
-}
-
-.brand-text {
-    font-size: 1.8rem;
-    font-weight: 700;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-.navbar-nav .nav-link {
-    color: #333 !important;
-    font-weight: 500;
-    margin: 0 0.5rem;
-    padding: 0.5rem 1rem !important;
-    border-radius: 8px;
-    transition: all 0.3s ease;
-    position: relative;
-}
-
-.navbar-nav .nav-link:hover {
-    background: rgba(102, 126, 234, 0.1);
-    color: #667eea !important;
-}
-
-.navbar-nav .nav-link.active {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white !important;
-}
-
-.btn-cta {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-    color: white !important;
-    border-radius: 25px !important;
-    padding: 0.5rem 1.5rem !important;
-    margin-left: 1rem;
-    font-weight: 600;
-}
-
-.btn-cta:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-}
-
-.dropdown-menu {
-    border: none;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    border-radius: 10px;
-    padding: 0.5rem;
-}
-
-.dropdown-item {
-    border-radius: 8px;
-    padding: 0.5rem 1rem;
-    transition: all 0.2s ease;
-}
-
-.dropdown-item:hover {
-    background: rgba(102, 126, 234, 0.1);
-    color: #667eea;
-}
-
-.hero-content {
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-    min-height: 80vh;
-    display: flex;
-    align-items: center;
-}
-
-.hero-content h1 {
-    font-size: 3rem;
-    font-weight: 700;
-    color: #333;
-    margin-bottom: 1rem;
-}
-
-.hero-content .lead {
-    font-size: 1.25rem;
-    color: #666;
-}`
-            },
             'flexbox-demo': {
                 html: `<div class="container py-5">
     <div class="row mb-5">
@@ -1828,29 +1736,6 @@ Copy and paste these classes into your HTML to see them in action!</textarea>
                     <div class="flex-item">Start</div>
                     <div class="flex-item">Middle</div>
                     <div class="flex-item">End</div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="col-md-6">
-            <div class="demo-card">
-                <h4>Column Layout</h4>
-                <div class="flex-demo flex-column">
-                    <div class="flex-item">Top</div>
-                    <div class="flex-item">Center</div>
-                    <div class="flex-item">Bottom</div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="col-md-6">
-            <div class="demo-card">
-                <h4>Responsive Cards</h4>
-                <div class="flex-demo flex-wrap">
-                    <div class="flex-card">Card 1</div>
-                    <div class="flex-card">Card 2</div>
-                    <div class="flex-card">Card 3</div>
-                    <div class="flex-card">Card 4</div>
                 </div>
             </div>
         </div>
@@ -1895,21 +1780,6 @@ Copy and paste these classes into your HTML to see them in action!</textarea>
     align-items: center;
 }
 
-.flex-column {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.flex-wrap {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    justify-content: center;
-}
-
 .flex-item {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
@@ -1918,409 +1788,6 @@ Copy and paste these classes into your HTML to see them in action!</textarea>
     font-weight: 500;
     text-align: center;
     min-width: 80px;
-}
-
-.flex-card {
-    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
-    color: #333;
-    padding: 1rem;
-    border-radius: 8px;
-    font-weight: 500;
-    text-align: center;
-    flex: 1;
-    min-width: 100px;
-    transition: transform 0.2s;
-}
-
-.flex-card:hover {
-    transform: scale(1.05);
-}`
-            },
-            'grid-system': {
-                html: `<div class="container py-5">
-    <div class="row mb-5">
-        <div class="col-12 text-center">
-            <h2>Bootstrap Grid System</h2>
-            <p class="lead">Responsive grid layouts with custom styling</p>
-        </div>
-    </div>
-    
-    <!-- Grid Examples -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="grid-item">Full Width (12/12)</div>
-        </div>
-    </div>
-    
-    <div class="row mb-4">
-        <div class="col-6">
-            <div class="grid-item">Half (6/12)</div>
-        </div>
-        <div class="col-6">
-            <div class="grid-item">Half (6/12)</div>
-        </div>
-    </div>
-    
-    <div class="row mb-4">
-        <div class="col-4">
-            <div class="grid-item">Third (4/12)</div>
-        </div>
-        <div class="col-4">
-            <div class="grid-item">Third (4/12)</div>
-        </div>
-        <div class="col-4">
-            <div class="grid-item">Third (4/12)</div>
-        </div>
-    </div>
-    
-    <div class="row mb-4">
-        <div class="col-3">
-            <div class="grid-item">Quarter</div>
-        </div>
-        <div class="col-3">
-            <div class="grid-item">Quarter</div>
-        </div>
-        <div class="col-3">
-            <div class="grid-item">Quarter</div>
-        </div>
-        <div class="col-3">
-            <div class="grid-item">Quarter</div>
-        </div>
-    </div>
-    
-    <!-- Responsive Grid -->
-    <div class="row">
-        <div class="col-12 mb-3">
-            <h4>Responsive Grid (col-sm-6 col-lg-3)</h4>
-        </div>
-        <div class="col-sm-6 col-lg-3 mb-3">
-            <div class="grid-item responsive-item">Responsive 1</div>
-        </div>
-        <div class="col-sm-6 col-lg-3 mb-3">
-            <div class="grid-item responsive-item">Responsive 2</div>
-        </div>
-        <div class="col-sm-6 col-lg-3 mb-3">
-            <div class="grid-item responsive-item">Responsive 3</div>
-        </div>
-        <div class="col-sm-6 col-lg-3 mb-3">
-            <div class="grid-item responsive-item">Responsive 4</div>
-        </div>
-    </div>
-</div>`,
-                css: `body {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
-
-.container {
-    background: rgba(255,255,255,0.1);
-    border-radius: 20px;
-    padding: 2rem !important;
-    backdrop-filter: blur(10px);
-}
-
-h2 {
-    color: white;
-    font-weight: 700;
-    margin-bottom: 1rem;
-}
-
-.lead {
-    color: rgba(255,255,255,0.9);
-}
-
-h4 {
-    color: white;
-    font-weight: 600;
-}
-
-.grid-item {
-    background: rgba(255,255,255,0.9);
-    color: #333;
-    padding: 1.5rem;
-    border-radius: 10px;
-    text-align: center;
-    font-weight: 600;
-    border: 2px solid rgba(255,255,255,0.2);
-    transition: all 0.3s ease;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.grid-item:hover {
-    background: white;
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-}
-
-.responsive-item {
-    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
-    min-height: 120px;
-}
-
-.responsive-item:hover {
-    background: linear-gradient(135deg, #fcb69f 0%, #ffecd2 100%);
-}`
-            },
-            'animation-demo': {
-                html: `<div class="container py-5">
-    <div class="row mb-5">
-        <div class="col-12 text-center">
-            <h2 class="animated-title">CSS Animations Demo</h2>
-            <p class="lead fade-in">Hover over the elements to see animations</p>
-        </div>
-    </div>
-    
-    <div class="row g-4">
-        <div class="col-md-3">
-            <div class="animation-card hover-scale">
-                <div class="card-content">
-                    <i class="bi bi-heart-fill"></i>
-                    <h5>Scale Effect</h5>
-                    <p>Hover to scale up</p>
-                </div>
-            </div>
-        </div>
-        
-        <div class="col-md-3">
-            <div class="animation-card hover-rotate">
-                <div class="card-content">
-                    <i class="bi bi-gear-fill"></i>
-                    <h5>Rotate Effect</h5>
-                    <p>Hover to rotate</p>
-                </div>
-            </div>
-        </div>
-        
-        <div class="col-md-3">
-            <div class="animation-card hover-flip">
-                <div class="card-content">
-                    <div class="card-front">
-                        <i class="bi bi-star-fill"></i>
-                        <h5>Flip Card</h5>
-                        <p>Hover to flip</p>
-                    </div>
-                    <div class="card-back">
-                        <i class="bi bi-check-circle-fill"></i>
-                        <h5>Flipped!</h5>
-                        <p>Amazing effect</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="col-md-3">
-            <div class="animation-card hover-bounce">
-                <div class="card-content">
-                    <i class="bi bi-lightning-fill"></i>
-                    <h5>Bounce Effect</h5>
-                    <p>Hover to bounce</p>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <div class="row mt-5">
-        <div class="col-12 text-center">
-            <div class="floating-elements">
-                <div class="floating-circle circle-1"></div>
-                <div class="floating-circle circle-2"></div>
-                <div class="floating-circle circle-3"></div>
-                <div class="floating-circle circle-4"></div>
-            </div>
-            <button class="animated-button">Click Me!</button>
-        </div>
-    </div>
-</div>`,
-                css: `body {
-    background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4);
-    background-size: 400% 400%;
-    animation: gradientShift 15s ease infinite;
-    min-height: 100vh;
-}
-
-@keyframes gradientShift {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
-
-.animated-title {
-    color: white;
-    font-weight: 700;
-    font-size: 3rem;
-    animation: titlePulse 2s ease-in-out infinite alternate;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-}
-
-@keyframes titlePulse {
-    from { transform: scale(1); }
-    to { transform: scale(1.05); }
-}
-
-.fade-in {
-    color: white;
-    opacity: 0;
-    animation: fadeIn 1s ease-in 0.5s forwards;
-}
-
-@keyframes fadeIn {
-    to { opacity: 1; }
-}
-
-.animation-card {
-    background: rgba(255,255,255,0.95);
-    border-radius: 20px;
-    padding: 2rem;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,255,255,0.2);
-    height: 250px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.card-content i {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-    color: #667eea;
-}
-
-.hover-scale:hover {
-    transform: scale(1.1);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-}
-
-.hover-rotate:hover {
-    transform: rotate(5deg) scale(1.05);
-}
-
-.hover-flip {
-    perspective: 1000px;
-}
-
-.hover-flip .card-content {
-    position: relative;
-    transform-style: preserve-3d;
-    transition: transform 0.6s;
-}
-
-.hover-flip:hover .card-content {
-    transform: rotateY(180deg);
-}
-
-.card-front, .card-back {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    backface-visibility: hidden;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-.card-back {
-    transform: rotateY(180deg);
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    color: white;
-    border-radius: 15px;
-}
-
-.hover-bounce:hover {
-    animation: bounce 0.6s ease-in-out;
-}
-
-@keyframes bounce {
-    0%, 20%, 60%, 100% { transform: translateY(0); }
-    40% { transform: translateY(-20px); }
-    80% { transform: translateY(-10px); }
-}
-
-.floating-elements {
-    position: relative;
-    height: 200px;
-    margin-bottom: 2rem;
-}
-
-.floating-circle {
-    position: absolute;
-    border-radius: 50%;
-    opacity: 0.7;
-}
-
-.circle-1 {
-    width: 60px;
-    height: 60px;
-    background: rgba(255,255,255,0.3);
-    left: 10%;
-    animation: float 3s ease-in-out infinite;
-}
-
-.circle-2 {
-    width: 40px;
-    height: 40px;
-    background: rgba(255,255,255,0.2);
-    right: 20%;
-    animation: float 4s ease-in-out infinite reverse;
-}
-
-.circle-3 {
-    width: 80px;
-    height: 80px;
-    background: rgba(255,255,255,0.1);
-    left: 50%;
-    top: 50%;
-    animation: float 5s ease-in-out infinite;
-}
-
-.circle-4 {
-    width: 30px;
-    height: 30px;
-    background: rgba(255,255,255,0.4);
-    right: 10%;
-    bottom: 20%;
-    animation: float 2.5s ease-in-out infinite reverse;
-}
-
-@keyframes float {
-    0%, 100% { transform: translateY(0px) rotate(0deg); }
-    50% { transform: translateY(-20px) rotate(180deg); }
-}
-
-.animated-button {
-    background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
-    color: white;
-    border: none;
-    padding: 15px 40px;
-    font-size: 1.2rem;
-    font-weight: 600;
-    border-radius: 50px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-    position: relative;
-    overflow: hidden;
-}
-
-.animated-button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 15px 40px rgba(0,0,0,0.3);
-}
-
-.animated-button:active {
-    transform: translateY(0px);
-    animation: buttonPress 0.3s ease;
-}
-
-@keyframes buttonPress {
-    0% { transform: scale(1); }
-    50% { transform: scale(0.95); }
-    100% { transform: scale(1); }
 }`
             }
         };
@@ -2481,6 +1948,3 @@ h4 {
             }, 1000);
         });
     }
-</script>
-</body>
-</html>
