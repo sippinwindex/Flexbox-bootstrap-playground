@@ -1,31 +1,20 @@
 #!/usr/bin/env python3
 """
-Bootstrap Generator - Python CLI Tools for Students
-Educational tools to generate Bootstrap templates, validate HTML, and automate workflows.
+Bootstrap Generator Serverless Endpoint
+Exposes Bootstrap template generation as a Vercel serverless function.
 """
 
-import os
-import sys
 import json
-import argparse
-import webbrowser
-from pathlib import Path
 from datetime import datetime
-import subprocess
-import shutil
+from http.server import BaseHTTPRequestHandler
+from urllib.parse import parse_qs
 
 class BootstrapGenerator:
-    """Main class for Bootstrap template generation and validation tools."""
-    
+    """Main class for Bootstrap template generation."""
+
     def __init__(self):
         self.version = "1.0.0"
         self.bootstrap_version = "5.3.3"
-        self.templates_dir = Path("templates")
-        self.output_dir = Path("generated")
-        
-        # Ensure directories exist
-        self.templates_dir.mkdir(exist_ok=True)
-        self.output_dir.mkdir(exist_ok=True)
         
         # Bootstrap CDN links
         self.bootstrap_css = f"https://cdn.jsdelivr.net/npm/bootstrap@{self.bootstrap_version}/dist/css/bootstrap.min.css"
@@ -226,13 +215,9 @@ class BootstrapGenerator:
                         <div class="bg-light p-4 rounded">
                             <h5><i class="bi bi-code-slash me-2"></i>Quick Start</h5>
                             <pre class="bg-dark text-light p-3 rounded"><code># Generate a new template
-python bootstrap_generator.py create --name "My Project"
-
-# Validate HTML
-python bootstrap_generator.py validate index.html
-
-# Open in browser
-python bootstrap_generator.py serve --port 8000</code></pre>
+curl -X POST -H "Content-Type: application/json" -d '{{"name":"My Project"}}' /api/bootstrap_generator
+# Download generated files separately
+</code></pre>
                         </div>
                     </div>
                 </div>
@@ -475,73 +460,8 @@ python bootstrap_generator.py serve --port 8000</code></pre>
         
         return components
     
-    def validate_html(self, file_path):
-        """Validate HTML file for common issues."""
-        try:
-            with open(file_path, 'r', encoding='utf-8') as file:
-                content = file.read()
-                
-            issues = []
-            
-            # Check for basic HTML structure
-            if '<!DOCTYPE html>' not in content:
-                issues.append("Missing DOCTYPE declaration")
-            
-            if '<html' not in content:
-                issues.append("Missing <html> tag")
-                
-            if '<head>' not in content:
-                issues.append("Missing <head> section")
-                
-            if '<title>' not in content:
-                issues.append("Missing <title> tag")
-                
-            if 'viewport' not in content:
-                issues.append("Missing viewport meta tag (important for responsive design)")
-                
-            if '<body>' not in content:
-                issues.append("Missing <body> tag")
-            
-            # Check for Bootstrap integration
-            if 'bootstrap' not in content.lower():
-                issues.append("Bootstrap CSS/JS not detected")
-                
-            # Check for accessibility
-            if 'alt=' not in content and '<img' in content:
-                issues.append("Images found without alt attributes")
-                
-            if 'aria-' not in content and ('button' in content or 'input' in content):
-                issues.append("Consider adding ARIA attributes for better accessibility")
-            
-            return {
-                'valid': len(issues) == 0,
-                'issues': issues,
-                'file': file_path
-            }
-            
-        except FileNotFoundError:
-            return {
-                'valid': False,
-                'issues': [f"File not found: {file_path}"],
-                'file': file_path
-            }
-        except Exception as e:
-            return {
-                'valid': False,
-                'issues': [f"Error reading file: {str(e)}"],
-                'file': file_path
-            }
-    
-    def create_project(self, name, template_type="basic"):
-        """Create a complete project structure."""
-        
-        project_dir = self.output_dir / name.lower().replace(' ', '-')
-        project_dir.mkdir(exist_ok=True)
-        
-        # Create directory structure
-        (project_dir / "css").mkdir(exist_ok=True)
-        (project_dir / "js").mkdir(exist_ok=True)
-        (project_dir / "images").mkdir(exist_ok=True)
+    def generate_project_files(self, name, template_type="basic"):
+        """Generate project files and return as dictionary."""
         
         # Create main HTML file
         if template_type == "component-library":
@@ -575,10 +495,6 @@ python bootstrap_generator.py serve --port 8000</code></pre>
             
         else:
             html_content = self.create_base_template(name)
-        
-        # Write HTML file
-        with open(project_dir / "index.html", 'w', encoding='utf-8') as f:
-            f.write(html_content)
         
         # Create custom CSS file
         css_content = """/* Custom CSS for your project */
@@ -655,9 +571,6 @@ python bootstrap_generator.py serve --port 8000</code></pre>
     }
 }
 """
-        
-        with open(project_dir / "css" / "custom.css", 'w', encoding='utf-8') as f:
-            f.write(css_content)
         
         # Create custom JavaScript file
         js_content = """// Custom JavaScript for your project
@@ -777,9 +690,6 @@ function copyToClipboard(text) {
 }
 """
         
-        with open(project_dir / "js" / "custom.js", 'w', encoding='utf-8') as f:
-            f.write(js_content)
-        
         # Create README file
         readme_content = f"""# {name}
 
@@ -817,13 +727,10 @@ A Bootstrap 5 project generated with Python tools.
 
 ## Development
 
-To serve the project locally with Python:
+To generate this project via API:
 
 ```bash
-# Python 3
-python -m http.server 8000
-
-# Then open http://localhost:8000
+curl -X POST -H "Content-Type: application/json" -d '{{"name":"My Project"}}' /api/bootstrap_generator
 ```
 
 ## Customization
@@ -863,157 +770,95 @@ Add custom functionality in `js/custom.js`. The file includes:
 This project template is free to use and modify.
 """
         
-        with open(project_dir / "README.md", 'w', encoding='utf-8') as f:
-            f.write(readme_content)
-        
-        return project_dir
-    
-    def serve_project(self, directory=".", port=8000):
-        """Serve project locally using Python's built-in server."""
+        return {
+            'index.html': html_content,
+            'css/custom.css': css_content,
+            'js/custom.js': js_content,
+            'README.md': readme_content
+        }
+
+class handler(BaseHTTPRequestHandler):
+    def do_POST(self):
+        """Handle POST requests for Bootstrap project generation."""
         try:
-            import http.server
-            import socketserver
+            # Get request body
+            content_length = int(self.headers['Content-Length'])
+            post_data = self.rfile.read(content_length)
             
-            os.chdir(directory)
+            # Parse JSON data
+            try:
+                data = json.loads(post_data.decode('utf-8'))
+            except json.JSONDecodeError:
+                data = {}
             
-            Handler = http.server.SimpleHTTPRequestHandler
+            name = data.get('name', 'My Project')
+            template_type = data.get('type', 'basic')
             
-            print(f"🚀 Starting server at http://localhost:{port}")
-            print("📁 Serving files from:", os.getcwd())
-            print("🛑 Press Ctrl+C to stop the server")
+            # Generate project
+            generator = BootstrapGenerator()
+            files = generator.generate_project_files(name, template_type)
             
-            with socketserver.TCPServer(("", port), Handler) as httpd:
-                # Try to open browser
-                try:
-                    webbrowser.open(f'http://localhost:{port}')
-                except:
-                    pass
-                
-                httpd.serve_forever()
-                
-        except KeyboardInterrupt:
-            print("\n👋 Server stopped")
-        except Exception as e:
-            print(f"❌ Error starting server: {e}")
-    
-    def minify_css(self, css_file):
-        """Simple CSS minification."""
-        try:
-            with open(css_file, 'r', encoding='utf-8') as f:
-                css_content = f.read()
-            
-            # Simple minification
-            minified = css_content
-            # Remove comments
-            import re
-            minified = re.sub(r'/\*.*?\*/', '', minified, flags=re.DOTALL)
-            # Remove extra whitespace
-            minified = re.sub(r'\s+', ' ', minified)
-            # Remove spaces around certain characters
-            minified = re.sub(r'\s*([{}:;,>+~])\s*', r'\1', minified)
-            
-            # Write minified version
-            minified_file = css_file.replace('.css', '.min.css')
-            with open(minified_file, 'w', encoding='utf-8') as f:
-                f.write(minified.strip())
-            
-            original_size = len(css_content)
-            minified_size = len(minified)
-            savings = ((original_size - minified_size) / original_size) * 100
-            
-            return {
-                'original_file': css_file,
-                'minified_file': minified_file,
-                'original_size': original_size,
-                'minified_size': minified_size,
-                'savings_percent': round(savings, 1)
+            # Return response
+            response_data = {
+                'status': 'success',
+                'message': f'Project "{name}" generated successfully',
+                'project_name': name,
+                'template_type': template_type,
+                'files': files
             }
             
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json')
+            self.send_header('Access-Control-Allow-Origin', '*')
+            self.send_header('Access-Control-Allow-Methods', 'POST, OPTIONS')
+            self.send_header('Access-Control-Allow-Headers', 'Content-Type')
+            self.end_headers()
+            
+            self.wfile.write(json.dumps(response_data).encode('utf-8'))
+            
         except Exception as e:
-            return {'error': str(e)}
-
-
-def main():
-    """Main CLI function."""
-    parser = argparse.ArgumentParser(
-        description="Bootstrap Generator - Educational tools for web development students",
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog="""
-Examples:
-  python bootstrap_generator.py create --name "My Portfolio" --type basic
-  python bootstrap_generator.py create --name "Component Demo" --type component-library
-  python bootstrap_generator.py validate index.html
-  python bootstrap_generator.py serve --port 8080
-  python bootstrap_generator.py minify styles.css
-        """
-    )
+            error_response = {
+                'status': 'error',
+                'message': str(e)
+            }
+            
+            self.send_response(500)
+            self.send_header('Content-Type', 'application/json')
+            self.send_header('Access-Control-Allow-Origin', '*')
+            self.end_headers()
+            
+            self.wfile.write(json.dumps(error_response).encode('utf-8'))
     
-    parser.add_argument('--version', action='version', version='Bootstrap Generator 1.0.0')
+    def do_OPTIONS(self):
+        """Handle OPTIONS requests for CORS."""
+        self.send_response(200)
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', 'POST, OPTIONS')
+        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
+        self.end_headers()
     
-    subparsers = parser.add_subparsers(dest='command', help='Available commands')
-    
-    # Create command
-    create_parser = subparsers.add_parser('create', help='Create a new Bootstrap project')
-    create_parser.add_argument('--name', '-n', required=True, help='Project name')
-    create_parser.add_argument('--type', '-t', choices=['basic', 'component-library'], 
-                              default='basic', help='Template type')
-    
-    # Validate command
-    validate_parser = subparsers.add_parser('validate', help='Validate HTML file')
-    validate_parser.add_argument('file', help='HTML file to validate')
-    
-    # Serve command
-    serve_parser = subparsers.add_parser('serve', help='Serve project locally')
-    serve_parser.add_argument('--port', '-p', type=int, default=8000, help='Port number')
-    serve_parser.add_argument('--directory', '-d', default='.', help='Directory to serve')
-    
-    # Minify command
-    minify_parser = subparsers.add_parser('minify', help='Minify CSS file')
-    minify_parser.add_argument('file', help='CSS file to minify')
-    
-    args = parser.parse_args()
-    
-    if not args.command:
-        parser.print_help()
-        return
-    
-    generator = BootstrapGenerator()
-    
-    if args.command == 'create':
-        print(f"🎨 Creating Bootstrap project: {args.name}")
-        project_dir = generator.create_project(args.name, args.type)
-        print(f"✅ Project created successfully!")
-        print(f"📁 Location: {project_dir}")
-        print(f"🌐 Open: {project_dir}/index.html")
-        print(f"🚀 Serve: python bootstrap_generator.py serve --directory {project_dir}")
+    def do_GET(self):
+        """Handle GET requests - return API info."""
+        response_data = {
+            'name': 'Bootstrap Generator API',
+            'version': '1.0.0',
+            'description': 'Generate Bootstrap templates via API',
+            'usage': {
+                'method': 'POST',
+                'content_type': 'application/json',
+                'body': {
+                    'name': 'Project Name (optional)',
+                    'type': 'basic or component-library (optional)'
+                }
+            },
+            'example': {
+                'curl': 'curl -X POST -H "Content-Type: application/json" -d \'{"name":"My Project","type":"basic"}\' /api/bootstrap_generator'
+            }
+        }
         
-    elif args.command == 'validate':
-        print(f"🔍 Validating HTML file: {args.file}")
-        result = generator.validate_html(args.file)
+        self.send_response(200)
+        self.send_header('Content-Type', 'application/json')
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.end_headers()
         
-        if result['valid']:
-            print("✅ HTML file is valid!")
-        else:
-            print("❌ HTML validation issues found:")
-            for issue in result['issues']:
-                print(f"  • {issue}")
-                
-    elif args.command == 'serve':
-        generator.serve_project(args.directory, args.port)
-        
-    elif args.command == 'minify':
-        print(f"⚡ Minifying CSS file: {args.file}")
-        result = generator.minify_css(args.file)
-        
-        if 'error' in result:
-            print(f"❌ Error: {result['error']}")
-        else:
-            print(f"✅ CSS minified successfully!")
-            print(f"📄 Original: {result['original_size']} bytes")
-            print(f"📄 Minified: {result['minified_size']} bytes")
-            print(f"💾 Savings: {result['savings_percent']}%")
-            print(f"📁 Output: {result['minified_file']}")
-
-
-if __name__ == "__main__":
-    main()
+        self.wfile.write(json.dumps(response_data, indent=2).encode('utf-8'))

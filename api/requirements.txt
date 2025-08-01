@@ -1,6 +1,2 @@
-# Vercel Serverless Functions - Python Dependencies
-# Lightweight dependencies for serverless environment
-
-requests>=2.28.0
-jinja2>=3.1.0
+# Minimal dependencies for Vercel serverless functions
 python-dateutil>=2.8.0
