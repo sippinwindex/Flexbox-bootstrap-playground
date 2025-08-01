@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Interactive CSS properties playground for learning all CSS properties">
     <meta name="keywords" content="CSS, properties, playground, learning, interactive, web development">
-    <title>CSS Properties Master Playground - Secure Edition</title>
+    <title>CSS Properties Master Playground - Complete Edition</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" 
@@ -82,10 +82,12 @@
             border: 3px dashed #667eea;
             border-radius: 12px;
             padding: 2rem;
-            min-height: 300px;
+            min-height: 400px;
             display: flex;
+            flex-wrap: wrap;
             align-items: center;
             justify-content: center;
+            gap: 1rem;
             margin: 1rem 0;
             position: relative;
             overflow: hidden;
@@ -124,11 +126,17 @@
             align-items: center;
             justify-content: center;
             user-select: none;
+            margin: 0.5rem;
         }
 
         .demo-element:hover {
             transform: scale(1.05);
             box-shadow: var(--shadow-lg);
+        }
+
+        .demo-element.selected {
+            outline: 3px solid #ffc107;
+            outline-offset: 2px;
         }
 
         .demo-text {
@@ -337,6 +345,8 @@
         .bounce { animation-name: bounce; }
         .shake { animation-name: shake; }
         .fade { animation-name: fade; }
+        .slide { animation-name: slide; }
+        .zoom { animation-name: zoom; }
 
         @keyframes spin {
             from { transform: rotate(0deg); }
@@ -358,6 +368,16 @@
         @keyframes fade {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.3; }
+        }
+
+        @keyframes slide {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(20px); }
+        }
+
+        @keyframes zoom {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
         }
 
         /* Toast notifications */
@@ -407,6 +427,41 @@
             font-size: 1.2rem;
         }
 
+        .element-controls {
+            margin-bottom: 1rem;
+        }
+
+        .add-element-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 0.5rem;
+        }
+
+        .add-element-btn:hover {
+            background: #218838;
+            transform: translateY(-1px);
+        }
+
+        .clear-elements-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .clear-elements-btn:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+        }
+
         @media (max-width: 768px) {
             .property-tabs {
                 flex-direction: column;
@@ -428,32 +483,54 @@
 
 <!-- Navigation -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
-    <div class="container">
-        <!-- Change this line -->
-        <a class="navbar-brand" href="index.html">
-            <i class="bi bi-house me-2"></i>CSS Learning Guide
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#" onclick="showToast('Welcome to Live Coding Playground!', 'info')">
+            <i class="bi bi-code-square me-2"></i>Live Coding Playground
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <div class="navbar-nav ms-auto">
-                <!-- Change this line -->
-                <a class="nav-link" href="index.html"><i class="bi bi-house me-1"></i>Home</a>
-                <a class="nav-link" href="#getting-started"><i class="bi bi-play-circle me-1"></i>Get Started</a>
-                <a class="nav-link" href="#selectors"><i class="bi bi-cursor me-1"></i>Selectors</a>
-                <a class="nav-link" href="#flexbox"><i class="bi bi-grid-3x3 me-1"></i>Flexbox</a>
-                <a class="nav-link" href="#responsive"><i class="bi bi-phone me-1"></i>Responsive</a>
+                <a class="nav-link" href="#" onclick="loadPreset('basic-page')">
+                    <i class="bi bi-house me-1"></i>Home
+                </a>
+                <a class="nav-link" href="#" onclick="loadPreset('flexbox-demo')">
+                    <i class="bi bi-grid-3x3 me-1"></i>Flexbox
+                </a>
+                <a class="nav-link" href="#" onclick="switchTab('html')">
+                    <i class="bi bi-code me-1"></i>HTML
+                </a>
+                <a class="nav-link" href="#" onclick="switchTab('bootstrap')">
+                    <i class="bi bi-bootstrap me-1"></i>Bootstrap
+                </a>
+                <a class="nav-link active" href="#" onclick="showToast('You are here!', 'info')">
+                    <i class="bi bi-play-circle me-1"></i>Live Coding
+                </a>
                 <div class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="bi bi-grid-3x3-gap me-1"></i>More
+                        <i class="bi bi-grid-3x3-gap me-1"></i>Templates
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#" onclick="showComingSoon('CSS Playground')"><i class="bi bi-palette me-2"></i>CSS Playground</a></li>
-                        <li><a class="dropdown-item" href="#" onclick="showComingSoon('Flexbox Playground')"><i class="bi bi-grid-3x3 me-2"></i>Flexbox Playground</a></li>
-                        <li><a class="dropdown-item" href="#" onclick="showComingSoon('HTML Guide')"><i class="bi bi-code me-2"></i>HTML Guide</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="loadPreset('landing-page')">
+                            <i class="bi bi-layout-text-window me-2"></i>Landing Page
+                        </a></li>
+                        <li><a class="dropdown-item" href="#" onclick="loadPreset('card-layout')">
+                            <i class="bi bi-card-list me-2"></i>Card Layout
+                        </a></li>
+                        <li><a class="dropdown-item" href="#" onclick="loadPreset('form-design')">
+                            <i class="bi bi-ui-checks me-2"></i>Form Design
+                        </a></li>
+                        <li><a class="dropdown-item" href="#" onclick="loadPreset('navigation')">
+                            <i class="bi bi-menu-button-wide me-2"></i>Navigation
+                        </a></li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="#" onclick="showAbout()"><i class="bi bi-info-circle me-2"></i>About</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="loadPreset('animation-demo')">
+                            <i class="bi bi-stars me-2"></i>Animations
+                        </a></li>
+                        <li><a class="dropdown-item" href="#" onclick="loadPreset('grid-system')">
+                            <i class="bi bi-grid me-2"></i>Grid System
+                        </a></li>
                     </ul>
                 </div>
             </div>
@@ -469,7 +546,7 @@
                     <h1 class="display-6 fw-bold mb-3">
                         <i class="bi bi-palette2 me-3"></i>CSS Properties Master Playground
                     </h1>
-                    <p class="lead mb-0">Master ALL CSS properties with interactive examples, live demos, and instant feedback. From basics to advanced techniques - explore the complete power of CSS.</p>
+                    <p class="lead mb-0">Master ALL CSS properties with interactive examples, live demos, and multiple elements. From basics to advanced techniques - explore the complete power of CSS.</p>
                 </div>
                 <div class="col-lg-4 text-center">
                     <div class="d-flex justify-content-center align-items-center" style="height: 120px;">
@@ -523,11 +600,22 @@
                 <div class="property-body">
                     <div class="row">
                         <div class="col-lg-6">
+                            <!-- Element Controls -->
+                            <div class="element-controls">
+                                <button class="add-element-btn" onclick="addElement('layout')">
+                                    <i class="bi bi-plus-circle me-1"></i>Add Element
+                                </button>
+                                <button class="clear-elements-btn" onclick="clearElements('layout')">
+                                    <i class="bi bi-trash me-1"></i>Clear All
+                                </button>
+                                <div class="small text-muted mt-2">Click elements to select and style them</div>
+                            </div>
+
                             <!-- Display -->
                             <div class="control-group">
                                 <label class="control-label">Display</label>
                                 <div class="description-text">Defines how an element is displayed and participates in layout</div>
-                                <select class="form-select" id="display" onchange="updateDemo()">
+                                <select class="form-select" id="layout-display" onchange="updateDemo('layout')">
                                     <option value="block">block</option>
                                     <option value="inline">inline</option>
                                     <option value="inline-block">inline-block</option>
@@ -538,25 +626,19 @@
                                     <option value="table">table</option>
                                     <option value="table-cell">table-cell</option>
                                 </select>
-                                <div class="learning-tip mt-2">
-                                    <strong>Most Used:</strong> <code>block</code>, <code>inline</code>, <code>flex</code>, and <code>grid</code> are the foundation of modern layouts.
-                                </div>
                             </div>
 
                             <!-- Position -->
                             <div class="control-group">
                                 <label class="control-label">Position</label>
                                 <div class="description-text">Determines the positioning method for an element</div>
-                                <select class="form-select" id="position" onchange="updateDemo()">
+                                <select class="form-select" id="layout-position" onchange="updateDemo('layout')">
                                     <option value="static">static</option>
                                     <option value="relative" selected>relative</option>
                                     <option value="absolute">absolute</option>
                                     <option value="fixed">fixed</option>
                                     <option value="sticky">sticky</option>
                                 </select>
-                                <div class="learning-tip mt-2">
-                                    <strong>Key Difference:</strong> <code>static</code> = normal flow, <code>relative</code> = offset from normal, <code>absolute</code> = positioned relative to parent, <code>fixed</code> = relative to viewport.
-                                </div>
                             </div>
 
                             <!-- Position Offsets -->
@@ -565,42 +647,39 @@
                                 <div class="description-text">Control exact positioning when position is not static</div>
                                 <div class="row g-2">
                                     <div class="col-6">
-                                        <label class="form-label small">Top: <span class="range-value" id="top-value">0px</span></label>
-                                        <input type="range" class="form-range" id="top" min="-100" max="100" value="0" oninput="updatePositionValue('top')" onchange="updateDemo()">
+                                        <label class="form-label small">Top: <span class="range-value" id="layout-top-value">0px</span></label>
+                                        <input type="range" class="form-range" id="layout-top" min="-100" max="100" value="0" oninput="updateRangeValue('layout-top', 'px')" onchange="updateDemo('layout')">
                                     </div>
                                     <div class="col-6">
-                                        <label class="form-label small">Left: <span class="range-value" id="left-value">0px</span></label>
-                                        <input type="range" class="form-range" id="left" min="-100" max="100" value="0" oninput="updatePositionValue('left')" onchange="updateDemo()">
+                                        <label class="form-label small">Left: <span class="range-value" id="layout-left-value">0px</span></label>
+                                        <input type="range" class="form-range" id="layout-left" min="-100" max="100" value="0" oninput="updateRangeValue('layout-left', 'px')" onchange="updateDemo('layout')">
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Z-Index -->
                             <div class="control-group">
-                                <label class="control-label">Z-Index: <span class="range-value" id="z-index-value">1</span></label>
-                                <div class="description-text">Controls stacking order of positioned elements (higher = front)</div>
-                                <input type="range" class="form-range" id="z-index" min="-10" max="10" value="1" oninput="updateRangeValue('z-index')" onchange="updateDemo()">
+                                <label class="control-label">Z-Index: <span class="range-value" id="layout-z-index-value">1</span></label>
+                                <div class="description-text">Controls stacking order of positioned elements</div>
+                                <input type="range" class="form-range" id="layout-z-index" min="-10" max="10" value="1" oninput="updateRangeValue('layout-z-index')" onchange="updateDemo('layout')">
                             </div>
 
                             <!-- Float -->
                             <div class="control-group">
                                 <label class="control-label">Float</label>
-                                <div class="description-text">Makes element float to left or right (legacy layout method)</div>
-                                <select class="form-select" id="float" onchange="updateDemo()">
+                                <div class="description-text">Makes element float to left or right</div>
+                                <select class="form-select" id="layout-float" onchange="updateDemo('layout')">
                                     <option value="none" selected>none</option>
                                     <option value="left">left</option>
                                     <option value="right">right</option>
                                 </select>
-                                <div class="learning-tip mt-2">
-                                    <strong>Modern Alternative:</strong> Use Flexbox or Grid instead of float for layouts.
-                                </div>
                             </div>
 
                             <!-- Overflow -->
                             <div class="control-group">
                                 <label class="control-label">Overflow</label>
                                 <div class="description-text">Controls what happens when content overflows container</div>
-                                <select class="form-select" id="overflow" onchange="updateDemo()">
+                                <select class="form-select" id="layout-overflow" onchange="updateDemo('layout')">
                                     <option value="visible" selected>visible</option>
                                     <option value="hidden">hidden</option>
                                     <option value="scroll">scroll</option>
@@ -612,8 +691,8 @@
                         <div class="col-lg-6">
                             <!-- Demo Area -->
                             <h5>Live Demo</h5>
-                            <div class="demo-container" id="demo-container">
-                                <div class="demo-element" id="demo-element">CSS Demo</div>
+                            <div class="demo-container" id="layout-demo-container">
+                                <div class="demo-element selected" id="layout-demo-element-0" onclick="selectElement('layout', 0)">Element 1</div>
                             </div>
                             
                             <!-- Quick Presets -->
@@ -675,11 +754,22 @@
                 <div class="property-body">
                     <div class="row">
                         <div class="col-lg-6">
+                            <!-- Element Controls -->
+                            <div class="element-controls">
+                                <button class="add-element-btn" onclick="addElement('typography')">
+                                    <i class="bi bi-plus-circle me-1"></i>Add Text Element
+                                </button>
+                                <button class="clear-elements-btn" onclick="clearElements('typography')">
+                                    <i class="bi bi-trash me-1"></i>Clear All
+                                </button>
+                                <div class="small text-muted mt-2">Click text elements to select and style them</div>
+                            </div>
+
                             <!-- Font Family -->
                             <div class="control-group">
                                 <label class="control-label">Font Family</label>
                                 <div class="description-text">Sets the typeface for text</div>
-                                <select class="form-select" id="font-family" onchange="updateTypographyDemo()">
+                                <select class="form-select" id="typography-font-family" onchange="updateDemo('typography')">
                                     <option value="Arial, sans-serif">Arial (Sans-serif)</option>
                                     <option value="Georgia, serif" selected>Georgia (Serif)</option>
                                     <option value="'Courier New', monospace">Courier New (Monospace)</option>
@@ -692,16 +782,16 @@
 
                             <!-- Font Size -->
                             <div class="control-group">
-                                <label class="control-label">Font Size: <span class="range-value" id="font-size-value">24px</span></label>
+                                <label class="control-label">Font Size: <span class="range-value" id="typography-font-size-value">24px</span></label>
                                 <div class="description-text">Controls the size of text</div>
-                                <input type="range" class="form-range" id="font-size" min="8" max="72" value="24" oninput="updateRangeValue('font-size', 'px')" onchange="updateTypographyDemo()">
+                                <input type="range" class="form-range" id="typography-font-size" min="8" max="72" value="24" oninput="updateRangeValue('typography-font-size', 'px')" onchange="updateDemo('typography')">
                             </div>
 
                             <!-- Font Weight -->
                             <div class="control-group">
                                 <label class="control-label">Font Weight</label>
                                 <div class="description-text">Controls the thickness/boldness of text</div>
-                                <select class="form-select" id="font-weight" onchange="updateTypographyDemo()">
+                                <select class="form-select" id="typography-font-weight" onchange="updateDemo('typography')">
                                     <option value="100">100 - Thin</option>
                                     <option value="200">200 - Extra Light</option>
                                     <option value="300">300 - Light</option>
@@ -716,30 +806,23 @@
 
                             <!-- Line Height -->
                             <div class="control-group">
-                                <label class="control-label">Line Height: <span class="range-value" id="line-height-value">1.5</span></label>
+                                <label class="control-label">Line Height: <span class="range-value" id="typography-line-height-value">1.5</span></label>
                                 <div class="description-text">Controls the space between lines of text</div>
-                                <input type="range" class="form-range" id="line-height" min="0.8" max="3" step="0.1" value="1.5" oninput="updateRangeValue('line-height')" onchange="updateTypographyDemo()">
+                                <input type="range" class="form-range" id="typography-line-height" min="0.8" max="3" step="0.1" value="1.5" oninput="updateRangeValue('typography-line-height')" onchange="updateDemo('typography')">
                             </div>
 
                             <!-- Letter Spacing -->
                             <div class="control-group">
-                                <label class="control-label">Letter Spacing: <span class="range-value" id="letter-spacing-value">0px</span></label>
+                                <label class="control-label">Letter Spacing: <span class="range-value" id="typography-letter-spacing-value">0px</span></label>
                                 <div class="description-text">Controls space between characters</div>
-                                <input type="range" class="form-range" id="letter-spacing" min="-2" max="10" step="0.5" value="0" oninput="updateRangeValue('letter-spacing', 'px')" onchange="updateTypographyDemo()">
-                            </div>
-
-                            <!-- Word Spacing -->
-                            <div class="control-group">
-                                <label class="control-label">Word Spacing: <span class="range-value" id="word-spacing-value">0px</span></label>
-                                <div class="description-text">Controls space between words</div>
-                                <input type="range" class="form-range" id="word-spacing" min="-5" max="20" step="1" value="0" oninput="updateRangeValue('word-spacing', 'px')" onchange="updateTypographyDemo()">
+                                <input type="range" class="form-range" id="typography-letter-spacing" min="-2" max="10" step="0.5" value="0" oninput="updateRangeValue('typography-letter-spacing', 'px')" onchange="updateDemo('typography')">
                             </div>
 
                             <!-- Text Transform -->
                             <div class="control-group">
                                 <label class="control-label">Text Transform</label>
                                 <div class="description-text">Controls text capitalization</div>
-                                <select class="form-select" id="text-transform" onchange="updateTypographyDemo()">
+                                <select class="form-select" id="typography-text-transform" onchange="updateDemo('typography')">
                                     <option value="none" selected>none</option>
                                     <option value="uppercase">UPPERCASE</option>
                                     <option value="lowercase">lowercase</option>
@@ -751,7 +834,7 @@
                             <div class="control-group">
                                 <label class="control-label">Text Decoration</label>
                                 <div class="description-text">Adds decorative lines to text</div>
-                                <select class="form-select" id="text-decoration" onchange="updateTypographyDemo()">
+                                <select class="form-select" id="typography-text-decoration" onchange="updateDemo('typography')">
                                     <option value="none" selected>none</option>
                                     <option value="underline">underline</option>
                                     <option value="overline">overline</option>
@@ -764,7 +847,7 @@
                             <div class="control-group">
                                 <label class="control-label">Text Align</label>
                                 <div class="description-text">Controls horizontal text alignment</div>
-                                <select class="form-select" id="text-align" onchange="updateTypographyDemo()">
+                                <select class="form-select" id="typography-text-align" onchange="updateDemo('typography')">
                                     <option value="left">left</option>
                                     <option value="center" selected>center</option>
                                     <option value="right">right</option>
@@ -775,9 +858,9 @@
 
                         <div class="col-lg-6">
                             <h5>Live Demo</h5>
-                            <div class="demo-container" id="typo-demo-container">
-                                <div class="demo-text" id="typo-demo-element">
-                                    The quick brown fox jumps over the lazy dog. This text demonstrates various typography properties including font family, size, weight, spacing, and text effects in real-time.
+                            <div class="demo-container" id="typography-demo-container">
+                                <div class="demo-text selected" id="typography-demo-element-0" onclick="selectElement('typography', 0)">
+                                    The quick brown fox jumps over the lazy dog. This text demonstrates typography.
                                 </div>
                             </div>
                             
@@ -815,10 +898,10 @@
                         <div class="col-12">
                             <h5>Generated CSS</h5>
                             <div class="position-relative">
-                                <button class="copy-btn" onclick="copyCode('typo-css-output')">
+                                <button class="copy-btn" onclick="copyCode('typography-css-output')">
                                     <i class="bi bi-clipboard me-1"></i>Copy
                                 </button>
-                                <div class="code-output" id="typo-css-output">/* CSS will be generated here */</div>
+                                <div class="code-output" id="typography-css-output">/* CSS will be generated here */</div>
                             </div>
                         </div>
                     </div>
@@ -837,13 +920,24 @@
                 <div class="property-body">
                     <div class="row">
                         <div class="col-lg-6">
+                            <!-- Element Controls -->
+                            <div class="element-controls">
+                                <button class="add-element-btn" onclick="addElement('colors')">
+                                    <i class="bi bi-plus-circle me-1"></i>Add Element
+                                </button>
+                                <button class="clear-elements-btn" onclick="clearElements('colors')">
+                                    <i class="bi bi-trash me-1"></i>Clear All
+                                </button>
+                                <div class="small text-muted mt-2">Click elements to select and style their colors</div>
+                            </div>
+
                             <!-- Text Color -->
                             <div class="control-group">
                                 <label class="control-label">Text Color</label>
                                 <div class="description-text">Sets the color of text content</div>
                                 <div class="d-flex gap-2 align-items-center">
-                                    <input type="color" class="color-input" id="text-color" value="#ffffff" onchange="updateColorsDemo()">
-                                    <input type="text" class="form-control" id="text-color-hex" value="#ffffff" onchange="updateColorFromHex('text-color')" placeholder="#ffffff">
+                                    <input type="color" class="color-input" id="colors-text-color" value="#ffffff" onchange="updateDemo('colors')">
+                                    <input type="text" class="form-control" id="colors-text-color-hex" value="#ffffff" onchange="updateColorFromHex('colors', 'text-color')" placeholder="#ffffff">
                                 </div>
                             </div>
 
@@ -852,23 +946,23 @@
                                 <label class="control-label">Background Color</label>
                                 <div class="description-text">Sets the background color of the element</div>
                                 <div class="d-flex gap-2 align-items-center">
-                                    <input type="color" class="color-input" id="bg-color" value="#667eea" onchange="updateColorsDemo()">
-                                    <input type="text" class="form-control" id="bg-color-hex" value="#667eea" onchange="updateColorFromHex('bg-color')" placeholder="#667eea">
+                                    <input type="color" class="color-input" id="colors-bg-color" value="#667eea" onchange="updateDemo('colors')">
+                                    <input type="text" class="form-control" id="colors-bg-color-hex" value="#667eea" onchange="updateColorFromHex('colors', 'bg-color')" placeholder="#667eea">
                                 </div>
                             </div>
 
                             <!-- Opacity -->
                             <div class="control-group">
-                                <label class="control-label">Opacity: <span class="range-value" id="opacity-value">1</span></label>
+                                <label class="control-label">Opacity: <span class="range-value" id="colors-opacity-value">1</span></label>
                                 <div class="description-text">Controls the transparency of the entire element</div>
-                                <input type="range" class="form-range" id="opacity" min="0" max="1" step="0.1" value="1" oninput="updateRangeValue('opacity')" onchange="updateColorsDemo()">
+                                <input type="range" class="form-range" id="colors-opacity" min="0" max="1" step="0.1" value="1" oninput="updateRangeValue('colors-opacity')" onchange="updateDemo('colors')">
                             </div>
 
                             <!-- Background Size -->
                             <div class="control-group">
                                 <label class="control-label">Background Size</label>
                                 <div class="description-text">Controls how background images are sized</div>
-                                <select class="form-select" id="bg-size" onchange="updateColorsDemo()">
+                                <select class="form-select" id="colors-bg-size" onchange="updateDemo('colors')">
                                     <option value="auto">auto</option>
                                     <option value="cover" selected>cover</option>
                                     <option value="contain">contain</option>
@@ -880,7 +974,7 @@
                             <div class="control-group">
                                 <label class="control-label">Background Repeat</label>
                                 <div class="description-text">Controls if/how background images repeat</div>
-                                <select class="form-select" id="bg-repeat" onchange="updateColorsDemo()">
+                                <select class="form-select" id="colors-bg-repeat" onchange="updateDemo('colors')">
                                     <option value="no-repeat" selected>no-repeat</option>
                                     <option value="repeat">repeat</option>
                                     <option value="repeat-x">repeat-x</option>
@@ -892,7 +986,7 @@
                         <div class="col-lg-6">
                             <h5>Live Demo</h5>
                             <div class="demo-container" id="colors-demo-container">
-                                <div class="demo-element" id="colors-demo-element">Color Demo</div>
+                                <div class="demo-element selected" id="colors-demo-element-0" onclick="selectElement('colors', 0)">Color Demo</div>
                             </div>
                             
                             <div class="mb-3">
@@ -940,84 +1034,728 @@
             </div>
         </div>
 
-        <!-- Other tabs can be added here following the same pattern -->
-        <!-- For brevity, I'll add placeholders for the remaining tabs -->
-        
+        <!-- Sizing Tab -->
         <div id="sizing-tab" class="tab-content">
             <div class="property-card">
                 <div class="property-header">
                     <h3 class="mb-0"><i class="bi bi-arrows-move me-2"></i>Sizing & Spacing</h3>
                     <p class="mb-0 opacity-75">Control width, height, margins, padding, and box model</p>
+                    <div class="live-indicator">LIVE</div>
                 </div>
                 <div class="property-body">
-                    <div class="text-center py-5">
-                        <i class="bi bi-tools display-1 text-muted"></i>
-                        <h5 class="mt-3 text-muted">Sizing Controls Coming Soon</h5>
-                        <p class="text-muted">Width, height, margin, padding, and box-sizing controls will be available here.</p>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <!-- Element Controls -->
+                            <div class="element-controls">
+                                <button class="add-element-btn" onclick="addElement('sizing')">
+                                    <i class="bi bi-plus-circle me-1"></i>Add Element
+                                </button>
+                                <button class="clear-elements-btn" onclick="clearElements('sizing')">
+                                    <i class="bi bi-trash me-1"></i>Clear All
+                                </button>
+                                <div class="small text-muted mt-2">Click elements to select and resize them</div>
+                            </div>
+
+                            <!-- Width -->
+                            <div class="control-group">
+                                <label class="control-label">Width: <span class="range-value" id="sizing-width-value">200px</span></label>
+                                <div class="description-text">Controls the width of the element</div>
+                                <input type="range" class="form-range" id="sizing-width" min="50" max="400" value="200" oninput="updateRangeValue('sizing-width', 'px')" onchange="updateDemo('sizing')">
+                            </div>
+
+                            <!-- Height -->
+                            <div class="control-group">
+                                <label class="control-label">Height: <span class="range-value" id="sizing-height-value">100px</span></label>
+                                <div class="description-text">Controls the height of the element</div>
+                                <input type="range" class="form-range" id="sizing-height" min="50" max="300" value="100" oninput="updateRangeValue('sizing-height', 'px')" onchange="updateDemo('sizing')">
+                            </div>
+
+                            <!-- Margin -->
+                            <div class="control-group">
+                                <label class="control-label">Margin: <span class="range-value" id="sizing-margin-value">10px</span></label>
+                                <div class="description-text">Controls the outer space around the element</div>
+                                <input type="range" class="form-range" id="sizing-margin" min="0" max="50" value="10" oninput="updateRangeValue('sizing-margin', 'px')" onchange="updateDemo('sizing')">
+                            </div>
+
+                            <!-- Padding -->
+                            <div class="control-group">
+                                <label class="control-label">Padding: <span class="range-value" id="sizing-padding-value">20px</span></label>
+                                <div class="description-text">Controls the inner space within the element</div>
+                                <input type="range" class="form-range" id="sizing-padding" min="0" max="50" value="20" oninput="updateRangeValue('sizing-padding', 'px')" onchange="updateDemo('sizing')">
+                            </div>
+
+                            <!-- Box Sizing -->
+                            <div class="control-group">
+                                <label class="control-label">Box Sizing</label>
+                                <div class="description-text">Controls how width and height are calculated</div>
+                                <select class="form-select" id="sizing-box-sizing" onchange="updateDemo('sizing')">
+                                    <option value="content-box">content-box (default)</option>
+                                    <option value="border-box" selected>border-box (includes padding & border)</option>
+                                </select>
+                            </div>
+
+                            <!-- Max Width -->
+                            <div class="control-group">
+                                <label class="control-label">Max Width: <span class="range-value" id="sizing-max-width-value">none</span></label>
+                                <div class="description-text">Sets the maximum width of the element</div>
+                                <input type="range" class="form-range" id="sizing-max-width" min="100" max="500" value="500" oninput="updateMaxWidthValue()" onchange="updateDemo('sizing')">
+                            </div>
+
+                            <!-- Min Width -->
+                            <div class="control-group">
+                                <label class="control-label">Min Width: <span class="range-value" id="sizing-min-width-value">0px</span></label>
+                                <div class="description-text">Sets the minimum width of the element</div>
+                                <input type="range" class="form-range" id="sizing-min-width" min="0" max="200" value="0" oninput="updateRangeValue('sizing-min-width', 'px')" onchange="updateDemo('sizing')">
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <h5>Live Demo</h5>
+                            <div class="demo-container" id="sizing-demo-container">
+                                <div class="demo-element selected" id="sizing-demo-element-0" onclick="selectElement('sizing', 0)">Sizing Demo</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Sizing Presets:</label>
+                                <div>
+                                    <button class="preset-btn" onclick="applySizingPreset('small')">
+                                        <i class="bi bi-square me-1"></i>Small
+                                    </button>
+                                    <button class="preset-btn" onclick="applySizingPreset('medium')">
+                                        <i class="bi bi-square me-1"></i>Medium
+                                    </button>
+                                    <button class="preset-btn" onclick="applySizingPreset('large')">
+                                        <i class="bi bi-square me-1"></i>Large
+                                    </button>
+                                    <button class="preset-btn" onclick="applySizingPreset('responsive')">
+                                        <i class="bi bi-phone me-1"></i>Responsive
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="alert alert-info">
+                                <h6><i class="bi bi-lightbulb me-2"></i>Sizing Tips</h6>
+                                <ul class="mb-0 small">
+                                    <li>Use <code>box-sizing: border-box</code> for easier sizing</li>
+                                    <li><code>max-width: 100%</code> prevents overflow</li>
+                                    <li>Use relative units like <code>%</code>, <code>em</code>, <code>rem</code></li>
+                                    <li>CSS Grid and Flexbox handle sizing automatically</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h5>Generated CSS</h5>
+                            <div class="position-relative">
+                                <button class="copy-btn" onclick="copyCode('sizing-css-output')">
+                                    <i class="bi bi-clipboard me-1"></i>Copy
+                                </button>
+                                <div class="code-output" id="sizing-css-output">/* CSS will be generated here */</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
+        <!-- Borders Tab -->
         <div id="borders-tab" class="tab-content">
             <div class="property-card">
                 <div class="property-header">
                     <h3 class="mb-0"><i class="bi bi-square me-2"></i>Borders & Outlines</h3>
                     <p class="mb-0 opacity-75">Control border styles, width, colors, and border-radius</p>
+                    <div class="live-indicator">LIVE</div>
                 </div>
                 <div class="property-body">
-                    <div class="text-center py-5">
-                        <i class="bi bi-tools display-1 text-muted"></i>
-                        <h5 class="mt-3 text-muted">Border Controls Coming Soon</h5>
-                        <p class="text-muted">Border styles, width, colors, and radius controls will be available here.</p>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <!-- Element Controls -->
+                            <div class="element-controls">
+                                <button class="add-element-btn" onclick="addElement('borders')">
+                                    <i class="bi bi-plus-circle me-1"></i>Add Element
+                                </button>
+                                <button class="clear-elements-btn" onclick="clearElements('borders')">
+                                    <i class="bi bi-trash me-1"></i>Clear All
+                                </button>
+                                <div class="small text-muted mt-2">Click elements to select and style their borders</div>
+                            </div>
+
+                            <!-- Border Width -->
+                            <div class="control-group">
+                                <label class="control-label">Border Width: <span class="range-value" id="borders-width-value">2px</span></label>
+                                <div class="description-text">Controls the thickness of the border</div>
+                                <input type="range" class="form-range" id="borders-width" min="0" max="20" value="2" oninput="updateRangeValue('borders-width', 'px')" onchange="updateDemo('borders')">
+                            </div>
+
+                            <!-- Border Style -->
+                            <div class="control-group">
+                                <label class="control-label">Border Style</label>
+                                <div class="description-text">Sets the style of the border line</div>
+                                <select class="form-select" id="borders-style" onchange="updateDemo('borders')">
+                                    <option value="none">none</option>
+                                    <option value="solid" selected>solid</option>
+                                    <option value="dashed">dashed</option>
+                                    <option value="dotted">dotted</option>
+                                    <option value="double">double</option>
+                                    <option value="groove">groove</option>
+                                    <option value="ridge">ridge</option>
+                                    <option value="inset">inset</option>
+                                    <option value="outset">outset</option>
+                                </select>
+                            </div>
+
+                            <!-- Border Color -->
+                            <div class="control-group">
+                                <label class="control-label">Border Color</label>
+                                <div class="description-text">Sets the color of the border</div>
+                                <div class="d-flex gap-2 align-items-center">
+                                    <input type="color" class="color-input" id="borders-color" value="#667eea" onchange="updateDemo('borders')">
+                                    <input type="text" class="form-control" id="borders-color-hex" value="#667eea" onchange="updateColorFromHex('borders', 'color')" placeholder="#667eea">
+                                </div>
+                            </div>
+
+                            <!-- Border Radius -->
+                            <div class="control-group">
+                                <label class="control-label">Border Radius: <span class="range-value" id="borders-radius-value">8px</span></label>
+                                <div class="description-text">Controls the roundness of corners</div>
+                                <input type="range" class="form-range" id="borders-radius" min="0" max="50" value="8" oninput="updateRangeValue('borders-radius', 'px')" onchange="updateDemo('borders')">
+                            </div>
+
+                            <!-- Outline Width -->
+                            <div class="control-group">
+                                <label class="control-label">Outline Width: <span class="range-value" id="borders-outline-width-value">0px</span></label>
+                                <div class="description-text">Controls the thickness of the outline (outside border)</div>
+                                <input type="range" class="form-range" id="borders-outline-width" min="0" max="10" value="0" oninput="updateRangeValue('borders-outline-width', 'px')" onchange="updateDemo('borders')">
+                            </div>
+
+                            <!-- Outline Style -->
+                            <div class="control-group">
+                                <label class="control-label">Outline Style</label>
+                                <div class="description-text">Sets the style of the outline</div>
+                                <select class="form-select" id="borders-outline-style" onchange="updateDemo('borders')">
+                                    <option value="none" selected>none</option>
+                                    <option value="solid">solid</option>
+                                    <option value="dashed">dashed</option>
+                                    <option value="dotted">dotted</option>
+                                    <option value="double">double</option>
+                                </select>
+                            </div>
+
+                            <!-- Outline Color -->
+                            <div class="control-group">
+                                <label class="control-label">Outline Color</label>
+                                <div class="description-text">Sets the color of the outline</div>
+                                <div class="d-flex gap-2 align-items-center">
+                                    <input type="color" class="color-input" id="borders-outline-color" value="#ff6b6b" onchange="updateDemo('borders')">
+                                    <input type="text" class="form-control" id="borders-outline-color-hex" value="#ff6b6b" onchange="updateColorFromHex('borders', 'outline-color')" placeholder="#ff6b6b">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <h5>Live Demo</h5>
+                            <div class="demo-container" id="borders-demo-container">
+                                <div class="demo-element selected" id="borders-demo-element-0" onclick="selectElement('borders', 0)">Borders Demo</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Border Presets:</label>
+                                <div>
+                                    <button class="preset-btn" onclick="applyBorderPreset('thin')">
+                                        <i class="bi bi-square me-1"></i>Thin
+                                    </button>
+                                    <button class="preset-btn" onclick="applyBorderPreset('thick')">
+                                        <i class="bi bi-square me-1"></i>Thick
+                                    </button>
+                                    <button class="preset-btn" onclick="applyBorderPreset('dashed')">
+                                        <i class="bi bi-dash-square me-1"></i>Dashed
+                                    </button>
+                                    <button class="preset-btn" onclick="applyBorderPreset('rounded')">
+                                        <i class="bi bi-circle me-1"></i>Rounded
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="alert alert-info">
+                                <h6><i class="bi bi-lightbulb me-2"></i>Border Tips</h6>
+                                <ul class="mb-0 small">
+                                    <li>Borders add to element size unless <code>box-sizing: border-box</code></li>
+                                    <li>Outlines don't affect layout and appear outside borders</li>
+                                    <li><code>border-radius: 50%</code> creates a circle</li>
+                                    <li>Use <code>border: none</code> to remove all borders</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h5>Generated CSS</h5>
+                            <div class="position-relative">
+                                <button class="copy-btn" onclick="copyCode('borders-css-output')">
+                                    <i class="bi bi-clipboard me-1"></i>Copy
+                                </button>
+                                <div class="code-output" id="borders-css-output">/* CSS will be generated here */</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
+        <!-- Effects Tab -->
         <div id="effects-tab" class="tab-content">
             <div class="property-card">
                 <div class="property-header effects">
                     <h3 class="mb-0"><i class="bi bi-stars me-2"></i>Effects & Filters</h3>
                     <p class="mb-0 opacity-75">Add shadows, filters, transforms, and visual effects</p>
+                    <div class="live-indicator">LIVE</div>
                 </div>
                 <div class="property-body">
-                    <div class="text-center py-5">
-                        <i class="bi bi-tools display-1 text-muted"></i>
-                        <h5 class="mt-3 text-muted">Effects Controls Coming Soon</h5>
-                        <p class="text-muted">Box shadows, text shadows, filters, and transforms will be available here.</p>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <!-- Element Controls -->
+                            <div class="element-controls">
+                                <button class="add-element-btn" onclick="addElement('effects')">
+                                    <i class="bi bi-plus-circle me-1"></i>Add Element
+                                </button>
+                                <button class="clear-elements-btn" onclick="clearElements('effects')">
+                                    <i class="bi bi-trash me-1"></i>Clear All
+                                </button>
+                                <div class="small text-muted mt-2">Click elements to select and add effects</div>
+                            </div>
+
+                            <!-- Box Shadow -->
+                            <div class="control-group">
+                                <label class="control-label">Box Shadow Blur: <span class="range-value" id="effects-shadow-blur-value">10px</span></label>
+                                <div class="description-text">Controls the blur radius of the shadow</div>
+                                <input type="range" class="form-range" id="effects-shadow-blur" min="0" max="50" value="10" oninput="updateRangeValue('effects-shadow-blur', 'px')" onchange="updateDemo('effects')">
+                            </div>
+
+                            <!-- Shadow Offset X -->
+                            <div class="control-group">
+                                <label class="control-label">Shadow Offset X: <span class="range-value" id="effects-shadow-x-value">5px</span></label>
+                                <div class="description-text">Horizontal offset of the shadow</div>
+                                <input type="range" class="form-range" id="effects-shadow-x" min="-30" max="30" value="5" oninput="updateRangeValue('effects-shadow-x', 'px')" onchange="updateDemo('effects')">
+                            </div>
+
+                            <!-- Shadow Offset Y -->
+                            <div class="control-group">
+                                <label class="control-label">Shadow Offset Y: <span class="range-value" id="effects-shadow-y-value">5px</span></label>
+                                <div class="description-text">Vertical offset of the shadow</div>
+                                <input type="range" class="form-range" id="effects-shadow-y" min="-30" max="30" value="5" oninput="updateRangeValue('effects-shadow-y', 'px')" onchange="updateDemo('effects')">
+                            </div>
+
+                            <!-- Shadow Color -->
+                            <div class="control-group">
+                                <label class="control-label">Shadow Color</label>
+                                <div class="description-text">Sets the color of the shadow</div>
+                                <div class="d-flex gap-2 align-items-center">
+                                    <input type="color" class="color-input" id="effects-shadow-color" value="#000000" onchange="updateDemo('effects')">
+                                    <input type="text" class="form-control" id="effects-shadow-color-hex" value="#000000" onchange="updateColorFromHex('effects', 'shadow-color')" placeholder="#000000">
+                                </div>
+                            </div>
+
+                            <!-- Transform Scale -->
+                            <div class="control-group">
+                                <label class="control-label">Transform Scale: <span class="range-value" id="effects-scale-value">1</span></label>
+                                <div class="description-text">Scales the element size</div>
+                                <input type="range" class="form-range" id="effects-scale" min="0.5" max="2" step="0.1" value="1" oninput="updateRangeValue('effects-scale')" onchange="updateDemo('effects')">
+                            </div>
+
+                            <!-- Transform Rotate -->
+                            <div class="control-group">
+                                <label class="control-label">Transform Rotate: <span class="range-value" id="effects-rotate-value">0deg</span></label>
+                                <div class="description-text">Rotates the element</div>
+                                <input type="range" class="form-range" id="effects-rotate" min="-180" max="180" value="0" oninput="updateRangeValue('effects-rotate', 'deg')" onchange="updateDemo('effects')">
+                            </div>
+
+                            <!-- Filter Blur -->
+                            <div class="control-group">
+                                <label class="control-label">Filter Blur: <span class="range-value" id="effects-blur-value">0px</span></label>
+                                <div class="description-text">Applies blur filter to the element</div>
+                                <input type="range" class="form-range" id="effects-blur" min="0" max="20" value="0" oninput="updateRangeValue('effects-blur', 'px')" onchange="updateDemo('effects')">
+                            </div>
+
+                            <!-- Filter Brightness -->
+                            <div class="control-group">
+                                <label class="control-label">Filter Brightness: <span class="range-value" id="effects-brightness-value">100%</span></label>
+                                <div class="description-text">Controls the brightness of the element</div>
+                                <input type="range" class="form-range" id="effects-brightness" min="0" max="200" value="100" oninput="updateRangeValue('effects-brightness', '%')" onchange="updateDemo('effects')">
+                            </div>
+
+                            <!-- Filter Contrast -->
+                            <div class="control-group">
+                                <label class="control-label">Filter Contrast: <span class="range-value" id="effects-contrast-value">100%</span></label>
+                                <div class="description-text">Controls the contrast of the element</div>
+                                <input type="range" class="form-range" id="effects-contrast" min="0" max="200" value="100" oninput="updateRangeValue('effects-contrast', '%')" onchange="updateDemo('effects')">
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <h5>Live Demo</h5>
+                            <div class="demo-container" id="effects-demo-container">
+                                <div class="demo-element selected" id="effects-demo-element-0" onclick="selectElement('effects', 0)">Effects Demo</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Effect Presets:</label>
+                                <div>
+                                    <button class="preset-btn" onclick="applyEffectPreset('glow')">
+                                        <i class="bi bi-brightness-high me-1"></i>Glow
+                                    </button>
+                                    <button class="preset-btn" onclick="applyEffectPreset('shadow')">
+                                        <i class="bi bi-box me-1"></i>Shadow
+                                    </button>
+                                    <button class="preset-btn" onclick="applyEffectPreset('vintage')">
+                                        <i class="bi bi-filter me-1"></i>Vintage
+                                    </button>
+                                    <button class="preset-btn" onclick="applyEffectPreset('rotate')">
+                                        <i class="bi bi-arrow-repeat me-1"></i>Rotate
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="alert alert-info">
+                                <h6><i class="bi bi-lightbulb me-2"></i>Effects Tips</h6>
+                                <ul class="mb-0 small">
+                                    <li>Box shadows can have multiple layers separated by commas</li>
+                                    <li>Transforms don't affect document flow</li>
+                                    <li>Filters can be combined for complex effects</li>
+                                    <li>Use <code>transform-origin</code> to change rotation center</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h5>Generated CSS</h5>
+                            <div class="position-relative">
+                                <button class="copy-btn" onclick="copyCode('effects-css-output')">
+                                    <i class="bi bi-clipboard me-1"></i>Copy
+                                </button>
+                                <div class="code-output" id="effects-css-output">/* CSS will be generated here */</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
+        <!-- Animations Tab -->
         <div id="animations-tab" class="tab-content">
             <div class="property-card">
                 <div class="property-header animations">
                     <h3 class="mb-0"><i class="bi bi-arrow-repeat me-2"></i>Animations & Transitions</h3>
                     <p class="mb-0 opacity-75">Create smooth transitions and keyframe animations</p>
+                    <div class="live-indicator">LIVE</div>
                 </div>
                 <div class="property-body">
-                    <div class="text-center py-5">
-                        <i class="bi bi-tools display-1 text-muted"></i>
-                        <h5 class="mt-3 text-muted">Animation Controls Coming Soon</h5>
-                        <p class="text-muted">Transition and animation controls with keyframe editors will be available here.</p>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <!-- Element Controls -->
+                            <div class="element-controls">
+                                <button class="add-element-btn" onclick="addElement('animations')">
+                                    <i class="bi bi-plus-circle me-1"></i>Add Element
+                                </button>
+                                <button class="clear-elements-btn" onclick="clearElements('animations')">
+                                    <i class="bi bi-trash me-1"></i>Clear All
+                                </button>
+                                <div class="small text-muted mt-2">Click elements to select and animate them</div>
+                            </div>
+
+                            <!-- Animation Name -->
+                            <div class="control-group">
+                                <label class="control-label">Animation Type</label>
+                                <div class="description-text">Choose the type of animation</div>
+                                <select class="form-select" id="animations-name" onchange="updateDemo('animations')">
+                                    <option value="none" selected>none</option>
+                                    <option value="spin">Spin</option>
+                                    <option value="bounce">Bounce</option>
+                                    <option value="shake">Shake</option>
+                                    <option value="fade">Fade</option>
+                                    <option value="slide">Slide</option>
+                                    <option value="zoom">Zoom</option>
+                                </select>
+                            </div>
+
+                            <!-- Animation Duration -->
+                            <div class="control-group">
+                                <label class="control-label">Animation Duration: <span class="range-value" id="animations-duration-value">2s</span></label>
+                                <div class="description-text">How long one animation cycle takes</div>
+                                <input type="range" class="form-range" id="animations-duration" min="0.5" max="5" step="0.5" value="2" oninput="updateRangeValue('animations-duration', 's')" onchange="updateDemo('animations')">
+                            </div>
+
+                            <!-- Animation Iteration -->
+                            <div class="control-group">
+                                <label class="control-label">Animation Iteration Count</label>
+                                <div class="description-text">How many times the animation repeats</div>
+                                <select class="form-select" id="animations-iteration" onchange="updateDemo('animations')">
+                                    <option value="1">1 (once)</option>
+                                    <option value="2">2 times</option>
+                                    <option value="3">3 times</option>
+                                    <option value="5">5 times</option>
+                                    <option value="infinite" selected>infinite</option>
+                                </select>
+                            </div>
+
+                            <!-- Animation Timing Function -->
+                            <div class="control-group">
+                                <label class="control-label">Animation Timing Function</label>
+                                <div class="description-text">Controls the speed curve of the animation</div>
+                                <select class="form-select" id="animations-timing" onchange="updateDemo('animations')">
+                                    <option value="linear">linear</option>
+                                    <option value="ease" selected>ease</option>
+                                    <option value="ease-in">ease-in</option>
+                                    <option value="ease-out">ease-out</option>
+                                    <option value="ease-in-out">ease-in-out</option>
+                                </select>
+                            </div>
+
+                            <!-- Animation Direction -->
+                            <div class="control-group">
+                                <label class="control-label">Animation Direction</label>
+                                <div class="description-text">Direction of the animation playback</div>
+                                <select class="form-select" id="animations-direction" onchange="updateDemo('animations')">
+                                    <option value="normal" selected>normal</option>
+                                    <option value="reverse">reverse</option>
+                                    <option value="alternate">alternate</option>
+                                    <option value="alternate-reverse">alternate-reverse</option>
+                                </select>
+                            </div>
+
+                            <!-- Transition Duration -->
+                            <div class="control-group">
+                                <label class="control-label">Transition Duration: <span class="range-value" id="animations-transition-value">0.3s</span></label>
+                                <div class="description-text">Duration for hover transitions</div>
+                                <input type="range" class="form-range" id="animations-transition" min="0" max="2" step="0.1" value="0.3" oninput="updateRangeValue('animations-transition', 's')" onchange="updateDemo('animations')">
+                            </div>
+
+                            <!-- Transition Property -->
+                            <div class="control-group">
+                                <label class="control-label">Transition Property</label>
+                                <div class="description-text">Which properties to animate on hover</div>
+                                <select class="form-select" id="animations-transition-property" onchange="updateDemo('animations')">
+                                    <option value="all" selected>all</option>
+                                    <option value="transform">transform</option>
+                                    <option value="opacity">opacity</option>
+                                    <option value="background-color">background-color</option>
+                                    <option value="box-shadow">box-shadow</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <h5>Live Demo</h5>
+                            <div class="demo-container" id="animations-demo-container">
+                                <div class="demo-element selected" id="animations-demo-element-0" onclick="selectElement('animations', 0)">Hover Me!</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Animation Presets:</label>
+                                <div>
+                                    <button class="preset-btn" onclick="applyAnimationPreset('pulse')">
+                                        <i class="bi bi-heart-pulse me-1"></i>Pulse
+                                    </button>
+                                    <button class="preset-btn" onclick="applyAnimationPreset('wiggle')">
+                                        <i class="bi bi-arrow-left-right me-1"></i>Wiggle
+                                    </button>
+                                    <button class="preset-btn" onclick="applyAnimationPreset('glow')">
+                                        <i class="bi bi-lightbulb me-1"></i>Glow
+                                    </button>
+                                    <button class="preset-btn" onclick="applyAnimationPreset('float')">
+                                        <i class="bi bi-arrow-up-down me-1"></i>Float
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="alert alert-info">
+                                <h6><i class="bi bi-lightbulb me-2"></i>Animation Tips</h6>
+                                <ul class="mb-0 small">
+                                    <li>Use <code>transform</code> and <code>opacity</code> for smooth animations</li>
+                                    <li>Avoid animating layout properties like <code>width</code> or <code>height</code></li>
+                                    <li><code>will-change</code> can optimize performance</li>
+                                    <li>Use <code>animation-fill-mode</code> to control end states</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h5>Generated CSS</h5>
+                            <div class="position-relative">
+                                <button class="copy-btn" onclick="copyCode('animations-css-output')">
+                                    <i class="bi bi-clipboard me-1"></i>Copy
+                                </button>
+                                <div class="code-output" id="animations-css-output">/* CSS will be generated here */</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
+        <!-- Advanced Tab -->
         <div id="advanced-tab" class="tab-content">
             <div class="property-card">
                 <div class="property-header advanced">
                     <h3 class="mb-0"><i class="bi bi-gear me-2"></i>Advanced Properties</h3>
-                    <p class="mb-0 opacity-75">Explore CSS Grid, custom properties, and modern CSS features</p>
+                    <p class="mb-0 opacity-75">Explore CSS Grid, Flexbox, custom properties, and modern CSS features</p>
+                    <div class="live-indicator">LIVE</div>
                 </div>
                 <div class="property-body">
-                    <div class="text-center py-5">
-                        <i class="bi bi-tools display-1 text-muted"></i>
-                        <h5 class="mt-3 text-muted">Advanced Controls Coming Soon</h5>
-                        <p class="text-muted">CSS Grid, custom properties, and cutting-edge CSS features will be available here.</p>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <!-- Element Controls -->
+                            <div class="element-controls">
+                                <button class="add-element-btn" onclick="addElement('advanced')">
+                                    <i class="bi bi-plus-circle me-1"></i>Add Element
+                                </button>
+                                <button class="clear-elements-btn" onclick="clearElements('advanced')">
+                                    <i class="bi bi-trash me-1"></i>Clear All
+                                </button>
+                                <div class="small text-muted mt-2">Click elements to select and apply advanced styles</div>
+                            </div>
+
+                            <!-- Flexbox Direction -->
+                            <div class="control-group">
+                                <label class="control-label">Flex Direction (Container)</label>
+                                <div class="description-text">Sets the direction of flex items</div>
+                                <select class="form-select" id="advanced-flex-direction" onchange="updateDemo('advanced')">
+                                    <option value="row" selected>row</option>
+                                    <option value="row-reverse">row-reverse</option>
+                                    <option value="column">column</option>
+                                    <option value="column-reverse">column-reverse</option>
+                                </select>
+                            </div>
+
+                            <!-- Justify Content -->
+                            <div class="control-group">
+                                <label class="control-label">Justify Content (Container)</label>
+                                <div class="description-text">Aligns flex items along main axis</div>
+                                <select class="form-select" id="advanced-justify-content" onchange="updateDemo('advanced')">
+                                    <option value="flex-start">flex-start</option>
+                                    <option value="flex-end">flex-end</option>
+                                    <option value="center" selected>center</option>
+                                    <option value="space-between">space-between</option>
+                                    <option value="space-around">space-around</option>
+                                    <option value="space-evenly">space-evenly</option>
+                                </select>
+                            </div>
+
+                            <!-- Align Items -->
+                            <div class="control-group">
+                                <label class="control-label">Align Items (Container)</label>
+                                <div class="description-text">Aligns flex items along cross axis</div>
+                                <select class="form-select" id="advanced-align-items" onchange="updateDemo('advanced')">
+                                    <option value="flex-start">flex-start</option>
+                                    <option value="flex-end">flex-end</option>
+                                    <option value="center" selected>center</option>
+                                    <option value="baseline">baseline</option>
+                                    <option value="stretch">stretch</option>
+                                </select>
+                            </div>
+
+                            <!-- Flex Grow -->
+                            <div class="control-group">
+                                <label class="control-label">Flex Grow: <span class="range-value" id="advanced-flex-grow-value">0</span></label>
+                                <div class="description-text">How much an item should grow</div>
+                                <input type="range" class="form-range" id="advanced-flex-grow" min="0" max="3" value="0" oninput="updateRangeValue('advanced-flex-grow')" onchange="updateDemo('advanced')">
+                            </div>
+
+                            <!-- Flex Shrink -->
+                            <div class="control-group">
+                                <label class="control-label">Flex Shrink: <span class="range-value" id="advanced-flex-shrink-value">1</span></label>
+                                <div class="description-text">How much an item should shrink</div>
+                                <input type="range" class="form-range" id="advanced-flex-shrink" min="0" max="3" value="1" oninput="updateRangeValue('advanced-flex-shrink')" onchange="updateDemo('advanced')">
+                            </div>
+
+                            <!-- CSS Grid Columns -->
+                            <div class="control-group">
+                                <label class="control-label">Grid Template Columns</label>
+                                <div class="description-text">Defines grid column sizes</div>
+                                <select class="form-select" id="advanced-grid-columns" onchange="updateDemo('advanced')">
+                                    <option value="1fr">1fr (single column)</option>
+                                    <option value="1fr 1fr" selected>1fr 1fr (two equal)</option>
+                                    <option value="1fr 2fr">1fr 2fr (1:2 ratio)</option>
+                                    <option value="repeat(3, 1fr)">repeat(3, 1fr)</option>
+                                    <option value="200px 1fr">200px 1fr</option>
+                                </select>
+                            </div>
+
+                            <!-- CSS Grid Rows -->
+                            <div class="control-group">
+                                <label class="control-label">Grid Template Rows</label>
+                                <div class="description-text">Defines grid row sizes</div>
+                                <select class="form-select" id="advanced-grid-rows" onchange="updateDemo('advanced')">
+                                    <option value="auto">auto</option>
+                                    <option value="1fr 1fr" selected>1fr 1fr (two equal)</option>
+                                    <option value="100px auto">100px auto</option>
+                                    <option value="repeat(3, 1fr)">repeat(3, 1fr)</option>
+                                </select>
+                            </div>
+
+                            <!-- Grid Gap -->
+                            <div class="control-group">
+                                <label class="control-label">Grid Gap: <span class="range-value" id="advanced-grid-gap-value">10px</span></label>
+                                <div class="description-text">Space between grid items</div>
+                                <input type="range" class="form-range" id="advanced-grid-gap" min="0" max="50" value="10" oninput="updateRangeValue('advanced-grid-gap', 'px')" onchange="updateDemo('advanced')">
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <h5>Live Demo</h5>
+                            <div class="demo-container" id="advanced-demo-container" style="display: grid;">
+                                <div class="demo-element selected" id="advanced-demo-element-0" onclick="selectElement('advanced', 0)">Grid Item 1</div>
+                                <div class="demo-element" id="advanced-demo-element-1" onclick="selectElement('advanced', 1)">Grid Item 2</div>
+                                <div class="demo-element" id="advanced-demo-element-2" onclick="selectElement('advanced', 2)">Grid Item 3</div>
+                                <div class="demo-element" id="advanced-demo-element-3" onclick="selectElement('advanced', 3)">Grid Item 4</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Layout Presets:</label>
+                                <div>
+                                    <button class="preset-btn" onclick="applyAdvancedPreset('flexbox')">
+                                        <i class="bi bi-distribute-horizontal me-1"></i>Flexbox
+                                    </button>
+                                    <button class="preset-btn" onclick="applyAdvancedPreset('grid')">
+                                        <i class="bi bi-grid-3x3 me-1"></i>CSS Grid
+                                    </button>
+                                    <button class="preset-btn" onclick="applyAdvancedPreset('holy-grail')">
+                                        <i class="bi bi-layout-text-window me-1"></i>Holy Grail
+                                    </button>
+                                    <button class="preset-btn" onclick="applyAdvancedPreset('card-layout')">
+                                        <i class="bi bi-card-list me-1"></i>Card Layout
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="alert alert-info">
+                                <h6><i class="bi bi-lightbulb me-2"></i>Advanced Tips</h6>
+                                <ul class="mb-0 small">
+                                    <li>CSS Grid is perfect for 2D layouts</li>
+                                    <li>Flexbox excels at 1D layouts (rows or columns)</li>
+                                    <li>Use <code>fr</code> units for flexible grid sizing</li>
+                                    <li>Combine Grid and Flexbox for complex layouts</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h5>Generated CSS</h5>
+                            <div class="position-relative">
+                                <button class="copy-btn" onclick="copyCode('advanced-css-output')">
+                                    <i class="bi bi-clipboard me-1"></i>Copy
+                                </button>
+                                <div class="code-output" id="advanced-css-output">/* CSS will be generated here */</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1029,924 +1767,1071 @@
             integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" 
             crossorigin="anonymous"></script>
     
-    <!-- Security Utils (MUST be loaded before main script) -->
     <script>
-        // Security utility functions
-        const SecurityUtils = {
-            // Input validation and sanitization
-            sanitizeHTML: function(input) {
-                if (typeof input !== 'string') return '';
-                
-                // Remove dangerous tags and attributes
-                const div = document.createElement('div');
-                div.textContent = input;
-                let sanitized = div.innerHTML;
-                
-                // Remove script tags and event handlers
-                sanitized = sanitized.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
-                sanitized = sanitized.replace(/on\w+\s*=\s*"[^"]*"/gi, '');
-                sanitized = sanitized.replace(/on\w+\s*=\s*'[^']*'/gi, '');
-                sanitized = sanitized.replace(/javascript:/gi, '');
-                
-                return sanitized;
-            },
-
-            // CSS property validation
-            validateCSSProperty: function(property, value) {
-                const allowedProperties = [
-                    'display', 'position', 'top', 'left', 'right', 'bottom', 'z-index',
-                    'float', 'clear', 'overflow', 'font-family', 'font-size', 'font-weight',
-                    'line-height', 'letter-spacing', 'word-spacing', 'text-transform',
-                    'text-decoration', 'text-align', 'color', 'background-color',
-                    'background-image', 'background-size', 'background-repeat',
-                    'width', 'height', 'margin', 'padding', 'border', 'border-radius',
-                    'box-shadow', 'text-shadow', 'opacity', 'transform', 'transition',
-                    'animation', 'filter'
-                ];
-                
-                if (!allowedProperties.includes(property)) return false;
-                
-                // Basic value validation
-                if (typeof value !== 'string') return false;
-                if (value.length > 200) return false;
-                if (/[<>'"]/g.test(value)) return false;
-                
-                return true;
-            },
-
-            // Color validation
-            validateColor: function(color) {
-                if (!color || typeof color !== 'string') return false;
-                
-                // Allow hex colors, rgb, rgba, hsl, hsla, and named colors
-                const colorRegex = /^(#[0-9A-F]{3,8}|rgb\(.*\)|rgba\(.*\)|hsl\(.*\)|hsla\(.*\)|[a-z]+)$/i;
-                return colorRegex.test(color) && color.length <= 50;
-            },
-
-            // Numeric value validation
-            validateNumeric: function(value, min = -1000, max = 1000) {
-                const num = parseFloat(value);
-                return !isNaN(num) && num >= min && num <= max;
-            },
-
-            // Rate limiting for user actions
-            rateLimiter: {
-                actions: new Map(),
-                
-                isAllowed: function(action, limit = 10, window = 60000) {
-                    const now = Date.now();
-                    const key = action;
-                    
-                    if (!this.actions.has(key)) {
-                        this.actions.set(key, []);
-                    }
-                    
-                    const timestamps = this.actions.get(key);
-                    
-                    // Remove old timestamps
-                    while (timestamps.length > 0 && now - timestamps[0] > window) {
-                        timestamps.shift();
-                    }
-                    
-                    if (timestamps.length >= limit) {
-                        return false;
-                    }
-                    
-                    timestamps.push(now);
-                    return true;
-                }
-            },
-
-            // Error handling
-            handleError: function(error, context = '') {
-                console.error(`Security Error ${context}:`, error);
-                
-                // Log to a secure endpoint in production
-                if (typeof window.reportError === 'function') {
-                    window.reportError({
-                        error: error.message,
-                        context: context,
-                        timestamp: new Date().toISOString(),
-                        userAgent: navigator.userAgent
-                    });
-                }
-            }
+        // Global state management
+        let currentTab = 'layout';
+        let elementCounts = {
+            layout: 1,
+            typography: 1,
+            colors: 1,
+            sizing: 1,
+            borders: 1,
+            effects: 1,
+            animations: 1,
+            advanced: 4
+        };
+        let selectedElements = {
+            layout: 0,
+            typography: 0,
+            colors: 0,
+            sizing: 0,
+            borders: 0,
+            effects: 0,
+            animations: 0,
+            advanced: 0
         };
 
-        // Global error handlers
-        window.addEventListener('error', function(event) {
-            SecurityUtils.handleError(event.error, 'Global Error Handler');
-        });
-
-        window.addEventListener('unhandledrejection', function(event) {
-            SecurityUtils.handleError(event.reason, 'Unhandled Promise Rejection');
-        });
-    </script>
-    
-    <!-- Main Application Script -->
-    <script>
-        // Initialize on page load with error handling
+        // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
-            try {
-                updateDemo();
-                updateTypographyDemo();
-                updateColorsDemo();
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Initialization');
-            }
+            updateDemo('layout');
+            updateDemo('typography');
+            updateDemo('colors');
+            updateDemo('sizing');
+            updateDemo('borders');
+            updateDemo('effects');
+            updateDemo('animations');
+            updateDemo('advanced');
         });
 
-        // Tab switching with validation
+        // Tab switching
         function switchPropertyTab(tabName) {
-            try {
-                if (!SecurityUtils.rateLimiter.isAllowed('switchTab', 20, 10000)) {
-                    console.warn('Rate limit exceeded for tab switching');
-                    return;
-                }
-
-                const validTabs = ['layout', 'typography', 'colors', 'sizing', 'borders', 'effects', 'animations', 'advanced'];
-                if (!validTabs.includes(tabName)) {
-                    throw new Error('Invalid tab name');
-                }
-
-                // Hide all tab contents
-                document.querySelectorAll('.tab-content').forEach(tab => {
-                    tab.classList.remove('active');
-                });
-                
-                // Remove active class from all tab buttons
-                document.querySelectorAll('.tab-btn').forEach(btn => {
-                    btn.classList.remove('active');
-                });
-                
-                // Show selected tab content
-                const targetTab = document.getElementById(tabName + '-tab');
-                if (targetTab) {
-                    targetTab.classList.add('active');
-                }
-                
-                // Add active class to clicked button
-                if (event && event.target) {
-                    event.target.classList.add('active');
-                }
-
-                // Announce change for accessibility
-                announceChange(`Switched to ${tabName} properties tab`);
-
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Tab Switching');
+            currentTab = tabName;
+            
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            const targetTab = document.getElementById(tabName + '-tab');
+            if (targetTab) {
+                targetTab.classList.add('active');
+            }
+            
+            // Add active class to clicked button
+            if (event && event.target) {
+                event.target.classList.add('active');
             }
         }
 
-        // Update range value displays with validation
+        // Update range value displays
         function updateRangeValue(id, unit = '') {
-            try {
-                const element = document.getElementById(id);
-                const valueElement = document.getElementById(id + '-value');
-                if (element && valueElement) {
-                    const value = parseFloat(element.value);
-                    if (SecurityUtils.validateNumeric(value, -1000, 1000)) {
-                        valueElement.textContent = value + unit;
-                    }
-                }
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Range Value Update');
+            const element = document.getElementById(id);
+            const valueElement = document.getElementById(id + '-value');
+            if (element && valueElement) {
+                valueElement.textContent = element.value + unit;
             }
         }
 
-        function updatePositionValue(property) {
-            try {
-                updateRangeValue(property, 'px');
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Position Value Update');
+        function updateMaxWidthValue() {
+            const element = document.getElementById('sizing-max-width');
+            const valueElement = document.getElementById('sizing-max-width-value');
+            if (element && valueElement) {
+                const value = element.value;
+                valueElement.textContent = value === '500' ? 'none' : value + 'px';
             }
         }
 
-        // Layout Demo Functions with security
-        function updateDemo() {
-            try {
-                if (!SecurityUtils.rateLimiter.isAllowed('updateDemo', 50, 10000)) {
-                    console.warn('Rate limit exceeded for demo updates');
-                    return;
-                }
+        // Add new element
+        function addElement(tabName) {
+            const container = document.getElementById(tabName + '-demo-container');
+            if (!container) return;
 
-                const element = document.getElementById('demo-element');
-                const container = document.getElementById('demo-container');
-                
-                if (!element || !container) return;
+            const elementId = tabName + '-demo-element-' + elementCounts[tabName];
+            const element = document.createElement('div');
+            element.id = elementId;
+            element.onclick = function() { selectElement(tabName, elementCounts[tabName]); };
 
-                // Get values with validation
-                const display = document.getElementById('display')?.value || 'flex';
-                const position = document.getElementById('position')?.value || 'relative';
-                const top = document.getElementById('top')?.value || '0';
-                const left = document.getElementById('left')?.value || '0';
-                const zIndex = document.getElementById('z-index')?.value || '1';
-                const float = document.getElementById('float')?.value || 'none';
-                const overflow = document.getElementById('overflow')?.value || 'visible';
-
-                // Validate CSS properties and values
-                const cssProperties = {
-                    display, position, 
-                    top: top + 'px', 
-                    left: left + 'px', 
-                    'z-index': zIndex, 
-                    float, 
-                    overflow
-                };
-
-                let validatedStyles = {};
-                for (const [prop, value] of Object.entries(cssProperties)) {
-                    if (SecurityUtils.validateCSSProperty(prop, value)) {
-                        validatedStyles[prop] = value;
-                    }
-                }
-
-                // Apply validated styles safely
-                Object.assign(element.style, validatedStyles);
-                
-                // Special handling for container overflow
-                if (SecurityUtils.validateCSSProperty('overflow', overflow)) {
-                    container.style.overflow = overflow;
-                }
-                
-                generateLayoutCSS();
-
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Layout Demo Update');
+            if (tabName === 'typography') {
+                element.className = 'demo-text';
+                element.textContent = `Text Element ${elementCounts[tabName] + 1}`;
+            } else {
+                element.className = 'demo-element';
+                element.textContent = `Element ${elementCounts[tabName] + 1}`;
             }
+
+            container.appendChild(element);
+            elementCounts[tabName]++;
+            
+            // Select the new element
+            selectElement(tabName, elementCounts[tabName] - 1);
+            updateDemo(tabName);
+            showToast(`Added new ${tabName} element!`);
+        }
+
+        // Clear all elements
+        function clearElements(tabName) {
+            const container = document.getElementById(tabName + '-demo-container');
+            if (!container) return;
+
+            container.innerHTML = '';
+            elementCounts[tabName] = 0;
+            selectedElements[tabName] = 0;
+            
+            // Add one element back
+            addElement(tabName);
+            showToast(`Cleared all ${tabName} elements!`);
+        }
+
+        // Select element
+        function selectElement(tabName, index) {
+            // Remove selection from all elements in this tab
+            const container = document.getElementById(tabName + '-demo-container');
+            if (container) {
+                container.querySelectorAll('.demo-element, .demo-text').forEach(el => {
+                    el.classList.remove('selected');
+                });
+            }
+
+            // Add selection to clicked element
+            const element = document.getElementById(tabName + '-demo-element-' + index);
+            if (element) {
+                element.classList.add('selected');
+                selectedElements[tabName] = index;
+            }
+        }
+
+        // Update color from hex input
+        function updateColorFromHex(tabName, colorType) {
+            const hexInput = document.getElementById(tabName + '-' + colorType + '-hex');
+            const colorInput = document.getElementById(tabName + '-' + colorType);
+            
+            if (hexInput && colorInput) {
+                colorInput.value = hexInput.value;
+                updateDemo(tabName);
+            }
+        }
+
+        // Main update demo function
+        function updateDemo(tabName) {
+            switch(tabName) {
+                case 'layout':
+                    updateLayoutDemo();
+                    break;
+                case 'typography':
+                    updateTypographyDemo();
+                    break;
+                case 'colors':
+                    updateColorsDemo();
+                    break;
+                case 'sizing':
+                    updateSizingDemo();
+                    break;
+                case 'borders':
+                    updateBordersDemo();
+                    break;
+                case 'effects':
+                    updateEffectsDemo();
+                    break;
+                case 'animations':
+                    updateAnimationsDemo();
+                    break;
+                case 'advanced':
+                    updateAdvancedDemo();
+                    break;
+            }
+        }
+
+        // Layout Demo
+        function updateLayoutDemo() {
+            const selectedElement = document.getElementById('layout-demo-element-' + selectedElements.layout);
+            if (!selectedElement) return;
+
+            const display = document.getElementById('layout-display').value;
+            const position = document.getElementById('layout-position').value;
+            const top = document.getElementById('layout-top').value + 'px';
+            const left = document.getElementById('layout-left').value + 'px';
+            const zIndex = document.getElementById('layout-z-index').value;
+            const float = document.getElementById('layout-float').value;
+            const overflow = document.getElementById('layout-overflow').value;
+
+            Object.assign(selectedElement.style, {
+                display, position, top, left, zIndex, float, overflow
+            });
+
+            generateLayoutCSS();
         }
 
         function generateLayoutCSS() {
-            try {
-                const display = document.getElementById('display')?.value || 'flex';
-                const position = document.getElementById('position')?.value || 'relative';
-                const top = document.getElementById('top')?.value || '0';
-                const left = document.getElementById('left')?.value || '0';
-                const zIndex = document.getElementById('z-index')?.value || '1';
-                const float = document.getElementById('float')?.value || 'none';
-                const overflow = document.getElementById('overflow')?.value || 'visible';
+            const display = document.getElementById('layout-display').value;
+            const position = document.getElementById('layout-position').value;
+            const top = document.getElementById('layout-top').value;
+            const left = document.getElementById('layout-left').value;
+            const zIndex = document.getElementById('layout-z-index').value;
+            const float = document.getElementById('layout-float').value;
+            const overflow = document.getElementById('layout-overflow').value;
 
-                let css = `<span class="css-selector">.element</span> {\n`;
-                css += `  <span class="css-property">display</span>: <span class="css-value">${SecurityUtils.sanitizeHTML(display)}</span>;\n`;
-                css += `  <span class="css-property">position</span>: <span class="css-value">${SecurityUtils.sanitizeHTML(position)}</span>;\n`;
-                
-                if (position !== 'static') {
-                    if (top !== '0') css += `  <span class="css-property">top</span>: <span class="css-value">${SecurityUtils.sanitizeHTML(top)}px</span>;\n`;
-                    if (left !== '0') css += `  <span class="css-property">left</span>: <span class="css-value">${SecurityUtils.sanitizeHTML(left)}px</span>;\n`;
-                    if (zIndex !== '1') css += `  <span class="css-property">z-index</span>: <span class="css-value">${SecurityUtils.sanitizeHTML(zIndex)}</span>;\n`;
-                }
-                
-                if (float !== 'none') css += `  <span class="css-property">float</span>: <span class="css-value">${SecurityUtils.sanitizeHTML(float)}</span>;\n`;
-                if (overflow !== 'visible') css += `  <span class="css-property">overflow</span>: <span class="css-value">${SecurityUtils.sanitizeHTML(overflow)}</span>;\n`;
-                
-                css += `}`;
-
-                const outputEl = document.getElementById('layout-css-output');
-                if (outputEl) {
-                    outputEl.innerHTML = css;
-                }
-
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Layout CSS Generation');
+            let css = `<span class="css-selector">.element</span> {\n`;
+            css += `  <span class="css-property">display</span>: <span class="css-value">${display}</span>;\n`;
+            css += `  <span class="css-property">position</span>: <span class="css-value">${position}</span>;\n`;
+            
+            if (position !== 'static') {
+                if (top !== '0') css += `  <span class="css-property">top</span>: <span class="css-value">${top}px</span>;\n`;
+                if (left !== '0') css += `  <span class="css-property">left</span>: <span class="css-value">${left}px</span>;\n`;
+                if (zIndex !== '1') css += `  <span class="css-property">z-index</span>: <span class="css-value">${zIndex}</span>;\n`;
             }
+            
+            if (float !== 'none') css += `  <span class="css-property">float</span>: <span class="css-value">${float}</span>;\n`;
+            if (overflow !== 'visible') css += `  <span class="css-property">overflow</span>: <span class="css-value">${overflow}</span>;\n`;
+            
+            css += `}`;
+
+            document.getElementById('layout-css-output').innerHTML = css;
         }
 
-        // Typography Demo Functions with security
+        // Typography Demo
         function updateTypographyDemo() {
-            try {
-                if (!SecurityUtils.rateLimiter.isAllowed('updateTypographyDemo', 50, 10000)) {
-                    console.warn('Rate limit exceeded for typography updates');
-                    return;
-                }
+            const selectedElement = document.getElementById('typography-demo-element-' + selectedElements.typography);
+            if (!selectedElement) return;
 
-                const element = document.getElementById('typo-demo-element');
-                if (!element) return;
-                
-                // Get values with validation
-                const fontFamily = document.getElementById('font-family')?.value || 'Georgia, serif';
-                const fontSize = document.getElementById('font-size')?.value || '24';
-                const fontWeight = document.getElementById('font-weight')?.value || '400';
-                const lineHeight = document.getElementById('line-height')?.value || '1.5';
-                const letterSpacing = document.getElementById('letter-spacing')?.value || '0';
-                const wordSpacing = document.getElementById('word-spacing')?.value || '0';
-                const textTransform = document.getElementById('text-transform')?.value || 'none';
-                const textDecoration = document.getElementById('text-decoration')?.value || 'none';
-                const textAlign = document.getElementById('text-align')?.value || 'center';
+            const fontFamily = document.getElementById('typography-font-family').value;
+            const fontSize = document.getElementById('typography-font-size').value + 'px';
+            const fontWeight = document.getElementById('typography-font-weight').value;
+            const lineHeight = document.getElementById('typography-line-height').value;
+            const letterSpacing = document.getElementById('typography-letter-spacing').value + 'px';
+            const textTransform = document.getElementById('typography-text-transform').value;
+            const textDecoration = document.getElementById('typography-text-decoration').value;
+            const textAlign = document.getElementById('typography-text-align').value;
 
-                // Validate and apply styles
-                const cssProperties = {
-                    'font-family': fontFamily,
-                    'font-size': fontSize + 'px',
-                    'font-weight': fontWeight,
-                    'line-height': lineHeight,
-                    'letter-spacing': letterSpacing + 'px',
-                    'word-spacing': wordSpacing + 'px',
-                    'text-transform': textTransform,
-                    'text-decoration': textDecoration,
-                    'text-align': textAlign
-                };
+            Object.assign(selectedElement.style, {
+                fontFamily, fontSize, fontWeight, lineHeight, letterSpacing,
+                textTransform, textDecoration, textAlign
+            });
 
-                let validatedStyles = {};
-                for (const [prop, value] of Object.entries(cssProperties)) {
-                    if (SecurityUtils.validateCSSProperty(prop, value)) {
-                        validatedStyles[prop] = value;
-                    }
-                }
-
-                Object.assign(element.style, validatedStyles);
-                generateTypographyCSS();
-
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Typography Demo Update');
-            }
+            generateTypographyCSS();
         }
 
         function generateTypographyCSS() {
-            try {
-                const fontFamily = document.getElementById('font-family')?.value || 'Georgia, serif';
-                const fontSize = document.getElementById('font-size')?.value || '24';
-                const fontWeight = document.getElementById('font-weight')?.value || '400';
-                const lineHeight = document.getElementById('line-height')?.value || '1.5';
-                const letterSpacing = document.getElementById('letter-spacing')?.value || '0';
-                const wordSpacing = document.getElementById('word-spacing')?.value || '0';
-                const textTransform = document.getElementById('text-transform')?.value || 'none';
-                const textDecoration = document.getElementById('text-decoration')?.value || 'none';
-                const textAlign = document.getElementById('text-align')?.value || 'center';
+            const fontFamily = document.getElementById('typography-font-family').value;
+            const fontSize = document.getElementById('typography-font-size').value;
+            const fontWeight = document.getElementById('typography-font-weight').value;
+            const lineHeight = document.getElementById('typography-line-height').value;
+            const letterSpacing = document.getElementById('typography-letter-spacing').value;
+            const textTransform = document.getElementById('typography-text-transform').value;
+            const textDecoration = document.getElementById('typography-text-decoration').value;
+            const textAlign = document.getElementById('typography-text-align').value;
 
-                let css = `<span class="css-selector">.text-element</span> {\n`;
-                css += `  <span class="css-property">font-family</span>: <span class="css-value">${SecurityUtils.sanitizeHTML(fontFamily)}</span>;\n`;
-                css += `  <span class="css-property">font-size</span>: <span class="css-value">${SecurityUtils.sanitizeHTML(fontSize)}px</span>;\n`;
-                css += `  <span class="css-property">font-weight</span>: <span class="css-value">${SecurityUtils.sanitizeHTML(fontWeight)}</span>;\n`;
-                css += `  <span class="css-property">line-height</span>: <span class="css-value">${SecurityUtils.sanitizeHTML(lineHeight)}</span>;\n`;
-                css += `  <span class="css-property">text-align</span>: <span class="css-value">${SecurityUtils.sanitizeHTML(textAlign)}</span>;\n`;
-                
-                if (letterSpacing !== '0') css += `  <span class="css-property">letter-spacing</span>: <span class="css-value">${SecurityUtils.sanitizeHTML(letterSpacing)}px</span>;\n`;
-                if (wordSpacing !== '0') css += `  <span class="css-property">word-spacing</span>: <span class="css-value">${SecurityUtils.sanitizeHTML(wordSpacing)}px</span>;\n`;
-                if (textTransform !== 'none') css += `  <span class="css-property">text-transform</span>: <span class="css-value">${SecurityUtils.sanitizeHTML(textTransform)}</span>;\n`;
-                if (textDecoration !== 'none') css += `  <span class="css-property">text-decoration</span>: <span class="css-value">${SecurityUtils.sanitizeHTML(textDecoration)}</span>;\n`;
-                
-                css += `}`;
+            let css = `<span class="css-selector">.text-element</span> {\n`;
+            css += `  <span class="css-property">font-family</span>: <span class="css-value">${fontFamily}</span>;\n`;
+            css += `  <span class="css-property">font-size</span>: <span class="css-value">${fontSize}px</span>;\n`;
+            css += `  <span class="css-property">font-weight</span>: <span class="css-value">${fontWeight}</span>;\n`;
+            css += `  <span class="css-property">line-height</span>: <span class="css-value">${lineHeight}</span>;\n`;
+            css += `  <span class="css-property">text-align</span>: <span class="css-value">${textAlign}</span>;\n`;
+            
+            if (letterSpacing !== '0') css += `  <span class="css-property">letter-spacing</span>: <span class="css-value">${letterSpacing}px</span>;\n`;
+            if (textTransform !== 'none') css += `  <span class="css-property">text-transform</span>: <span class="css-value">${textTransform}</span>;\n`;
+            if (textDecoration !== 'none') css += `  <span class="css-property">text-decoration</span>: <span class="css-value">${textDecoration}</span>;\n`;
+            
+            css += `}`;
 
-                const outputEl = document.getElementById('typo-css-output');
-                if (outputEl) {
-                    outputEl.innerHTML = css;
-                }
-
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Typography CSS Generation');
-            }
+            document.getElementById('typography-css-output').innerHTML = css;
         }
 
-        // Colors Demo Functions with security
+        // Colors Demo
         function updateColorsDemo() {
-            try {
-                if (!SecurityUtils.rateLimiter.isAllowed('updateColorsDemo', 50, 10000)) {
-                    console.warn('Rate limit exceeded for colors updates');
-                    return;
-                }
+            const selectedElement = document.getElementById('colors-demo-element-' + selectedElements.colors);
+            if (!selectedElement) return;
 
-                const element = document.getElementById('colors-demo-element');
-                if (!element) return;
+            const textColor = document.getElementById('colors-text-color').value;
+            const bgColor = document.getElementById('colors-bg-color').value;
+            const opacity = document.getElementById('colors-opacity').value;
+            const bgSize = document.getElementById('colors-bg-size').value;
+            const bgRepeat = document.getElementById('colors-bg-repeat').value;
 
-                // Get values with validation
-                const textColor = document.getElementById('text-color')?.value || '#ffffff';
-                const bgColor = document.getElementById('bg-color')?.value || '#667eea';
-                const opacity = document.getElementById('opacity')?.value || '1';
-                const bgSize = document.getElementById('bg-size')?.value || 'cover';
-                const bgRepeat = document.getElementById('bg-repeat')?.value || 'no-repeat';
+            // Update hex inputs
+            document.getElementById('colors-text-color-hex').value = textColor;
+            document.getElementById('colors-bg-color-hex').value = bgColor;
 
-                // Update hex inputs
-                const textColorHex = document.getElementById('text-color-hex');
-                const bgColorHex = document.getElementById('bg-color-hex');
-                if (textColorHex) textColorHex.value = textColor;
-                if (bgColorHex) bgColorHex.value = bgColor;
+            Object.assign(selectedElement.style, {
+                color: textColor,
+                backgroundColor: bgColor,
+                opacity: opacity,
+                backgroundSize: bgSize,
+                backgroundRepeat: bgRepeat
+            });
 
-                // Validate and apply styles
-                const cssProperties = {
-                    color: textColor,
-                    'background-color': bgColor,
-                    opacity: opacity,
-                    'background-size': bgSize,
-                    'background-repeat': bgRepeat
-                };
-
-                let validatedStyles = {};
-                for (const [prop, value] of Object.entries(cssProperties)) {
-                    if (prop === 'color' || prop === 'background-color') {
-                        if (SecurityUtils.validateColor(value)) {
-                            validatedStyles[prop] = value;
-                        }
-                    } else if (SecurityUtils.validateCSSProperty(prop, value)) {
-                        validatedStyles[prop] = value;
-                    }
-                }
-
-                Object.assign(element.style, validatedStyles);
-                generateColorsCSS();
-
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Colors Demo Update');
-            }
-        }
-
-        function updateColorFromHex(colorType) {
-            try {
-                const hexInput = document.getElementById(colorType + '-hex');
-                const colorInput = document.getElementById(colorType);
-                
-                if (hexInput && colorInput) {
-                    const hexValue = hexInput.value;
-                    if (SecurityUtils.validateColor(hexValue)) {
-                        colorInput.value = hexValue;
-                        updateColorsDemo();
-                    }
-                }
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Color Hex Update');
-            }
+            generateColorsCSS();
         }
 
         function generateColorsCSS() {
-            try {
-                const textColor = document.getElementById('text-color')?.value || '#ffffff';
-                const bgColor = document.getElementById('bg-color')?.value || '#667eea';
-                const opacity = document.getElementById('opacity')?.value || '1';
-                const bgSize = document.getElementById('bg-size')?.value || 'cover';
-                const bgRepeat = document.getElementById('bg-repeat')?.value || 'no-repeat';
+            const textColor = document.getElementById('colors-text-color').value;
+            const bgColor = document.getElementById('colors-bg-color').value;
+            const opacity = document.getElementById('colors-opacity').value;
+            const bgSize = document.getElementById('colors-bg-size').value;
+            const bgRepeat = document.getElementById('colors-bg-repeat').value;
 
-                let css = `<span class="css-selector">.color-element</span> {\n`;
-                css += `  <span class="css-property">color</span>: <span class="css-value">${SecurityUtils.sanitizeHTML(textColor)}</span>;\n`;
-                css += `  <span class="css-property">background-color</span>: <span class="css-value">${SecurityUtils.sanitizeHTML(bgColor)}</span>;\n`;
-                
-                if (opacity !== '1') css += `  <span class="css-property">opacity</span>: <span class="css-value">${SecurityUtils.sanitizeHTML(opacity)}</span>;\n`;
-                if (bgSize !== 'auto') css += `  <span class="css-property">background-size</span>: <span class="css-value">${SecurityUtils.sanitizeHTML(bgSize)}</span>;\n`;
-                if (bgRepeat !== 'repeat') css += `  <span class="css-property">background-repeat</span>: <span class="css-value">${SecurityUtils.sanitizeHTML(bgRepeat)}</span>;\n`;
-                
-                css += `}`;
+            let css = `<span class="css-selector">.color-element</span> {\n`;
+            css += `  <span class="css-property">color</span>: <span class="css-value">${textColor}</span>;\n`;
+            css += `  <span class="css-property">background-color</span>: <span class="css-value">${bgColor}</span>;\n`;
+            
+            if (opacity !== '1') css += `  <span class="css-property">opacity</span>: <span class="css-value">${opacity}</span>;\n`;
+            if (bgSize !== 'auto') css += `  <span class="css-property">background-size</span>: <span class="css-value">${bgSize}</span>;\n`;
+            if (bgRepeat !== 'repeat') css += `  <span class="css-property">background-repeat</span>: <span class="css-value">${bgRepeat}</span>;\n`;
+            
+            css += `}`;
 
-                const outputEl = document.getElementById('colors-css-output');
-                if (outputEl) {
-                    outputEl.innerHTML = css;
-                }
-
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Colors CSS Generation');
-            }
+            document.getElementById('colors-css-output').innerHTML = css;
         }
 
-        // Preset functions with validation
-        function applyLayoutPreset(preset) {
-            try {
-                if (!SecurityUtils.rateLimiter.isAllowed('applyPreset', 20, 60000)) {
-                    console.warn('Rate limit exceeded for applying presets');
-                    return;
-                }
+        // Sizing Demo
+        function updateSizingDemo() {
+            const selectedElement = document.getElementById('sizing-demo-element-' + selectedElements.sizing);
+            if (!selectedElement) return;
 
-                const validPresets = ['centered', 'fixed-header', 'sticky-nav', 'floating'];
-                if (!validPresets.includes(preset)) {
-                    throw new Error('Invalid preset name');
-                }
+            const width = document.getElementById('sizing-width').value + 'px';
+            const height = document.getElementById('sizing-height').value + 'px';
+            const margin = document.getElementById('sizing-margin').value + 'px';
+            const padding = document.getElementById('sizing-padding').value + 'px';
+            const boxSizing = document.getElementById('sizing-box-sizing').value;
+            const maxWidth = document.getElementById('sizing-max-width').value === '500' ? 'none' : document.getElementById('sizing-max-width').value + 'px';
+            const minWidth = document.getElementById('sizing-min-width').value + 'px';
 
-                switch(preset) {
-                    case 'centered':
-                        document.getElementById('position').value = 'absolute';
-                        document.getElementById('top').value = '50';
-                        document.getElementById('left').value = '50';
-                        updateRangeValue('top', 'px');
-                        updateRangeValue('left', 'px');
-                        const demoElement = document.getElementById('demo-element');
-                        if (demoElement) {
-                            demoElement.style.transform = 'translate(-50%, -50%)';
-                        }
-                        break;
-                    case 'fixed-header':
-                        document.getElementById('position').value = 'fixed';
-                        document.getElementById('top').value = '0';
-                        document.getElementById('left').value = '0';
-                        updateRangeValue('top', 'px');
-                        updateRangeValue('left', 'px');
-                        break;
-                    case 'sticky-nav':
-                        document.getElementById('position').value = 'sticky';
-                        document.getElementById('top').value = '0';
-                        updateRangeValue('top', 'px');
-                        break;
-                    case 'floating':
-                        document.getElementById('position').value = 'relative';
-                        document.getElementById('float').value = 'right';
-                        break;
-                }
-                updateDemo();
-                showToast(`Applied ${preset.replace('-', ' ')} preset!`, 'success');
+            Object.assign(selectedElement.style, {
+                width, height, margin, padding, boxSizing, maxWidth, minWidth
+            });
 
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Apply Layout Preset');
+            generateSizingCSS();
+        }
+
+        function generateSizingCSS() {
+            const width = document.getElementById('sizing-width').value;
+            const height = document.getElementById('sizing-height').value;
+            const margin = document.getElementById('sizing-margin').value;
+            const padding = document.getElementById('sizing-padding').value;
+            const boxSizing = document.getElementById('sizing-box-sizing').value;
+            const maxWidth = document.getElementById('sizing-max-width').value === '500' ? 'none' : document.getElementById('sizing-max-width').value + 'px';
+            const minWidth = document.getElementById('sizing-min-width').value;
+
+            let css = `<span class="css-selector">.sizing-element</span> {\n`;
+            css += `  <span class="css-property">width</span>: <span class="css-value">${width}px</span>;\n`;
+            css += `  <span class="css-property">height</span>: <span class="css-value">${height}px</span>;\n`;
+            css += `  <span class="css-property">margin</span>: <span class="css-value">${margin}px</span>;\n`;
+            css += `  <span class="css-property">padding</span>: <span class="css-value">${padding}px</span>;\n`;
+            css += `  <span class="css-property">box-sizing</span>: <span class="css-value">${boxSizing}</span>;\n`;
+            
+            if (maxWidth !== 'none') css += `  <span class="css-property">max-width</span>: <span class="css-value">${maxWidth}</span>;\n`;
+            if (minWidth !== '0') css += `  <span class="css-property">min-width</span>: <span class="css-value">${minWidth}px</span>;\n`;
+            
+            css += `}`;
+
+            document.getElementById('sizing-css-output').innerHTML = css;
+        }
+
+        // Borders Demo
+        function updateBordersDemo() {
+            const selectedElement = document.getElementById('borders-demo-element-' + selectedElements.borders);
+            if (!selectedElement) return;
+
+            const borderWidth = document.getElementById('borders-width').value + 'px';
+            const borderStyle = document.getElementById('borders-style').value;
+            const borderColor = document.getElementById('borders-color').value;
+            const borderRadius = document.getElementById('borders-radius').value + 'px';
+            const outlineWidth = document.getElementById('borders-outline-width').value + 'px';
+            const outlineStyle = document.getElementById('borders-outline-style').value;
+            const outlineColor = document.getElementById('borders-outline-color').value;
+
+            // Update hex inputs
+            document.getElementById('borders-color-hex').value = borderColor;
+            document.getElementById('borders-outline-color-hex').value = outlineColor;
+
+            Object.assign(selectedElement.style, {
+                borderWidth, borderStyle, borderColor, borderRadius,
+                outlineWidth, outlineStyle, outlineColor
+            });
+
+            generateBordersCSS();
+        }
+
+        function generateBordersCSS() {
+            const borderWidth = document.getElementById('borders-width').value;
+            const borderStyle = document.getElementById('borders-style').value;
+            const borderColor = document.getElementById('borders-color').value;
+            const borderRadius = document.getElementById('borders-radius').value;
+            const outlineWidth = document.getElementById('borders-outline-width').value;
+            const outlineStyle = document.getElementById('borders-outline-style').value;
+            const outlineColor = document.getElementById('borders-outline-color').value;
+
+            let css = `<span class="css-selector">.border-element</span> {\n`;
+            
+            if (borderStyle !== 'none') {
+                css += `  <span class="css-property">border</span>: <span class="css-value">${borderWidth}px ${borderStyle} ${borderColor}</span>;\n`;
             }
+            
+            if (borderRadius !== '0') css += `  <span class="css-property">border-radius</span>: <span class="css-value">${borderRadius}px</span>;\n`;
+            
+            if (outlineStyle !== 'none' && outlineWidth !== '0') {
+                css += `  <span class="css-property">outline</span>: <span class="css-value">${outlineWidth}px ${outlineStyle} ${outlineColor}</span>;\n`;
+            }
+            
+            css += `}`;
+
+            document.getElementById('borders-css-output').innerHTML = css;
+        }
+
+        // Effects Demo
+        function updateEffectsDemo() {
+            const selectedElement = document.getElementById('effects-demo-element-' + selectedElements.effects);
+            if (!selectedElement) return;
+
+            const shadowBlur = document.getElementById('effects-shadow-blur').value;
+            const shadowX = document.getElementById('effects-shadow-x').value;
+            const shadowY = document.getElementById('effects-shadow-y').value;
+            const shadowColor = document.getElementById('effects-shadow-color').value;
+            const scale = document.getElementById('effects-scale').value;
+            const rotate = document.getElementById('effects-rotate').value;
+            const blur = document.getElementById('effects-blur').value;
+            const brightness = document.getElementById('effects-brightness').value;
+            const contrast = document.getElementById('effects-contrast').value;
+
+            // Update hex input
+            document.getElementById('effects-shadow-color-hex').value = shadowColor;
+
+            const boxShadow = shadowBlur === '0' ? 'none' : `${shadowX}px ${shadowY}px ${shadowBlur}px ${shadowColor}`;
+            const transform = `scale(${scale}) rotate(${rotate}deg)`;
+            const filter = `blur(${blur}px) brightness(${brightness}%) contrast(${contrast}%)`;
+
+            Object.assign(selectedElement.style, {
+                boxShadow, transform, filter
+            });
+
+            generateEffectsCSS();
+        }
+
+        function generateEffectsCSS() {
+            const shadowBlur = document.getElementById('effects-shadow-blur').value;
+            const shadowX = document.getElementById('effects-shadow-x').value;
+            const shadowY = document.getElementById('effects-shadow-y').value;
+            const shadowColor = document.getElementById('effects-shadow-color').value;
+            const scale = document.getElementById('effects-scale').value;
+            const rotate = document.getElementById('effects-rotate').value;
+            const blur = document.getElementById('effects-blur').value;
+            const brightness = document.getElementById('effects-brightness').value;
+            const contrast = document.getElementById('effects-contrast').value;
+
+            let css = `<span class="css-selector">.effects-element</span> {\n`;
+            
+            if (shadowBlur !== '0') {
+                css += `  <span class="css-property">box-shadow</span>: <span class="css-value">${shadowX}px ${shadowY}px ${shadowBlur}px ${shadowColor}</span>;\n`;
+            }
+            
+            if (scale !== '1' || rotate !== '0') {
+                css += `  <span class="css-property">transform</span>: <span class="css-value">scale(${scale}) rotate(${rotate}deg)</span>;\n`;
+            }
+            
+            if (blur !== '0' || brightness !== '100' || contrast !== '100') {
+                css += `  <span class="css-property">filter</span>: <span class="css-value">blur(${blur}px) brightness(${brightness}%) contrast(${contrast}%)</span>;\n`;
+            }
+            
+            css += `}`;
+
+            document.getElementById('effects-css-output').innerHTML = css;
+        }
+
+        // Animations Demo
+        function updateAnimationsDemo() {
+            const selectedElement = document.getElementById('animations-demo-element-' + selectedElements.animations);
+            if (!selectedElement) return;
+
+            const animationName = document.getElementById('animations-name').value;
+            const animationDuration = document.getElementById('animations-duration').value + 's';
+            const animationIteration = document.getElementById('animations-iteration').value;
+            const animationTiming = document.getElementById('animations-timing').value;
+            const animationDirection = document.getElementById('animations-direction').value;
+            const transitionDuration = document.getElementById('animations-transition').value + 's';
+            const transitionProperty = document.getElementById('animations-transition-property').value;
+
+            // Remove existing animation classes
+            selectedElement.classList.remove('spin', 'bounce', 'shake', 'fade', 'slide', 'zoom');
+            
+            if (animationName !== 'none') {
+                selectedElement.classList.add('animation-demo', animationName);
+                selectedElement.style.animationDuration = animationDuration;
+                selectedElement.style.animationIterationCount = animationIteration;
+                selectedElement.style.animationTimingFunction = animationTiming;
+                selectedElement.style.animationDirection = animationDirection;
+            } else {
+                selectedElement.classList.remove('animation-demo');
+            }
+
+            selectedElement.style.transition = `${transitionProperty} ${transitionDuration}`;
+
+            // Add hover effect
+            selectedElement.onmouseenter = function() {
+                this.style.transform = 'scale(1.1)';
+            };
+            selectedElement.onmouseleave = function() {
+                this.style.transform = 'scale(1)';
+            };
+
+            generateAnimationsCSS();
+        }
+
+        function generateAnimationsCSS() {
+            const animationName = document.getElementById('animations-name').value;
+            const animationDuration = document.getElementById('animations-duration').value;
+            const animationIteration = document.getElementById('animations-iteration').value;
+            const animationTiming = document.getElementById('animations-timing').value;
+            const animationDirection = document.getElementById('animations-direction').value;
+            const transitionDuration = document.getElementById('animations-transition').value;
+            const transitionProperty = document.getElementById('animations-transition-property').value;
+
+            let css = `<span class="css-selector">.animation-element</span> {\n`;
+            
+            if (animationName !== 'none') {
+                css += `  <span class="css-property">animation</span>: <span class="css-value">${animationName} ${animationDuration}s ${animationTiming} ${animationIteration} ${animationDirection}</span>;\n`;
+            }
+            
+            if (transitionDuration !== '0') {
+                css += `  <span class="css-property">transition</span>: <span class="css-value">${transitionProperty} ${transitionDuration}s</span>;\n`;
+            }
+            
+            css += `}\n\n`;
+            css += `<span class="css-selector">.animation-element:hover</span> {\n`;
+            css += `  <span class="css-property">transform</span>: <span class="css-value">scale(1.1)</span>;\n`;
+            css += `}`;
+
+            document.getElementById('animations-css-output').innerHTML = css;
+        }
+
+        // Advanced Demo
+        function updateAdvancedDemo() {
+            const container = document.getElementById('advanced-demo-container');
+            if (!container) return;
+
+            const flexDirection = document.getElementById('advanced-flex-direction').value;
+            const justifyContent = document.getElementById('advanced-justify-content').value;
+            const alignItems = document.getElementById('advanced-align-items').value;
+            const gridColumns = document.getElementById('advanced-grid-columns').value;
+            const gridRows = document.getElementById('advanced-grid-rows').value;
+            const gridGap = document.getElementById('advanced-grid-gap').value + 'px';
+
+            // Apply container styles
+            Object.assign(container.style, {
+                display: 'grid',
+                gridTemplateColumns: gridColumns,
+                gridTemplateRows: gridRows,
+                gap: gridGap,
+                justifyContent,
+                alignItems,
+                flexDirection
+            });
+
+            // Apply item styles to selected element
+            const selectedElement = document.getElementById('advanced-demo-element-' + selectedElements.advanced);
+            if (selectedElement) {
+                const flexGrow = document.getElementById('advanced-flex-grow').value;
+                const flexShrink = document.getElementById('advanced-flex-shrink').value;
+                
+                selectedElement.style.flexGrow = flexGrow;
+                selectedElement.style.flexShrink = flexShrink;
+            }
+
+            generateAdvancedCSS();
+        }
+
+        function generateAdvancedCSS() {
+            const flexDirection = document.getElementById('advanced-flex-direction').value;
+            const justifyContent = document.getElementById('advanced-justify-content').value;
+            const alignItems = document.getElementById('advanced-align-items').value;
+            const gridColumns = document.getElementById('advanced-grid-columns').value;
+            const gridRows = document.getElementById('advanced-grid-rows').value;
+            const gridGap = document.getElementById('advanced-grid-gap').value;
+            const flexGrow = document.getElementById('advanced-flex-grow').value;
+            const flexShrink = document.getElementById('advanced-flex-shrink').value;
+
+            let css = `<span class="css-selector">.container</span> {\n`;
+            css += `  <span class="css-property">display</span>: <span class="css-value">grid</span>;\n`;
+            css += `  <span class="css-property">grid-template-columns</span>: <span class="css-value">${gridColumns}</span>;\n`;
+            css += `  <span class="css-property">grid-template-rows</span>: <span class="css-value">${gridRows}</span>;\n`;
+            css += `  <span class="css-property">gap</span>: <span class="css-value">${gridGap}px</span>;\n`;
+            css += `  <span class="css-property">justify-content</span>: <span class="css-value">${justifyContent}</span>;\n`;
+            css += `  <span class="css-property">align-items</span>: <span class="css-value">${alignItems}</span>;\n`;
+            css += `}\n\n`;
+            
+            css += `<span class="css-selector">.item</span> {\n`;
+            if (flexGrow !== '0') css += `  <span class="css-property">flex-grow</span>: <span class="css-value">${flexGrow}</span>;\n`;
+            if (flexShrink !== '1') css += `  <span class="css-property">flex-shrink</span>: <span class="css-value">${flexShrink}</span>;\n`;
+            css += `}`;
+
+            document.getElementById('advanced-css-output').innerHTML = css;
+        }
+
+        // Preset functions
+        function applyLayoutPreset(preset) {
+            switch(preset) {
+                case 'centered':
+                    document.getElementById('layout-position').value = 'absolute';
+                    document.getElementById('layout-top').value = '50';
+                    document.getElementById('layout-left').value = '50';
+                    updateRangeValue('layout-top', 'px');
+                    updateRangeValue('layout-left', 'px');
+                    break;
+                case 'fixed-header':
+                    document.getElementById('layout-position').value = 'fixed';
+                    document.getElementById('layout-top').value = '0';
+                    document.getElementById('layout-left').value = '0';
+                    updateRangeValue('layout-top', 'px');
+                    updateRangeValue('layout-left', 'px');
+                    break;
+                case 'sticky-nav':
+                    document.getElementById('layout-position').value = 'sticky';
+                    document.getElementById('layout-top').value = '0';
+                    updateRangeValue('layout-top', 'px');
+                    break;
+                case 'floating':
+                    document.getElementById('layout-position').value = 'relative';
+                    document.getElementById('layout-float').value = 'right';
+                    break;
+            }
+            updateDemo('layout');
+            showToast(`Applied ${preset.replace('-', ' ')} preset!`);
         }
 
         function applyTypographyPreset(preset) {
-            try {
-                if (!SecurityUtils.rateLimiter.isAllowed('applyTypographyPreset', 20, 60000)) {
-                    console.warn('Rate limit exceeded for typography presets');
-                    return;
-                }
-
-                const validPresets = ['heading', 'body', 'caption', 'code'];
-                if (!validPresets.includes(preset)) {
-                    throw new Error('Invalid typography preset');
-                }
-
-                switch(preset) {
-                    case 'heading':
-                        document.getElementById('font-size').value = '36';
-                        document.getElementById('font-weight').value = '700';
-                        document.getElementById('line-height').value = '1.2';
-                        document.getElementById('font-family').value = 'Arial, sans-serif';
-                        document.getElementById('text-transform').value = 'none';
-                        document.getElementById('letter-spacing').value = '0';
-                        break;
-                    case 'body':
-                        document.getElementById('font-size').value = '16';
-                        document.getElementById('font-weight').value = '400';
-                        document.getElementById('line-height').value = '1.6';
-                        document.getElementById('font-family').value = 'Georgia, serif';
-                        document.getElementById('text-transform').value = 'none';
-                        document.getElementById('letter-spacing').value = '0';
-                        break;
-                    case 'caption':
-                        document.getElementById('font-size').value = '12';
-                        document.getElementById('font-weight').value = '400';
-                        document.getElementById('line-height').value = '1.4';
-                        document.getElementById('text-transform').value = 'uppercase';
-                        document.getElementById('letter-spacing').value = '1';
-                        break;
-                    case 'code':
-                        document.getElementById('font-family').value = "'Courier New', monospace";
-                        document.getElementById('font-size').value = '14';
-                        document.getElementById('font-weight').value = '400';
-                        document.getElementById('line-height').value = '1.5';
-                        document.getElementById('text-transform').value = 'none';
-                        document.getElementById('letter-spacing').value = '0';
-                        break;
-                }
-                updateRangeValue('font-size', 'px');
-                updateRangeValue('line-height');
-                updateRangeValue('letter-spacing', 'px');
-                updateTypographyDemo();
-                showToast(`Applied ${preset} typography preset!`, 'success');
-
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Apply Typography Preset');
+            switch(preset) {
+                case 'heading':
+                    document.getElementById('typography-font-size').value = '36';
+                    document.getElementById('typography-font-weight').value = '700';
+                    document.getElementById('typography-line-height').value = '1.2';
+                    document.getElementById('typography-font-family').value = 'Arial, sans-serif';
+                    break;
+                case 'body':
+                    document.getElementById('typography-font-size').value = '16';
+                    document.getElementById('typography-font-weight').value = '400';
+                    document.getElementById('typography-line-height').value = '1.6';
+                    document.getElementById('typography-font-family').value = 'Georgia, serif';
+                    break;
+                case 'caption':
+                    document.getElementById('typography-font-size').value = '12';
+                    document.getElementById('typography-font-weight').value = '400';
+                    document.getElementById('typography-text-transform').value = 'uppercase';
+                    document.getElementById('typography-letter-spacing').value = '1';
+                    break;
+                case 'code':
+                    document.getElementById('typography-font-family').value = "'Courier New', monospace";
+                    document.getElementById('typography-font-size').value = '14';
+                    break;
             }
+            updateRangeValue('typography-font-size', 'px');
+            updateRangeValue('typography-line-height');
+            updateRangeValue('typography-letter-spacing', 'px');
+            updateDemo('typography');
+            showToast(`Applied ${preset} typography preset!`);
         }
 
         function applyColorPreset(preset) {
-            try {
-                if (!SecurityUtils.rateLimiter.isAllowed('applyColorPreset', 20, 60000)) {
-                    console.warn('Rate limit exceeded for color presets');
-                    return;
-                }
-
-                const validPresets = ['primary', 'success', 'warning', 'gradient'];
-                if (!validPresets.includes(preset)) {
-                    throw new Error('Invalid color preset');
-                }
-
-                switch(preset) {
-                    case 'primary':
-                        document.getElementById('text-color').value = '#ffffff';
-                        document.getElementById('bg-color').value = '#007bff';
-                        break;
-                    case 'success':
-                        document.getElementById('text-color').value = '#ffffff';
-                        document.getElementById('bg-color').value = '#28a745';
-                        break;
-                    case 'warning':
-                        document.getElementById('text-color').value = '#212529';
-                        document.getElementById('bg-color').value = '#ffc107';
-                        break;
-                    case 'gradient':
-                        document.getElementById('text-color').value = '#ffffff';
-                        document.getElementById('bg-color').value = '#667eea';
-                        const element = document.getElementById('colors-demo-element');
-                        if (element) {
-                            element.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-                        }
-                        break;
-                }
-                updateColorsDemo();
-                showToast(`Applied ${preset} color preset!`, 'success');
-
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Apply Color Preset');
+            switch(preset) {
+                case 'primary':
+                    document.getElementById('colors-text-color').value = '#ffffff';
+                    document.getElementById('colors-bg-color').value = '#007bff';
+                    break;
+                case 'success':
+                    document.getElementById('colors-text-color').value = '#ffffff';
+                    document.getElementById('colors-bg-color').value = '#28a745';
+                    break;
+                case 'warning':
+                    document.getElementById('colors-text-color').value = '#212529';
+                    document.getElementById('colors-bg-color').value = '#ffc107';
+                    break;
+                case 'gradient':
+                    document.getElementById('colors-text-color').value = '#ffffff';
+                    document.getElementById('colors-bg-color').value = '#667eea';
+                    break;
             }
+            updateDemo('colors');
+            showToast(`Applied ${preset} color preset!`);
         }
 
-        // Copy functionality with security
+        function applySizingPreset(preset) {
+            switch(preset) {
+                case 'small':
+                    document.getElementById('sizing-width').value = '100';
+                    document.getElementById('sizing-height').value = '60';
+                    document.getElementById('sizing-padding').value = '10';
+                    break;
+                case 'medium':
+                    document.getElementById('sizing-width').value = '200';
+                    document.getElementById('sizing-height').value = '100';
+                    document.getElementById('sizing-padding').value = '20';
+                    break;
+                case 'large':
+                    document.getElementById('sizing-width').value = '300';
+                    document.getElementById('sizing-height').value = '150';
+                    document.getElementById('sizing-padding').value = '30';
+                    break;
+                case 'responsive':
+                    document.getElementById('sizing-width').value = '300';
+                    document.getElementById('sizing-max-width').value = '400';
+                    document.getElementById('sizing-min-width').value = '200';
+                    break;
+            }
+            updateRangeValue('sizing-width', 'px');
+            updateRangeValue('sizing-height', 'px');
+            updateRangeValue('sizing-padding', 'px');
+            updateMaxWidthValue();
+            updateRangeValue('sizing-min-width', 'px');
+            updateDemo('sizing');
+            showToast(`Applied ${preset} sizing preset!`);
+        }
+
+        function applyBorderPreset(preset) {
+            switch(preset) {
+                case 'thin':
+                    document.getElementById('borders-width').value = '1';
+                    document.getElementById('borders-style').value = 'solid';
+                    document.getElementById('borders-radius').value = '0';
+                    break;
+                case 'thick':
+                    document.getElementById('borders-width').value = '5';
+                    document.getElementById('borders-style').value = 'solid';
+                    document.getElementById('borders-radius').value = '0';
+                    break;
+                case 'dashed':
+                    document.getElementById('borders-width').value = '2';
+                    document.getElementById('borders-style').value = 'dashed';
+                    document.getElementById('borders-radius').value = '0';
+                    break;
+                case 'rounded':
+                    document.getElementById('borders-width').value = '2';
+                    document.getElementById('borders-style').value = 'solid';
+                    document.getElementById('borders-radius').value = '25';
+                    break;
+            }
+            updateRangeValue('borders-width', 'px');
+            updateRangeValue('borders-radius', 'px');
+            updateDemo('borders');
+            showToast(`Applied ${preset} border preset!`);
+        }
+
+        function applyEffectPreset(preset) {
+            switch(preset) {
+                case 'glow':
+                    document.getElementById('effects-shadow-blur').value = '20';
+                    document.getElementById('effects-shadow-x').value = '0';
+                    document.getElementById('effects-shadow-y').value = '0';
+                    document.getElementById('effects-shadow-color').value = '#667eea';
+                    break;
+                case 'shadow':
+                    document.getElementById('effects-shadow-blur').value = '15';
+                    document.getElementById('effects-shadow-x').value = '5';
+                    document.getElementById('effects-shadow-y').value = '5';
+                    document.getElementById('effects-shadow-color').value = '#000000';
+                    break;
+                case 'vintage':
+                    document.getElementById('effects-brightness').value = '80';
+                    document.getElementById('effects-contrast').value = '120';
+                    document.getElementById('effects-blur').value = '1';
+                    break;
+                case 'rotate':
+                    document.getElementById('effects-rotate').value = '15';
+                    document.getElementById('effects-scale').value = '1.1';
+                    break;
+            }
+            updateRangeValue('effects-shadow-blur', 'px');
+            updateRangeValue('effects-shadow-x', 'px');
+            updateRangeValue('effects-shadow-y', 'px');
+            updateRangeValue('effects-brightness', '%');
+            updateRangeValue('effects-contrast', '%');
+            updateRangeValue('effects-blur', 'px');
+            updateRangeValue('effects-rotate', 'deg');
+            updateRangeValue('effects-scale');
+            updateDemo('effects');
+            showToast(`Applied ${preset} effect preset!`);
+        }
+
+        function applyAnimationPreset(preset) {
+            switch(preset) {
+                case 'pulse':
+                    document.getElementById('animations-name').value = 'zoom';
+                    document.getElementById('animations-duration').value = '1';
+                    document.getElementById('animations-iteration').value = 'infinite';
+                    document.getElementById('animations-direction').value = 'alternate';
+                    break;
+                case 'wiggle':
+                    document.getElementById('animations-name').value = 'shake';
+                    document.getElementById('animations-duration').value = '0.5';
+                    document.getElementById('animations-iteration').value = 'infinite';
+                    break;
+                case 'glow':
+                    document.getElementById('animations-name').value = 'fade';
+                    document.getElementById('animations-duration').value = '2';
+                    document.getElementById('animations-iteration').value = 'infinite';
+                    document.getElementById('animations-direction').value = 'alternate';
+                    break;
+                case 'float':
+                    document.getElementById('animations-name').value = 'bounce';
+                    document.getElementById('animations-duration').value = '3';
+                    document.getElementById('animations-iteration').value = 'infinite';
+                    break;
+            }
+            updateRangeValue('animations-duration', 's');
+            updateDemo('animations');
+            showToast(`Applied ${preset} animation preset!`);
+        }
+
+        function applyAdvancedPreset(preset) {
+            switch(preset) {
+                case 'flexbox':
+                    document.getElementById('advanced-demo-container').style.display = 'flex';
+                    document.getElementById('advanced-flex-direction').value = 'row';
+                    document.getElementById('advanced-justify-content').value = 'space-between';
+                    document.getElementById('advanced-align-items').value = 'center';
+                    break;
+                case 'grid':
+                    document.getElementById('advanced-demo-container').style.display = 'grid';
+                    document.getElementById('advanced-grid-columns').value = 'repeat(3, 1fr)';
+                    document.getElementById('advanced-grid-rows').value = 'auto';
+                    document.getElementById('advanced-grid-gap').value = '20';
+                    break;
+                case 'holy-grail':
+                    document.getElementById('advanced-demo-container').style.display = 'grid';
+                    document.getElementById('advanced-grid-columns').value = '200px 1fr 200px';
+                    document.getElementById('advanced-grid-rows').value = 'auto 1fr auto';
+                    break;
+                case 'card-layout':
+                    document.getElementById('advanced-demo-container').style.display = 'grid';
+                    document.getElementById('advanced-grid-columns').value = 'repeat(auto-fit, minmax(200px, 1fr))';
+                    document.getElementById('advanced-grid-gap').value = '15';
+                    break;
+            }
+            updateRangeValue('advanced-grid-gap', 'px');
+            updateDemo('advanced');
+            showToast(`Applied ${preset} layout preset!`);
+        }
+
+        // Copy functionality
         function copyCode(outputId) {
-            try {
-                if (!SecurityUtils.rateLimiter.isAllowed('copyCode', 10, 60000)) {
-                    console.warn('Rate limit exceeded for copy operations');
-                    return;
-                }
+            const codeElement = document.getElementById(outputId);
+            if (!codeElement) return;
 
-                const codeElement = document.getElementById(outputId);
-                if (!codeElement) return;
-
-                const codeText = codeElement.textContent || '';
-                
-                if (navigator.clipboard && navigator.clipboard.writeText) {
-                    navigator.clipboard.writeText(codeText).then(() => {
-                        showCopySuccess(event.target);
-                    }).catch((error) => {
-                        SecurityUtils.handleError(error, 'Clipboard API');
-                        fallbackCopy(codeText, event.target);
-                    });
-                } else {
+            const codeText = codeElement.textContent || '';
+            
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(codeText).then(() => {
+                    showCopySuccess(event.target);
+                }).catch(() => {
                     fallbackCopy(codeText, event.target);
-                }
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Copy Code');
+                });
+            } else {
+                fallbackCopy(codeText, event.target);
             }
         }
 
         function fallbackCopy(text, button) {
-            try {
-                const textArea = document.createElement('textarea');
-                textArea.value = text;
-                textArea.style.position = 'fixed';
-                textArea.style.opacity = '0';
-                document.body.appendChild(textArea);
-                textArea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textArea);
-                showCopySuccess(button);
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Fallback Copy');
-            }
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.opacity = '0';
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            showCopySuccess(button);
         }
 
         function showCopySuccess(button) {
-            try {
-                if (!button) return;
-                
-                const originalHTML = button.innerHTML;
-                
-                button.classList.add('copied');
-                button.innerHTML = '<i class="bi bi-check me-1"></i>Copied!';
-                
-                setTimeout(() => {
-                    button.classList.remove('copied');
-                    button.innerHTML = originalHTML;
-                }, 2000);
-                
-                showToast('CSS code copied to clipboard!', 'success');
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Copy Success Display');
-            }
+            if (!button) return;
+            
+            const originalHTML = button.innerHTML;
+            
+            button.classList.add('copied');
+            button.innerHTML = '<i class="bi bi-check me-1"></i>Copied!';
+            
+            setTimeout(() => {
+                button.classList.remove('copied');
+                button.innerHTML = originalHTML;
+            }, 2000);
+            
+            showToast('CSS code copied to clipboard!');
         }
 
-        // Toast notification system with rate limiting
-        function showToast(message, type = 'info') {
-            try {
-                if (!SecurityUtils.rateLimiter.isAllowed('showToast', 20, 30000)) {
-                    return;
-                }
+        // Toast notification system
+        function showToast(message, type = 'success') {
+            const toastContainer = document.getElementById('toast-container');
+            if (!toastContainer) return;
 
-                const toastContainer = document.getElementById('toast-container');
-                if (!toastContainer) return;
+            const toast = document.createElement('div');
+            toast.className = `toast-custom show`;
+            
+            const iconMap = {
+                success: 'check-circle',
+                warning: 'exclamation-triangle',
+                error: 'x-circle',
+                info: 'info-circle'
+            };
 
-                const toast = document.createElement('div');
-                toast.className = `toast-custom show`;
-                
-                const iconMap = {
-                    success: 'check-circle',
-                    warning: 'exclamation-triangle',
-                    error: 'x-circle',
-                    info: 'info-circle'
-                };
+            const colorMap = {
+                success: '#28a745',
+                warning: '#ffc107',
+                error: '#dc3545',
+                info: '#17a2b8'
+            };
 
-                const colorMap = {
-                    success: '#28a745',
-                    warning: '#ffc107',
-                    error: '#dc3545',
-                    info: '#17a2b8'
-                };
+            toast.innerHTML = `
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-${iconMap[type]} me-2" style="color: ${colorMap[type]}; font-size: 1.2rem;"></i>
+                    <span>${message}</span>
+                </div>
+            `;
 
-                toast.innerHTML = `
-                    <div class="d-flex align-items-center">
-                        <i class="bi bi-${iconMap[type]} me-2" style="color: ${colorMap[type]}; font-size: 1.2rem;"></i>
-                        <span>${SecurityUtils.sanitizeHTML(message)}</span>
-                    </div>
-                `;
+            toastContainer.appendChild(toast);
 
-                toastContainer.appendChild(toast);
-
+            setTimeout(() => {
+                toast.style.animation = 'slideIn 0.3s ease reverse';
                 setTimeout(() => {
-                    toast.style.animation = 'slideIn 0.3s ease reverse';
-                    setTimeout(() => {
-                        if (toast.parentNode) {
-                            toastContainer.removeChild(toast);
-                        }
-                    }, 300);
-                }, 3000);
-
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Show Toast');
-            }
+                    if (toast.parentNode) {
+                        toastContainer.removeChild(toast);
+                    }
+                }, 300);
+            }, 3000);
         }
 
-        // Keyboard shortcuts with security
+        // Keyboard shortcuts
         document.addEventListener('keydown', function(e) {
-            try {
-                // Ctrl/Cmd + Enter to copy current CSS
-                if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-                    e.preventDefault();
-                    const activeTab = document.querySelector('.tab-content.active');
-                    if (activeTab) {
-                        const codeOutput = activeTab.querySelector('.code-output');
-                        if (codeOutput) {
-                            const codeText = codeOutput.textContent || '';
-                            if (navigator.clipboard) {
-                                navigator.clipboard.writeText(codeText);
-                                showToast('CSS copied via keyboard shortcut!', 'success');
-                            }
+            // Ctrl/Cmd + Enter to copy current CSS
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                e.preventDefault();
+                const activeTab = document.querySelector('.tab-content.active');
+                if (activeTab) {
+                    const codeOutput = activeTab.querySelector('.code-output');
+                    if (codeOutput) {
+                        const codeText = codeOutput.textContent || '';
+                        if (navigator.clipboard) {
+                            navigator.clipboard.writeText(codeText);
+                            showToast('CSS copied via keyboard shortcut!');
                         }
                     }
                 }
-                
-                // Escape to reset current tab
-                if (e.key === 'Escape') {
-                    e.preventDefault();
-                    const activeTabId = document.querySelector('.tab-content.active')?.id;
-                    if (activeTabId === 'layout-tab') {
-                        resetLayoutControls();
-                    } else if (activeTabId === 'typography-tab') {
-                        resetTypographyControls();
-                    } else if (activeTabId === 'colors-tab') {
-                        resetColorControls();
-                    }
+            }
+            
+            // Number keys 1-8 to switch tabs
+            if (e.key >= '1' && e.key <= '8' && !e.ctrlKey && !e.metaKey) {
+                e.preventDefault();
+                const tabNames = ['layout', 'typography', 'colors', 'sizing', 'borders', 'effects', 'animations', 'advanced'];
+                const tabIndex = parseInt(e.key) - 1;
+                if (tabIndex < tabNames.length) {
+                    switchPropertyTab(tabNames[tabIndex]);
                 }
-                
-                // Number keys 1-8 to switch tabs
-                if (e.key >= '1' && e.key <= '8' && !e.ctrlKey && !e.metaKey) {
-                    e.preventDefault();
-                    const tabNames = ['layout', 'typography', 'colors', 'sizing', 'borders', 'effects', 'animations', 'advanced'];
-                    const tabIndex = parseInt(e.key) - 1;
-                    if (tabIndex < tabNames.length) {
-                        switchPropertyTab(tabNames[tabIndex]);
-                    }
-                }
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Keyboard Shortcuts');
+            }
+
+            // A key to add new element
+            if (e.key === 'a' && !e.ctrlKey && !e.metaKey) {
+                e.preventDefault();
+                addElement(currentTab);
+            }
+
+            // Delete key to clear elements
+            if (e.key === 'Delete' && !e.ctrlKey && !e.metaKey) {
+                e.preventDefault();
+                clearElements(currentTab);
             }
         });
 
-        // Reset functions
-        function resetLayoutControls() {
-            try {
-                document.getElementById('display').value = 'flex';
-                document.getElementById('position').value = 'relative';
-                document.getElementById('top').value = '0';
-                document.getElementById('left').value = '0';
-                document.getElementById('z-index').value = '1';
-                document.getElementById('float').value = 'none';
-                document.getElementById('overflow').value = 'visible';
-                
-                updateRangeValue('top', 'px');
-                updateRangeValue('left', 'px');
-                updateRangeValue('z-index');
-                updateDemo();
-                showToast('Layout controls reset!', 'info');
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Reset Layout Controls');
-            }
-        }
+        // Initialize range values on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize all range values
+            const rangeInputs = document.querySelectorAll('input[type="range"]');
+            rangeInputs.forEach(input => {
+                const id = input.id;
+                if (id.includes('font-size') || id.includes('width') || id.includes('height') || 
+                    id.includes('margin') || id.includes('padding') || id.includes('radius') ||
+                    id.includes('shadow') || id.includes('top') || id.includes('left')) {
+                    updateRangeValue(id, 'px');
+                } else if (id.includes('opacity') || id.includes('line-height') || 
+                          id.includes('scale') || id.includes('grow') || id.includes('shrink')) {
+                    updateRangeValue(id);
+                } else if (id.includes('brightness') || id.includes('contrast')) {
+                    updateRangeValue(id, '%');
+                } else if (id.includes('rotate')) {
+                    updateRangeValue(id, 'deg');
+                } else if (id.includes('duration') || id.includes('transition')) {
+                    updateRangeValue(id, 's');
+                }
+            });
 
-        function resetTypographyControls() {
-            try {
-                document.getElementById('font-family').value = 'Georgia, serif';
-                document.getElementById('font-size').value = '24';
-                document.getElementById('font-weight').value = '400';
-                document.getElementById('line-height').value = '1.5';
-                document.getElementById('letter-spacing').value = '0';
-                document.getElementById('word-spacing').value = '0';
-                document.getElementById('text-transform').value = 'none';
-                document.getElementById('text-decoration').value = 'none';
-                document.getElementById('text-align').value = 'center';
-                
-                updateRangeValue('font-size', 'px');
-                updateRangeValue('line-height');
-                updateRangeValue('letter-spacing', 'px');
-                updateRangeValue('word-spacing', 'px');
-                updateTypographyDemo();
-                showToast('Typography controls reset!', 'info');
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Reset Typography Controls');
-            }
-        }
+            // Initialize max width special case
+            updateMaxWidthValue();
 
-        function resetColorControls() {
-            try {
-                document.getElementById('text-color').value = '#ffffff';
-                document.getElementById('bg-color').value = '#667eea';
-                document.getElementById('opacity').value = '1';
-                document.getElementById('bg-size').value = 'cover';
-                document.getElementById('bg-repeat').value = 'no-repeat';
-                
-                updateRangeValue('opacity');
-                updateColorsDemo();
-                showToast('Color controls reset!', 'info');
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Reset Color Controls');
-            }
-        }
-
-        // Accessibility announcements
-        function announceChange(message) {
-            try {
-                const announcement = document.createElement('div');
-                announcement.setAttribute('aria-live', 'polite');
-                announcement.setAttribute('aria-atomic', 'true');
-                announcement.className = 'visually-hidden';
-                announcement.textContent = SecurityUtils.sanitizeHTML(message);
-                document.body.appendChild(announcement);
-                
-                setTimeout(() => {
-                    if (announcement.parentNode) {
-                        document.body.removeChild(announcement);
-                    }
-                }, 1000);
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Accessibility Announcement');
-            }
-        }
+            // Show welcome message
+            setTimeout(() => {
+                showToast('Welcome to CSS Properties Playground! Use keyboard shortcuts: 1-8 to switch tabs, A to add elements, Delete to clear.', 'info');
+            }, 1000);
+        });
 
         // Performance monitoring
         if ('performance' in window && 'mark' in performance) {
             performance.mark('css-playground-loaded');
         }
-    </script>
 
-    <!-- Error Boundary and Monitoring -->
-    <script>
-        // Additional security monitoring
-        (function() {
-            'use strict';
-            
-            // Monitor for suspicious activity
-            let suspiciousActivity = 0;
-            const MAX_SUSPICIOUS_ACTIVITY = 10;
-            
-            // Monitor DOM modifications
-            const observer = new MutationObserver(function(mutations) {
-                mutations.forEach(function(mutation) {
-                    // Check for suspicious script injections
-                    if (mutation.type === 'childList') {
-                        mutation.addedNodes.forEach(function(node) {
-                            if (node.nodeType === Node.ELEMENT_NODE) {
-                                if (node.tagName === 'SCRIPT' || 
-                                    node.innerHTML.includes('<script') ||
-                                    node.innerHTML.includes('javascript:') ||
-                                    node.innerHTML.includes('data:text/html')) {
-                                    suspiciousActivity++;
-                                    console.warn('Suspicious content detected and blocked');
-                                    node.remove();
-                                    
-                                    if (suspiciousActivity >= MAX_SUSPICIOUS_ACTIVITY) {
-                                        console.error('Maximum suspicious activity threshold reached');
-                                        // Could implement additional security measures here
-                                    }
-                                }
-                            }
-                        });
-                    }
-                });
-            });
-
-            // Start observing
-            observer.observe(document.body, {
-                childList: true,
-                subtree: true,
-                characterData: true
-            });
-
-            // Content Security Policy violation handler
-            document.addEventListener('securitypolicyviolation', function(event) {
-                SecurityUtils.handleError({
-                    message: 'CSP Violation',
-                    violatedDirective: event.violatedDirective,
-                    blockedURI: event.blockedURI,
-                    lineNumber: event.lineNumber,
-                    sourceFile: event.sourceFile
-                }, 'CSP Violation');
-            });
-
-            // Performance monitoring
-            if ('performance' in window && 'mark' in performance) {
-                performance.mark('css-playground-security-loaded');
+        // Add some interactive features
+        document.addEventListener('mouseover', function(e) {
+            if (e.target.classList.contains('demo-element') || e.target.classList.contains('demo-text')) {
+                e.target.style.transform = 'scale(1.02)';
             }
-        })();
+        });
+
+        document.addEventListener('mouseout', function(e) {
+            if (e.target.classList.contains('demo-element') || e.target.classList.contains('demo-text')) {
+                if (!e.target.classList.contains('selected')) {
+                    e.target.style.transform = 'scale(1)';
+                }
+            }
+        });
+
+        // Accessibility improvements
+        document.addEventListener('focus', function(e) {
+            if (e.target.classList.contains('demo-element') || e.target.classList.contains('demo-text')) {
+                e.target.style.outline = '2px solid #ffc107';
+            }
+        });
+
+        document.addEventListener('blur', function(e) {
+            if (e.target.classList.contains('demo-element') || e.target.classList.contains('demo-text')) {
+                e.target.style.outline = 'none';
+            }
+        });
+
+        // Add touch support for mobile
+        let touchStartY = 0;
+        document.addEventListener('touchstart', function(e) {
+            touchStartY = e.touches[0].clientY;
+        });
+
+        document.addEventListener('touchend', function(e) {
+            const touchEndY = e.changedTouches[0].clientY;
+            const diff = touchStartY - touchEndY;
+            
+            if (Math.abs(diff) > 50) { // Swipe threshold
+                if (diff > 0) {
+                    // Swipe up - next tab
+                    const tabNames = ['layout', 'typography', 'colors', 'sizing', 'borders', 'effects', 'animations', 'advanced'];
+                    const currentIndex = tabNames.indexOf(currentTab);
+                    const nextIndex = (currentIndex + 1) % tabNames.length;
+                    switchPropertyTab(tabNames[nextIndex]);
+                } else {
+                    // Swipe down - previous tab
+                    const tabNames = ['layout', 'typography', 'colors', 'sizing', 'borders', 'effects', 'animations', 'advanced'];
+                    const currentIndex = tabNames.indexOf(currentTab);
+                    const prevIndex = currentIndex === 0 ? tabNames.length - 1 : currentIndex - 1;
+                    switchPropertyTab(tabNames[prevIndex]);
+                }
+            }
+        });
     </script>
 </body>
 </html>

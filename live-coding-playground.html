@@ -42,15 +42,31 @@
             overflow-x: hidden;
         }
 
-        .playground-container {
+        .main-container {
+            height: calc(100vh - 140px);
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+        }
+
+        .editor-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
             background: white;
             border-radius: 12px;
             box-shadow: var(--shadow-md);
             overflow: hidden;
-            margin-bottom: 1rem;
-            height: calc(100vh - 200px);
+        }
+
+        .preview-section {
+            flex: 1;
             display: flex;
             flex-direction: column;
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
         }
 
         .editor-tabs {
@@ -110,16 +126,6 @@
             font-size: 14px;
             line-height: 1.5;
             font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-        }
-
-        .preview-container {
-            background: white;
-            border-radius: 12px;
-            box-shadow: var(--shadow-md);
-            overflow: hidden;
-            height: calc(100vh - 200px);
-            display: flex;
-            flex-direction: column;
         }
 
         .preview-header {
@@ -293,13 +299,6 @@
             border-color: #667eea;
         }
 
-        .fullscreen-mode .playground-container,
-        .fullscreen-mode .preview-container {
-            height: 100vh;
-            border-radius: 0;
-            margin: 0;
-        }
-
         .console-panel {
             background: #1a1a1a;
             color: #e6e6e6;
@@ -333,28 +332,6 @@
             color: #48cae4;
         }
 
-        .split-view {
-            display: flex;
-            height: 100%;
-            gap: 1rem;
-        }
-
-        .split-pane {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .resize-handle {
-            width: 4px;
-            background: var(--border-color);
-            cursor: col-resize;
-            transition: background 0.2s;
-        }
-
-        .resize-handle:hover {
-            background: #667eea;
-        }
-
         .shortcuts-modal .modal-body {
             font-family: monospace;
         }
@@ -373,9 +350,28 @@
             font-size: 0.8rem;
         }
 
+        .resize-handle {
+            width: 4px;
+            background: var(--border-color);
+            cursor: col-resize;
+            transition: background 0.2s;
+            position: relative;
+        }
+
+        .resize-handle:hover {
+            background: #667eea;
+        }
+
         @media (max-width: 768px) {
-            .split-view {
+            .main-container {
                 flex-direction: column;
+                height: auto;
+            }
+            
+            .editor-section,
+            .preview-section {
+                flex: none;
+                min-height: 400px;
             }
             
             .toolbar {
@@ -427,39 +423,75 @@
 <!-- Navigation -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
     <div class="container-fluid">
-        <a class="navbar-brand" href="#">
+        <a class="navbar-brand" href="#" onclick="showToast('Welcome to Live Coding Playground!', 'info')">
             <i class="bi bi-code-square me-2"></i>Live Coding Playground
         </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <div class="navbar-nav ms-auto">
-                <a class="nav-link" href="#"><i class="bi bi-house me-1"></i>Home</a>
-                <a class="nav-link" href="#"><i class="bi bi-grid-3x3 me-1"></i>Flexbox</a>
-                <a class="nav-link" href="#"><i class="bi bi-code me-1"></i>HTML</a>
-                <a class="nav-link" href="#"><i class="bi bi-bootstrap me-1"></i>Bootstrap</a>
-                <a class="nav-link active" href="#"><i class="bi bi-play-circle me-1"></i>Live Coding</a>
+                <a class="nav-link" href="#" onclick="loadPreset('basic-page')">
+                    <i class="bi bi-house me-1"></i>Home
+                </a>
+                <a class="nav-link" href="#" onclick="loadPreset('flexbox-demo')">
+                    <i class="bi bi-grid-3x3 me-1"></i>Flexbox
+                </a>
+                <a class="nav-link" href="#" onclick="switchTab('html')">
+                    <i class="bi bi-code me-1"></i>HTML
+                </a>
+                <a class="nav-link" href="#" onclick="switchTab('bootstrap')">
+                    <i class="bi bi-bootstrap me-1"></i>Bootstrap
+                </a>
+                <a class="nav-link active" href="#" onclick="showToast('You are here!', 'info')">
+                    <i class="bi bi-play-circle me-1"></i>Live Coding
+                </a>
+                <div class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-grid-3x3-gap me-1"></i>Templates
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#" onclick="loadPreset('landing-page')">
+                            <i class="bi bi-layout-text-window me-2"></i>Landing Page
+                        </a></li>
+                        <li><a class="dropdown-item" href="#" onclick="loadPreset('card-layout')">
+                            <i class="bi bi-card-list me-2"></i>Card Layout
+                        </a></li>
+                        <li><a class="dropdown-item" href="#" onclick="loadPreset('form-design')">
+                            <i class="bi bi-ui-checks me-2"></i>Form Design
+                        </a></li>
+                        <li><a class="dropdown-item" href="#" onclick="loadPreset('navigation')">
+                            <i class="bi bi-menu-button-wide me-2"></i>Navigation
+                        </a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#" onclick="loadPreset('animation-demo')">
+                            <i class="bi bi-stars me-2"></i>Animations
+                        </a></li>
+                        <li><a class="dropdown-item" href="#" onclick="loadPreset('grid-system')">
+                            <i class="bi bi-grid me-2"></i>Grid System
+                        </a></li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
 </nav>
 
 <!-- Hero Section -->
-<section class="bg-gradient text-white py-4" style="background: var(--primary-gradient);">
+<section class="bg-gradient text-white py-3" style="background: var(--primary-gradient);">
     <div class="container-fluid">
         <div class="row align-items-center">
             <div class="col-lg-8">
-                <h1 class="h3 fw-bold mb-2">
+                <h1 class="h4 fw-bold mb-2">
                     <i class="bi bi-play-circle me-2"></i>Live Coding Playground
                 </h1>
-                <p class="mb-0">Write HTML, CSS, and Bootstrap code and see instant results. Perfect for learning and experimentation!</p>
+                <p class="mb-0 small">Write HTML, CSS, and Bootstrap code and see instant results. Perfect for learning and experimentation!</p>
             </div>
             <div class="col-lg-4 text-end">
                 <div class="d-flex justify-content-end gap-2">
-                    <span class="badge bg-light text-dark"><i class="bi bi-lightning me-1"></i>Real-time</span>
-                    <span class="badge bg-light text-dark"><i class="bi bi-bootstrap me-1"></i>Bootstrap 5</span>
-                    <span class="badge bg-light text-dark"><i class="bi bi-palette me-1"></i>Syntax Highlighting</span>
+                    <span class="badge bg-light text-dark small"><i class="bi bi-lightning me-1"></i>Real-time</span>
+                    <span class="badge bg-light text-dark small"><i class="bi bi-bootstrap me-1"></i>Bootstrap 5</span>
+                    <span class="badge bg-light text-dark small"><i class="bi bi-palette me-1"></i>Syntax Highlighting</span>
                 </div>
             </div>
         </div>
@@ -467,106 +499,100 @@
 </section>
 
 <!-- Main Content -->
-<div class="container-fluid py-3">
-    <div class="split-view" id="main-split">
-        <!-- Editor Section -->
-        <div class="split-pane">
-            <div class="playground-container">
-                <!-- Toolbar -->
-                <div class="toolbar">
-                    <div class="toolbar-group">
-                        <div class="preset-dropdown">
-                            <button class="toolbar-btn" onclick="togglePresets()">
-                                <i class="bi bi-collection"></i>Templates
-                            </button>
-                            <div class="preset-menu" id="preset-menu">
-                                <div class="preset-item" onclick="loadPreset('basic-page')">
-                                    <div class="preset-title">Basic Page</div>
-                                    <div class="preset-description">Simple HTML structure with Bootstrap</div>
-                                </div>
-                                <div class="preset-item" onclick="loadPreset('landing-page')">
-                                    <div class="preset-title">Landing Page</div>
-                                    <div class="preset-description">Hero section with call-to-action</div>
-                                </div>
-                                <div class="preset-item" onclick="loadPreset('card-layout')">
-                                    <div class="preset-title">Card Layout</div>
-                                    <div class="preset-description">Bootstrap cards with custom CSS</div>
-                                </div>
-                                <div class="preset-item" onclick="loadPreset('form-design')">
-                                    <div class="preset-title">Form Design</div>
-                                    <div class="preset-description">Styled contact form</div>
-                                </div>
-                                <div class="preset-item" onclick="loadPreset('navigation')">
-                                    <div class="preset-title">Navigation Bar</div>
-                                    <div class="preset-description">Responsive navbar with dropdown</div>
-                                </div>
-                                <div class="preset-item" onclick="loadPreset('flexbox-demo')">
-                                    <div class="preset-title">Flexbox Demo</div>
-                                    <div class="preset-description">CSS Flexbox with Bootstrap utilities</div>
-                                </div>
-                                <div class="preset-item" onclick="loadPreset('grid-system')">
-                                    <div class="preset-title">Grid System</div>
-                                    <div class="preset-description">Bootstrap grid with custom styling</div>
-                                </div>
-                                <div class="preset-item" onclick="loadPreset('animation-demo')">
-                                    <div class="preset-title">CSS Animations</div>
-                                    <div class="preset-description">CSS transitions and animations</div>
-                                </div>
-                            </div>
+<div class="main-container">
+    <!-- Editor Section -->
+    <div class="editor-section">
+        <!-- Toolbar -->
+        <div class="toolbar">
+            <div class="toolbar-group">
+                <div class="preset-dropdown">
+                    <button class="toolbar-btn" onclick="togglePresets()">
+                        <i class="bi bi-collection"></i>Templates
+                    </button>
+                    <div class="preset-menu" id="preset-menu">
+                        <div class="preset-item" onclick="loadPreset('basic-page')">
+                            <div class="preset-title">Basic Page</div>
+                            <div class="preset-description">Simple HTML structure with Bootstrap</div>
                         </div>
-                        
-                        <button class="toolbar-btn" onclick="runCode()">
-                            <i class="bi bi-play-fill"></i>Run
-                        </button>
-                        
-                        <button class="toolbar-btn" onclick="clearCode()">
-                            <i class="bi bi-trash"></i>Clear
-                        </button>
-                        
-                        <button class="toolbar-btn" onclick="formatCode()">
-                            <i class="bi bi-code"></i>Format
-                        </button>
-                    </div>
-                    
-                    <div class="toolbar-group">
-                        <select class="theme-selector" id="theme-selector" onchange="changeTheme()">
-                            <option value="github">Light Theme</option>
-                            <option value="monokai" selected>Dark Theme</option>
-                            <option value="dracula">Dracula</option>
-                        </select>
-                        
-                        <button class="toolbar-btn" onclick="toggleConsole()">
-                            <i class="bi bi-terminal"></i>Console
-                        </button>
-                        
-                        <button class="toolbar-btn" onclick="toggleFullscreen()">
-                            <i class="bi bi-arrows-fullscreen"></i>Fullscreen
-                        </button>
-                        
-                        <button class="toolbar-btn" onclick="showShortcuts()">
-                            <i class="bi bi-question-circle"></i>Help
-                        </button>
+                        <div class="preset-item" onclick="loadPreset('landing-page')">
+                            <div class="preset-title">Landing Page</div>
+                            <div class="preset-description">Hero section with call-to-action</div>
+                        </div>
+                        <div class="preset-item" onclick="loadPreset('card-layout')">
+                            <div class="preset-title">Card Layout</div>
+                            <div class="preset-description">Bootstrap cards with custom CSS</div>
+                        </div>
+                        <div class="preset-item" onclick="loadPreset('form-design')">
+                            <div class="preset-title">Form Design</div>
+                            <div class="preset-description">Styled contact form</div>
+                        </div>
+                        <div class="preset-item" onclick="loadPreset('navigation')">
+                            <div class="preset-title">Navigation Bar</div>
+                            <div class="preset-description">Responsive navbar with dropdown</div>
+                        </div>
+                        <div class="preset-item" onclick="loadPreset('flexbox-demo')">
+                            <div class="preset-title">Flexbox Demo</div>
+                            <div class="preset-description">CSS Flexbox with Bootstrap utilities</div>
+                        </div>
+                        <div class="preset-item" onclick="loadPreset('grid-system')">
+                            <div class="preset-title">Grid System</div>
+                            <div class="preset-description">Bootstrap grid with custom styling</div>
+                        </div>
+                        <div class="preset-item" onclick="loadPreset('animation-demo')">
+                            <div class="preset-title">CSS Animations</div>
+                            <div class="preset-description">CSS transitions and animations</div>
+                        </div>
                     </div>
                 </div>
+                
+                <button class="toolbar-btn" onclick="runCode()">
+                    <i class="bi bi-play-fill"></i>Run
+                </button>
+                
+                <button class="toolbar-btn" onclick="clearCode()">
+                    <i class="bi bi-trash"></i>Clear
+                </button>
+                
+                <button class="toolbar-btn" onclick="formatCode()">
+                    <i class="bi bi-code"></i>Format
+                </button>
+            </div>
+            
+            <div class="toolbar-group">
+                <select class="theme-selector" id="theme-selector" onchange="changeTheme()">
+                    <option value="github">Light Theme</option>
+                    <option value="monokai" selected>Dark Theme</option>
+                    <option value="dracula">Dracula</option>
+                </select>
+                
+                <button class="toolbar-btn" onclick="toggleConsole()">
+                    <i class="bi bi-terminal"></i>Console
+                </button>
+                
+                <button class="toolbar-btn" onclick="showShortcuts()">
+                    <i class="bi bi-question-circle"></i>Help
+                </button>
+            </div>
+        </div>
 
-                <!-- Editor Tabs -->
-                <div class="editor-tabs">
-                    <button class="tab-btn active" onclick="switchTab('html')" id="html-tab">
-                        <i class="bi bi-code-slash"></i>HTML
-                    </button>
-                    <button class="tab-btn" onclick="switchTab('css')" id="css-tab">
-                        <i class="bi bi-palette"></i>CSS
-                    </button>
-                    <button class="tab-btn" onclick="switchTab('bootstrap')" id="bootstrap-tab">
-                        <i class="bi bi-bootstrap"></i>Bootstrap Classes
-                    </button>
-                </div>
+        <!-- Editor Tabs -->
+        <div class="editor-tabs">
+            <button class="tab-btn active" onclick="switchTab('html')" id="html-tab">
+                <i class="bi bi-code-slash"></i>HTML
+            </button>
+            <button class="tab-btn" onclick="switchTab('css')" id="css-tab">
+                <i class="bi bi-palette"></i>CSS
+            </button>
+            <button class="tab-btn" onclick="switchTab('bootstrap')" id="bootstrap-tab">
+                <i class="bi bi-bootstrap"></i>Bootstrap Classes
+            </button>
+        </div>
 
-                <!-- Editor Container -->
-                <div class="editor-container">
-                    <!-- HTML Editor -->
-                    <div class="editor-panel active" id="html-panel">
-                        <textarea id="html-editor" placeholder="Write your HTML here...">
+        <!-- Editor Container -->
+        <div class="editor-container">
+            <!-- HTML Editor -->
+            <div class="editor-panel active" id="html-panel">
+                <textarea id="html-editor" placeholder="Write your HTML here...">
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-8">
@@ -582,11 +608,11 @@
         </div>
     </div>
 </div></textarea>
-                    </div>
+            </div>
 
-                    <!-- CSS Editor -->
-                    <div class="editor-panel" id="css-panel">
-                        <textarea id="css-editor" placeholder="Write your CSS here...">
+            <!-- CSS Editor -->
+            <div class="editor-panel" id="css-panel">
+                <textarea id="css-editor" placeholder="Write your CSS here...">
 /* Custom CSS Styles */
 .card {
     border: none;
@@ -622,11 +648,11 @@ body {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
 }</textarea>
-                    </div>
+            </div>
 
-                    <!-- Bootstrap Classes Helper -->
-                    <div class="editor-panel" id="bootstrap-panel">
-                        <textarea id="bootstrap-editor" placeholder="Bootstrap classes and utilities reference...">
+            <!-- Bootstrap Classes Helper -->
+            <div class="editor-panel" id="bootstrap-panel">
+                <textarea id="bootstrap-editor" placeholder="Bootstrap classes and utilities reference...">
 <!-- Bootstrap 5 Quick Reference -->
 
 <!-- Layout Classes -->
@@ -673,70 +699,66 @@ body {
 .shadow-sm .shadow .shadow-lg
 
 Copy and paste these classes into your HTML to see them in action!</textarea>
-                    </div>
-                </div>
-
-                <!-- Status Bar -->
-                <div class="status-bar">
-                    <div>
-                        <span id="cursor-position">Ln 1, Col 1</span>
-                        <span class="ms-3" id="word-count">0 words</span>
-                    </div>
-                    <div class="error-indicator" id="error-indicator">
-                        <i class="bi bi-exclamation-triangle"></i>
-                        <span id="error-message">No errors</span>
-                    </div>
-                    <div>
-                        <span id="auto-save-status">Auto-save: On</span>
-                    </div>
-                </div>
-
-                <!-- Console Panel -->
-                <div class="console-panel" id="console-panel">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <strong>Console Output</strong>
-                        <button class="btn btn-sm btn-outline-light" onclick="clearConsole()">Clear</button>
-                    </div>
-                    <div id="console-output"></div>
-                </div>
             </div>
         </div>
 
-        <!-- Resize Handle -->
-        <div class="resize-handle" id="resize-handle"></div>
-
-        <!-- Preview Section -->
-        <div class="split-pane">
-            <div class="preview-container">
-                <div class="preview-header">
-                    <div>
-                        <h6 class="mb-0">
-                            <i class="bi bi-eye me-2"></i>Live Preview
-                        </h6>
-                    </div>
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="responsive-controls">
-                            <button class="responsive-btn active" onclick="setPreviewSize('100%')" title="Desktop">
-                                <i class="bi bi-display"></i>
-                            </button>
-                            <button class="responsive-btn" onclick="setPreviewSize('768px')" title="Tablet">
-                                <i class="bi bi-tablet"></i>
-                            </button>
-                            <button class="responsive-btn" onclick="setPreviewSize('375px')" title="Mobile">
-                                <i class="bi bi-phone"></i>
-                            </button>
-                        </div>
-                        <div class="live-indicator">LIVE</div>
-                    </div>
-                </div>
-                
-                <div style="flex: 1; position: relative;">
-                    <div class="loading-overlay" id="loading-overlay">
-                        <div class="spinner"></div>
-                    </div>
-                    <iframe id="preview-frame" class="preview-frame"></iframe>
-                </div>
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div>
+                <span id="cursor-position">Ln 1, Col 1</span>
+                <span class="ms-3" id="word-count">0 words</span>
             </div>
+            <div class="error-indicator" id="error-indicator">
+                <i class="bi bi-exclamation-triangle"></i>
+                <span id="error-message">No errors</span>
+            </div>
+            <div>
+                <span id="auto-save-status">Auto-save: On</span>
+            </div>
+        </div>
+
+        <!-- Console Panel -->
+        <div class="console-panel" id="console-panel">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <strong>Console Output</strong>
+                <button class="btn btn-sm btn-outline-light" onclick="clearConsole()">Clear</button>
+            </div>
+            <div id="console-output"></div>
+        </div>
+    </div>
+
+    <!-- Resize Handle -->
+    <div class="resize-handle" id="resize-handle"></div>
+
+    <!-- Preview Section -->
+    <div class="preview-section">
+        <div class="preview-header">
+            <div>
+                <h6 class="mb-0">
+                    <i class="bi bi-eye me-2"></i>Live Preview
+                </h6>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <div class="responsive-controls">
+                    <button class="responsive-btn active" onclick="setPreviewSize('100%')" title="Desktop">
+                        <i class="bi bi-display"></i>
+                    </button>
+                    <button class="responsive-btn" onclick="setPreviewSize('768px')" title="Tablet">
+                        <i class="bi bi-tablet"></i>
+                    </button>
+                    <button class="responsive-btn" onclick="setPreviewSize('375px')" title="Mobile">
+                        <i class="bi bi-phone"></i>
+                    </button>
+                </div>
+                <div class="live-indicator">LIVE</div>
+            </div>
+        </div>
+        
+        <div style="flex: 1; position: relative;">
+            <div class="loading-overlay" id="loading-overlay">
+                <div class="spinner"></div>
+            </div>
+            <iframe id="preview-frame" class="preview-frame"></iframe>
         </div>
     </div>
 </div>
@@ -771,10 +793,6 @@ Copy and paste these classes into your HTML to see them in action!</textarea>
                 <div class="shortcut-item">
                     <span>Replace</span>
                     <kbd class="shortcut-key">Ctrl + H</kbd>
-                </div>
-                <div class="shortcut-item">
-                    <span>Toggle Fullscreen</span>
-                    <kbd class="shortcut-key">F11</kbd>
                 </div>
                 <div class="shortcut-item">
                     <span>Switch to HTML</span>
@@ -834,7 +852,6 @@ Copy and paste these classes into your HTML to see them in action!</textarea>
     // Global variables
     let htmlEditor, cssEditor, bootstrapEditor;
     let currentTab = 'html';
-    let isFullscreen = false;
     let autoSaveInterval;
     let updateTimeout;
 
@@ -918,8 +935,7 @@ Copy and paste these classes into your HTML to see them in action!</textarea>
                 "Alt-1": () => switchTab('html'),
                 "Alt-2": () => switchTab('css'),
                 "Alt-3": () => switchTab('bootstrap'),
-                "Ctrl-`": toggleConsole,
-                "F11": toggleFullscreen
+                "Ctrl-`": toggleConsole
             }
         });
 
@@ -941,8 +957,7 @@ Copy and paste these classes into your HTML to see them in action!</textarea>
                 "Alt-1": () => switchTab('html'),
                 "Alt-2": () => switchTab('css'),
                 "Alt-3": () => switchTab('bootstrap'),
-                "Ctrl-`": toggleConsole,
-                "F11": toggleFullscreen
+                "Ctrl-`": toggleConsole
             }
         });
 
@@ -1003,7 +1018,7 @@ Copy and paste these classes into your HTML to see them in action!</textarea>
 
     function setupResizeHandle() {
         const resizeHandle = document.getElementById('resize-handle');
-        const splitView = document.getElementById('main-split');
+        const mainContainer = document.querySelector('.main-container');
         let isResizing = false;
 
         resizeHandle.addEventListener('mousedown', function(e) {
@@ -1016,15 +1031,15 @@ Copy and paste these classes into your HTML to see them in action!</textarea>
         function handleResize(e) {
             if (!isResizing) return;
             
-            const splitViewRect = splitView.getBoundingClientRect();
-            const percentage = ((e.clientX - splitViewRect.left) / splitViewRect.width) * 100;
+            const containerRect = mainContainer.getBoundingClientRect();
+            const percentage = ((e.clientX - containerRect.left) / containerRect.width) * 100;
             
             if (percentage > 20 && percentage < 80) {
-                const leftPane = splitView.querySelector('.split-pane:first-child');
-                const rightPane = splitView.querySelector('.split-pane:last-child');
+                const editorSection = document.querySelector('.editor-section');
+                const previewSection = document.querySelector('.preview-section');
                 
-                leftPane.style.flex = `0 0 ${percentage}%`;
-                rightPane.style.flex = `0 0 ${100 - percentage}%`;
+                editorSection.style.flex = `0 0 ${percentage}%`;
+                previewSection.style.flex = `0 0 ${100 - percentage}%`;
                 
                 // Refresh editors after resize
                 setTimeout(() => {
@@ -1057,11 +1072,6 @@ Copy and paste these classes into your HTML to see them in action!</textarea>
         if (e.ctrlKey && e.key === 's') {
             e.preventDefault();
             saveCode();
-        }
-        
-        if (e.key === 'F11') {
-            e.preventDefault();
-            toggleFullscreen();
         }
     }
 
@@ -1325,19 +1335,6 @@ Copy and paste these classes into your HTML to see them in action!</textarea>
     function clearConsole() {
         document.getElementById('console-output').innerHTML = '';
         showToast('Console cleared!', 'info');
-    }
-
-    function toggleFullscreen() {
-        isFullscreen = !isFullscreen;
-        document.body.classList.toggle('fullscreen-mode', isFullscreen);
-        
-        setTimeout(() => {
-            htmlEditor.refresh();
-            cssEditor.refresh();
-            bootstrapEditor.refresh();
-        }, 100);
-        
-        showToast(isFullscreen ? 'Fullscreen enabled' : 'Fullscreen disabled', 'info');
     }
 
     function setPreviewSize(width) {
@@ -1671,10 +1668,10 @@ Copy and paste these classes into your HTML to see them in action!</textarea>
         <a class="navbar-brand" href="#">
             <span class="brand-text">YourBrand</span>
         </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#demoNavbar">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
+        <div class="collapse navbar-collapse" id="demoNavbar">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
                     <a class="nav-link active" href="#">Home</a>
@@ -2064,30 +2061,6 @@ h4 {
 
 .responsive-item:hover {
     background: linear-gradient(135deg, #fcb69f 0%, #ffecd2 100%);
-}
-
-/* Show grid lines effect */
-.row {
-    position: relative;
-}
-
-.row::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 15px;
-    right: 15px;
-    bottom: 0;
-    background-image: 
-        repeating-linear-gradient(
-            90deg,
-            transparent,
-            transparent 8.333%,
-            rgba(255,255,255,0.1) 8.333%,
-            rgba(255,255,255,0.1) 8.334%
-        );
-    pointer-events: none;
-    border-radius: 5px;
 }`
             },
             'animation-demo': {

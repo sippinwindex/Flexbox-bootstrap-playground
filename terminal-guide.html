@@ -6,8 +6,8 @@
     <meta http-equiv="X-Frame-Options" content="DENY">
     <meta http-equiv="X-XSS-Protection" content="1; mode=block">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Complete Terminal learning guide with interactive examples and live terminal">
-    <title>Terminal Learning Guide - Interactive Edition</title>
+    <meta name="description" content="Interactive Terminal learning guide with hands-on practice">
+    <title>Interactive Terminal Learning Guide</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" 
@@ -37,6 +37,7 @@
             --terminal-yellow: #ffeb3b;
             --terminal-red: #f44336;
             --terminal-blue: #2196f3;
+            --terminal-success: #4caf50;
         }
 
         body {
@@ -178,13 +179,14 @@
             min-height: 60px;
         }
 
-        /* Terminal Simulator Styles */
-        .terminal-simulator {
+        /* Interactive Terminal Styles */
+        .interactive-terminal {
             background: var(--terminal-bg);
             border-radius: 8px;
             overflow: hidden;
             font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
             box-shadow: var(--shadow-md);
+            min-height: 400px;
         }
 
         .terminal-header {
@@ -217,11 +219,34 @@
             font-weight: 500;
         }
 
+        .terminal-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .terminal-control-btn {
+            background: #4a5568;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .terminal-control-btn:hover {
+            background: #2d3748;
+        }
+
         .terminal-body {
             background: var(--terminal-bg);
             color: var(--terminal-text);
             padding: 16px;
-            min-height: 200px;
+            min-height: 350px;
+            max-height: 350px;
+            overflow-y: auto;
             font-size: 14px;
             line-height: 1.4;
         }
@@ -230,6 +255,7 @@
             margin-bottom: 4px;
             display: flex;
             align-items: flex-start;
+            flex-wrap: wrap;
         }
 
         .terminal-prompt {
@@ -246,6 +272,19 @@
             color: var(--terminal-blue);
             margin-left: 0;
             white-space: pre-wrap;
+            width: 100%;
+        }
+
+        .terminal-error {
+            color: var(--terminal-red);
+            margin-left: 0;
+            width: 100%;
+        }
+
+        .terminal-success {
+            color: var(--terminal-success);
+            margin-left: 0;
+            width: 100%;
         }
 
         .terminal-comment {
@@ -253,65 +292,126 @@
             font-style: italic;
         }
 
-        .code-container {
-            position: relative;
-            background: #2d3748;
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        .code-header {
-            background: #1a202c;
-            padding: 0.75rem 1rem;
+        .terminal-input-line {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid #4a5568;
+            margin-top: 8px;
         }
 
-        .code-language {
-            color: #a0aec0;
-            font-size: 0.85rem;
-            font-weight: 500;
-        }
-
-        .copy-btn {
-            background: #28a745;
-            color: white;
+        .terminal-input {
+            background: transparent;
             border: none;
-            border-radius: 6px;
-            padding: 0.5rem 1rem;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            color: var(--terminal-text);
+            font-family: inherit;
+            font-size: inherit;
+            outline: none;
+            flex: 1;
+            margin-left: 8px;
+        }
+
+        .terminal-cursor {
+            animation: blink 1s infinite;
+            color: var(--terminal-text);
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        /* Practice Challenge Styles */
+        .practice-challenge {
+            background: linear-gradient(135deg, #e8f4fd, #d1ecf1);
+            border: 1px solid #bee5eb;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            position: relative;
+        }
+
+        .practice-challenge::before {
+            content: '🎯';
+            position: absolute;
+            left: 15px;
+            top: 15px;
+            font-size: 1.2rem;
+        }
+
+        .practice-challenge h6 {
+            margin-left: 2rem;
+            color: #0c5460;
+        }
+
+        .challenge-status {
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            margin-top: 1rem;
         }
 
-        .copy-btn:hover {
-            background: #218838;
-            transform: scale(1.05);
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #6c757d;
         }
 
-        .copy-btn.copied {
-            background: #17a2b8;
+        .status-indicator.completed {
+            background: var(--terminal-success);
         }
 
-        .code-block {
-            margin: 0;
+        .status-indicator.current {
+            background: #ffc107;
+            animation: pulse 2s infinite;
         }
 
-        .code-block pre {
-            margin: 0;
-            padding: 1.5rem;
-            background: transparent !important;
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
         }
 
-        .badge-level {
-            font-size: 0.7rem;
-            padding: 0.35rem 0.7rem;
-            border-radius: 12px;
+        .hint-box {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 6px;
+            padding: 1rem;
+            margin: 1rem 0;
+            display: none;
+        }
+
+        .hint-box.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .progress-bar-container {
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: var(--success-gradient);
+            width: 0;
+            transition: width 0.5s ease;
+        }
+
+        .command-hint {
+            background: rgba(76, 175, 80, 0.1);
+            border-left: 4px solid #4caf50;
+            padding: 0.5rem 1rem;
+            margin: 0.5rem 0;
+            border-radius: 0 4px 4px 0;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9rem;
         }
 
         .best-practice {
@@ -348,42 +448,10 @@
             font-size: 1.2rem;
         }
 
-        .command-card {
-            background: #f8f9fa;
-            border: 1px solid #dee2e6;
-            border-radius: 8px;
-            padding: 1rem;
-            margin: 0.5rem 0;
-            transition: all 0.3s ease;
-        }
-
-        .command-card:hover {
-            background: #e9ecef;
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .command-syntax {
-            font-family: 'Consolas', 'Monaco', monospace;
-            background: var(--terminal-bg);
-            color: var(--terminal-text);
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            font-size: 0.9rem;
-        }
-
-        .interactive-demo {
-            background: var(--terminal-bg);
-            border-radius: 8px;
-            padding: 1rem;
-            margin: 1rem 0;
-        }
-
-        .demo-step {
-            margin-bottom: 1rem;
-            padding: 0.5rem;
-            border-left: 3px solid var(--terminal-blue);
-            background: rgba(33, 150, 243, 0.1);
+        .badge-level {
+            font-size: 0.7rem;
+            padding: 0.35rem 0.7rem;
+            border-radius: 12px;
         }
 
         /* Toast notifications */
@@ -412,40 +480,6 @@
         @keyframes slideIn {
             from { transform: translateX(100%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
-        }
-
-        /* File tree styles */
-        .file-tree {
-            font-family: 'Consolas', 'Monaco', monospace;
-            background: #f8f9fa;
-            border: 1px solid #dee2e6;
-            border-radius: 8px;
-            padding: 1rem;
-            margin: 1rem 0;
-        }
-
-        .file-tree-item {
-            display: flex;
-            align-items: center;
-            padding: 0.25rem 0;
-            color: #495057;
-        }
-
-        .file-tree-icon {
-            margin-right: 0.5rem;
-            width: 16px;
-        }
-
-        .tree-indent {
-            margin-left: 1rem;
-        }
-
-        /* Progress indicator */
-        .progress-section {
-            background: linear-gradient(135deg, #e8f5e8, #d4edda);
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin: 2rem 0;
         }
 
         /* Responsive adjustments */
@@ -484,19 +518,26 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">
-                <i class="bi bi-terminal me-2"></i>Terminal Learning Guide
+                <i class="bi bi-terminal me-2"></i>Interactive Terminal Guide
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <div class="navbar-nav ms-auto">
-                    <a class="nav-link" href="#"><i class="bi bi-house me-1"></i>Home</a>
-                    <a class="nav-link" href="#"><i class="bi bi-grid-3x3 me-1"></i>Flexbox</a>
-                    <a class="nav-link" href="#"><i class="bi bi-code me-1"></i>HTML</a>
-                    <a class="nav-link" href="#"><i class="bi bi-bootstrap me-1"></i>Bootstrap</a>
-                    <a class="nav-link" href="#"><i class="bi bi-play-circle me-1"></i>Live Coding</a>
-                    <a class="nav-link active" href="#"><i class="bi bi-terminal me-1"></i>Terminal</a>
+                    <a class="nav-link" href="#getting-started">
+                        <i class="bi bi-play-circle me-1"></i>Start Learning
+                    </a>
+                    <a class="nav-link" href="#navigation-commands">
+                        <i class="bi bi-compass me-1"></i>Navigation
+                    </a>
+                    <a class="nav-link" href="#file-operations">
+                        <i class="bi bi-file-earmark me-1"></i>File Operations
+                    </a>
+                    <a class="nav-link" href="#practice-terminal">
+                        <i class="bi bi-terminal me-1"></i>Practice Terminal
+                    </a>
                 </div>
             </div>
         </div>
@@ -508,49 +549,40 @@
             <div class="row align-items-center">
                 <div class="col-lg-8">
                     <h1 class="display-5 fw-bold mb-3">
-                        <i class="bi bi-terminal me-3"></i>Terminal Mastery Guide
+                        <i class="bi bi-terminal me-3"></i>Interactive Terminal Mastery
                     </h1>
-                    <p class="lead mb-4">Master the command line with interactive examples showing both terminal output and command explanations. From beginner to advanced terminal skills.</p>
+                    <p class="lead mb-4">Learn terminal commands by actually typing them! Practice with real interactive examples and get instant feedback on your commands.</p>
                     <div class="d-flex gap-3 flex-wrap">
                         <a href="#getting-started" class="btn btn-light btn-lg">
                             <i class="bi bi-play me-2"></i>Start Learning
                         </a>
-                        <a href="#live-terminal" class="btn btn-outline-light btn-lg">
-                            <i class="bi bi-terminal me-2"></i>Try Terminal
+                        <a href="#practice-terminal" class="btn btn-outline-light btn-lg">
+                            <i class="bi bi-terminal me-2"></i>Practice Now
                         </a>
                     </div>
                 </div>
                 <div class="col-lg-4 text-center">
-                    <div class="terminal-simulator">
+                    <div class="interactive-terminal">
                         <div class="terminal-header">
                             <div class="terminal-dots">
                                 <div class="terminal-dot red"></div>
                                 <div class="terminal-dot yellow"></div>
                                 <div class="terminal-dot green"></div>
                             </div>
-                            <div class="terminal-title">Terminal</div>
-                            <div></div>
+                            <div class="terminal-title">Interactive Terminal</div>
+                            <div class="terminal-controls">
+                                <button class="terminal-control-btn" onclick="clearHeroTerminal()">Clear</button>
+                            </div>
                         </div>
-                        <div class="terminal-body">
+                        <div class="terminal-body" id="hero-terminal">
                             <div class="terminal-line">
+                                <span class="terminal-comment"># Try typing: pwd</span>
+                            </div>
+                            <div class="terminal-input-line">
                                 <span class="terminal-prompt">student@learning:~$</span>
-                                <span class="terminal-command">ls -la</span>
-                            </div>
-                            <div class="terminal-line">
-                                <span class="terminal-output">drwxr-xr-x  5 student student  4096 Jan 15 10:30 .</span>
-                            </div>
-                            <div class="terminal-line">
-                                <span class="terminal-output">drwxr-xr-x  3 root    root     4096 Jan 10 09:15 ..</span>
-                            </div>
-                            <div class="terminal-line">
-                                <span class="terminal-output">-rw-r--r--  1 student student   220 Jan 10 09:15 .bashrc</span>
-                            </div>
-                            <div class="terminal-line">
-                                <span class="terminal-output">drwxr-xr-x  2 student student  4096 Jan 15 10:30 documents</span>
-                            </div>
-                            <div class="terminal-line">
-                                <span class="terminal-prompt">student@learning:~$</span>
-                                <span class="terminal-command blink">_</span>
+                                <input type="text" class="terminal-input" id="hero-input" 
+                                       placeholder="Type a command..." onkeypress="handleHeroCommand(event)">
+                                <span class="terminal-cursor">_</span>
                             </div>
                         </div>
                     </div>
@@ -565,7 +597,7 @@
             <div class="col-lg-3">
                 <div class="guide-nav p-3">
                     <h6 class="text-muted small text-uppercase mb-3 fw-bold">
-                        <i class="bi bi-list me-2"></i>Table of Contents
+                        <i class="bi bi-list me-2"></i>Learning Path
                     </h6>
                     <nav class="nav flex-column" id="guide-navigation">
                         <a class="nav-link active" href="#getting-started">
@@ -580,16 +612,37 @@
                         <a class="nav-link" href="#text-processing">
                             <i class="bi bi-file-text me-2"></i>Text Processing
                         </a>
-                        <a class="nav-link" href="#system-info">
-                            <i class="bi bi-info-circle me-2"></i>System Information
-                        </a>
-                        <a class="nav-link" href="#advanced-commands">
-                            <i class="bi bi-gear me-2"></i>Advanced Commands
-                        </a>
-                        <a class="nav-link" href="#live-terminal">
-                            <i class="bi bi-terminal me-2"></i>Live Terminal
+                        <a class="nav-link" href="#practice-terminal">
+                            <i class="bi bi-terminal me-2"></i>Practice Terminal
                         </a>
                     </nav>
+                    
+                    <!-- Progress Tracker -->
+                    <div class="mt-4 p-3 bg-light rounded">
+                        <h6 class="small fw-bold mb-2">
+                            <i class="bi bi-trophy me-1"></i>Your Progress
+                        </h6>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" id="overall-progress"></div>
+                        </div>
+                        <div class="small text-muted mt-1">
+                            <span id="progress-text">0% Complete</span>
+                        </div>
+                        <div class="mt-2">
+                            <div class="d-flex align-items-center mb-1">
+                                <div class="status-indicator" id="nav-status"></div>
+                                <span class="small ms-2">Navigation</span>
+                            </div>
+                            <div class="d-flex align-items-center mb-1">
+                                <div class="status-indicator" id="file-status"></div>
+                                <span class="small ms-2">File Operations</span>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <div class="status-indicator" id="text-status"></div>
+                                <span class="small ms-2">Text Processing</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -598,49 +651,51 @@
                 <!-- Getting Started -->
                 <section id="getting-started" class="content-section">
                     <div class="d-flex align-items-center mb-4">
-                        <h2 class="mb-0">Getting Started with Terminal</h2>
+                        <h2 class="mb-0">Getting Started with Interactive Terminal</h2>
                         <span class="badge bg-success ms-3 badge-level">Beginner</span>
                     </div>
                     
-                    <p class="lead">The terminal (also called command line or shell) is a text-based interface for interacting with your computer. It's incredibly powerful and essential for developers, system administrators, and power users.</p>
+                    <p class="lead">Welcome to the interactive terminal learning experience! You'll learn by doing - type real commands and see immediate results.</p>
 
                     <div class="best-practice">
-                        <h6><i class="bi bi-lightbulb text-success me-2"></i>What You'll Learn</h6>
+                        <h6><i class="bi bi-lightbulb text-success me-2"></i>How This Works</h6>
                         <ul class="mb-0">
-                            <li>Essential terminal commands for navigation and file management</li>
-                            <li>Text processing and system information commands</li>
-                            <li>Interactive examples with real terminal output</li>
-                            <li>Best practices and common patterns</li>
-                            <li>Advanced techniques for power users</li>
+                            <li><strong>Interactive Tabs:</strong> Each example has a "Try It" tab where you can type commands</li>
+                            <li><strong>Real Feedback:</strong> Get instant validation and results for your commands</li>
+                            <li><strong>Guided Learning:</strong> Follow step-by-step challenges with hints</li>
+                            <li><strong>Progress Tracking:</strong> Watch your skills grow as you complete sections</li>
                         </ul>
                     </div>
 
-                    <h4>Terminal Anatomy</h4>
+                    <h4>Understanding the Terminal Prompt</h4>
                     <div class="example-container">
                         <div class="example-header">
                             <h6 class="example-title">
                                 <i class="bi bi-terminal"></i>
-                                Understanding the Terminal Prompt
+                                Terminal Prompt Basics
                             </h6>
                         </div>
                         <div class="example-tabs">
-                            <button class="example-tab active" onclick="switchTab(this, 'demo')">
-                                <i class="bi bi-display"></i>Terminal Demo
+                            <button class="example-tab active" onclick="switchExampleTab(this, 'demo')">
+                                <i class="bi bi-display"></i>Demo
                             </button>
-                            <button class="example-tab" onclick="switchTab(this, 'explanation')">
+                            <button class="example-tab" onclick="switchExampleTab(this, 'practice')">
+                                <i class="bi bi-keyboard"></i>Try It
+                            </button>
+                            <button class="example-tab" onclick="switchExampleTab(this, 'explanation')">
                                 <i class="bi bi-info-circle"></i>Explanation
                             </button>
                         </div>
                         <div class="example-content">
                             <div class="example-pane active" data-tab="demo">
-                                <div class="terminal-simulator">
+                                <div class="interactive-terminal">
                                     <div class="terminal-header">
                                         <div class="terminal-dots">
                                             <div class="terminal-dot red"></div>
                                             <div class="terminal-dot yellow"></div>
                                             <div class="terminal-dot green"></div>
                                         </div>
-                                        <div class="terminal-title">Terminal</div>
+                                        <div class="terminal-title">Demo Terminal</div>
                                         <div></div>
                                     </div>
                                     <div class="terminal-body">
@@ -656,9 +711,51 @@
                                         </div>
                                         <div class="terminal-line">
                                             <span class="terminal-prompt">student@learning</span><span style="color: #fff;">:</span><span style="color: var(--terminal-blue);">~</span><span style="color: #fff;">$</span>
-                                            <span class="terminal-command">_</span>
+                                            <span class="terminal-cursor">_</span>
                                         </div>
                                     </div>
+                                </div>
+                            </div>
+                            <div class="example-pane" data-tab="practice">
+                                <div class="practice-challenge">
+                                    <h6>🎯 Challenge: Try your first command!</h6>
+                                    <p>Type <code>echo "Hello World!"</code> in the terminal below and press Enter.</p>
+                                    <div class="command-hint">
+                                        <strong>Hint:</strong> The echo command prints text to the terminal
+                                    </div>
+                                </div>
+                                <div class="interactive-terminal">
+                                    <div class="terminal-header">
+                                        <div class="terminal-dots">
+                                            <div class="terminal-dot red"></div>
+                                            <div class="terminal-dot yellow"></div>
+                                            <div class="terminal-dot green"></div>
+                                        </div>
+                                        <div class="terminal-title">Practice Terminal</div>
+                                        <div class="terminal-controls">
+                                            <button class="terminal-control-btn" onclick="clearTerminal('practice-1')">Clear</button>
+                                            <button class="terminal-control-btn" onclick="showHint('hint-1')">Hint</button>
+                                        </div>
+                                    </div>
+                                    <div class="terminal-body" id="practice-1">
+                                        <div class="terminal-line">
+                                            <span class="terminal-comment"># Try: echo "Hello World!"</span>
+                                        </div>
+                                        <div class="terminal-input-line">
+                                            <span class="terminal-prompt">student@learning:~$</span>
+                                            <input type="text" class="terminal-input" 
+                                                   onkeypress="handleCommand(event, 'practice-1', 'getting-started-1')"
+                                                   placeholder="Type your command here...">
+                                            <span class="terminal-cursor">_</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="hint-box" id="hint-1">
+                                    <strong>💡 Hint:</strong> Type exactly: <code>echo "Hello World!"</code> and press Enter
+                                </div>
+                                <div class="challenge-status" id="challenge-getting-started-1">
+                                    <div class="status-indicator current"></div>
+                                    <span>Challenge: Use echo command</span>
                                 </div>
                             </div>
                             <div class="example-pane" data-tab="explanation">
@@ -666,61 +763,26 @@
                                     <h6>Prompt Breakdown:</h6>
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <div class="command-card">
+                                            <div class="p-3 bg-light rounded mb-3">
                                                 <h6><span class="badge bg-primary">student</span> Username</h6>
                                                 <p class="mb-0">The currently logged-in user</p>
                                             </div>
-                                            <div class="command-card">
+                                            <div class="p-3 bg-light rounded mb-3">
                                                 <h6><span class="badge bg-info">learning</span> Hostname</h6>
                                                 <p class="mb-0">The name of your computer/server</p>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
-                                            <div class="command-card">
+                                            <div class="p-3 bg-light rounded mb-3">
                                                 <h6><span class="badge bg-warning">~</span> Current Directory</h6>
                                                 <p class="mb-0">~ represents your home directory</p>
                                             </div>
-                                            <div class="command-card">
+                                            <div class="p-3 bg-light rounded mb-3">
                                                 <h6><span class="badge bg-success">$</span> Prompt Symbol</h6>
                                                 <p class="mb-0">$ = regular user, # = root user</p>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="progress-section">
-                        <h6><i class="bi bi-trophy text-warning me-2"></i>Your Learning Path</h6>
-                        <p>Follow this guide step by step to master terminal commands. Each section builds on the previous one.</p>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="d-flex align-items-center mb-2">
-                                    <i class="bi bi-check-circle text-success me-2"></i>
-                                    <span>✓ Basic navigation (pwd, ls, cd)</span>
-                                </div>
-                                <div class="d-flex align-items-center mb-2">
-                                    <i class="bi bi-circle me-2"></i>
-                                    <span>File operations (touch, mkdir, rm)</span>
-                                </div>
-                                <div class="d-flex align-items-center mb-2">
-                                    <i class="bi bi-circle me-2"></i>
-                                    <span>Text processing (cat, grep, find)</span>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="d-flex align-items-center mb-2">
-                                    <i class="bi bi-circle me-2"></i>
-                                    <span>System information (ps, top, df)</span>
-                                </div>
-                                <div class="d-flex align-items-center mb-2">
-                                    <i class="bi bi-circle me-2"></i>
-                                    <span>Advanced techniques (pipes, redirection)</span>
-                                </div>
-                                <div class="d-flex align-items-center mb-2">
-                                    <i class="bi bi-circle me-2"></i>
-                                    <span>Live terminal practice</span>
                                 </div>
                             </div>
                         </div>
@@ -734,7 +796,7 @@
                         <span class="badge bg-primary ms-3 badge-level">Beginner</span>
                     </div>
 
-                    <p>These commands help you move around the file system and understand where you are.</p>
+                    <p>Master the essential commands for moving around the file system.</p>
 
                     <h4>pwd - Show Current Directory</h4>
                     <div class="example-container">
@@ -745,23 +807,23 @@
                             </h6>
                         </div>
                         <div class="example-tabs">
-                            <button class="example-tab active" onclick="switchTab(this, 'demo')">
-                                <i class="bi bi-display"></i>Terminal Demo
+                            <button class="example-tab active" onclick="switchExampleTab(this, 'demo')">
+                                <i class="bi bi-display"></i>Demo
                             </button>
-                            <button class="example-tab" onclick="switchTab(this, 'syntax')">
-                                <i class="bi bi-code"></i>Command Syntax
+                            <button class="example-tab" onclick="switchExampleTab(this, 'practice')">
+                                <i class="bi bi-keyboard"></i>Try It
                             </button>
                         </div>
                         <div class="example-content">
                             <div class="example-pane active" data-tab="demo">
-                                <div class="terminal-simulator">
+                                <div class="interactive-terminal">
                                     <div class="terminal-header">
                                         <div class="terminal-dots">
                                             <div class="terminal-dot red"></div>
                                             <div class="terminal-dot yellow"></div>
                                             <div class="terminal-dot green"></div>
                                         </div>
-                                        <div class="terminal-title">Terminal</div>
+                                        <div class="terminal-title">Demo Terminal</div>
                                         <div></div>
                                     </div>
                                     <div class="terminal-body">
@@ -774,35 +836,51 @@
                                         </div>
                                         <div class="terminal-line">
                                             <span class="terminal-prompt">student@learning:~$</span>
-                                            <span class="terminal-command">cd documents</span>
-                                        </div>
-                                        <div class="terminal-line">
-                                            <span class="terminal-prompt">student@learning:~/documents$</span>
-                                            <span class="terminal-command">pwd</span>
-                                        </div>
-                                        <div class="terminal-line">
-                                            <span class="terminal-output">/home/student/documents</span>
+                                            <span class="terminal-cursor">_</span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="example-pane" data-tab="syntax">
-                                <div class="code-container">
-                                    <div class="code-header">
-                                        <span class="code-language">Bash</span>
-                                        <button class="copy-btn" onclick="copyCode(this)">
-                                            <i class="bi bi-clipboard"></i>Copy Command
-                                        </button>
+                            <div class="example-pane" data-tab="practice">
+                                <div class="practice-challenge">
+                                    <h6>🎯 Challenge: Find your current location!</h6>
+                                    <p>Use the <code>pwd</code> command to see what directory you're currently in.</p>
+                                    <div class="command-hint">
+                                        <strong>Hint:</strong> pwd stands for "print working directory"
                                     </div>
-                                    <div class="code-block">
-                                        <pre><code class="language-bash"># Print working directory
-pwd
-
-# Example output: /home/student/documents
-
-# Use case: Find out exactly where you are
-# in the file system hierarchy</code></pre>
+                                </div>
+                                <div class="interactive-terminal">
+                                    <div class="terminal-header">
+                                        <div class="terminal-dots">
+                                            <div class="terminal-dot red"></div>
+                                            <div class="terminal-dot yellow"></div>
+                                            <div class="terminal-dot green"></div>
+                                        </div>
+                                        <div class="terminal-title">Practice Terminal</div>
+                                        <div class="terminal-controls">
+                                            <button class="terminal-control-btn" onclick="clearTerminal('practice-pwd')">Clear</button>
+                                            <button class="terminal-control-btn" onclick="showHint('hint-pwd')">Hint</button>
+                                        </div>
                                     </div>
+                                    <div class="terminal-body" id="practice-pwd">
+                                        <div class="terminal-line">
+                                            <span class="terminal-comment"># Try: pwd</span>
+                                        </div>
+                                        <div class="terminal-input-line">
+                                            <span class="terminal-prompt">student@learning:~$</span>
+                                            <input type="text" class="terminal-input" 
+                                                   onkeypress="handleCommand(event, 'practice-pwd', 'nav-pwd')"
+                                                   placeholder="Type pwd and press Enter">
+                                            <span class="terminal-cursor">_</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="hint-box" id="hint-pwd">
+                                    <strong>💡 Hint:</strong> Just type <code>pwd</code> and press Enter
+                                </div>
+                                <div class="challenge-status" id="challenge-nav-pwd">
+                                    <div class="status-indicator current"></div>
+                                    <span>Challenge: Use pwd command</span>
                                 </div>
                             </div>
                         </div>
@@ -817,26 +895,23 @@ pwd
                             </h6>
                         </div>
                         <div class="example-tabs">
-                            <button class="example-tab active" onclick="switchTab(this, 'demo')">
-                                <i class="bi bi-display"></i>Terminal Demo
+                            <button class="example-tab active" onclick="switchExampleTab(this, 'demo')">
+                                <i class="bi bi-display"></i>Demo
                             </button>
-                            <button class="example-tab" onclick="switchTab(this, 'options')">
-                                <i class="bi bi-gear"></i>Common Options
-                            </button>
-                            <button class="example-tab" onclick="switchTab(this, 'syntax')">
-                                <i class="bi bi-code"></i>Command Syntax
+                            <button class="example-tab" onclick="switchExampleTab(this, 'practice')">
+                                <i class="bi bi-keyboard"></i>Try It
                             </button>
                         </div>
                         <div class="example-content">
                             <div class="example-pane active" data-tab="demo">
-                                <div class="terminal-simulator">
+                                <div class="interactive-terminal">
                                     <div class="terminal-header">
                                         <div class="terminal-dots">
                                             <div class="terminal-dot red"></div>
                                             <div class="terminal-dot yellow"></div>
                                             <div class="terminal-dot green"></div>
                                         </div>
-                                        <div class="terminal-title">Terminal</div>
+                                        <div class="terminal-title">Demo Terminal</div>
                                         <div></div>
                                     </div>
                                     <div class="terminal-body">
@@ -852,226 +927,67 @@ pwd
                                             <span class="terminal-command">ls -la</span>
                                         </div>
                                         <div class="terminal-line">
-                                            <span class="terminal-output">total 28</span>
-                                        </div>
-                                        <div class="terminal-line">
                                             <span class="terminal-output">drwxr-xr-x  5 student student 4096 Jan 15 10:30 .</span>
                                         </div>
                                         <div class="terminal-line">
                                             <span class="terminal-output">drwxr-xr-x  3 root    root    4096 Jan 10 09:15 ..</span>
                                         </div>
                                         <div class="terminal-line">
-                                            <span class="terminal-output">-rw-r--r--  1 student student  220 Jan 10 09:15 .bashrc</span>
-                                        </div>
-                                        <div class="terminal-line">
                                             <span class="terminal-output">drwxr-xr-x  2 student student 4096 Jan 15 10:30 documents</span>
                                         </div>
-                                        <div class="terminal-line">
-                                            <span class="terminal-output">drwxr-xr-x  2 student student 4096 Jan 15 08:45 downloads</span>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="example-pane" data-tab="options">
-                                <div class="example-output">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="command-card">
-                                                <div class="command-syntax">ls -l</div>
-                                                <p class="mb-0">Long format with detailed information</p>
-                                            </div>
-                                            <div class="command-card">
-                                                <div class="command-syntax">ls -a</div>
-                                                <p class="mb-0">Show hidden files (starting with .)</p>
-                                            </div>
-                                            <div class="command-card">
-                                                <div class="command-syntax">ls -h</div>
-                                                <p class="mb-0">Human readable file sizes</p>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="command-card">
-                                                <div class="command-syntax">ls -la</div>
-                                                <p class="mb-0">Long format + hidden files</p>
-                                            </div>
-                                            <div class="command-card">
-                                                <div class="command-syntax">ls -t</div>
-                                                <p class="mb-0">Sort by modification time</p>
-                                            </div>
-                                            <div class="command-card">
-                                                <div class="command-syntax">ls -R</div>
-                                                <p class="mb-0">Recursive listing (subdirectories)</p>
-                                            </div>
-                                        </div>
-                                    </div>
+                            <div class="example-pane" data-tab="practice">
+                                <div class="practice-challenge">
+                                    <h6>🎯 Multi-step Challenge: Explore listing options!</h6>
+                                    <p>Complete these commands in order:</p>
+                                    <ol>
+                                        <li>Type <code>ls</code> to see basic file listing</li>
+                                        <li>Type <code>ls -l</code> to see detailed listing</li>
+                                        <li>Type <code>ls -la</code> to see hidden files too</li>
+                                    </ol>
                                 </div>
-                            </div>
-                            <div class="example-pane" data-tab="syntax">
-                                <div class="code-container">
-                                    <div class="code-header">
-                                        <span class="code-language">Bash</span>
-                                        <button class="copy-btn" onclick="copyCode(this)">
-                                            <i class="bi bi-clipboard"></i>Copy Commands
-                                        </button>
-                                    </div>
-                                    <div class="code-block">
-                                        <pre><code class="language-bash"># Basic listing
-ls
-
-# List with details
-ls -l
-
-# List all files (including hidden)
-ls -a
-
-# List with details and hidden files
-ls -la
-
-# List with human readable sizes
-ls -lh
-
-# List specific directory
-ls /path/to/directory</code></pre>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <h4>cd - Change Directory</h4>
-                    <div class="example-container">
-                        <div class="example-header">
-                            <h6 class="example-title">
-                                <i class="bi bi-arrow-right"></i>
-                                Navigate Between Directories
-                            </h6>
-                        </div>
-                        <div class="example-tabs">
-                            <button class="example-tab active" onclick="switchTab(this, 'demo')">
-                                <i class="bi bi-display"></i>Terminal Demo
-                            </button>
-                            <button class="example-tab" onclick="switchTab(this, 'shortcuts')">
-                                <i class="bi bi-lightning"></i>Useful Shortcuts
-                            </button>
-                            <button class="example-tab" onclick="switchTab(this, 'syntax')">
-                                <i class="bi bi-code"></i>Command Syntax
-                            </button>
-                        </div>
-                        <div class="example-content">
-                            <div class="example-pane active" data-tab="demo">
-                                <div class="terminal-simulator">
+                                <div class="interactive-terminal">
                                     <div class="terminal-header">
                                         <div class="terminal-dots">
                                             <div class="terminal-dot red"></div>
                                             <div class="terminal-dot yellow"></div>
                                             <div class="terminal-dot green"></div>
                                         </div>
-                                        <div class="terminal-title">Terminal</div>
-                                        <div></div>
+                                        <div class="terminal-title">Practice Terminal</div>
+                                        <div class="terminal-controls">
+                                            <button class="terminal-control-btn" onclick="clearTerminal('practice-ls')">Clear</button>
+                                            <button class="terminal-control-btn" onclick="showHint('hint-ls')">Hint</button>
+                                        </div>
                                     </div>
-                                    <div class="terminal-body">
+                                    <div class="terminal-body" id="practice-ls">
                                         <div class="terminal-line">
+                                            <span class="terminal-comment"># Start with: ls</span>
+                                        </div>
+                                        <div class="terminal-input-line">
                                             <span class="terminal-prompt">student@learning:~$</span>
-                                            <span class="terminal-command">cd documents</span>
-                                        </div>
-                                        <div class="terminal-line">
-                                            <span class="terminal-prompt">student@learning:~/documents$</span>
-                                            <span class="terminal-command">cd ..</span>
-                                        </div>
-                                        <div class="terminal-line">
-                                            <span class="terminal-prompt">student@learning:~$</span>
-                                            <span class="terminal-command">cd /usr/bin</span>
-                                        </div>
-                                        <div class="terminal-line">
-                                            <span class="terminal-prompt">student@learning:/usr/bin$</span>
-                                            <span class="terminal-command">cd ~</span>
-                                        </div>
-                                        <div class="terminal-line">
-                                            <span class="terminal-prompt">student@learning:~$</span>
-                                            <span class="terminal-command">cd -</span>
-                                        </div>
-                                        <div class="terminal-line">
-                                            <span class="terminal-output">/usr/bin</span>
-                                        </div>
-                                        <div class="terminal-line">
-                                            <span class="terminal-prompt">student@learning:/usr/bin$</span>
+                                            <input type="text" class="terminal-input" 
+                                                   onkeypress="handleCommand(event, 'practice-ls', 'nav-ls')"
+                                                   placeholder="Type ls commands...">
+                                            <span class="terminal-cursor">_</span>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="example-pane" data-tab="shortcuts">
-                                <div class="example-output">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="command-card">
-                                                <div class="command-syntax">cd ~</div>
-                                                <p class="mb-0">Go to home directory</p>
-                                            </div>
-                                            <div class="command-card">
-                                                <div class="command-syntax">cd ..</div>
-                                                <p class="mb-0">Go up one directory level</p>
-                                            </div>
-                                            <div class="command-card">
-                                                <div class="command-syntax">cd -</div>
-                                                <p class="mb-0">Go to previous directory</p>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="command-card">
-                                                <div class="command-syntax">cd .</div>
-                                                <p class="mb-0">Stay in current directory</p>
-                                            </div>
-                                            <div class="command-card">
-                                                <div class="command-syntax">cd ../../../</div>
-                                                <p class="mb-0">Go up multiple levels</p>
-                                            </div>
-                                            <div class="command-card">
-                                                <div class="command-syntax">cd /</div>
-                                                <p class="mb-0">Go to root directory</p>
-                                            </div>
-                                        </div>
-                                    </div>
+                                <div class="hint-box" id="hint-ls">
+                                    <strong>💡 Hint:</strong> 
+                                    <ul class="mb-0 mt-2">
+                                        <li><code>ls</code> - basic listing</li>
+                                        <li><code>ls -l</code> - long format with details</li>
+                                        <li><code>ls -la</code> - long format with hidden files</li>
+                                    </ul>
                                 </div>
-                            </div>
-                            <div class="example-pane" data-tab="syntax">
-                                <div class="code-container">
-                                    <div class="code-header">
-                                        <span class="code-language">Bash</span>
-                                        <button class="copy-btn" onclick="copyCode(this)">
-                                            <i class="bi bi-clipboard"></i>Copy Commands
-                                        </button>
-                                    </div>
-                                    <div class="code-block">
-                                        <pre><code class="language-bash"># Change to specific directory
-cd /path/to/directory
-
-# Go to home directory
-cd ~
-# or just
-cd
-
-# Go up one level
-cd ..
-
-# Go to previous directory
-cd -
-
-# Go to root directory
-cd /</code></pre>
-                                    </div>
+                                <div class="challenge-status" id="challenge-nav-ls">
+                                    <div class="status-indicator current"></div>
+                                    <span>Challenge: Use ls commands (0/3 completed)</span>
                                 </div>
                             </div>
                         </div>
-                    </div>
-
-                    <div class="best-practice">
-                        <h6><i class="bi bi-check-circle text-success me-2"></i>Navigation Best Practices</h6>
-                        <ul class="mb-0">
-                            <li>Use <code>pwd</code> frequently to stay oriented</li>
-                            <li>Use Tab completion to avoid typing full paths</li>
-                            <li>Learn relative vs absolute paths: <code>../documents</code> vs <code>/home/user/documents</code></li>
-                            <li>Use <code>cd -</code> to quickly switch between two directories</li>
-                        </ul>
                     </div>
                 </section>
 
@@ -1091,23 +1007,23 @@ cd /</code></pre>
                             </h6>
                         </div>
                         <div class="example-tabs">
-                            <button class="example-tab active" onclick="switchTab(this, 'demo')">
-                                <i class="bi bi bi-display"></i>Terminal Demo
+                            <button class="example-tab active" onclick="switchExampleTab(this, 'demo')">
+                                <i class="bi bi-display"></i>Demo
                             </button>
-                            <button class="example-tab" onclick="switchTab(this, 'syntax')">
-                                <i class="bi bi-code"></i>Command Syntax
+                            <button class="example-tab" onclick="switchExampleTab(this, 'practice')">
+                                <i class="bi bi-keyboard"></i>Try It
                             </button>
                         </div>
                         <div class="example-content">
                             <div class="example-pane active" data-tab="demo">
-                                <div class="terminal-simulator">
+                                <div class="interactive-terminal">
                                     <div class="terminal-header">
                                         <div class="terminal-dots">
                                             <div class="terminal-dot red"></div>
                                             <div class="terminal-dot yellow"></div>
                                             <div class="terminal-dot green"></div>
                                         </div>
-                                        <div class="terminal-title">Terminal</div>
+                                        <div class="terminal-title">Demo Terminal</div>
                                         <div></div>
                                     </div>
                                     <div class="terminal-body">
@@ -1117,196 +1033,71 @@ cd /</code></pre>
                                         </div>
                                         <div class="terminal-line">
                                             <span class="terminal-prompt">student@learning:~$</span>
-                                            <span class="terminal-command">cd my-project</span>
-                                        </div>
-                                        <div class="terminal-line">
-                                            <span class="terminal-prompt">student@learning:~/my-project$</span>
                                             <span class="terminal-command">touch README.md</span>
                                         </div>
                                         <div class="terminal-line">
-                                            <span class="terminal-prompt">student@learning:~/my-project$</span>
-                                            <span class="terminal-command">touch index.html style.css script.js</span>
-                                        </div>
-                                        <div class="terminal-line">
-                                            <span class="terminal-prompt">student@learning:~/my-project$</span>
+                                            <span class="terminal-prompt">student@learning:~$</span>
                                             <span class="terminal-command">ls -l</span>
                                         </div>
                                         <div class="terminal-line">
-                                            <span class="terminal-output">-rw-r--r-- 1 student student 0 Jan 15 10:45 README.md</span>
+                                            <span class="terminal-output">drwxr-xr-x 2 student student 4096 Jan 15 10:45 my-project</span>
                                         </div>
                                         <div class="terminal-line">
-                                            <span class="terminal-output">-rw-r--r-- 1 student student 0 Jan 15 10:45 index.html</span>
-                                        </div>
-                                        <div class="terminal-line">
-                                            <span class="terminal-output">-rw-r--r-- 1 student student 0 Jan 15 10:45 script.js</span>
-                                        </div>
-                                        <div class="terminal-line">
-                                            <span class="terminal-output">-rw-r--r-- 1 student student 0 Jan 15 10:45 style.css</span>
+                                            <span class="terminal-output">-rw-r--r-- 1 student student    0 Jan 15 10:45 README.md</span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="example-pane" data-tab="syntax">
-                                <div class="code-container">
-                                    <div class="code-header">
-                                        <span class="code-language">Bash</span>
-                                        <button class="copy-btn" onclick="copyCode(this)">
-                                            <i class="bi bi-clipboard"></i>Copy Commands
-                                        </button>
-                                    </div>
-                                    <div class="code-block">
-                                        <pre><code class="language-bash"># Create a directory
-mkdir directory-name
-
-# Create multiple directories
-mkdir dir1 dir2 dir3
-
-# Create nested directories
-mkdir -p path/to/nested/directory
-
-# Create an empty file
-touch filename.txt
-
-# Create multiple files
-touch file1.txt file2.txt file3.txt
-
-# Update timestamp of existing file
-touch existing-file.txt</code></pre>
-                                    </div>
+                            <div class="example-pane" data-tab="practice">
+                                <div class="practice-challenge">
+                                    <h6>🎯 Project Setup Challenge!</h6>
+                                    <p>Let's create a project structure:</p>
+                                    <ol>
+                                        <li>Create a directory called <code>my-website</code></li>
+                                        <li>Create a file called <code>index.html</code></li>
+                                        <li>List the files to see your work</li>
+                                    </ol>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <h4>Copying and Moving Files</h4>
-                    <div class="example-container">
-                        <div class="example-header">
-                            <h6 class="example-title">
-                                <i class="bi bi-files"></i>
-                                cp, mv - Copy and Move Files
-                            </h6>
-                        </div>
-                        <div class="example-tabs">
-                            <button class="example-tab active" onclick="switchTab(this, 'demo')">
-                                <i class="bi bi-display"></i>Terminal Demo
-                            </button>
-                            <button class="example-tab" onclick="switchTab(this, 'options')">
-                                <i class="bi bi-gear"></i>Common Options
-                            </button>
-                            <button class="example-tab" onclick="switchTab(this, 'syntax')">
-                                <i class="bi bi-code"></i>Command Syntax
-                            </button>
-                        </div>
-                        <div class="example-content">
-                            <div class="example-pane active" data-tab="demo">
-                                <div class="terminal-simulator">
+                                <div class="interactive-terminal">
                                     <div class="terminal-header">
                                         <div class="terminal-dots">
                                             <div class="terminal-dot red"></div>
                                             <div class="terminal-dot yellow"></div>
                                             <div class="terminal-dot green"></div>
                                         </div>
-                                        <div class="terminal-title">Terminal</div>
-                                        <div></div>
+                                        <div class="terminal-title">Practice Terminal</div>
+                                        <div class="terminal-controls">
+                                            <button class="terminal-control-btn" onclick="clearTerminal('practice-files')">Clear</button>
+                                            <button class="terminal-control-btn" onclick="showHint('hint-files')">Hint</button>
+                                        </div>
                                     </div>
-                                    <div class="terminal-body">
+                                    <div class="terminal-body" id="practice-files">
                                         <div class="terminal-line">
-                                            <span class="terminal-prompt">student@learning:~/my-project$</span>
-                                            <span class="terminal-command">cp README.md README-backup.md</span>
+                                            <span class="terminal-comment"># Start with: mkdir my-website</span>
                                         </div>
-                                        <div class="terminal-line">
-                                            <span class="terminal-prompt">student@learning:~/my-project$</span>
-                                            <span class="terminal-command">mv script.js app.js</span>
-                                        </div>
-                                        <div class="terminal-line">
-                                            <span class="terminal-prompt">student@learning:~/my-project$</span>
-                                            <span class="terminal-command">mkdir backup</span>
-                                        </div>
-                                        <div class="terminal-line">
-                                            <span class="terminal-prompt">student@learning:~/my-project$</span>
-                                            <span class="terminal-command">cp *.md backup/</span>
-                                        </div>
-                                        <div class="terminal-line">
-                                            <span class="terminal-prompt">student@learning:~/my-project$</span>
-                                            <span class="terminal-command">ls backup/</span>
-                                        </div>
-                                        <div class="terminal-line">
-                                            <span class="terminal-output">README.md  README-backup.md</span>
+                                        <div class="terminal-input-line">
+                                            <span class="terminal-prompt">student@learning:~$</span>
+                                            <input type="text" class="terminal-input" 
+                                                   onkeypress="handleCommand(event, 'practice-files', 'file-create')"
+                                                   placeholder="Create your project...">
+                                            <span class="terminal-cursor">_</span>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="example-pane" data-tab="options">
-                                <div class="example-output">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <h6>Copy (cp) Options:</h6>
-                                            <div class="command-card">
-                                                <div class="command-syntax">cp -r</div>
-                                                <p class="mb-0">Copy directories recursively</p>
-                                            </div>
-                                            <div class="command-card">
-                                                <div class="command-syntax">cp -i</div>
-                                                <p class="mb-0">Interactive mode (ask before overwrite)</p>
-                                            </div>
-                                            <div class="command-card">
-                                                <div class="command-syntax">cp -v</div>
-                                                <p class="mb-0">Verbose mode (show what's being copied)</p>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <h6>Move (mv) Options:</h6>
-                                            <div class="command-card">
-                                                <div class="command-syntax">mv -i</div>
-                                                <p class="mb-0">Interactive mode (ask before overwrite)</p>
-                                            </div>
-                                            <div class="command-card">
-                                                <div class="command-syntax">mv -v</div>
-                                                <p class="mb-0">Verbose mode (show what's being moved)</p>
-                                            </div>
-                                            <div class="command-card">
-                                                <div class="command-syntax">mv -n</div>
-                                                <p class="mb-0">No overwrite (don't replace existing files)</p>
-                                            </div>
-                                        </div>
-                                    </div>
+                                <div class="hint-box" id="hint-files">
+                                    <strong>💡 Commands you need:</strong>
+                                    <ul class="mb-0 mt-2">
+                                        <li><code>mkdir my-website</code> - create directory</li>
+                                        <li><code>touch index.html</code> - create file</li>
+                                        <li><code>ls -l</code> - list files with details</li>
+                                    </ul>
                                 </div>
-                            </div>
-                            <div class="example-pane" data-tab="syntax">
-                                <div class="code-container">
-                                    <div class="code-header">
-                                        <span class="code-language">Bash</span>
-                                        <button class="copy-btn" onclick="copyCode(this)">
-                                            <i class="bi bi-clipboard"></i>Copy Commands
-                                        </button>
-                                    </div>
-                                    <div class="code-block">
-                                        <pre><code class="language-bash"># Copy file
-cp source.txt destination.txt
-
-# Copy file to directory
-cp file.txt /path/to/directory/
-
-# Copy directory recursively
-cp -r source-dir/ destination-dir/
-
-# Move/rename file
-mv oldname.txt newname.txt
-
-# Move file to directory
-mv file.txt /path/to/directory/
-
-# Move multiple files
-mv file1.txt file2.txt file3.txt /destination/</code></pre>
-                                    </div>
+                                <div class="challenge-status" id="challenge-file-create">
+                                    <div class="status-indicator current"></div>
+                                    <span>Challenge: Create project structure (0/3 completed)</span>
                                 </div>
                             </div>
                         </div>
-                    </div>
-
-                    <div class="warning-box">
-                        <h6><i class="bi bi-exclamation-triangle text-warning me-2"></i>Important</h6>
-                        <p class="mb-0">Be careful with <code>mv</code> and <code>cp</code> commands. They can overwrite existing files without warning (unless you use the <code>-i</code> flag).</p>
                     </div>
                 </section>
 
@@ -1322,139 +1113,730 @@ mv file1.txt file2.txt file3.txt /destination/</code></pre>
                         <div class="example-header">
                             <h6 class="example-title">
                                 <i class="bi bi-file-text"></i>
-                                cat, less, head, tail - Reading File Contents
+                                cat, echo - Working with Text
                             </h6>
                         </div>
                         <div class="example-tabs">
-                            <button class="example-tab active" onclick="switchTab(this, 'demo')">
-                                <i class="bi bi-display"></i>Terminal Demo
-                            </button>
-                            <button class="example-tab" onclick="switchTab(this, 'comparison')">
-                                <i class="bi bi-table"></i>Command Comparison
-                            </button>
-                            <button class="example-tab" onclick="switchTab(this, 'syntax')">
-                                <i class="bi bi-code"></i>Command Syntax
+                            <button class="example-tab active" onclick="switchExampleTab(this, 'practice')">
+                                <i class="bi bi-keyboard"></i>Try It
                             </button>
                         </div>
                         <div class="example-content">
-                            <div class="example-pane active" data-tab="demo">
-                                <div class="terminal-simulator">
+                            <div class="example-pane active" data-tab="practice">
+                                <div class="practice-challenge">
+                                    <h6>🎯 Text Processing Challenge!</h6>
+                                    <p>Let's work with text content:</p>
+                                    <ol>
+                                        <li>Use <code>echo "Hello World" > greeting.txt</code> to create a file with content</li>
+                                        <li>Use <code>cat greeting.txt</code> to read the file</li>
+                                        <li>Use <code>echo "Welcome to Terminal!" >> greeting.txt</code> to append more text</li>
+                                        <li>Use <code>cat greeting.txt</code> again to see both lines</li>
+                                    </ol>
+                                </div>
+                                <div class="interactive-terminal">
                                     <div class="terminal-header">
                                         <div class="terminal-dots">
                                             <div class="terminal-dot red"></div>
                                             <div class="terminal-dot yellow"></div>
                                             <div class="terminal-dot green"></div>
                                         </div>
-                                        <div class="terminal-title">Terminal</div>
-                                        <div></div>
+                                        <div class="terminal-title">Practice Terminal</div>
+                                        <div class="terminal-controls">
+                                            <button class="terminal-control-btn" onclick="clearTerminal('practice-text')">Clear</button>
+                                            <button class="terminal-control-btn" onclick="showHint('hint-text')">Hint</button>
+                                        </div>
                                     </div>
-                                    <div class="terminal-body">
+                                    <div class="terminal-body" id="practice-text">
                                         <div class="terminal-line">
+                                            <span class="terminal-comment"># Try: echo "Hello World" > greeting.txt</span>
+                                        </div>
+                                        <div class="terminal-input-line">
                                             <span class="terminal-prompt">student@learning:~$</span>
-                                            <span class="terminal-command">cat README.md</span>
-                                        </div>
-                                        <div class="terminal-line">
-                                            <span class="terminal-output"># My Project</span>
-                                        </div>
-                                        <div class="terminal-line">
-                                            <span class="terminal-output">This is a sample project for learning terminal commands.</span>
-                                        </div>
-                                        <div class="terminal-line">
-                                            <span class="terminal-output">## Features</span>
-                                        </div>
-                                        <div class="terminal-line">
-                                            <span class="terminal-output">- Modern web technologies</span>
-                                        </div>
-                                        <div class="terminal-line">
-                                            <span class="terminal-output">- Responsive design</span>
-                                        </div>
-                                        <div class="terminal-line">
-                                            <span class="terminal-prompt">student@learning:~$</span>
-                                            <span class="terminal-command">head -3 README.md</span>
-                                        </div>
-                                        <div class="terminal-line">
-                                            <span class="terminal-output"># My Project</span>
-                                        </div>
-                                        <div class="terminal-line">
-                                            <span class="terminal-output">This is a sample project for learning terminal commands.</span>
-                                        </div>
-                                        <div class="terminal-line">
-                                            <span class="terminal-output">## Features</span>
+                                            <input type="text" class="terminal-input" 
+                                                   onkeypress="handleCommand(event, 'practice-text', 'text-processing')"
+                                                   placeholder="Work with text files...">
+                                            <span class="terminal-cursor">_</span>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="example-pane" data-tab="comparison">
-                                <div class="example-output">
-                                    <div class="table-responsive">
-                                        <table class="table table-striped table-hover">
-                                            <thead class="table-dark">
-                                                <tr>
-                                                    <th>Command</th>
-                                                    <th>Purpose</th>
-                                                    <th>Best For</th>
-                                                    <th>Example</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td><code>cat</code></td>
-                                                    <td>Display entire file</td>
-                                                    <td>Small files</td>
-                                                    <td><code>cat file.txt</code></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><code>less</code></td>
-                                                    <td>View file with pagination</td>
-                                                    <td>Large files</td>
-                                                    <td><code>less file.txt</code></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><code>head</code></td>
-                                                    <td>Show first 10 lines</td>
-                                                    <td>File beginning</td>
-                                                    <td><code>head -5 file.txt</code></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><code>tail</code></td>
-                                                    <td>Show last 10 lines</td>
-                                                    <td>Log files, recent content</td>
-                                                    <td><code>tail -f log.txt</code></td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                <div class="hint-box" id="hint-text">
+                                    <strong>💡 Text commands:</strong>
+                                    <ul class="mb-0 mt-2">
+                                        <li><code>echo "text" > file</code> - write to file (overwrites)</li>
+                                        <li><code>echo "text" >> file</code> - append to file</li>
+                                        <li><code>cat filename</code> - display file contents</li>
+                                    </ul>
+                                </div>
+                                <div class="challenge-status" id="challenge-text-processing">
+                                    <div class="status-indicator current"></div>
+                                    <span>Challenge: Text file operations (0/4 completed)</span>
                                 </div>
                             </div>
-                            <div class="example-pane" data-tab="syntax">
-                                <div class="code-container">
-                                    <div class="code-header">
-                                        <span class="code-language">Bash</span>
-                                        <button class="copy-btn" onclick="copyCode(this)">
-                                            <i class="bi bi-clipboard"></i>Copy Commands
-                                        </button>
-                                    </div>
-                                    <div class="code-block">
-                                        <pre><code class="language-bash"># Display entire file
-cat filename.txt
+                        </div>
+                    </div>
+                </section>
 
-# View file with pagination (press q to quit)
-less filename.txt
+                <!-- Practice Terminal -->
+                <section id="practice-terminal" class="content-section">
+                    <div class="d-flex align-items-center mb-4">
+                        <h2 class="mb-0">Free Practice Terminal</h2>
+                        <span class="badge bg-success ms-3 badge-level">All Levels</span>
+                    </div>
+                    
+                    <p class="lead">Practice any commands you've learned! This is your free-form terminal to experiment with.</p>
 
-# Show first 10 lines
-head filename.txt
-
-# Show first N lines
-head -5 filename.txt
-
-# Show last 10 lines
-tail filename.txt
-
-# Show last N lines
-tail -20 filename.txt
-
-# Follow file changes (useful for logs)
-tail -f logfile.txt</code></pre>
-                                    </div>
-                                </div>
+                    <div class="interactive-terminal" style="min-height: 500px;">
+                        <div class="terminal-header">
+                            <div class="terminal-dots">
+                                <div class="terminal-dot red"></div>
+                                <div class="terminal-dot yellow"></div>
+                                <div class="terminal-dot green"></div>
                             </div>
+                            <div class="terminal-title">Free Practice Terminal</div>
+                            <div class="terminal-controls">
+                                <button class="terminal-control-btn" onclick="clearTerminal('free-practice')">Clear</button>
+                                <button class="terminal-control-btn" onclick="showCommands()">Commands</button>
+                            </div>
+                        </div>
+                        <div class="terminal-body" style="min-height: 450px;" id="free-practice">
+                            <div class="terminal-line">
+                                <span class="terminal-comment"># Free practice! Try any commands you've learned</span>
+                            </div>
+                            <div class="terminal-line">
+                                <span class="terminal-comment"># Available: pwd, ls, mkdir, touch, echo, cat, cd</span>
+                            </div>
+                            <div class="terminal-input-line">
+                                <span class="terminal-prompt">student@learning:~$</span>
+                                <input type="text" class="terminal-input" 
+                                       onkeypress="handleCommand(event, 'free-practice', 'free')"
+                                       placeholder="Try any command...">
+                                <span class="terminal-cursor">_</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <div class="best-practice">
+                                <h6><i class="bi bi-check-circle text-success me-2"></i>Commands You've Learned</h6>
+                                <ul class="mb-0">
+                                    <li><code>pwd</code> - show current directory</li>
+                                    <li><code>ls</code> - list files and directories</li>
+                                    <li><code>mkdir</code> - create directories</li>
+                                    <li><code>touch</code> - create files</li>
+                                    <li><code>echo</code> - display text</li>
+                                    <li><code>cat</code> - read file contents</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="warning-box">
+                                <h6><i class="bi bi-lightbulb text-warning me-2"></i>Try These Combinations</h6>
+                                <ul class="mb-0">
+                                    <li><code>mkdir test && cd test</code></li>
+                                    <li><code>echo "content" > file.txt && cat file.txt</code></li>
+                                    <li><code>ls -la | head -5</code></li>
+                                    <li><code>find . -name "*.txt"</code></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" 
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    <script>
+        // Virtual File System
+        let virtualFS = {
+            '/home/student': {
+                type: 'directory',
+                contents: {
+                    'documents': { type: 'directory', contents: {} },
+                    'downloads': { type: 'directory', contents: {} },
+                    'pictures': { type: 'directory', contents: {} },
+                    'projects': { type: 'directory', contents: {} }
+                }
+            }
+        };
+
+        let currentPath = '/home/student';
+        let commandHistory = {};
+        let challengeProgress = {
+            'getting-started-1': false,
+            'nav-pwd': false,
+            'nav-ls': 0, // This will track 0-3 for the multi-step challenge
+            'file-create': 0, // 0-3 for the multi-step challenge
+            'text-processing': 0 // 0-4 for the text processing challenge
+        };
+
+        // Command handlers
+        function handleCommand(event, terminalId, challengeId) {
+            if (event.key === 'Enter') {
+                const input = event.target;
+                const command = input.value.trim();
+                const terminalBody = document.getElementById(terminalId);
+                
+                // Add command to terminal display
+                addCommandLine(terminalBody, command);
+                
+                // Process the command
+                const result = processCommand(command, terminalId, challengeId);
+                
+                if (result.output) {
+                    addOutputLine(terminalBody, result.output, result.type || 'output');
+                }
+                
+                // Clear input and create new input line
+                input.value = '';
+                addNewInputLine(terminalBody, terminalId, challengeId);
+                
+                // Remove the old input line
+                input.closest('.terminal-input-line').remove();
+                
+                // Scroll to bottom
+                terminalBody.scrollTop = terminalBody.scrollHeight;
+                
+                // Focus new input
+                const newInput = terminalBody.querySelector('.terminal-input');
+                if (newInput) newInput.focus();
+                
+                // Update progress if applicable
+                if (challengeId !== 'free') {
+                    updateProgress(challengeId, command, result.success);
+                }
+            }
+        }
+
+        function handleHeroCommand(event) {
+            if (event.key === 'Enter') {
+                const input = event.target;
+                const command = input.value.trim();
+                const terminalBody = document.getElementById('hero-terminal');
+                
+                // Add command to terminal display
+                addCommandLine(terminalBody, command);
+                
+                // Process the command
+                const result = processCommand(command, 'hero-terminal', 'hero');
+                
+                if (result.output) {
+                    addOutputLine(terminalBody, result.output, result.type || 'output');
+                }
+                
+                // Clear input
+                input.value = '';
+                
+                // Add new input line
+                addNewInputLine(terminalBody, 'hero-terminal', 'hero');
+                
+                // Scroll to bottom
+                terminalBody.scrollTop = terminalBody.scrollHeight;
+                
+                // Focus new input
+                const newInput = terminalBody.querySelector('.terminal-input');
+                if (newInput) newInput.focus();
+            }
+        }
+
+        function processCommand(command, terminalId, challengeId) {
+            const parts = command.split(' ');
+            const cmd = parts[0].toLowerCase();
+            
+            switch (cmd) {
+                case 'pwd':
+                    return { output: currentPath, success: true };
+                    
+                case 'ls':
+                    return handleLsCommand(parts);
+                    
+                case 'mkdir':
+                    return handleMkdirCommand(parts);
+                    
+                case 'touch':
+                    return handleTouchCommand(parts);
+                    
+                case 'echo':
+                    return handleEchoCommand(parts, command);
+                    
+                case 'cat':
+                    return handleCatCommand(parts);
+                    
+                case 'cd':
+                    return handleCdCommand(parts);
+                    
+                case 'clear':
+                    clearTerminal(terminalId);
+                    return { output: '', success: true };
+                    
+                case 'help':
+                    return { 
+                        output: 'Available commands: pwd, ls, mkdir, touch, echo, cat, cd, clear, help',
+                        success: true 
+                    };
+                    
+                default:
+                    if (command.trim() === '') {
+                        return { output: '', success: true };
+                    }
+                    return { 
+                        output: `Command not found: ${cmd}. Type 'help' for available commands.`,
+                        type: 'error',
+                        success: false 
+                    };
+            }
+        }
+
+        function handleLsCommand(parts) {
+            const currentDir = getDirectoryAtPath(currentPath);
+            if (!currentDir) {
+                return { output: 'Directory not found', type: 'error', success: false };
+            }
+            
+            const hasLongFlag = parts.includes('-l') || parts.includes('-la');
+            const hasAllFlag = parts.includes('-a') || parts.includes('-la');
+            
+            let files = Object.keys(currentDir.contents);
+            
+            if (hasAllFlag) {
+                files = ['.', '..', ...files];
+            }
+            
+            if (hasLongFlag) {
+                let output = '';
+                if (hasAllFlag) {
+                    output += 'drwxr-xr-x  5 student student 4096 Jan 15 10:30 .\n';
+                    output += 'drwxr-xr-x  3 root    root    4096 Jan 10 09:15 ..\n';
+                }
+                
+                files.filter(f => f !== '.' && f !== '..').forEach(file => {
+                    const item = currentDir.contents[file];
+                    const type = item.type === 'directory' ? 'd' : '-';
+                    const permissions = item.type === 'directory' ? 'rwxr-xr-x' : 'rw-r--r--';
+                    const size = item.type === 'directory' ? '4096' : (item.content ? item.content.length : '0');
+                    output += `${type}${permissions} 1 student student ${size.padStart(4)} Jan 15 10:45 ${file}\n`;
+                });
+                
+                return { output: output.trim(), success: true };
+            } else {
+                return { output: files.filter(f => f !== '.' && f !== '..').join('  '), success: true };
+            }
+        }
+
+        function handleMkdirCommand(parts) {
+            if (parts.length < 2) {
+                return { output: 'mkdir: missing operand', type: 'error', success: false };
+            }
+            
+            const dirName = parts[1];
+            const currentDir = getDirectoryAtPath(currentPath);
+            
+            if (currentDir.contents[dirName]) {
+                return { output: `mkdir: cannot create directory '${dirName}': File exists`, type: 'error', success: false };
+            }
+            
+            currentDir.contents[dirName] = { type: 'directory', contents: {} };
+            return { output: '', success: true };
+        }
+
+        function handleTouchCommand(parts) {
+            if (parts.length < 2) {
+                return { output: 'touch: missing operand', type: 'error', success: false };
+            }
+            
+            const fileName = parts[1];
+            const currentDir = getDirectoryAtPath(currentPath);
+            
+            if (!currentDir.contents[fileName]) {
+                currentDir.contents[fileName] = { type: 'file', content: '' };
+            }
+            
+            return { output: '', success: true };
+        }
+
+        function handleEchoCommand(parts, fullCommand) {
+            // Handle echo with redirection
+            if (fullCommand.includes(' > ') || fullCommand.includes(' >> ')) {
+                const isAppend = fullCommand.includes(' >> ');
+                const redirectOperator = isAppend ? ' >> ' : ' > ';
+                const [textPart, filePart] = fullCommand.split(redirectOperator);
+                
+                // Extract text content (remove echo command and quotes)
+                let text = textPart.replace(/^echo\s+/, '').trim();
+                if ((text.startsWith('"') && text.endsWith('"')) || 
+                    (text.startsWith("'") && text.endsWith("'"))) {
+                    text = text.slice(1, -1);
+                }
+                
+                const fileName = filePart.trim();
+                const currentDir = getDirectoryAtPath(currentPath);
+                
+                if (isAppend && currentDir.contents[fileName]) {
+                    currentDir.contents[fileName].content += '\n' + text;
+                } else {
+                    currentDir.contents[fileName] = { type: 'file', content: text };
+                }
+                
+                return { output: '', success: true };
+            } else {
+                // Regular echo command
+                let text = parts.slice(1).join(' ');
+                if ((text.startsWith('"') && text.endsWith('"')) || 
+                    (text.startsWith("'") && text.endsWith("'"))) {
+                    text = text.slice(1, -1);
+                }
+                return { output: text, success: true };
+            }
+        }
+
+        function handleCatCommand(parts) {
+            if (parts.length < 2) {
+                return { output: 'cat: missing operand', type: 'error', success: false };
+            }
+            
+            const fileName = parts[1];
+            const currentDir = getDirectoryAtPath(currentPath);
+            const file = currentDir.contents[fileName];
+            
+            if (!file) {
+                return { output: `cat: ${fileName}: No such file or directory`, type: 'error', success: false };
+            }
+            
+            if (file.type === 'directory') {
+                return { output: `cat: ${fileName}: Is a directory`, type: 'error', success: false };
+            }
+            
+            return { output: file.content || '', success: true };
+        }
+
+        function handleCdCommand(parts) {
+            if (parts.length === 1 || parts[1] === '~') {
+                currentPath = '/home/student';
+                return { output: '', success: true };
+            }
+            
+            const targetDir = parts[1];
+            
+            if (targetDir === '..') {
+                const pathParts = currentPath.split('/').filter(p => p);
+                if (pathParts.length > 2) { // Don't go above /home/student
+                    pathParts.pop();
+                    currentPath = '/' + pathParts.join('/');
+                }
+                return { output: '', success: true };
+            }
+            
+            const currentDir = getDirectoryAtPath(currentPath);
+            if (currentDir.contents[targetDir] && currentDir.contents[targetDir].type === 'directory') {
+                currentPath = currentPath + (currentPath.endsWith('/') ? '' : '/') + targetDir;
+                return { output: '', success: true };
+            } else {
+                return { output: `cd: ${targetDir}: No such file or directory`, type: 'error', success: false };
+            }
+        }
+
+        function getDirectoryAtPath(path) {
+            const parts = path.split('/').filter(p => p);
+            let current = virtualFS['/home/student'];
+            
+            for (let i = 2; i < parts.length; i++) { // Skip 'home' and 'student'
+                if (current.contents[parts[i]]) {
+                    current = current.contents[parts[i]];
+                } else {
+                    return null;
+                }
+            }
+            
+            return current;
+        }
+
+        function addCommandLine(terminalBody, command) {
+            const line = document.createElement('div');
+            line.className = 'terminal-line';
+            line.innerHTML = `
+                <span class="terminal-prompt">student@learning:~$</span>
+                <span class="terminal-command">${command}</span>
+            `;
+            terminalBody.appendChild(line);
+        }
+
+        function addOutputLine(terminalBody, output, type = 'output') {
+            if (output) {
+                const line = document.createElement('div');
+                line.className = 'terminal-line';
+                const className = type === 'error' ? 'terminal-error' : 
+                                type === 'success' ? 'terminal-success' : 'terminal-output';
+                line.innerHTML = `<span class="${className}">${output}</span>`;
+                terminalBody.appendChild(line);
+            }
+        }
+
+        function addNewInputLine(terminalBody, terminalId, challengeId) {
+            const inputLine = document.createElement('div');
+            inputLine.className = 'terminal-input-line';
+            inputLine.innerHTML = `
+                <span class="terminal-prompt">student@learning:~$</span>
+                <input type="text" class="terminal-input" 
+                       onkeypress="handleCommand(event, '${terminalId}', '${challengeId}')"
+                       placeholder="Type your command...">
+                <span class="terminal-cursor">_</span>
+            `;
+            terminalBody.appendChild(inputLine);
+        }
+
+        function updateProgress(challengeId, command, success) {
+            if (!success) return;
+            
+            switch (challengeId) {
+                case 'getting-started-1':
+                    if (command.includes('echo') && command.includes('Hello World')) {
+                        challengeProgress[challengeId] = true;
+                        updateChallengeStatus(challengeId, 'completed', 'Challenge completed! ✅');
+                        showToast('Great job! You used the echo command successfully!', 'success');
+                    }
+                    break;
+                    
+                case 'nav-pwd':
+                    if (command === 'pwd') {
+                        challengeProgress[challengeId] = true;
+                        updateChallengeStatus(challengeId, 'completed', 'Challenge completed! ✅');
+                        showToast('Excellent! You found your current directory!', 'success');
+                    }
+                    break;
+                    
+                case 'nav-ls':
+                    let lsCommands = ['ls', 'ls -l', 'ls -la'];
+                    if (lsCommands.includes(command)) {
+                        challengeProgress[challengeId]++;
+                        const completed = challengeProgress[challengeId];
+                        updateChallengeStatus(challengeId, completed === 3 ? 'completed' : 'current', 
+                            `Challenge: Use ls commands (${completed}/3 completed)`);
+                        
+                        if (completed === 3) {
+                            showToast('Amazing! You mastered all ls variations!', 'success');
+                            document.getElementById('nav-status').classList.add('completed');
+                            updateOverallProgress();
+                        }
+                    }
+                    break;
+                    
+                case 'file-create':
+                    let fileCommands = ['mkdir my-website', 'touch index.html', 'ls -l'];
+                    if (fileCommands.includes(command)) {
+                        challengeProgress[challengeId]++;
+                        const completed = challengeProgress[challengeId];
+                        updateChallengeStatus(challengeId, completed === 3 ? 'completed' : 'current',
+                            `Challenge: Create project structure (${completed}/3 completed)`);
+                        
+                        if (completed === 3) {
+                            showToast('Fantastic! You created a complete project structure!', 'success');
+                            document.getElementById('file-status').classList.add('completed');
+                            updateOverallProgress();
+                        }
+                    }
+                    break;
+                    
+                case 'text-processing':
+                    let textCommands = [
+                        'echo "Hello World" > greeting.txt',
+                        'cat greeting.txt',
+                        'echo "Welcome to Terminal!" >> greeting.txt'
+                    ];
+                    
+                    let matched = false;
+                    textCommands.forEach((cmd, index) => {
+                        if (command.includes(cmd.split(' ')[0]) && 
+                            (command.includes('greeting.txt') || command === 'cat greeting.txt')) {
+                            matched = true;
+                        }
+                    });
+                    
+                    if (matched) {
+                        challengeProgress[challengeId]++;
+                        const completed = challengeProgress[challengeId];
+                        updateChallengeStatus(challengeId, completed === 4 ? 'completed' : 'current',
+                            `Challenge: Text file operations (${completed}/4 completed)`);
+                        
+                        if (completed === 4) {
+                            showToast('Outstanding! You mastered text file operations!', 'success');
+                            document.getElementById('text-status').classList.add('completed');
+                            updateOverallProgress();
+                        }
+                    }
+                    break;
+            }
+        }
+
+        function updateChallengeStatus(challengeId, status, text) {
+            const statusElement = document.getElementById(`challenge-${challengeId}`);
+            if (statusElement) {
+                const indicator = statusElement.querySelector('.status-indicator');
+                indicator.className = `status-indicator ${status}`;
+                statusElement.querySelector('span').textContent = text;
+            }
+        }
+
+        function updateOverallProgress() {
+            const completedSections = [
+                document.getElementById('nav-status').classList.contains('completed'),
+                document.getElementById('file-status').classList.contains('completed'),
+                document.getElementById('text-status').classList.contains('completed')
+            ].filter(Boolean).length;
+            
+            const percentage = Math.round((completedSections / 3) * 100);
+            document.getElementById('overall-progress').style.width = `${percentage}%`;
+            document.getElementById('progress-text').textContent = `${percentage}% Complete`;
+        }
+
+        // UI Helper Functions
+        function switchExampleTab(button, tabName) {
+            const container = button.closest('.example-container');
+            const tabs = container.querySelectorAll('.example-tab');
+            const panes = container.querySelectorAll('.example-pane');
+            
+            tabs.forEach(tab => tab.classList.remove('active'));
+            panes.forEach(pane => pane.classList.remove('active'));
+            
+            button.classList.add('active');
+            container.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+            
+            // Focus on input if switching to practice tab
+            if (tabName === 'practice') {
+                setTimeout(() => {
+                    const input = container.querySelector('.terminal-input');
+                    if (input) input.focus();
+                }, 100);
+            }
+        }
+
+        function clearTerminal(terminalId) {
+            const terminal = document.getElementById(terminalId);
+            const isHero = terminalId === 'hero-terminal';
+            
+            if (isHero) {
+                terminal.innerHTML = `
+                    <div class="terminal-line">
+                        <span class="terminal-comment"># Try typing: pwd</span>
+                    </div>
+                    <div class="terminal-input-line">
+                        <span class="terminal-prompt">student@learning:~$</span>
+                        <input type="text" class="terminal-input" id="hero-input" 
+                               placeholder="Type a command..." onkeypress="handleHeroCommand(event)">
+                        <span class="terminal-cursor">_</span>
+                    </div>
+                `;
+            } else {
+                // Find the challenge ID from the existing input
+                const existingInput = terminal.querySelector('.terminal-input');
+                const onkeypress = existingInput ? existingInput.getAttribute('onkeypress') : '';
+                const challengeId = onkeypress.match(/'([^']*)'.*'([^']*)'/)?.[2] || 'free';
+                
+                terminal.innerHTML = `
+                    <div class="terminal-line">
+                        <span class="terminal-comment"># Terminal cleared</span>
+                    </div>
+                    <div class="terminal-input-line">
+                        <span class="terminal-prompt">student@learning:~$</span>
+                        <input type="text" class="terminal-input" 
+                               onkeypress="handleCommand(event, '${terminalId}', '${challengeId}')"
+                               placeholder="Type your command...">
+                        <span class="terminal-cursor">_</span>
+                    </div>
+                `;
+            }
+            
+            // Focus the new input
+            const newInput = terminal.querySelector('.terminal-input');
+            if (newInput) newInput.focus();
+        }
+
+        function clearHeroTerminal() {
+            clearTerminal('hero-terminal');
+        }
+
+        function showHint(hintId) {
+            const hint = document.getElementById(hintId);
+            if (hint) {
+                hint.classList.toggle('show');
+            }
+        }
+
+        function showCommands() {
+            showToast('Available commands: pwd, ls, mkdir, touch, echo, cat, cd, clear, help', 'info');
+        }
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'toast-custom';
+            
+            const iconMap = {
+                success: 'bi-check-circle-fill text-success',
+                error: 'bi-x-circle-fill text-danger',
+                warning: 'bi-exclamation-triangle-fill text-warning',
+                info: 'bi-info-circle-fill text-info'
+            };
+            
+            toast.innerHTML = `
+                <div class="d-flex align-items-center">
+                    <i class="bi ${iconMap[type]} me-2"></i>
+                    <span>${message}</span>
+                    <button class="btn-close ms-auto" onclick="this.parentElement.parentElement.remove()"></button>
+                </div>
+            `;
+            
+            container.appendChild(toast);
+            
+            // Show toast
+            setTimeout(() => toast.classList.add('show'), 100);
+            
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 5000);
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            // Focus the hero terminal input
+            const heroInput = document.getElementById('hero-input');
+            if (heroInput) heroInput.focus();
+            
+            // Set up navigation
+            updateActiveNavigation();
+            
+            // Welcome message
+            setTimeout(() => {
+                showToast('Welcome to Interactive Terminal Learning! Click any terminal to start typing.', 'info');
+            }, 1000);
+        });
+
+        function updateActiveNavigation() {
+            const navLinks = document.querySelectorAll('.guide-nav .nav-link');
+            const sections = document.querySelectorAll('.content-section');
+            
+            window.addEventListener('scroll', () => {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop - 150;
+                    if (scrollY >= sectionTop) {
+                        current = section.getAttribute('id');
+                    }
+                });
+                
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === `#${current}`) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+        }
+    </script>
+</body>
+</html>

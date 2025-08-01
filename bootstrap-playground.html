@@ -6,7 +6,7 @@
     <meta http-equiv="X-Frame-Options" content="DENY">
     <meta http-equiv="X-XSS-Protection" content="1; mode=block">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enhanced Bootstrap Playground - Nested Containers</title>
+    <title>Enhanced Bootstrap Playground - Drag & Drop</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
@@ -175,6 +175,66 @@
             background: rgba(255, 193, 7, 0.1);
         }
 
+        /* Drag and Drop Styles */
+        .draggable {
+            cursor: move;
+        }
+
+        .draggable:hover .drag-handle {
+            opacity: 1;
+        }
+
+        .drag-handle {
+            position: absolute;
+            top: 8px;
+            right: 35px;
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            cursor: move;
+            opacity: 0;
+            transition: opacity var(--transition-base);
+            z-index: 25;
+        }
+
+        .drag-handle:hover {
+            background: #495057;
+        }
+
+        .dragging {
+            opacity: 0.5;
+            transform: scale(0.95);
+            z-index: 1000;
+        }
+
+        .drop-zone {
+            border: 2px dashed #28a745;
+            background: rgba(40, 167, 69, 0.1);
+            border-radius: 8px;
+            padding: 10px;
+            margin: 5px;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #28a745;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .drop-zone.drop-active {
+            border-color: #20c997;
+            background: rgba(32, 201, 151, 0.2);
+            transform: scale(1.02);
+        }
+
         .component-controls {
             position: absolute;
             top: -8px;
@@ -219,7 +279,11 @@
         .component-item:hover .delete-btn,
         .bootstrap-container:hover .delete-btn,
         .bootstrap-row:hover .delete-btn,
-        .bootstrap-column:hover .delete-btn {
+        .bootstrap-column:hover .delete-btn,
+        .component-item:hover .drag-handle,
+        .bootstrap-container:hover .drag-handle,
+        .bootstrap-row:hover .drag-handle,
+        .bootstrap-column:hover .drag-handle {
             opacity: 1;
         }
 
@@ -471,13 +535,48 @@
             color: var(--text-muted);
             margin-bottom: 0.75rem;
         }
+
+        .code-type-tabs {
+            display: flex;
+            background: #2d2d2d;
+            border-radius: 8px 8px 0 0;
+            overflow: hidden;
+        }
+
+        .code-type-btn {
+            padding: 0.5rem 1rem;
+            background: #404040;
+            color: #e6e6e6;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.8rem;
+        }
+
+        .code-type-btn.active {
+            background: #1a1a1a;
+            color: #28a745;
+        }
+
+        .code-type-btn:hover:not(.active) {
+            background: #555;
+        }
+
+        .reorder-instructions {
+            background: #e3f2fd;
+            border: 1px solid #2196f3;
+            border-radius: 6px;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            font-size: 0.85rem;
+        }
     </style>
 </head>
 <body>
-    <!-- Navigation -->
+<!-- Navigation -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
     <div class="container-fluid">
-        <a class="navbar-brand" href="#">
+        <a class="navbar-brand" href="#" onclick="showToast('Welcome to Live Coding Playground!', 'info')">
             <i class="bi bi-code-square me-2"></i>Live Coding Playground
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -485,20 +584,45 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <div class="navbar-nav ms-auto">
-                <a class="nav-link" href="#"><i class="bi bi-house me-1"></i>Home</a>
-                <a class="nav-link" href="#"><i class="bi bi-grid-3x3 me-1"></i>Flexbox</a>
-                <a class="nav-link" href="#"><i class="bi bi-code me-1"></i>HTML</a>
-                <a class="nav-link" href="#"><i class="bi bi-bootstrap me-1"></i>Bootstrap</a>
-                <a class="nav-link active" href="#"><i class="bi bi-play-circle me-1"></i>Live Coding</a>
+                <a class="nav-link" href="#" onclick="loadPreset('basic-page')">
+                    <i class="bi bi-house me-1"></i>Home
+                </a>
+                <a class="nav-link" href="#" onclick="loadPreset('flexbox-demo')">
+                    <i class="bi bi-grid-3x3 me-1"></i>Flexbox
+                </a>
+                <a class="nav-link" href="#" onclick="switchTab('html')">
+                    <i class="bi bi-code me-1"></i>HTML
+                </a>
+                <a class="nav-link" href="#" onclick="switchTab('bootstrap')">
+                    <i class="bi bi-bootstrap me-1"></i>Bootstrap
+                </a>
+                <a class="nav-link active" href="#" onclick="showToast('You are here!', 'info')">
+                    <i class="bi bi-play-circle me-1"></i>Live Coding
+                </a>
                 <div class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="bi bi-grid-3x3-gap me-1"></i>More
+                        <i class="bi bi-grid-3x3-gap me-1"></i>Templates
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#" onclick="showComingSoon('CSS Playground')"><i class="bi bi-palette me-2"></i>CSS Playground</a></li>
-                        <li><a class="dropdown-item" href="#" onclick="showComingSoon('JavaScript Guide')"><i class="bi bi-lightning me-2"></i>JavaScript Guide</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="loadPreset('landing-page')">
+                            <i class="bi bi-layout-text-window me-2"></i>Landing Page
+                        </a></li>
+                        <li><a class="dropdown-item" href="#" onclick="loadPreset('card-layout')">
+                            <i class="bi bi-card-list me-2"></i>Card Layout
+                        </a></li>
+                        <li><a class="dropdown-item" href="#" onclick="loadPreset('form-design')">
+                            <i class="bi bi-ui-checks me-2"></i>Form Design
+                        </a></li>
+                        <li><a class="dropdown-item" href="#" onclick="loadPreset('navigation')">
+                            <i class="bi bi-menu-button-wide me-2"></i>Navigation
+                        </a></li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="#" onclick="showAbout()"><i class="bi bi-info-circle me-2"></i>About</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="loadPreset('animation-demo')">
+                            <i class="bi bi-stars me-2"></i>Animations
+                        </a></li>
+                        <li><a class="dropdown-item" href="#" onclick="loadPreset('grid-system')">
+                            <i class="bi bi-grid me-2"></i>Grid System
+                        </a></li>
                     </ul>
                 </div>
             </div>
@@ -514,9 +638,9 @@
                     <h1 class="display-6 fw-bold mb-3">
                         <i class="bi bi-bootstrap me-3"></i>Enhanced Bootstrap Playground
                     </h1>
-                    <p class="lead mb-0">Build complex Bootstrap layouts with nested containers, rows, and columns. Master the Bootstrap grid system!</p>
+                    <p class="lead mb-0">Build complex Bootstrap layouts with drag & drop reordering. Master the Bootstrap grid system!</p>
                     <div class="mt-3">
-                        <span class="badge bg-light text-dark me-2"><i class="bi bi-boxes me-1"></i>Nested Structure</span>
+                        <span class="badge bg-light text-dark me-2"><i class="bi bi-arrows-move me-1"></i>Drag & Drop</span>
                         <span class="badge bg-light text-dark me-2"><i class="bi bi-grid-3x3 me-1"></i>Advanced Grid</span>
                         <span class="badge bg-light text-dark"><i class="bi bi-phone me-1"></i>Responsive</span>
                     </div>
@@ -538,6 +662,13 @@
     </section>
 
     <div class="container-fluid mt-4">
+        <!-- Reorder Instructions -->
+        <div class="reorder-instructions">
+            <i class="bi bi-info-circle me-2"></i>
+            <strong>Drag & Drop:</strong> Hover over elements to see the drag handle (<i class="bi bi-arrows-move"></i>). 
+            Drag elements to reorder them within containers. The live code updates automatically!
+        </div>
+
         <!-- Property Categories -->
         <div class="property-tabs">
             <button class="tab-btn active" onclick="switchTab('builder')">
@@ -1026,7 +1157,7 @@
                         <h5 class="mb-0">
                             <i class="bi bi-eye me-2"></i>Live Bootstrap Preview
                         </h5>
-                        <small>Interactive nested Bootstrap structure</small>
+                        <small>Interactive nested Bootstrap structure with drag & drop</small>
                         <div class="live-indicator">LIVE</div>
                     </div>
                     
@@ -1062,11 +1193,22 @@
                 <div class="playground-container">
                     <div class="p-3 text-white position-relative" style="background: var(--success-gradient);">
                         <h5 class="mb-0">
-                            <i class="bi bi-code-slash me-2"></i>Generated HTML
+                            <i class="bi bi-code-slash me-2"></i>Generated Code
                         </h5>
                         <small>Copy-ready Bootstrap code</small>
                         <div class="live-indicator">LIVE</div>
                     </div>
+                    
+                    <!-- Code Type Tabs -->
+                    <div class="code-type-tabs">
+                        <button class="code-type-btn active" onclick="switchCodeType('html')" id="html-tab">
+                            <i class="bi bi-code me-1"></i>HTML Only
+                        </button>
+                        <button class="code-type-btn" onclick="switchCodeType('complete')" id="complete-tab">
+                            <i class="bi bi-file-earmark-code me-1"></i>Complete
+                        </button>
+                    </div>
+                    
                     <div class="position-relative">
                         <button class="copy-btn" onclick="copyCode()" id="copy-btn">
                             <i class="bi bi-clipboard me-1"></i>Copy
@@ -1126,6 +1268,8 @@
         let activeContainer = 'preview-area';
         let elements = [];
         let structures = [];
+        let currentCodeType = 'html';
+        let draggedElement = null;
 
         // Component templates
         const componentTemplates = {
@@ -1155,7 +1299,14 @@
         document.addEventListener('DOMContentLoaded', function() {
             generateCode();
             rotateTips();
+            initializeDragAndDrop();
         });
+
+        // Initialize drag and drop functionality
+        function initializeDragAndDrop() {
+            document.addEventListener('dragover', handleDragOver);
+            document.addEventListener('drop', handleDrop);
+        }
 
         // Tab switching
         function switchTab(tabName) {
@@ -1168,6 +1319,165 @@
             
             document.getElementById(tabName + '-tab').classList.add('active');
             event.target.classList.add('active');
+        }
+
+        // Code type switching
+        function switchCodeType(type) {
+            currentCodeType = type;
+            
+            document.querySelectorAll('.code-type-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById(type + '-tab').classList.add('active');
+            
+            generateCode();
+        }
+
+        // Drag and drop handlers
+        function handleDragStart(e) {
+            draggedElement = e.target;
+            e.target.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/html', e.target.outerHTML);
+        }
+
+        function handleDragEnd(e) {
+            e.target.classList.remove('dragging');
+            draggedElement = null;
+            // Remove any temporary drop zones
+            document.querySelectorAll('.drop-zone').forEach(zone => zone.remove());
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            
+            if (!draggedElement) return;
+            
+            const target = e.target.closest('.bootstrap-container, .bootstrap-row, .bootstrap-column, .preview-area');
+            if (target && target !== draggedElement && !target.contains(draggedElement)) {
+                showDropZones(target);
+            }
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            
+            if (!draggedElement) return;
+            
+            const dropZone = e.target.closest('.drop-zone');
+            if (dropZone) {
+                const targetContainer = dropZone.parentElement;
+                const position = dropZone.dataset.position;
+                
+                // Move element
+                moveElement(draggedElement, targetContainer, position);
+                
+                // Clean up
+                document.querySelectorAll('.drop-zone').forEach(zone => zone.remove());
+                generateCode();
+                showToast('Element moved successfully!');
+            }
+        }
+
+        function showDropZones(container) {
+            // Remove existing drop zones
+            document.querySelectorAll('.drop-zone').forEach(zone => zone.remove());
+            
+            if (container.id === 'preview-area' || container.classList.contains('bootstrap-container') || 
+                container.classList.contains('bootstrap-row') || container.classList.contains('bootstrap-column')) {
+                
+                // Create drop zones before first child, between children, and after last child
+                const children = Array.from(container.children).filter(child => 
+                    !child.classList.contains('drop-zone') && 
+                    !child.classList.contains('text-center') &&
+                    !child.classList.contains('component-controls') &&
+                    !child.classList.contains('delete-btn') &&
+                    !child.classList.contains('drag-handle')
+                );
+                
+                // Drop zone at the beginning
+                const firstDropZone = createDropZone('before');
+                if (children.length > 0) {
+                    container.insertBefore(firstDropZone, children[0]);
+                } else {
+                    container.appendChild(firstDropZone);
+                }
+                
+                // Drop zones between children
+                for (let i = 0; i < children.length - 1; i++) {
+                    const dropZone = createDropZone(`after-${i}`);
+                    container.insertBefore(dropZone, children[i].nextSibling);
+                }
+                
+                // Drop zone at the end
+                if (children.length > 0) {
+                    const lastDropZone = createDropZone('after');
+                    container.appendChild(lastDropZone);
+                }
+            }
+        }
+
+        function createDropZone(position) {
+            const dropZone = document.createElement('div');
+            dropZone.className = 'drop-zone';
+            dropZone.dataset.position = position;
+            dropZone.innerHTML = '<i class="bi bi-plus-circle me-2"></i>Drop here';
+            
+            dropZone.addEventListener('dragenter', function() {
+                this.classList.add('drop-active');
+            });
+            
+            dropZone.addEventListener('dragleave', function() {
+                this.classList.remove('drop-active');
+            });
+            
+            return dropZone;
+        }
+
+        function moveElement(element, targetContainer, position) {
+            const elementId = element.id;
+            
+            // Update data structures
+            const elementData = elements.find(el => el.id === elementId) || structures.find(s => s.id === elementId);
+            if (elementData) {
+                elementData.parentContainer = targetContainer.id;
+            }
+            
+            // Move DOM element
+            const children = Array.from(targetContainer.children).filter(child => 
+                !child.classList.contains('drop-zone') && 
+                !child.classList.contains('text-center') &&
+                !child.classList.contains('component-controls') &&
+                !child.classList.contains('delete-btn') &&
+                !child.classList.contains('drag-handle')
+            );
+            
+            if (position === 'before' || children.length === 0) {
+                if (children.length > 0) {
+                    targetContainer.insertBefore(element, children[0]);
+                } else {
+                    targetContainer.appendChild(element);
+                }
+            } else if (position === 'after') {
+                targetContainer.appendChild(element);
+            } else if (position.startsWith('after-')) {
+                const index = parseInt(position.split('-')[1]);
+                if (children[index + 1]) {
+                    targetContainer.insertBefore(element, children[index + 1]);
+                } else {
+                    targetContainer.appendChild(element);
+                }
+            }
+            
+            // Remove placeholder if container had one
+            const placeholder = targetContainer.querySelector('.text-center.text-muted');
+            if (placeholder) {
+                placeholder.remove();
+                if (targetContainer.id === 'preview-area') {
+                    targetContainer.classList.add('has-content');
+                }
+            }
         }
 
         // Add element to container
@@ -1199,26 +1509,32 @@
         function addStructureElement(type, elementId, targetContainer) {
             const element = document.createElement('div');
             element.id = elementId;
+            element.draggable = true;
+            element.classList.add('draggable');
             element.onclick = function(e) {
                 e.stopPropagation();
                 selectStructure(elementId);
             };
+            
+            // Add drag event listeners
+            element.addEventListener('dragstart', handleDragStart);
+            element.addEventListener('dragend', handleDragEnd);
             
             let className = '';
             let content = '';
             
             if (type === 'container') {
                 className = 'bootstrap-container';
-                element.className = className;
-                content = '<div class="component-controls"><i class="bi bi-gear text-primary"></i></div><button class="delete-btn" onclick="event.stopPropagation(); deleteElement(\'' + elementId + '\');"><i class="bi bi-x"></i></button><div class="text-center text-muted py-2"><i class="bi bi-plus-circle me-2"></i>Add rows here</div>';
+                element.className = className + ' draggable';
+                content = '<div class="component-controls"><i class="bi bi-gear text-primary"></i></div><button class="delete-btn" onclick="event.stopPropagation(); deleteElement(\'' + elementId + '\');"><i class="bi bi-x"></i></button><button class="drag-handle"><i class="bi bi-arrows-move"></i></button><div class="text-center text-muted py-2"><i class="bi bi-plus-circle me-2"></i>Add rows here</div>';
             } else if (type === 'row') {
                 className = 'bootstrap-row';
-                element.className = className;
-                content = '<div class="component-controls"><i class="bi bi-gear text-primary"></i></div><button class="delete-btn" onclick="event.stopPropagation(); deleteElement(\'' + elementId + '\');"><i class="bi bi-x"></i></button><div class="text-center text-muted py-2 w-100"><i class="bi bi-plus-circle me-2"></i>Add columns here</div>';
+                element.className = className + ' draggable';
+                content = '<div class="component-controls"><i class="bi bi-gear text-primary"></i></div><button class="delete-btn" onclick="event.stopPropagation(); deleteElement(\'' + elementId + '\');"><i class="bi bi-x"></i></button><button class="drag-handle"><i class="bi bi-arrows-move"></i></button><div class="text-center text-muted py-2 w-100"><i class="bi bi-plus-circle me-2"></i>Add columns here</div>';
             } else if (type === 'column') {
                 className = 'bootstrap-column col-md-4';
-                element.className = className;
-                content = '<div class="component-controls"><i class="bi bi-gear text-primary"></i></div><button class="delete-btn" onclick="event.stopPropagation(); deleteElement(\'' + elementId + '\');"><i class="bi bi-x"></i></button><div class="text-center text-muted py-2"><i class="bi bi-plus-circle me-1"></i>Add content</div>';
+                element.className = className + ' draggable';
+                content = '<div class="component-controls"><i class="bi bi-gear text-primary"></i></div><button class="delete-btn" onclick="event.stopPropagation(); deleteElement(\'' + elementId + '\');"><i class="bi bi-x"></i></button><button class="drag-handle"><i class="bi bi-arrows-move"></i></button><div class="text-center text-muted py-2"><i class="bi bi-plus-circle me-1"></i>Add content</div>';
             }
             
             element.innerHTML = content;
@@ -1238,15 +1554,20 @@
         // Add component element
         function addComponentElement(type, elementId, targetContainer) {
             const element = document.createElement('div');
-            element.className = 'component-item';
+            element.className = 'component-item draggable';
             element.id = elementId;
+            element.draggable = true;
             element.onclick = function(e) {
                 e.stopPropagation();
                 selectElement(elementId);
             };
             
+            // Add drag event listeners
+            element.addEventListener('dragstart', handleDragStart);
+            element.addEventListener('dragend', handleDragEnd);
+            
             const template = componentTemplates[type];
-            element.innerHTML = '<div class="component-controls"><i class="bi bi-gear text-primary"></i></div><button class="delete-btn" onclick="event.stopPropagation(); deleteElement(\'' + elementId + '\');"><i class="bi bi-x"></i></button>' + template.html;
+            element.innerHTML = '<div class="component-controls"><i class="bi bi-gear text-primary"></i></div><button class="delete-btn" onclick="event.stopPropagation(); deleteElement(\'' + elementId + '\');"><i class="bi bi-x"></i></button><button class="drag-handle"><i class="bi bi-arrows-move"></i></button>' + template.html;
 
             targetContainer.appendChild(element);
             
@@ -1472,7 +1793,7 @@
                 structure.properties.gutter = gutter;
                 
                 // Update element classes
-                let classes = 'bootstrap-row row';
+                let classes = 'bootstrap-row row draggable';
                 if (justify) classes += ' ' + justify;
                 if (align) classes += ' ' + align;
                 if (gutter) classes += ' ' + gutter;
@@ -1490,7 +1811,7 @@
                 structure.properties.lg = lg;
                 
                 // Update element classes
-                let classes = 'bootstrap-column';
+                let classes = 'bootstrap-column draggable';
                 if (xs) classes += ' ' + xs;
                 if (sm) classes += ' ' + sm;
                 if (md) classes += ' ' + md;
@@ -1543,7 +1864,7 @@
             // Update DOM element
             const domElement = document.getElementById(selectedElement);
             if (domElement) {
-                domElement.innerHTML = '<div class="component-controls"><i class="bi bi-gear text-primary"></i></div><button class="delete-btn" onclick="event.stopPropagation(); deleteElement(\'' + selectedElement + '\');"><i class="bi bi-x"></i></button>' + updatedTemplate;
+                domElement.innerHTML = '<div class="component-controls"><i class="bi bi-gear text-primary"></i></div><button class="delete-btn" onclick="event.stopPropagation(); deleteElement(\'' + selectedElement + '\');"><i class="bi bi-x"></i></button><button class="drag-handle"><i class="bi bi-arrows-move"></i></button>' + updatedTemplate;
             }
             
             generateCode();
@@ -1807,7 +2128,11 @@
                 return html;
             }
             
-            const html = generateStructureHTML('preview-area');
+            let html = generateStructureHTML('preview-area');
+            
+            if (currentCodeType === 'complete') {
+                html = '<!DOCTYPE html>\n<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <title>Bootstrap Layout</title>\n    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">\n</head>\n<body>\n\n' + html + '\n    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"><\/script>\n</body>\n</html>';
+            }
             
             // Apply syntax highlighting
             const highlightedHTML = html
@@ -1841,21 +2166,32 @@
         }
 
         function copyFullCode() {
-            const htmlContent = document.getElementById('code-output').textContent;
-            const fullCode = '<!DOCTYPE html>\n<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <title>Bootstrap Layout</title>\n    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">\n</head>\n<body>\n    ' + htmlContent + '    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"><\/script>\n</body>\n</html>';
+            let htmlContent = document.getElementById('code-output').textContent;
             
-            navigator.clipboard.writeText(fullCode).then(function() {
+            if (currentCodeType === 'html') {
+                htmlContent = '<!DOCTYPE html>\n<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <title>Bootstrap Layout</title>\n    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">\n</head>\n<body>\n\n' + htmlContent + '\n    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"><\/script>\n</body>\n</html>';
+            }
+            
+            navigator.clipboard.writeText(htmlContent).then(function() {
                 showToast('Complete code copied to clipboard!');
             });
         }
 
         // Export functions
         function exportCodePen() {
-            const htmlContent = document.getElementById('code-output').textContent;
+            let htmlContent = document.getElementById('code-output').textContent;
+            
+            if (currentCodeType === 'complete') {
+                // Extract body content from complete HTML
+                const bodyMatch = htmlContent.match(/<body>\s*([\s\S]*?)\s*<script/);
+                if (bodyMatch) {
+                    htmlContent = bodyMatch[1].trim();
+                }
+            }
             
             const data = {
                 title: 'Bootstrap Layout from Enhanced Playground',
-                description: 'Created with Enhanced Bootstrap Playground',
+                description: 'Created with Enhanced Bootstrap Playground - Now with drag & drop!',
                 html: htmlContent,
                 css: '',
                 css_external: 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css',
@@ -1880,10 +2216,13 @@
         }
 
         function downloadHTML() {
-            const htmlContent = document.getElementById('code-output').textContent;
-            const fullCode = '<!DOCTYPE html>\n<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <title>Bootstrap Layout</title>\n    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">\n</head>\n<body>\n    ' + htmlContent + '    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"><\/script>\n</body>\n</html>';
+            let htmlContent = document.getElementById('code-output').textContent;
             
-            const blob = new Blob([fullCode], { type: 'text/html' });
+            if (currentCodeType === 'html') {
+                htmlContent = '<!DOCTYPE html>\n<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <title>Bootstrap Layout</title>\n    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">\n</head>\n<body>\n\n' + htmlContent + '\n    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"><\/script>\n</body>\n</html>';
+            }
+            
+            const blob = new Blob([htmlContent], { type: 'text/html' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
@@ -1924,7 +2263,8 @@
                 '<strong>Colors:</strong><br><code>.text-primary</code> for text<br><code>.bg-primary</code> for background<br>8 color variants available',
                 '<strong>Structure:</strong><br><code>.container</code> → <code>.row</code> → <code>.col</code><br>Always follow this hierarchy',
                 '<strong>Responsive:</strong><br><code>.col-sm-6 .col-lg-4</code><br>Different sizes on different screens',
-                '<strong>Utilities:</strong><br><code>.d-flex .justify-content-center</code><br>Powerful utility classes'
+                '<strong>Utilities:</strong><br><code>.d-flex .justify-content-center</code><br>Powerful utility classes',
+                '<strong>Drag & Drop:</strong><br>Hover over elements to see drag handle<br>Reorder elements easily!'
             ];
             
             const tipsElement = document.getElementById('bootstrap-tips');
@@ -1934,6 +2274,15 @@
                 currentTip = (currentTip + 1) % tips.length;
                 tipsElement.innerHTML = tips[currentTip];
             }, 4000);
+        }
+
+        // Placeholder functions for missing features
+        function showComingSoon(feature) {
+            showToast(feature + ' coming soon!', 'info');
+        }
+
+        function showAbout() {
+            showToast('Enhanced Bootstrap Playground v2.0 - Now with drag & drop!');
         }
     </script>
 </body>
