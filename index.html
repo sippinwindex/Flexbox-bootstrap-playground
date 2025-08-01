@@ -6,9 +6,9 @@
     <meta http-equiv="X-Frame-Options" content="DENY">
     <meta http-equiv="X-XSS-Protection" content="1; mode=block">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Interactive CSS learning platform with HTML, CSS, Flexbox, and Bootstrap playgrounds">
-    <meta name="keywords" content="CSS, HTML, Bootstrap, Flexbox, learning, interactive, playground, web development">
-    <title>CSS Learning Platform - Interactive Playground</title>
+    <meta name="description" content="Interactive web development learning platform with HTML, CSS, Flexbox, Bootstrap, and Terminal playgrounds">
+    <meta name="keywords" content="CSS, HTML, Bootstrap, Flexbox, Terminal, learning, interactive, playground, web development">
+    <title>Web Development Learning Platform - Interactive Playground</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" 
@@ -23,6 +23,7 @@
             --warning-gradient: linear-gradient(135deg, #ffc107, #ff8c00);
             --info-gradient: linear-gradient(135deg, #17a2b8, #20c997);
             --danger-gradient: linear-gradient(135deg, #dc3545, #fd79a8);
+            --terminal-gradient: linear-gradient(135deg, #2d3748, #1a202c);
             --shadow-sm: 0 2px 8px rgba(0,0,0,0.1);
             --shadow-md: 0 4px 15px rgba(0,0,0,0.15);
             --shadow-lg: 0 8px 25px rgba(0,0,0,0.2);
@@ -305,6 +306,10 @@
             background: linear-gradient(135deg, rgba(13, 202, 240, 0.05), rgba(13, 202, 240, 0.1));
         }
 
+        .feature-card.terminal-card {
+            background: linear-gradient(135deg, rgba(45, 55, 72, 0.05), rgba(26, 32, 44, 0.1));
+        }
+
         .feature-card.tutorial-card {
             background: linear-gradient(135deg, rgba(255, 193, 7, 0.05), rgba(255, 193, 7, 0.1));
         }
@@ -315,6 +320,37 @@
 
         .feature-card.component-card {
             background: linear-gradient(135deg, rgba(33, 37, 41, 0.05), rgba(33, 37, 41, 0.1));
+        }
+
+        .feature-card.coding-card {
+            background: linear-gradient(135deg, rgba(108, 117, 125, 0.05), rgba(73, 80, 87, 0.1));
+        }
+
+        .section-divider {
+            margin: 3rem 0;
+            text-align: center;
+        }
+
+        .section-divider h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+            padding: 0 2rem;
+            background: white;
+        }
+
+        .section-divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #dee2e6, transparent);
+            z-index: -1;
         }
     </style>
 </head>
@@ -329,7 +365,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
         <div class="container">
             <a class="navbar-brand" href="index.html">
-                <i class="bi bi-code-square me-2"></i>CSS Learning Platform
+                <i class="bi bi-code-square me-2"></i>Web Development Learning Platform
             </a>
             
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -360,6 +396,12 @@
                             <li><a class="dropdown-item" href="bootstrap-playground.html">
                                 <i class="bi bi-bootstrap me-2"></i>Bootstrap Playground
                             </a></li>
+                            <li><a class="dropdown-item" href="terminal-playground.html">
+                                <i class="bi bi-terminal me-2"></i>Terminal Playground
+                            </a></li>
+                            <li><a class="dropdown-item" href="live-coding-playground.html">
+                                <i class="bi bi-play-circle me-2"></i>Live Coding Playground
+                            </a></li>
                         </ul>
                     </li>
                     
@@ -381,6 +423,9 @@
                             </a></li>
                             <li><a class="dropdown-item" href="bootstrap-guide.html">
                                 <i class="bi bi-bootstrap me-2"></i>Bootstrap Guide
+                            </a></li>
+                            <li><a class="dropdown-item" href="terminal-guide.html">
+                                <i class="bi bi-terminal me-2"></i>Terminal Guide
                             </a></li>
                         </ul>
                     </li>
@@ -412,14 +457,14 @@
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-8">
-                    <h1 class="display-4 fw-bold mb-3">Everything You Need to Learn Web Development</h1>
-                    <p class="lead mb-4">From HTML fundamentals to advanced CSS techniques, our interactive platform covers it all with hands-on playgrounds and secure learning environments.</p>
+                    <h1 class="display-4 fw-bold mb-3">Complete Web Development Learning Platform</h1>
+                    <p class="lead mb-4">From HTML fundamentals to advanced terminal commands, master every aspect of web development with our interactive playgrounds, comprehensive guides, and hands-on learning tools.</p>
                     <div class="d-flex gap-3 flex-wrap">
                         <a href="html-playground.html" class="btn btn-light btn-lg btn-feature">
-                            <i class="bi bi-play-fill me-2"></i>Try HTML Playground
+                            <i class="bi bi-play-fill me-2"></i>Start Learning
                         </a>
-                        <a href="css-playground.html" class="btn btn-outline-light btn-lg btn-feature">
-                            <i class="bi bi-palette me-2"></i>CSS Playground
+                        <a href="terminal-playground.html" class="btn btn-outline-light btn-lg btn-feature">
+                            <i class="bi bi-terminal me-2"></i>Try Terminal
                         </a>
                     </div>
                 </div>
@@ -432,19 +477,17 @@
         </div>
     </section>
 
-    <!-- Features Section -->
+    <!-- Interactive Playgrounds Section -->
     <section class="py-5">
         <div class="container">
-            <div class="row text-center mb-5">
-                <div class="col-lg-8 mx-auto">
-                    <h2 class="display-6 fw-bold">Interactive Learning Tools</h2>
-                    <p class="lead text-muted">Master HTML, CSS, and Bootstrap through hands-on experimentation in secure environments.</p>
-                </div>
+            <div class="section-divider">
+                <h3>🎮 Interactive Playgrounds</h3>
+                <p class="text-muted">Hands-on learning environments with real-time feedback</p>
             </div>
             
             <div class="row g-4">
                 <!-- HTML Playground Card -->
-                <div class="col-md-6 col-lg-3">
+                <div class="col-md-6 col-lg-4">
                     <div class="card feature-card html-card">
                         <div class="card-body text-center p-4">
                             <div class="icon-wrapper bg-primary bg-opacity-10">
@@ -453,14 +496,14 @@
                             <h5 class="card-title">HTML Playground</h5>
                             <p class="card-text text-muted">Learn HTML elements, attributes, and structure with interactive examples and live preview.</p>
                             <a href="html-playground.html" class="btn btn-primary btn-feature">
-                                <i class="bi bi-arrow-right me-1"></i>Learn HTML
+                                <i class="bi bi-play me-1"></i>Try HTML
                             </a>
                         </div>
                     </div>
                 </div>
 
                 <!-- CSS Playground Card -->
-                <div class="col-md-6 col-lg-3">
+                <div class="col-md-6 col-lg-4">
                     <div class="card feature-card css-card">
                         <div class="card-body text-center p-4">
                             <div class="icon-wrapper bg-secondary bg-opacity-10">
@@ -469,14 +512,14 @@
                             <h5 class="card-title">CSS Playground</h5>
                             <p class="card-text text-muted">Experiment with CSS properties, colors, transforms, and effects with real-time visual feedback.</p>
                             <a href="css-playground.html" class="btn btn-secondary btn-feature">
-                                <i class="bi bi-arrow-right me-1"></i>Style Elements
+                                <i class="bi bi-play me-1"></i>Try CSS
                             </a>
                         </div>
                     </div>
                 </div>
 
                 <!-- Flexbox Playground Card -->
-                <div class="col-md-6 col-lg-3">
+                <div class="col-md-6 col-lg-4">
                     <div class="card feature-card flexbox-card">
                         <div class="card-body text-center p-4">
                             <div class="icon-wrapper bg-success bg-opacity-10">
@@ -485,14 +528,14 @@
                             <h5 class="card-title">Flexbox Playground</h5>
                             <p class="card-text text-muted">Interactive drag & drop interface to master CSS Flexbox with real-time code generation.</p>
                             <a href="flexbox-playground.html" class="btn btn-success btn-feature">
-                                <i class="bi bi-arrow-right me-1"></i>Master Flexbox
+                                <i class="bi bi-play me-1"></i>Try Flexbox
                             </a>
                         </div>
                     </div>
                 </div>
 
                 <!-- Bootstrap Playground Card -->
-                <div class="col-md-6 col-lg-3">
+                <div class="col-md-6 col-lg-4">
                     <div class="card feature-card bootstrap-card">
                         <div class="card-body text-center p-4">
                             <div class="icon-wrapper bg-info bg-opacity-10">
@@ -501,55 +544,185 @@
                             <h5 class="card-title">Bootstrap Playground</h5>
                             <p class="card-text text-muted">Build responsive layouts with Bootstrap components and copy the code for your projects.</p>
                             <a href="bootstrap-playground.html" class="btn btn-info btn-feature">
-                                <i class="bi bi-arrow-right me-1"></i>Build Layouts
+                                <i class="bi bi-play me-1"></i>Try Bootstrap
                             </a>
                         </div>
                     </div>
                 </div>
 
-                <!-- Guided Tutorials Card -->
+                <!-- Terminal Playground Card -->
                 <div class="col-md-6 col-lg-4">
+                    <div class="card feature-card terminal-card">
+                        <div class="card-body text-center p-4">
+                            <div class="icon-wrapper bg-dark bg-opacity-10">
+                                <i class="bi bi-terminal text-dark fs-4"></i>
+                            </div>
+                            <h5 class="card-title">Terminal Playground</h5>
+                            <p class="card-text text-muted">Master command line skills with our interactive terminal simulator. Practice file operations and navigation.</p>
+                            <a href="terminal-playground.html" class="btn btn-dark btn-feature">
+                                <i class="bi bi-terminal me-1"></i>Try Terminal
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Coding Playground Card -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="card feature-card coding-card">
+                        <div class="card-body text-center p-4">
+                            <div class="icon-wrapper bg-secondary bg-opacity-10">
+                                <i class="bi bi-play-circle text-secondary fs-4"></i>
+                            </div>
+                            <h5 class="card-title">Live Coding Playground</h5>
+                            <p class="card-text text-muted">Real-time HTML, CSS, and JavaScript editor with instant preview. Perfect for rapid prototyping.</p>
+                            <a href="live-coding-playground.html" class="btn btn-secondary btn-feature">
+                                <i class="bi bi-code me-1"></i>Live Code
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Learning Guides Section -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <div class="section-divider">
+                <h3>📚 Comprehensive Learning Guides</h3>
+                <p class="text-muted">Step-by-step tutorials with interactive examples</p>
+            </div>
+            
+            <div class="row g-4">
+                <!-- HTML Guide Card -->
+                <div class="col-md-6 col-lg-3">
                     <div class="card feature-card tutorial-card">
                         <div class="card-body text-center p-4">
-                            <div class="icon-wrapper bg-warning bg-opacity-10">
-                                <i class="bi bi-book text-warning fs-4"></i>
+                            <div class="icon-wrapper bg-primary bg-opacity-10">
+                                <i class="bi bi-file-text text-primary fs-4"></i>
                             </div>
-                            <h5 class="card-title">Guided Tutorials</h5>
-                            <p class="card-text text-muted">Step-by-step tutorials covering HTML, CSS, Bootstrap grid, components, and advanced techniques.</p>
-                            <a href="html-guide.html" class="btn btn-warning btn-feature">
-                                <i class="bi bi-arrow-right me-1"></i>View Tutorials
+                            <h5 class="card-title">HTML Guide</h5>
+                            <p class="card-text text-muted">Complete HTML tutorial with interactive examples and tabbed code previews.</p>
+                            <a href="html-guide.html" class="btn btn-primary btn-feature">
+                                <i class="bi bi-book me-1"></i>Learn HTML
                             </a>
                         </div>
                     </div>
                 </div>
 
+                <!-- CSS Guide Card -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="card feature-card tutorial-card">
+                        <div class="card-body text-center p-4">
+                            <div class="icon-wrapper bg-secondary bg-opacity-10">
+                                <i class="bi bi-file-text text-secondary fs-4"></i>
+                            </div>
+                            <h5 class="card-title">CSS Guide</h5>
+                            <p class="card-text text-muted">Master CSS styling with comprehensive documentation and visual examples.</p>
+                            <a href="css-guide.html" class="btn btn-secondary btn-feature">
+                                <i class="bi bi-book me-1"></i>Learn CSS
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Flexbox Guide Card -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="card feature-card tutorial-card">
+                        <div class="card-body text-center p-4">
+                            <div class="icon-wrapper bg-success bg-opacity-10">
+                                <i class="bi bi-file-text text-success fs-4"></i>
+                            </div>
+                            <h5 class="card-title">Flexbox Guide</h5>
+                            <p class="card-text text-muted">Complete Flexbox reference with visual examples and practical layouts.</p>
+                            <a href="flexbox-guide.html" class="btn btn-success btn-feature">
+                                <i class="bi bi-book me-1"></i>Learn Flexbox
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bootstrap Guide Card -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="card feature-card tutorial-card">
+                        <div class="card-body text-center p-4">
+                            <div class="icon-wrapper bg-info bg-opacity-10">
+                                <i class="bi bi-file-text text-info fs-4"></i>
+                            </div>
+                            <h5 class="card-title">Bootstrap Guide</h5>
+                            <p class="card-text text-muted">Comprehensive Bootstrap documentation with component examples and grid system.</p>
+                            <a href="bootstrap-guide.html" class="btn btn-info btn-feature">
+                                <i class="bi bi-book me-1"></i>Learn Bootstrap
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Featured Terminal Guide -->
+            <div class="row g-4 mt-4">
+                <div class="col-12">
+                    <div class="card feature-card terminal-card">
+                        <div class="card-body text-center p-5">
+                            <div class="row align-items-center">
+                                <div class="col-lg-2">
+                                    <div class="icon-wrapper bg-dark bg-opacity-10 mx-auto" style="width: 80px; height: 80px;">
+                                        <i class="bi bi-terminal text-dark" style="font-size: 2rem;"></i>
+                                    </div>
+                                </div>
+                                <div class="col-lg-8">
+                                    <h4 class="card-title">Terminal Mastery Guide</h4>
+                                    <p class="card-text text-muted mb-0">Comprehensive terminal learning guide with interactive examples, command references, and real terminal output demonstrations. Master the command line from beginner to advanced with tabbed examples and live demonstrations.</p>
+                                </div>
+                                <div class="col-lg-2">
+                                    <a href="terminal-guide.html" class="btn btn-dark btn-lg btn-feature">
+                                        <i class="bi bi-terminal me-2"></i>Master Terminal
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Developer Tools Section -->
+    <section class="py-5">
+        <div class="container">
+            <div class="section-divider">
+                <h3>🛠️ Developer Tools & Utilities</h3>
+                <p class="text-muted">Professional tools for web development workflow</p>
+            </div>
+            
+            <div class="row g-4">
                 <!-- CSS Utilities Card -->
-                <div class="col-md-6 col-lg-4">
+                <div class="col-md-6">
                     <div class="card feature-card utility-card">
                         <div class="card-body text-center p-4">
                             <div class="icon-wrapper bg-danger bg-opacity-10">
                                 <i class="bi bi-palette2 text-danger fs-4"></i>
                             </div>
-                            <h5 class="card-title">CSS Utilities</h5>
-                            <p class="card-text text-muted">Generate custom CSS utilities, color palettes, and styling helpers for your projects.</p>
+                            <h5 class="card-title">CSS Utilities Generator</h5>
+                            <p class="card-text text-muted">Generate custom CSS utilities, color palettes, gradients, and styling helpers for your projects.</p>
                             <a href="css-utilities.html" class="btn btn-danger btn-feature">
-                                <i class="bi bi-arrow-right me-1"></i>Generate CSS
+                                <i class="bi bi-gear me-1"></i>Generate CSS
                             </a>
                         </div>
                     </div>
                 </div>
 
-                <!-- Ready-to-Use Components Card -->
-                <div class="col-md-6 col-lg-4">
+                <!-- Python API Tools Card -->
+                <div class="col-md-6">
                     <div class="card feature-card component-card">
                         <div class="card-body text-center p-4">
-                            <div class="icon-wrapper bg-dark bg-opacity-10">
-                                <i class="bi bi-code-slash text-dark fs-4"></i>
+                            <div class="icon-wrapper bg-success bg-opacity-10">
+                                <i class="bi bi-code-square text-success fs-4"></i>
                             </div>
-                            <h5 class="card-title">Ready-to-Use Components</h5>
-                            <p class="card-text text-muted">Browse our library of pre-built components with HTML and CSS you can copy instantly.</p>
-                            <a href="bootstrap-playground.html" class="btn btn-dark btn-feature">
-                                <i class="bi bi-arrow-right me-1"></i>Browse Components
+                            <h5 class="card-title">Python Development Tools</h5>
+                            <p class="card-text text-muted">Command-line tools for project generation, Bootstrap templates, and development server management.</p>
+                            <a href="#python-tools" class="btn btn-success btn-feature">
+                                <i class="bi bi-terminal me-1"></i>View API Tools
                             </a>
                         </div>
                     </div>
@@ -572,7 +745,7 @@
                                 <div class="step-number bg-primary text-white">1</div>
                                 <div class="text-start">
                                     <h6 class="mb-0">Choose a Topic</h6>
-                                    <small class="text-muted">HTML, CSS, Flexbox, or Bootstrap</small>
+                                    <small class="text-muted">HTML, CSS, Flexbox, Bootstrap, or Terminal</small>
                                 </div>
                             </div>
                         </div>
@@ -600,32 +773,46 @@
                     <div class="mt-5 pt-4 border-top">
                         <h3 class="mb-4">Complete Learning Path</h3>
                         <div class="row g-3">
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <div class="learning-path-item">
                                     <i class="bi bi-code-slash text-primary fs-3 mb-2 d-block"></i>
                                     <h6 class="text-primary">HTML Basics</h6>
                                     <small class="text-muted">Elements, attributes, structure</small>
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <div class="learning-path-item">
                                     <i class="bi bi-palette text-secondary fs-3 mb-2 d-block"></i>
                                     <h6 class="text-secondary">CSS Styling</h6>
                                     <small class="text-muted">Colors, layout, effects</small>
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <div class="learning-path-item">
                                     <i class="bi bi-grid-3x3 text-success fs-3 mb-2 d-block"></i>
                                     <h6 class="text-success">Flexbox Layout</h6>
                                     <small class="text-muted">Modern CSS layouts</small>
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <div class="learning-path-item">
                                     <i class="bi bi-bootstrap text-info fs-3 mb-2 d-block"></i>
                                     <h6 class="text-info">Bootstrap Framework</h6>
                                     <small class="text-muted">Responsive components</small>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="learning-path-item">
+                                    <i class="bi bi-terminal text-dark fs-3 mb-2 d-block"></i>
+                                    <h6 class="text-dark">Terminal Skills</h6>
+                                    <small class="text-muted">Command line mastery</small>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="learning-path-item">
+                                    <i class="bi bi-play-circle text-secondary fs-3 mb-2 d-block"></i>
+                                    <h6 class="text-secondary">Live Coding</h6>
+                                    <small class="text-muted">Real-time development</small>
                                 </div>
                             </div>
                         </div>
@@ -656,7 +843,7 @@
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-md-6">
-                    <h5><i class="bi bi-code-square me-2"></i>CSS Learning Platform</h5>
+                    <h5><i class="bi bi-code-square me-2"></i>Web Development Learning Platform</h5>
                     <p class="mb-0 text-muted">Interactive tools for mastering modern web development</p>
                 </div>
                 <div class="col-md-6 text-md-end">
@@ -687,82 +874,6 @@
             integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" 
             crossorigin="anonymous"></script>
 
-    <!-- Security Utils (MUST be loaded before main script) -->
-    <script>
-        // Security utility functions
-        const SecurityUtils = {
-            // Input validation and sanitization
-            sanitizeHTML: function(input) {
-                if (typeof input !== 'string') return '';
-                
-                // Remove dangerous tags and attributes
-                const div = document.createElement('div');
-                div.textContent = input;
-                let sanitized = div.innerHTML;
-                
-                // Remove script tags and event handlers
-                sanitized = sanitized.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
-                sanitized = sanitized.replace(/on\w+\s*=\s*"[^"]*"/gi, '');
-                sanitized = sanitized.replace(/on\w+\s*=\s*'[^']*'/gi, '');
-                sanitized = sanitized.replace(/javascript:/gi, '');
-                
-                return sanitized;
-            },
-
-            // Rate limiting for user actions
-            rateLimiter: {
-                actions: new Map(),
-                
-                isAllowed: function(action, limit = 10, window = 60000) {
-                    const now = Date.now();
-                    const key = action;
-                    
-                    if (!this.actions.has(key)) {
-                        this.actions.set(key, []);
-                    }
-                    
-                    const timestamps = this.actions.get(key);
-                    
-                    // Remove old timestamps
-                    while (timestamps.length > 0 && now - timestamps[0] > window) {
-                        timestamps.shift();
-                    }
-                    
-                    if (timestamps.length >= limit) {
-                        return false;
-                    }
-                    
-                    timestamps.push(now);
-                    return true;
-                }
-            },
-
-            // Error handling
-            handleError: function(error, context = '') {
-                console.error(`Security Error ${context}:`, error);
-                
-                // Log to a secure endpoint in production
-                if (typeof window.reportError === 'function') {
-                    window.reportError({
-                        error: error.message,
-                        context: context,
-                        timestamp: new Date().toISOString(),
-                        userAgent: navigator.userAgent
-                    });
-                }
-            }
-        };
-
-        // Global error handlers
-        window.addEventListener('error', function(event) {
-            SecurityUtils.handleError(event.error, 'Global Error Handler');
-        });
-
-        window.addEventListener('unhandledrejection', function(event) {
-            SecurityUtils.handleError(event.reason, 'Unhandled Promise Rejection');
-        });
-    </script>
-
     <!-- Main Application Script -->
     <script>
         // Initialize on page load
@@ -773,7 +884,7 @@
                 updateProgress();
                 initializeInteractiveElements();
             } catch (error) {
-                SecurityUtils.handleError(error, 'Initialization');
+                console.error('Initialization error:', error);
             }
         });
 
@@ -802,27 +913,22 @@
                             
                         }, 16); // ~60fps
                     } catch (error) {
-                        SecurityUtils.handleError(error, 'Scroll Handler');
+                        console.error('Scroll handler error:', error);
                     }
                 });
 
             } catch (error) {
-                SecurityUtils.handleError(error, 'Initialize Scroll Effects');
+                console.error('Initialize scroll effects error:', error);
             }
         }
 
-        // Navigation functionality with security
+        // Navigation functionality
         function initializeNavigation() {
             try {
                 // Smooth scrolling for anchor links
                 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
                     anchor.addEventListener('click', function (e) {
                         try {
-                            if (!SecurityUtils.rateLimiter.isAllowed('navClick', 30, 10000)) {
-                                console.warn('Rate limit exceeded for navigation');
-                                return;
-                            }
-
                             e.preventDefault();
                             const target = document.querySelector(this.getAttribute('href'));
                             if (target) {
@@ -830,18 +936,15 @@
                                     behavior: 'smooth',
                                     block: 'start'
                                 });
-                                
-                                // Announce change for accessibility
-                                announceChange(`Navigated to ${target.textContent || 'section'}`);
                             }
                         } catch (error) {
-                            SecurityUtils.handleError(error, 'Anchor Navigation');
+                            console.error('Anchor navigation error:', error);
                         }
                     });
                 });
 
             } catch (error) {
-                SecurityUtils.handleError(error, 'Initialize Navigation');
+                console.error('Initialize navigation error:', error);
             }
         }
 
@@ -865,12 +968,6 @@
                 buttons.forEach(button => {
                     button.addEventListener('click', function(e) {
                         try {
-                            if (!SecurityUtils.rateLimiter.isAllowed('buttonClick', 20, 30000)) {
-                                console.warn('Rate limit exceeded for button clicks');
-                                e.preventDefault();
-                                return;
-                            }
-
                             const destination = this.getAttribute('href');
                             console.log(`User clicked: ${destination}`);
                             
@@ -884,13 +981,13 @@
                             }, 500);
 
                         } catch (error) {
-                            SecurityUtils.handleError(error, 'Button Click Handler');
+                            console.error('Button click handler error:', error);
                         }
                     });
                 });
 
             } catch (error) {
-                SecurityUtils.handleError(error, 'Initialize Interactive Elements');
+                console.error('Initialize interactive elements error:', error);
             }
         }
 
@@ -906,36 +1003,25 @@
                 
                 progressIndicator.style.width = Math.min(scrolled, 100) + '%';
             } catch (error) {
-                SecurityUtils.handleError(error, 'Update Progress');
+                console.error('Update progress error:', error);
             }
         }
 
         // Scroll to top functionality
         function scrollToTop() {
             try {
-                if (!SecurityUtils.rateLimiter.isAllowed('scrollToTop', 10, 30000)) {
-                    console.warn('Rate limit exceeded for scroll to top');
-                    return;
-                }
-
                 window.scrollTo({
                     top: 0,
                     behavior: 'smooth'
                 });
-                
-                announceChange('Scrolled to top of page');
             } catch (error) {
-                SecurityUtils.handleError(error, 'Scroll to Top');
+                console.error('Scroll to top error:', error);
             }
         }
 
         // Toast notification system
         function showToast(message, type = 'info') {
             try {
-                if (!SecurityUtils.rateLimiter.isAllowed('showToast', 20, 30000)) {
-                    return;
-                }
-
                 const toastContainer = document.getElementById('toast-container');
                 if (!toastContainer) return;
 
@@ -959,7 +1045,7 @@
                 toast.innerHTML = `
                     <div class="d-flex align-items-center">
                         <i class="bi bi-${iconMap[type]} me-2" style="color: ${colorMap[type]}; font-size: 1.2rem;"></i>
-                        <span>${SecurityUtils.sanitizeHTML(message)}</span>
+                        <span>${message}</span>
                     </div>
                 `;
 
@@ -975,7 +1061,7 @@
                 }, 3000);
 
             } catch (error) {
-                SecurityUtils.handleError(error, 'Show Toast');
+                console.error('Show toast error:', error);
             }
         }
 
@@ -995,95 +1081,14 @@
                 }
                 
             } catch (error) {
-                SecurityUtils.handleError(error, 'Keyboard Shortcuts');
+                console.error('Keyboard shortcuts error:', error);
             }
         });
-
-        // Accessibility announcements
-        function announceChange(message) {
-            try {
-                const announcement = document.createElement('div');
-                announcement.setAttribute('aria-live', 'polite');
-                announcement.setAttribute('aria-atomic', 'true');
-                announcement.className = 'visually-hidden';
-                announcement.textContent = SecurityUtils.sanitizeHTML(message);
-                document.body.appendChild(announcement);
-                
-                setTimeout(() => {
-                    if (announcement.parentNode) {
-                        document.body.removeChild(announcement);
-                    }
-                }, 1000);
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Accessibility Announcement');
-            }
-        }
 
         // Performance monitoring
         if ('performance' in window && 'mark' in performance) {
             performance.mark('homepage-loaded');
         }
-    </script>
-
-    <!-- Error Boundary and Monitoring -->
-    <script>
-        // Additional security monitoring
-        (function() {
-            'use strict';
-            
-            // Monitor for suspicious activity
-            let suspiciousActivity = 0;
-            const MAX_SUSPICIOUS_ACTIVITY = 10;
-            
-            // Monitor DOM modifications
-            const observer = new MutationObserver(function(mutations) {
-                mutations.forEach(function(mutation) {
-                    // Check for suspicious script injections
-                    if (mutation.type === 'childList') {
-                        mutation.addedNodes.forEach(function(node) {
-                            if (node.nodeType === Node.ELEMENT_NODE) {
-                                if (node.tagName === 'SCRIPT' || 
-                                    node.innerHTML.includes('<script') ||
-                                    node.innerHTML.includes('javascript:') ||
-                                    node.innerHTML.includes('data:text/html')) {
-                                    suspiciousActivity++;
-                                    console.warn('Suspicious content detected and blocked');
-                                    node.remove();
-                                    
-                                    if (suspiciousActivity >= MAX_SUSPICIOUS_ACTIVITY) {
-                                        console.error('Maximum suspicious activity threshold reached');
-                                        // Could implement additional security measures here
-                                    }
-                                }
-                            }
-                        });
-                    }
-                });
-            });
-
-            // Start observing
-            observer.observe(document.body, {
-                childList: true,
-                subtree: true,
-                characterData: true
-            });
-
-            // Content Security Policy violation handler
-            document.addEventListener('securitypolicyviolation', function(event) {
-                SecurityUtils.handleError({
-                    message: 'CSP Violation',
-                    violatedDirective: event.violatedDirective,
-                    blockedURI: event.blockedURI,
-                    lineNumber: event.lineNumber,
-                    sourceFile: event.sourceFile
-                }, 'CSP Violation');
-            });
-
-            // Performance monitoring
-            if ('performance' in window && 'mark' in performance) {
-                performance.mark('homepage-security-loaded');
-            }
-        })();
     </script>
 </body>
 </html>
