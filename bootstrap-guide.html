@@ -380,19 +380,36 @@
     <div class="toast-container" id="toast-container"></div>
 
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
-        <div class="container">
-            <a class="navbar-brand" href="index.html">
-                <i class="bi bi-arrow-left me-2"></i>Bootstrap Learning Guide
-            </a>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">
+            <i class="bi bi-code-square me-2"></i>Live Coding Playground
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
             <div class="navbar-nav ms-auto">
-                <a class="nav-link" href="index.html"><i class="bi bi-house me-1"></i>Home</a>
-                <a class="nav-link" href="bootstrap-playground.html"><i class="bi bi-bootstrap me-1"></i>Bootstrap Playground</a>
-                <a class="nav-link" href="css-guide.html"><i class="bi bi-palette me-1"></i>CSS Guide</a>
-                <a class="nav-link" href="html-playground.html"><i class="bi bi-code me-1"></i>HTML</a>
+                <a class="nav-link" href="#"><i class="bi bi-house me-1"></i>Home</a>
+                <a class="nav-link" href="#"><i class="bi bi-grid-3x3 me-1"></i>Flexbox</a>
+                <a class="nav-link" href="#"><i class="bi bi-code me-1"></i>HTML</a>
+                <a class="nav-link" href="#"><i class="bi bi-bootstrap me-1"></i>Bootstrap</a>
+                <a class="nav-link active" href="#"><i class="bi bi-play-circle me-1"></i>Live Coding</a>
+                <div class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-grid-3x3-gap me-1"></i>More
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#" onclick="showComingSoon('CSS Playground')"><i class="bi bi-palette me-2"></i>CSS Playground</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="showComingSoon('JavaScript Guide')"><i class="bi bi-lightning me-2"></i>JavaScript Guide</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#" onclick="showAbout()"><i class="bi bi-info-circle me-2"></i>About</a></li>
+                    </ul>
+                </div>
             </div>
         </div>
-    </nav>
+    </div>
+</nav>
 
     <!-- Hero Section -->
     <section class="hero-section">

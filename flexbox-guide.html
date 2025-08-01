@@ -6,9 +6,8 @@
     <meta http-equiv="X-Frame-Options" content="DENY">
     <meta http-equiv="X-XSS-Protection" content="1; mode=block">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Complete Flexbox learning guide with interactive examples and modern security practices">
-    <meta name="keywords" content="Flexbox, CSS, learning, guide, tutorial, responsive design, security">
-    <title>Flexbox Learning Guide - Complete Secure Edition</title>
+    <meta name="description" content="Complete Flexbox learning guide with interactive tabbed examples">
+    <title>Flexbox Learning Guide - Interactive Edition</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" 
@@ -53,21 +52,6 @@
             top: 100px;
             max-height: calc(100vh - 120px);
             overflow-y: auto;
-            scrollbar-width: thin;
-            scrollbar-color: #667eea #f1f1f1;
-        }
-
-        .guide-nav::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .guide-nav::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-
-        .guide-nav::-webkit-scrollbar-thumb {
-            background: #667eea;
-            border-radius: 3px;
         }
 
         .guide-nav .nav-link {
@@ -78,7 +62,6 @@
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
-            position: relative;
         }
 
         .guide-nav .nav-link:hover {
@@ -94,19 +77,6 @@
             box-shadow: var(--shadow-sm);
         }
 
-        .guide-nav .nav-link.active::after {
-            content: '';
-            position: absolute;
-            right: -8px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 0;
-            height: 0;
-            border-top: 8px solid transparent;
-            border-bottom: 8px solid transparent;
-            border-left: 8px solid #667eea;
-        }
-
         .content-section {
             background: white;
             border-radius: 12px;
@@ -120,28 +90,77 @@
             box-shadow: var(--shadow-md);
         }
 
+        /* Enhanced Example Container with Tabs */
         .example-container {
             background: #f8f9fa;
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            padding: 1.5rem;
             margin: 1.5rem 0;
-            position: relative;
             overflow: hidden;
+            position: relative;
         }
 
-        .example-container::before {
-            content: 'Live Example';
-            position: absolute;
-            top: -10px;
-            left: 20px;
-            background: #28a745;
+        .example-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 0.75rem;
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .example-title {
             font-weight: 600;
-            text-transform: uppercase;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .example-tabs {
+            background: #e9ecef;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .example-tab {
+            background: none;
+            border: none;
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #495057;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+
+        .example-tab:hover {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+        }
+
+        .example-tab.active {
+            background: white;
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .example-content {
+            position: relative;
+        }
+
+        .example-pane {
+            display: none;
+            padding: 1.5rem;
+        }
+
+        .example-pane.active {
+            display: block;
         }
 
         .example-output {
@@ -149,45 +168,62 @@
             border: 2px dashed #dee2e6;
             border-radius: 8px;
             padding: 1.5rem;
-            margin-top: 1rem;
-            min-height: 50px;
+            min-height: 60px;
         }
 
-        .code-block {
+        .code-container {
             position: relative;
-            margin: 1.5rem 0;
+            background: #2d3748;
             border-radius: 8px;
             overflow: hidden;
-            box-shadow: var(--shadow-sm);
+        }
+
+        .code-header {
+            background: #1a202c;
+            padding: 0.75rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #4a5568;
+        }
+
+        .code-language {
+            color: #a0aec0;
+            font-size: 0.85rem;
+            font-weight: 500;
         }
 
         .copy-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
             background: #28a745;
             color: white;
             border: none;
             border-radius: 6px;
-            padding: 6px 12px;
-            font-size: 0.8rem;
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
             cursor: pointer;
-            opacity: 0.8;
             transition: all 0.3s ease;
-            z-index: 10;
             display: flex;
             align-items: center;
-            gap: 0.25rem;
+            gap: 0.5rem;
         }
 
         .copy-btn:hover {
-            opacity: 1;
-            transform: scale(1.05);
             background: #218838;
+            transform: scale(1.05);
         }
 
         .copy-btn.copied {
             background: #17a2b8;
+        }
+
+        .code-block {
+            margin: 0;
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 1.5rem;
+            background: transparent !important;
         }
 
         .badge-level {
@@ -272,16 +308,16 @@
         .flex-demo-item:nth-child(3) { background: #ffc107; color: #000; }
         .flex-demo-item:nth-child(4) { background: #dc3545; }
 
-        /* Progress indicator */
-        .progress-indicator {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 0%;
-            height: 3px;
-            background: var(--primary-gradient);
-            z-index: 9999;
-            transition: width 0.3s ease;
+        /* Interactive demo controls */
+        .demo-controls {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .demo-controls .form-select {
+            min-width: 150px;
         }
 
         /* Toast notifications */
@@ -323,12 +359,15 @@
             border-radius: 50%;
             width: 50px;
             height: 50px;
-            display: none;
+            display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             transition: all 0.3s ease;
             z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transform: scale(0.8);
         }
 
         .back-to-top:hover {
@@ -337,38 +376,9 @@
         }
 
         .back-to-top.show {
-            display: flex;
-        }
-
-        /* Interactive demo styles */
-        .interactive-demo {
-            border: 2px solid #007bff;
-            border-radius: 8px;
-            padding: 1rem;
-            background: #f8f9fa;
-        }
-
-        .demo-controls {
-            background: white;
-            border-radius: 6px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .property-demo {
-            display: flex;
-            background: #e9ecef;
-            border: 2px dashed #6c757d;
-            border-radius: 6px;
-            min-height: 100px;
-            padding: 0.5rem;
-            margin: 1rem 0;
-        }
-
-        /* Component spacing */
-        .component-demo {
-            margin: 1rem 0;
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1);
         }
 
         /* Responsive adjustments */
@@ -383,45 +393,57 @@
                 padding: 1.5rem;
             }
             
-            .example-container {
-                padding: 1rem;
+            .example-tabs {
+                flex-direction: column;
             }
-        }
-
-        /* Code syntax highlighting enhancements */
-        pre[class*="language-"] {
-            margin: 0;
-            border-radius: 8px;
-        }
-
-        code[class*="language-"] {
-            font-size: 0.9rem;
-            line-height: 1.4;
+            
+            .example-tab {
+                border-bottom: none;
+                border-right: 3px solid transparent;
+            }
+            
+            .example-tab.active {
+                border-bottom: none;
+                border-right-color: #667eea;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Progress Indicator -->
-    <div class="progress-indicator" id="progress-indicator"></div>
-
     <!-- Toast Container -->
     <div class="toast-container" id="toast-container"></div>
 
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
-        <div class="container">
-            <a class="navbar-brand" href="index.html">
-                <i class="bi bi-arrow-left me-2"></i>Flexbox Learning Guide
-            </a>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">
+            <i class="bi bi-code-square me-2"></i>Live Coding Playground
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
             <div class="navbar-nav ms-auto">
-                <a class="nav-link" href="index.html"><i class="bi bi-house me-1"></i>Home</a>
-                <a class="nav-link" href="flexbox-playground.html"><i class="bi bi-grid-3x3 me-1"></i>Flexbox Playground</a>
-                <a class="nav-link" href="html-guide.html"><i class="bi bi-code-slash me-1"></i>HTML Guide</a>
-                <a class="nav-link" href="css-guide.html"><i class="bi bi-palette me-1"></i>CSS Guide</a>
-                <a class="nav-link" href="bootstrap-guide.html"><i class="bi bi-bootstrap me-1"></i>Bootstrap Guide</a>
+                <a class="nav-link" href="#"><i class="bi bi-house me-1"></i>Home</a>
+                <a class="nav-link" href="#"><i class="bi bi-grid-3x3 me-1"></i>Flexbox</a>
+                <a class="nav-link" href="#"><i class="bi bi-code me-1"></i>HTML</a>
+                <a class="nav-link" href="#"><i class="bi bi-bootstrap me-1"></i>Bootstrap</a>
+                <a class="nav-link active" href="#"><i class="bi bi-play-circle me-1"></i>Live Coding</a>
+                <div class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-grid-3x3-gap me-1"></i>More
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#" onclick="showComingSoon('CSS Playground')"><i class="bi bi-palette me-2"></i>CSS Playground</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="showComingSoon('JavaScript Guide')"><i class="bi bi-lightning me-2"></i>JavaScript Guide</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#" onclick="showAbout()"><i class="bi bi-info-circle me-2"></i>About</a></li>
+                    </ul>
+                </div>
             </div>
         </div>
-    </nav>
+    </div>
+</nav>
 
     <!-- Hero Section -->
     <section class="hero-section">
@@ -431,19 +453,23 @@
                     <h1 class="display-5 fw-bold mb-3">
                         <i class="bi bi-grid-3x3 me-3"></i>CSS Flexbox Mastery Guide
                     </h1>
-                    <p class="lead mb-4">Master CSS Flexbox - the powerful one-dimensional layout method that revolutionized web design. Learn through theory, examples, and hands-on practice.</p>
+                    <p class="lead mb-4">Master CSS Flexbox - the powerful one-dimensional layout method that revolutionized web design. Learn through interactive tabbed examples with live preview and source code.</p>
                     <div class="d-flex gap-3 flex-wrap">
-                        <a href="flexbox-playground.html" class="btn btn-light btn-lg">
-                            <i class="bi bi-play-fill me-2"></i>Try Flexbox Playground
-                        </a>
-                        <a href="#introduction" class="btn btn-outline-light btn-lg">
+                        <a href="#introduction" class="btn btn-light btn-lg">
                             <i class="bi bi-book me-2"></i>Start Learning
+                        </a>
+                        <a href="#container-properties" class="btn btn-outline-light btn-lg">
+                            <i class="bi bi-play-fill me-2"></i>Try Examples
                         </a>
                     </div>
                 </div>
                 <div class="col-lg-4 text-center">
                     <div class="d-flex justify-content-center align-items-center" style="height: 200px;">
-                        <i class="bi bi-grid-3x3 display-1 opacity-75"></i>
+                        <div style="display: flex; gap: 10px; align-items: center; justify-content: center; background: rgba(255,255,255,0.1); padding: 2rem; border-radius: 12px;">
+                            <div style="width: 40px; height: 40px; background: #ffffff; border-radius: 6px; opacity: 0.9;"></div>
+                            <div style="width: 40px; height: 60px; background: #ffffff; border-radius: 6px; opacity: 0.8;"></div>
+                            <div style="width: 40px; height: 50px; background: #ffffff; border-radius: 6px; opacity: 0.7;"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -477,12 +503,6 @@
                         <a class="nav-link" href="#responsive-flexbox">
                             <i class="bi bi-phone me-2"></i>Responsive Design
                         </a>
-                        <a class="nav-link" href="#real-world">
-                            <i class="bi bi-globe me-2"></i>Real-world Examples
-                        </a>
-                        <a class="nav-link" href="#troubleshooting">
-                            <i class="bi bi-bug me-2"></i>Troubleshooting
-                        </a>
                         <a class="nav-link" href="#best-practices">
                             <i class="bi bi-check-circle me-2"></i>Best Practices
                         </a>
@@ -494,16 +514,9 @@
             <div class="col-lg-9">
                 <!-- Introduction -->
                 <section id="introduction" class="content-section">
-                    <div class="d-flex align-items-center justify-content-between mb-4">
-                        <div class="d-flex align-items-center">
-                            <h2 class="mb-0">Introduction to Flexbox</h2>
-                            <span class="badge bg-success ms-3 badge-level">Essential</span>
-                        </div>
-                        <div class="d-flex gap-2">
-                            <button class="btn btn-outline-primary btn-sm" onclick="toggleAllExamples()">
-                                <i class="bi bi-eye me-1"></i>Toggle Examples
-                            </button>
-                        </div>
+                    <div class="d-flex align-items-center mb-4">
+                        <h2 class="mb-0">Introduction to Flexbox</h2>
+                        <span class="badge bg-success ms-3 badge-level">Essential</span>
                     </div>
                     
                     <p class="lead">CSS Flexbox (Flexible Box Layout) is a one-dimensional layout method that makes it easy to align and distribute space among items in a container, even when their size is unknown or dynamic.</p>
@@ -520,49 +533,79 @@
                     </div>
 
                     <h4 class="mt-4 mb-3">Before Flexbox vs. After Flexbox</h4>
-                    <div class="row g-4">
-                        <div class="col-md-6">
-                            <h6 class="text-danger">❌ Old Way (Float/Position)</h6>
-                            <div class="code-block">
-                                <button class="copy-btn" onclick="copyCode(this)">
-                                    <i class="bi bi-clipboard"></i>Copy
-                                </button>
-                                <pre><code class="language-css">/* Complex centering */
-.center {
+                    <div class="example-container">
+                        <div class="example-header">
+                            <h6 class="example-title">
+                                <i class="bi bi-code-slash"></i>
+                                Old Way vs. Flexbox Way
+                            </h6>
+                        </div>
+                        <div class="example-tabs">
+                            <button class="example-tab active" onclick="switchTab(this, 'preview')">
+                                <i class="bi bi-eye"></i>Preview
+                            </button>
+                            <button class="example-tab" onclick="switchTab(this, 'code')">
+                                <i class="bi bi-code"></i>CSS Code
+                            </button>
+                        </div>
+                        <div class="example-content">
+                            <div class="example-pane active" data-tab="preview">
+                                <div class="example-output">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <h6 class="text-danger">❌ Old Way (Complex)</h6>
+                                            <div style="position: relative; height: 100px; background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 4px;">
+                                                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #dc3545; color: white; padding: 0.5rem; border-radius: 4px;">
+                                                    Centered Text
+                                                </div>
+                                            </div>
+                                            <small class="text-muted">Complex positioning required</small>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h6 class="text-success">✅ Flexbox Way (Simple)</h6>
+                                            <div style="display: flex; justify-content: center; align-items: center; height: 100px; background: #d4edda; border: 1px solid #c3e6cb; border-radius: 4px;">
+                                                <div style="background: #28a745; color: white; padding: 0.5rem; border-radius: 4px;">
+                                                    Centered Text
+                                                </div>
+                                            </div>
+                                            <small class="text-muted">Just 3 CSS properties!</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="example-pane" data-tab="code">
+                                <div class="code-container">
+                                    <div class="code-header">
+                                        <span class="code-language">CSS</span>
+                                        <button class="copy-btn" onclick="copyCode(this)">
+                                            <i class="bi bi-clipboard"></i>Copy Code
+                                        </button>
+                                    </div>
+                                    <div class="code-block">
+                                        <pre><code class="language-css">/* ❌ Old Way (Complex centering) */
+.old-center {
+    position: relative;
+    height: 100px;
+}
+
+.old-center-content {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
 }
 
-/* Clearfix for floats */
-.clearfix::after {
-    content: "";
-    display: table;
-    clear: both;
-}</code></pre>
-                            </div>
-                            <div class="info-box">
-                                <small><strong>Problems:</strong> Complex code, browser inconsistencies, limited flexibility.</small>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <h6 class="text-success">✅ Flexbox Way</h6>
-                            <div class="code-block">
-                                <button class="copy-btn" onclick="copyCode(this)">
-                                    <i class="bi bi-clipboard"></i>Copy
-                                </button>
-                                <pre><code class="language-css">/* Simple centering */
+/* ✅ Flexbox Way (Simple centering) */
 .flex-center {
     display: flex;
     justify-content: center;
     align-items: center;
+    height: 100px;
 }
 
-/* That's it! */</code></pre>
-                            </div>
-                            <div class="info-box">
-                                <small><strong>Benefits:</strong> Clean code, consistent behavior, powerful alignment.</small>
+/* That's it! Clean, simple, and flexible */</code></pre>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -577,53 +620,99 @@
 
                     <h4>The Flex Model</h4>
                     <div class="example-container">
-                        <div class="text-center mb-3">
-                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 200'%3E%3Crect x='20' y='20' width='360' height='160' fill='%23e9ecef' stroke='%23007bff' stroke-width='2'/%3E%3Ctext x='200' y='15' text-anchor='middle' font-size='12' fill='%23007bff'%3EFlex Container%3C/text%3E%3Crect x='40' y='40' width='80' height='40' fill='%23007bff'/%3E%3Ctext x='80' y='65' text-anchor='middle' font-size='10' fill='white'%3EItem 1%3C/text%3E%3Crect x='140' y='40' width='80' height='40' fill='%2328a745'/%3E%3Ctext x='180' y='65' text-anchor='middle' font-size='10' fill='white'%3EItem 2%3C/text%3E%3Crect x='240' y='40' width='80' height='40' fill='%23ffc107'/%3E%3Ctext x='280' y='65' text-anchor='middle' font-size='10' fill='black'%3EItem 3%3C/text%3E%3Cline x1='40' y1='100' x2='340' y2='100' stroke='%23dc3545' stroke-width='2' marker-end='url(%23arrowhead)'/%3E%3Ctext x='190' y='115' text-anchor='middle' font-size='10' fill='%23dc3545'%3EMain Axis (row)%3C/text%3E%3Cline x1='360' y1='40' x2='360' y2='140' stroke='%2317a2b8' stroke-width='2' marker-end='url(%23arrowhead)'/%3E%3Ctext x='375' y='95' text-anchor='middle' font-size='10' fill='%2317a2b8' transform='rotate(90 375 95)'%3ECross Axis%3C/text%3E%3Cdefs%3E%3Cmarker id='arrowhead' markerWidth='10' markerHeight='7' refX='9' refY='3.5' orient='auto'%3E%3Cpolygon points='0 0, 10 3.5, 0 7' fill='%23dc3545'/%3E%3C/marker%3E%3C/defs%3E%3C/svg%3E" alt="Flexbox Model Diagram" style="max-width: 100%; height: auto;">
+                        <div class="example-header">
+                            <h6 class="example-title">
+                                <i class="bi bi-diagram-3"></i>
+                                Flex Container and Items
+                            </h6>
                         </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <h6>📦 Flex Container (Parent)</h6>
-                                <ul>
-                                    <li>Element with <code>display: flex</code></li>
-                                    <li>Establishes flex formatting context</li>
-                                    <li>Controls how children are laid out</li>
-                                </ul>
-                            </div>
-                            <div class="col-md-6">
-                                <h6>📋 Flex Items (Children)</h6>
-                                <ul>
-                                    <li>Direct children of flex container</li>
-                                    <li>Can grow, shrink, and be aligned</li>
-                                    <li>Participate in flex layout</li>
-                                </ul>
-                            </div>
+                        <div class="example-tabs">
+                            <button class="example-tab active" onclick="switchTab(this, 'preview')">
+                                <i class="bi bi-eye"></i>Preview
+                            </button>
+                            <button class="example-tab" onclick="switchTab(this, 'code')">
+                                <i class="bi bi-code"></i>CSS Code
+                            </button>
                         </div>
-                    </div>
+                        <div class="example-content">
+                            <div class="example-pane active" data-tab="preview">
+                                <div class="example-output">
+                                    <div style="border: 3px solid #007bff; border-radius: 8px; padding: 1rem; background: #e7f3ff; position: relative;">
+                                        <h6 style="color: #007bff; margin-top: 0;">📦 Flex Container (Parent)</h6>
+                                        <div style="display: flex; gap: 0.5rem;">
+                                            <div style="background: #007bff; color: white; padding: 1rem; border-radius: 4px; flex: 1; text-align: center;">
+                                                📋 Flex Item 1
+                                            </div>
+                                            <div style="background: #28a745; color: white; padding: 1rem; border-radius: 4px; flex: 1; text-align: center;">
+                                                📋 Flex Item 2
+                                            </div>
+                                            <div style="background: #ffc107; color: black; padding: 1rem; border-radius: 4px; flex: 1; text-align: center;">
+                                                📋 Flex Item 3
+                                            </div>
+                                        </div>
+                                        <!-- Axis indicators -->
+                                        <div style="position: absolute; bottom: -20px; left: 1rem; right: 1rem; height: 2px; background: #dc3545;"></div>
+                                        <div style="position: absolute; bottom: -35px; left: 50%; transform: translateX(-50%); color: #dc3545; font-size: 0.8rem; background: white; padding: 0 0.5rem;">
+                                            ➡️ Main Axis (justify-content)
+                                        </div>
+                                        <div style="position: absolute; right: -20px; top: 1rem; bottom: 1rem; width: 2px; background: #17a2b8;"></div>
+                                        <div style="position: absolute; right: -80px; top: 50%; transform: translateY(-50%) rotate(90deg); color: #17a2b8; font-size: 0.8rem; background: white; padding: 0 0.5rem; white-space: nowrap;">
+                                            Cross Axis (align-items)
+                                        </div>
+                                    </div>
+                                    <div style="height: 40px;"></div> <!-- Spacer for axis labels -->
+                                    <div class="row mt-3">
+                                        <div class="col-md-6">
+                                            <h6>📦 Flex Container</h6>
+                                            <ul>
+                                                <li>Element with <code>display: flex</code></li>
+                                                <li>Establishes flex formatting context</li>
+                                                <li>Controls layout of children</li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h6>📋 Flex Items</h6>
+                                            <ul>
+                                                <li>Direct children of flex container</li>
+                                                <li>Can grow, shrink, and be aligned</li>
+                                                <li>Participate in flex layout</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="example-pane" data-tab="code">
+                                <div class="code-container">
+                                    <div class="code-header">
+                                        <span class="code-language">CSS</span>
+                                        <button class="copy-btn" onclick="copyCode(this)">
+                                            <i class="bi bi-clipboard"></i>Copy Code
+                                        </button>
+                                    </div>
+                                    <div class="code-block">
+                                        <pre><code class="language-css">/* Create a flex container */
+.flex-container {
+    display: flex;           /* Creates flex formatting context */
+    gap: 0.5rem;            /* Space between items */
+    padding: 1rem;
+    border: 3px solid #007bff;
+    border-radius: 8px;
+}
 
-                    <h4>Axes in Flexbox</h4>
-                    <div class="example-container">
-                        <div class="row g-4">
-                            <div class="col-md-6">
-                                <h6>Main Axis (Primary)</h6>
-                                <div style="display: flex; background: #e9ecef; padding: 1rem; border-radius: 6px; position: relative;">
-                                    <div style="background: #007bff; color: white; padding: 0.5rem; margin-right: 0.5rem; border-radius: 4px;">1</div>
-                                    <div style="background: #28a745; color: white; padding: 0.5rem; margin-right: 0.5rem; border-radius: 4px;">2</div>
-                                    <div style="background: #ffc107; color: black; padding: 0.5rem; border-radius: 4px;">3</div>
-                                    <div style="position: absolute; bottom: -5px; left: 0; right: 0; height: 2px; background: #dc3545;"></div>
+/* Flex items (children) automatically participate */
+.flex-item {
+    flex: 1;                /* Equal width distribution */
+    padding: 1rem;
+    text-align: center;
+    border-radius: 4px;
+}
+
+/* Individual item styling */
+.item-1 { background: #007bff; color: white; }
+.item-2 { background: #28a745; color: white; }
+.item-3 { background: #ffc107; color: black; }</code></pre>
+                                    </div>
                                 </div>
-                                <small class="text-muted">Direction: <code>flex-direction</code><br>
-                                Alignment: <code>justify-content</code></small>
-                            </div>
-                            <div class="col-md-6">
-                                <h6>Cross Axis (Secondary)</h6>
-                                <div style="display: flex; background: #e9ecef; padding: 1rem; border-radius: 6px; height: 80px; position: relative;">
-                                    <div style="background: #007bff; color: white; padding: 0.5rem; margin-right: 0.5rem; border-radius: 4px; align-self: flex-start;">1</div>
-                                    <div style="background: #28a745; color: white; padding: 0.5rem; margin-right: 0.5rem; border-radius: 4px; align-self: center;">2</div>
-                                    <div style="background: #ffc107; color: black; padding: 0.5rem; border-radius: 4px; align-self: flex-end;">3</div>
-                                    <div style="position: absolute; top: 0; bottom: 0; right: -5px; width: 2px; background: #17a2b8;"></div>
-                                </div>
-                                <small class="text-muted">Alignment: <code>align-items</code><br>
-                                Individual: <code>align-self</code></small>
                             </div>
                         </div>
                     </div>
@@ -638,205 +727,276 @@
 
                     <h4>1. display: flex</h4>
                     <div class="example-container">
-                        <div class="code-block">
-                            <button class="copy-btn" onclick="copyCode(this)">
-                                <i class="bi bi-clipboard"></i>Copy
-                            </button>
-                            <pre><code class="language-css">.container {
-    display: flex; /* or inline-flex */
-}</code></pre>
+                        <div class="example-header">
+                            <h6 class="example-title">
+                                <i class="bi bi-box"></i>
+                                Creating a Flex Container
+                            </h6>
                         </div>
-                        <div class="example-output">
-                            <div style="display: flex; background: #e9ecef; padding: 1rem; border-radius: 6px;">
-                                <div class="flex-demo-item">Item 1</div>
-                                <div class="flex-demo-item">Item 2</div>
-                                <div class="flex-demo-item">Item 3</div>
+                        <div class="example-tabs">
+                            <button class="example-tab active" onclick="switchTab(this, 'preview')">
+                                <i class="bi bi-eye"></i>Preview
+                            </button>
+                            <button class="example-tab" onclick="switchTab(this, 'code')">
+                                <i class="bi bi-code"></i>CSS Code
+                            </button>
+                        </div>
+                        <div class="example-content">
+                            <div class="example-pane active" data-tab="preview">
+                                <div class="example-output">
+                                    <div style="display: flex; background: #e9ecef; padding: 1rem; border-radius: 6px; gap: 0.5rem;">
+                                        <div style="background: #007bff; color: white; padding: 1rem; border-radius: 4px; font-weight: 500; text-align: center;">Item 1</div>
+                                        <div style="background: #28a745; color: white; padding: 1rem; border-radius: 4px; font-weight: 500; text-align: center;">Item 2</div>
+                                        <div style="background: #ffc107; color: black; padding: 1rem; border-radius: 4px; font-weight: 500; text-align: center;">Item 3</div>
+                                    </div>
+                                    <small class="text-muted mt-2 d-block">Items automatically line up horizontally</small>
+                                </div>
                             </div>
-                            <small class="text-muted">Items automatically line up horizontally</small>
+                            <div class="example-pane" data-tab="code">
+                                <div class="code-container">
+                                    <div class="code-header">
+                                        <span class="code-language">CSS</span>
+                                        <button class="copy-btn" onclick="copyCode(this)">
+                                            <i class="bi bi-clipboard"></i>Copy Code
+                                        </button>
+                                    </div>
+                                    <div class="code-block">
+                                        <pre><code class="language-css">.container {
+    display: flex;           /* Creates flex container */
+    /* or */
+    display: inline-flex;    /* Inline flex container */
+    
+    gap: 0.5rem;            /* Modern way to add spacing */
+    padding: 1rem;
+    background: #e9ecef;
+    border-radius: 6px;
+}
+
+.item {
+    padding: 1rem;
+    border-radius: 4px;
+    text-align: center;
+}</code></pre>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <h4>2. flex-direction</h4>
+                    <h4>2. justify-content (Main Axis)</h4>
                     <div class="example-container">
-                        <div class="code-block">
-                            <button class="copy-btn" onclick="copyCode(this)">
-                                <i class="bi bi-clipboard"></i>Copy
-                            </button>
-                            <pre><code class="language-css">.container {
-    flex-direction: row;          /* default: left to right */
-    flex-direction: row-reverse;  /* right to left */
-    flex-direction: column;       /* top to bottom */
-    flex-direction: column-reverse; /* bottom to top */
-}</code></pre>
+                        <div class="example-header">
+                            <h6 class="example-title">
+                                <i class="bi bi-arrows-horizontal"></i>
+                                Horizontal Alignment Options
+                            </h6>
                         </div>
-                        <div class="example-output">
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <h6>row (default)</h6>
-                                    <div style="display: flex; flex-direction: row; background: #e9ecef; padding: 0.5rem; border-radius: 4px;">
-                                        <div class="flex-demo-item" style="padding: 0.5rem; margin: 0.25rem;">1</div>
-                                        <div class="flex-demo-item" style="padding: 0.5rem; margin: 0.25rem;">2</div>
-                                        <div class="flex-demo-item" style="padding: 0.5rem; margin: 0.25rem;">3</div>
+                        <div class="example-tabs">
+                            <button class="example-tab active" onclick="switchTab(this, 'preview')">
+                                <i class="bi bi-eye"></i>Interactive Demo
+                            </button>
+                            <button class="example-tab" onclick="switchTab(this, 'code')">
+                                <i class="bi bi-code"></i>CSS Code
+                            </button>
+                        </div>
+                        <div class="example-content">
+                            <div class="example-pane active" data-tab="preview">
+                                <div class="example-output">
+                                    <div class="demo-controls">
+                                        <label for="justify-select" class="form-label">Try different justify-content values:</label>
+                                        <select class="form-select" id="justify-select" onchange="updateJustifyContent(this.value)">
+                                            <option value="flex-start">flex-start (default)</option>
+                                            <option value="center">center</option>
+                                            <option value="flex-end">flex-end</option>
+                                            <option value="space-between">space-between</option>
+                                            <option value="space-around">space-around</option>
+                                            <option value="space-evenly">space-evenly</option>
+                                        </select>
                                     </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <h6>column</h6>
-                                    <div style="display: flex; flex-direction: column; background: #e9ecef; padding: 0.5rem; border-radius: 4px; height: 120px;">
-                                        <div class="flex-demo-item" style="padding: 0.25rem; margin: 0.125rem;">1</div>
-                                        <div class="flex-demo-item" style="padding: 0.25rem; margin: 0.125rem;">2</div>
-                                        <div class="flex-demo-item" style="padding: 0.25rem; margin: 0.125rem;">3</div>
+                                    <div id="justify-demo" style="display: flex; justify-content: flex-start; background: #e9ecef; padding: 1rem; border-radius: 4px; min-height: 80px; align-items: center;">
+                                        <div style="background: #007bff; color: white; padding: 0.75rem; border-radius: 4px; min-width: 60px; text-align: center;">1</div>
+                                        <div style="background: #28a745; color: white; padding: 0.75rem; border-radius: 4px; min-width: 60px; text-align: center;">2</div>
+                                        <div style="background: #ffc107; color: black; padding: 0.75rem; border-radius: 4px; min-width: 60px; text-align: center;">3</div>
                                     </div>
+                                    <small class="text-muted mt-2 d-block">Select different values to see how items align horizontally</small>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-
-                    <h4>3. justify-content (Main Axis)</h4>
-                    <div class="example-container">
-                        <div class="code-block">
-                            <button class="copy-btn" onclick="copyCode(this)">
-                                <i class="bi bi-clipboard"></i>Copy
-                            </button>
-                            <pre><code class="language-css">.container {
+                            <div class="example-pane" data-tab="code">
+                                <div class="code-container">
+                                    <div class="code-header">
+                                        <span class="code-language">CSS</span>
+                                        <button class="copy-btn" onclick="copyCode(this)">
+                                            <i class="bi bi-clipboard"></i>Copy Code
+                                        </button>
+                                    </div>
+                                    <div class="code-block">
+                                        <pre><code class="language-css">.container {
+    display: flex;
+    
+    /* Main axis alignment options: */
     justify-content: flex-start;    /* default: start of container */
     justify-content: flex-end;      /* end of container */
     justify-content: center;        /* center of container */
     justify-content: space-between; /* space between items */
     justify-content: space-around;  /* space around items */
     justify-content: space-evenly;  /* equal space everywhere */
+}
+
+/* Most common usage: */
+.center-content {
+    display: flex;
+    justify-content: center;
+}
+
+.spread-items {
+    display: flex;
+    justify-content: space-between;
 }</code></pre>
-                        </div>
-                        <div class="example-output">
-                            <div class="row g-2">
-                                <div class="col-md-6">
-                                    <h6 class="small">center</h6>
-                                    <div style="display: flex; justify-content: center; background: #e9ecef; padding: 0.5rem; border-radius: 4px;">
-                                        <div class="flex-demo-item" style="padding: 0.5rem; margin: 0.125rem; min-width: 40px;">1</div>
-                                        <div class="flex-demo-item" style="padding: 0.5rem; margin: 0.125rem; min-width: 40px;">2</div>
-                                        <div class="flex-demo-item" style="padding: 0.5rem; margin: 0.125rem; min-width: 40px;">3</div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <h6 class="small">space-between</h6>
-                                    <div style="display: flex; justify-content: space-between; background: #e9ecef; padding: 0.5rem; border-radius: 4px;">
-                                        <div class="flex-demo-item" style="padding: 0.5rem; margin: 0; min-width: 40px;">1</div>
-                                        <div class="flex-demo-item" style="padding: 0.5rem; margin: 0; min-width: 40px;">2</div>
-                                        <div class="flex-demo-item" style="padding: 0.5rem; margin: 0; min-width: 40px;">3</div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <h6 class="small">space-around</h6>
-                                    <div style="display: flex; justify-content: space-around; background: #e9ecef; padding: 0.5rem; border-radius: 4px;">
-                                        <div class="flex-demo-item" style="padding: 0.5rem; margin: 0; min-width: 40px;">1</div>
-                                        <div class="flex-demo-item" style="padding: 0.5rem; margin: 0; min-width: 40px;">2</div>
-                                        <div class="flex-demo-item" style="padding: 0.5rem; margin: 0; min-width: 40px;">3</div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <h6 class="small">space-evenly</h6>
-                                    <div style="display: flex; justify-content: space-evenly; background: #e9ecef; padding: 0.5rem; border-radius: 4px;">
-                                        <div class="flex-demo-item" style="padding: 0.5rem; margin: 0; min-width: 40px;">1</div>
-                                        <div class="flex-demo-item" style="padding: 0.5rem; margin: 0; min-width: 40px;">2</div>
-                                        <div class="flex-demo-item" style="padding: 0.5rem; margin: 0; min-width: 40px;">3</div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <h4>4. align-items (Cross Axis)</h4>
+                    <h4>3. align-items (Cross Axis)</h4>
                     <div class="example-container">
-                        <div class="code-block">
-                            <button class="copy-btn" onclick="copyCode(this)">
-                                <i class="bi bi-clipboard"></i>Copy
+                        <div class="example-header">
+                            <h6 class="example-title">
+                                <i class="bi bi-arrows-vertical"></i>
+                                Vertical Alignment Options
+                            </h6>
+                        </div>
+                        <div class="example-tabs">
+                            <button class="example-tab active" onclick="switchTab(this, 'preview')">
+                                <i class="bi bi-eye"></i>Interactive Demo
                             </button>
-                            <pre><code class="language-css">.container {
+                            <button class="example-tab" onclick="switchTab(this, 'code')">
+                                <i class="bi bi-code"></i>CSS Code
+                            </button>
+                        </div>
+                        <div class="example-content">
+                            <div class="example-pane active" data-tab="preview">
+                                <div class="example-output">
+                                    <div class="demo-controls">
+                                        <label for="align-select" class="form-label">Try different align-items values:</label>
+                                        <select class="form-select" id="align-select" onchange="updateAlignItems(this.value)">
+                                            <option value="stretch">stretch (default)</option>
+                                            <option value="flex-start">flex-start</option>
+                                            <option value="center">center</option>
+                                            <option value="flex-end">flex-end</option>
+                                            <option value="baseline">baseline</option>
+                                        </select>
+                                    </div>
+                                    <div id="align-demo" style="display: flex; align-items: stretch; background: #e9ecef; padding: 1rem; border-radius: 4px; height: 120px; gap: 0.5rem;">
+                                        <div style="background: #007bff; color: white; padding: 0.5rem; border-radius: 4px; display: flex; align-items: center; justify-content: center;">Item 1</div>
+                                        <div style="background: #28a745; color: white; padding: 1.5rem 0.5rem; border-radius: 4px; display: flex; align-items: center; justify-content: center;">Tall Item</div>
+                                        <div style="background: #ffc107; color: black; padding: 0.5rem; border-radius: 4px; display: flex; align-items: center; justify-content: center;">Item 3</div>
+                                    </div>
+                                    <small class="text-muted mt-2 d-block">Select different values to see how items align vertically</small>
+                                </div>
+                            </div>
+                            <div class="example-pane" data-tab="code">
+                                <div class="code-container">
+                                    <div class="code-header">
+                                        <span class="code-language">CSS</span>
+                                        <button class="copy-btn" onclick="copyCode(this)">
+                                            <i class="bi bi-clipboard"></i>Copy Code
+                                        </button>
+                                    </div>
+                                    <div class="code-block">
+                                        <pre><code class="language-css">.container {
+    display: flex;
+    height: 100px;          /* Need height for vertical alignment */
+    
+    /* Cross axis alignment options: */
     align-items: stretch;    /* default: fill container height */
-    align-items: flex-start; /* align to start */
-    align-items: flex-end;   /* align to end */
+    align-items: flex-start; /* align to top */
+    align-items: flex-end;   /* align to bottom */
     align-items: center;     /* center alignment */
     align-items: baseline;   /* align to text baseline */
+}
+
+/* Perfect centering (both axes): */
+.perfect-center {
+    display: flex;
+    justify-content: center;  /* horizontal center */
+    align-items: center;      /* vertical center */
+    height: 100vh;           /* full viewport height */
 }</code></pre>
-                        </div>
-                        <div class="example-output">
-                            <div class="row g-2">
-                                <div class="col-md-6">
-                                    <h6 class="small">center</h6>
-                                    <div style="display: flex; align-items: center; background: #e9ecef; padding: 0.5rem; border-radius: 4px; height: 80px;">
-                                        <div class="flex-demo-item" style="padding: 0.5rem; margin: 0.125rem;">1</div>
-                                        <div class="flex-demo-item" style="padding: 1rem; margin: 0.125rem;">2 Tall</div>
-                                        <div class="flex-demo-item" style="padding: 0.5rem; margin: 0.125rem;">3</div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <h6 class="small">flex-start</h6>
-                                    <div style="display: flex; align-items: flex-start; background: #e9ecef; padding: 0.5rem; border-radius: 4px; height: 80px;">
-                                        <div class="flex-demo-item" style="padding: 0.5rem; margin: 0.125rem;">1</div>
-                                        <div class="flex-demo-item" style="padding: 1rem; margin: 0.125rem;">2 Tall</div>
-                                        <div class="flex-demo-item" style="padding: 0.5rem; margin: 0.125rem;">3</div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <h4>5. flex-wrap</h4>
+                    <h4>4. flex-direction</h4>
                     <div class="example-container">
-                        <div class="code-block">
-                            <button class="copy-btn" onclick="copyCode(this)">
-                                <i class="bi bi-clipboard"></i>Copy
-                            </button>
-                            <pre><code class="language-css">.container {
-    flex-wrap: nowrap;    /* default: single line */
-    flex-wrap: wrap;      /* wrap to new lines */
-    flex-wrap: wrap-reverse; /* wrap in reverse */
-}</code></pre>
+                        <div class="example-header">
+                            <h6 class="example-title">
+                                <i class="bi bi-arrow-up-right"></i>
+                                Layout Direction Control
+                            </h6>
                         </div>
-                        <div class="example-output">
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <h6 class="small">nowrap (default)</h6>
-                                    <div style="display: flex; flex-wrap: nowrap; background: #e9ecef; padding: 0.5rem; border-radius: 4px; width: 200px; overflow: hidden;">
-                                        <div class="flex-demo-item" style="padding: 0.5rem; margin: 0.125rem; min-width: 60px; flex-shrink: 1;">1</div>
-                                        <div class="flex-demo-item" style="padding: 0.5rem; margin: 0.125rem; min-width: 60px; flex-shrink: 1;">2</div>
-                                        <div class="flex-demo-item" style="padding: 0.5rem; margin: 0.125rem; min-width: 60px; flex-shrink: 1;">3</div>
-                                        <div class="flex-demo-item" style="padding: 0.5rem; margin: 0.125rem; min-width: 60px; flex-shrink: 1;">4</div>
+                        <div class="example-tabs">
+                            <button class="example-tab active" onclick="switchTab(this, 'preview')">
+                                <i class="bi bi-eye"></i>Interactive Demo
+                            </button>
+                            <button class="example-tab" onclick="switchTab(this, 'code')">
+                                <i class="bi bi-code"></i>CSS Code
+                            </button>
+                        </div>
+                        <div class="example-content">
+                            <div class="example-pane active" data-tab="preview">
+                                <div class="example-output">
+                                    <div class="demo-controls">
+                                        <label for="direction-select" class="form-label">Try different flex-direction values:</label>
+                                        <select class="form-select" id="direction-select" onchange="updateFlexDirection(this.value)">
+                                            <option value="row">row (default)</option>
+                                            <option value="row-reverse">row-reverse</option>
+                                            <option value="column">column</option>
+                                            <option value="column-reverse">column-reverse</option>
+                                        </select>
                                     </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <h6 class="small">wrap</h6>
-                                    <div style="display: flex; flex-wrap: wrap; background: #e9ecef; padding: 0.5rem; border-radius: 4px; width: 200px;">
-                                        <div class="flex-demo-item" style="padding: 0.5rem; margin: 0.125rem; min-width: 60px;">1</div>
-                                        <div class="flex-demo-item" style="padding: 0.5rem; margin: 0.125rem; min-width: 60px;">2</div>
-                                        <div class="flex-demo-item" style="padding: 0.5rem; margin: 0.125rem; min-width: 60px;">3</div>
-                                        <div class="flex-demo-item" style="padding: 0.5rem; margin: 0.125rem; min-width: 60px;">4</div>
+                                    <div id="direction-demo" style="display: flex; flex-direction: row; background: #e9ecef; padding: 1rem; border-radius: 4px; gap: 0.5rem; min-height: 120px;">
+                                        <div style="background: #007bff; color: white; padding: 1rem; border-radius: 4px; min-width: 80px; text-align: center;">First</div>
+                                        <div style="background: #28a745; color: white; padding: 1rem; border-radius: 4px; min-width: 80px; text-align: center;">Second</div>
+                                        <div style="background: #ffc107; color: black; padding: 1rem; border-radius: 4px; min-width: 80px; text-align: center;">Third</div>
                                     </div>
+                                    <small class="text-muted mt-2 d-block">Select different values to see how the layout direction changes</small>
                                 </div>
                             </div>
-                        </div>
-                    </div>
+                            <div class="example-pane" data-tab="code">
+                                <div class="code-container">
+                                    <div class="code-header">
+                                        <span class="code-language">CSS</span>
+                                        <button class="copy-btn" onclick="copyCode(this)">
+                                            <i class="bi bi-clipboard"></i>Copy Code
+                                        </button>
+                                    </div>
+                                    <div class="code-block">
+                                        <pre><code class="language-css">.container {
+    display: flex;
+    
+    /* Direction options: */
+    flex-direction: row;         /* default: left to right */
+    flex-direction: row-reverse; /* right to left */
+    flex-direction: column;      /* top to bottom */
+    flex-direction: column-reverse; /* bottom to top */
+}
 
-                    <h4>6. gap (Modern)</h4>
-                    <div class="example-container">
-                        <div class="code-block">
-                            <button class="copy-btn" onclick="copyCode(this)">
-                                <i class="bi bi-clipboard"></i>Copy
-                            </button>
-                            <pre><code class="language-css">.container {
-    gap: 1rem;           /* uniform gap */
-    gap: 1rem 2rem;      /* row-gap column-gap */
-    row-gap: 1rem;       /* space between rows */
-    column-gap: 2rem;    /* space between columns */
+/* Responsive direction example */
+.responsive-direction {
+    flex-direction: column;  /* Mobile: stack vertically */
+}
+
+@media (min-width: 768px) {
+    .responsive-direction {
+        flex-direction: row;  /* Desktop: side by side */
+    }
 }</code></pre>
-                        </div>
-                        <div class="example-output">
-                            <div style="display: flex; flex-wrap: wrap; gap: 1rem; background: #e9ecef; padding: 1rem; border-radius: 4px;">
-                                <div class="flex-demo-item" style="margin: 0;">1</div>
-                                <div class="flex-demo-item" style="margin: 0;">2</div>
-                                <div class="flex-demo-item" style="margin: 0;">3</div>
-                                <div class="flex-demo-item" style="margin: 0;">4</div>
+                                    </div>
+                                </div>
                             </div>
-                            <small class="text-muted mt-2 d-block">Clean spacing without margins</small>
                         </div>
                     </div>
                 </section>
@@ -850,139 +1010,145 @@
 
                     <h4>1. flex-grow</h4>
                     <div class="example-container">
-                        <div class="code-block">
-                            <button class="copy-btn" onclick="copyCode(this)">
-                                <i class="bi bi-clipboard"></i>Copy
-                            </button>
-                            <pre><code class="language-css">.item {
-    flex-grow: 0;  /* default: don't grow */
-    flex-grow: 1;  /* grow to fill space */
-    flex-grow: 2;  /* grow twice as much */
-}</code></pre>
+                        <div class="example-header">
+                            <h6 class="example-title">
+                                <i class="bi bi-arrows-expand"></i>
+                                Growing Items to Fill Space
+                            </h6>
                         </div>
-                        <div class="example-output">
-                            <div style="display: flex; background: #e9ecef; padding: 0.5rem; border-radius: 4px;">
-                                <div style="background: #007bff; color: white; padding: 0.5rem; margin: 0.125rem; border-radius: 4px; flex-grow: 0;">grow: 0</div>
-                                <div style="background: #28a745; color: white; padding: 0.5rem; margin: 0.125rem; border-radius: 4px; flex-grow: 1;">grow: 1</div>
-                                <div style="background: #ffc107; color: black; padding: 0.5rem; margin: 0.125rem; border-radius: 4px; flex-grow: 2;">grow: 2</div>
+                        <div class="example-tabs">
+                            <button class="example-tab active" onclick="switchTab(this, 'preview')">
+                                <i class="bi bi-eye"></i>Preview
+                            </button>
+                            <button class="example-tab" onclick="switchTab(this, 'code')">
+                                <i class="bi bi-code"></i>CSS Code
+                            </button>
+                        </div>
+                        <div class="example-content">
+                            <div class="example-pane active" data-tab="preview">
+                                <div class="example-output">
+                                    <div style="display: flex; background: #e9ecef; padding: 0.5rem; border-radius: 4px; gap: 0.5rem;">
+                                        <div style="background: #007bff; color: white; padding: 0.5rem; border-radius: 4px; flex-grow: 0; text-align: center; min-width: 80px;">grow: 0</div>
+                                        <div style="background: #28a745; color: white; padding: 0.5rem; border-radius: 4px; flex-grow: 1; text-align: center;">grow: 1</div>
+                                        <div style="background: #ffc107; color: black; padding: 0.5rem; border-radius: 4px; flex-grow: 2; text-align: center;">grow: 2</div>
+                                    </div>
+                                    <small class="text-muted mt-2 d-block">Item 3 grows twice as much as Item 2</small>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-
-                    <h4>2. flex-shrink</h4>
-                    <div class="example-container">
-                        <div class="code-block">
-                            <button class="copy-btn" onclick="copyCode(this)">
-                                <i class="bi bi-clipboard"></i>Copy
-                            </button>
-                            <pre><code class="language-css">.item {
-    flex-shrink: 1;  /* default: shrink if needed */
-    flex-shrink: 0;  /* don't shrink */
-    flex-shrink: 2;  /* shrink twice as much */
-}</code></pre>
-                        </div>
-                        <div class="example-output">
-                            <div style="display: flex; background: #e9ecef; padding: 0.5rem; border-radius: 4px; width: 300px;">
-                                <div style="background: #007bff; color: white; padding: 0.5rem; margin: 0.125rem; border-radius: 4px; flex-shrink: 0; min-width: 120px;">no shrink</div>
-                                <div style="background: #28a745; color: white; padding: 0.5rem; margin: 0.125rem; border-radius: 4px; flex-shrink: 1; min-width: 120px;">shrink: 1</div>
-                                <div style="background: #ffc107; color: black; padding: 0.5rem; margin: 0.125rem; border-radius: 4px; flex-shrink: 2; min-width: 120px;">shrink: 2</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <h4>3. flex-basis</h4>
-                    <div class="example-container">
-                        <div class="code-block">
-                            <button class="copy-btn" onclick="copyCode(this)">
-                                <i class="bi bi-clipboard"></i>Copy
-                            </button>
-                            <pre><code class="language-css">.item {
-    flex-basis: auto;    /* default: use width/height */
-    flex-basis: 200px;   /* initial size before growing/shrinking */
-    flex-basis: 20%;     /* percentage of container */
-    flex-basis: 0;       /* ignore intrinsic size */
-}</code></pre>
-                        </div>
-                        <div class="example-output">
-                            <div style="display: flex; background: #e9ecef; padding: 0.5rem; border-radius: 4px;">
-                                <div style="background: #007bff; color: white; padding: 0.5rem; margin: 0.125rem; border-radius: 4px; flex-basis: 100px;">100px</div>
-                                <div style="background: #28a745; color: white; padding: 0.5rem; margin: 0.125rem; border-radius: 4px; flex-basis: 150px;">150px</div>
-                                <div style="background: #ffc107; color: black; padding: 0.5rem; margin: 0.125rem; border-radius: 4px; flex-basis: 80px;">80px</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <h4>4. flex Shorthand</h4>
-                    <div class="example-container">
-                        <div class="code-block">
-                            <button class="copy-btn" onclick="copyCode(this)">
-                                <i class="bi bi-clipboard"></i>Copy
-                            </button>
-                            <pre><code class="language-css">.item {
-    flex: 1;              /* flex-grow: 1, flex-shrink: 1, flex-basis: 0% */
-    flex: 0 0 200px;      /* don't grow/shrink, 200px wide */
-    flex: 1 1 auto;       /* grow and shrink, auto basis */
-    flex: none;           /* same as 0 0 auto */
-}</code></pre>
-                        </div>
-                        <div class="warning-box">
-                            <h6><i class="bi bi-exclamation-triangle text-warning me-2"></i>Common Values</h6>
-                            <ul class="mb-0">
-                                <li><code>flex: 1</code> - Item takes up available space</li>
-                                <li><code>flex: 0 0 auto</code> - Item keeps its natural size</li>
-                                <li><code>flex: 1 1 0%</code> - All items have equal width</li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <h4>5. align-self</h4>
-                    <div class="example-container">
-                        <div class="code-block">
-                            <button class="copy-btn" onclick="copyCode(this)">
-                                <i class="bi bi-clipboard"></i>Copy
-                            </button>
-                            <pre><code class="language-css">.item {
-    align-self: auto;       /* inherit from container */
-    align-self: flex-start; /* align to start */
-    align-self: flex-end;   /* align to end */
-    align-self: center;     /* center align */
-    align-self: stretch;    /* stretch to fill */
-}</code></pre>
-                        </div>
-                        <div class="example-output">
-                            <div style="display: flex; align-items: center; background: #e9ecef; padding: 0.5rem; border-radius: 4px; height: 100px;">
-                                <div style="background: #007bff; color: white; padding: 0.5rem; margin: 0.125rem; border-radius: 4px; align-self: flex-start;">start</div>
-                                <div style="background: #28a745; color: white; padding: 0.5rem; margin: 0.125rem; border-radius: 4px; align-self: center;">center</div>
-                                <div style="background: #ffc107; color: black; padding: 0.5rem; margin: 0.125rem; border-radius: 4px; align-self: flex-end;">end</div>
-                                <div style="background: #dc3545; color: white; padding: 0.5rem; margin: 0.125rem; border-radius: 4px; align-self: stretch;">stretch</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <h4>6. order</h4>
-                    <div class="example-container">
-                        <div class="code-block">
-                            <button class="copy-btn" onclick="copyCode(this)">
-                                <i class="bi bi-clipboard"></i>Copy
-                            </button>
-                            <pre><code class="language-css">.item {
-    order: 0;   /* default order */
-    order: 1;   /* appears later */
-    order: -1;  /* appears earlier */
+                            <div class="example-pane" data-tab="code">
+                                <div class="code-container">
+                                    <div class="code-header">
+                                        <span class="code-language">CSS</span>
+                                        <button class="copy-btn" onclick="copyCode(this)">
+                                            <i class="bi bi-clipboard"></i>Copy Code
+                                        </button>
+                                    </div>
+                                    <div class="code-block">
+                                        <pre><code class="language-css">.container {
+    display: flex;
+    gap: 0.5rem;
 }
 
-/* Example: Reorder without changing HTML */
-.item-1 { order: 3; }
-.item-2 { order: 1; }
-.item-3 { order: 2; }</code></pre>
-                        </div>
-                        <div class="example-output">
-                            <div style="display: flex; background: #e9ecef; padding: 0.5rem; border-radius: 4px;">
-                                <div style="background: #007bff; color: white; padding: 0.5rem; margin: 0.125rem; border-radius: 4px; order: 3;">Item 1 (order: 3)</div>
-                                <div style="background: #28a745; color: white; padding: 0.5rem; margin: 0.125rem; border-radius: 4px; order: 1;">Item 2 (order: 1)</div>
-                                <div style="background: #ffc107; color: black; padding: 0.5rem; margin: 0.125rem; border-radius: 4px; order: 2;">Item 3 (order: 2)</div>
+.item-1 {
+    flex-grow: 0;  /* Don't grow (keep natural size) */
+}
+
+.item-2 {
+    flex-grow: 1;  /* Grow to fill available space */
+}
+
+.item-3 {
+    flex-grow: 2;  /* Grow twice as much as item-2 */
+}
+
+/* Common pattern: equal width items */
+.equal-items {
+    flex-grow: 1;  /* All items grow equally */
+}</code></pre>
+                                    </div>
+                                </div>
                             </div>
-                            <small class="text-muted mt-2 d-block">Visual order: 2, 3, 1 (despite HTML order: 1, 2, 3)</small>
+                        </div>
+                    </div>
+
+                    <h4>2. flex Shorthand</h4>
+                    <div class="example-container">
+                        <div class="example-header">
+                            <h6 class="example-title">
+                                <i class="bi bi-speedometer2"></i>
+                                Common Flex Patterns
+                            </h6>
+                        </div>
+                        <div class="example-tabs">
+                            <button class="example-tab active" onclick="switchTab(this, 'preview')">
+                                <i class="bi bi-eye"></i>Preview
+                            </button>
+                            <button class="example-tab" onclick="switchTab(this, 'code')">
+                                <i class="bi bi-code"></i>CSS Code
+                            </button>
+                        </div>
+                        <div class="example-content">
+                            <div class="example-pane active" data-tab="preview">
+                                <div class="example-output">
+                                    <div class="row g-3">
+                                        <div class="col-12">
+                                            <h6>flex: 1 (Equal distribution)</h6>
+                                            <div style="display: flex; background: #e9ecef; padding: 0.5rem; border-radius: 4px; gap: 0.5rem;">
+                                                <div style="background: #007bff; color: white; padding: 0.5rem; border-radius: 4px; flex: 1; text-align: center;">Item 1</div>
+                                                <div style="background: #28a745; color: white; padding: 0.5rem; border-radius: 4px; flex: 1; text-align: center;">Item 2</div>
+                                                <div style="background: #ffc107; color: black; padding: 0.5rem; border-radius: 4px; flex: 1; text-align: center;">Item 3</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <h6>flex: 0 0 auto (Natural size)</h6>
+                                            <div style="display: flex; background: #e9ecef; padding: 0.5rem; border-radius: 4px; gap: 0.5rem;">
+                                                <div style="background: #007bff; color: white; padding: 0.5rem; border-radius: 4px; flex: 0 0 auto; text-align: center;">Short</div>
+                                                <div style="background: #28a745; color: white; padding: 0.5rem; border-radius: 4px; flex: 0 0 auto; text-align: center;">Medium Content</div>
+                                                <div style="background: #ffc107; color: black; padding: 0.5rem; border-radius: 4px; flex: 0 0 auto; text-align: center;">Very Long Content Here</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="example-pane" data-tab="code">
+                                <div class="code-container">
+                                    <div class="code-header">
+                                        <span class="code-language">CSS</span>
+                                        <button class="copy-btn" onclick="copyCode(this)">
+                                            <i class="bi bi-clipboard"></i>Copy Code
+                                        </button>
+                                    </div>
+                                    <div class="code-block">
+                                        <pre><code class="language-css">/* Flex shorthand: flex-grow flex-shrink flex-basis */
+
+.equal-width {
+    flex: 1;              /* flex: 1 1 0% - equal distribution */
+}
+
+.natural-size {
+    flex: 0 0 auto;       /* Don't grow/shrink, use natural size */
+    /* Same as: flex: none; */
+}
+
+.fixed-width {
+    flex: 0 0 200px;      /* Fixed 200px width, no grow/shrink */
+}
+
+.grow-shrink {
+    flex: 1 1 auto;       /* Grow and shrink from natural size */
+}
+
+/* Most common patterns: */
+.sidebar {
+    flex: 0 0 250px;      /* Fixed sidebar width */
+}
+
+.main-content {
+    flex: 1;              /* Takes remaining space */
+}</code></pre>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -996,123 +1162,230 @@
 
                     <h4>Perfect Centering</h4>
                     <div class="example-container">
-                        <div class="code-block">
-                            <button class="copy-btn" onclick="copyCode(this)">
-                                <i class="bi bi-clipboard"></i>Copy
+                        <div class="example-header">
+                            <h6 class="example-title">
+                                <i class="bi bi-bullseye"></i>
+                                Center Anything Perfectly
+                            </h6>
+                        </div>
+                        <div class="example-tabs">
+                            <button class="example-tab active" onclick="switchTab(this, 'preview')">
+                                <i class="bi bi-eye"></i>Preview
                             </button>
-                            <pre><code class="language-css">.center-everything {
+                            <button class="example-tab" onclick="switchTab(this, 'code')">
+                                <i class="bi bi-code"></i>CSS Code
+                            </button>
+                        </div>
+                        <div class="example-content">
+                            <div class="example-pane active" data-tab="preview">
+                                <div class="example-output">
+                                    <div style="display: flex; justify-content: center; align-items: center; background: #e9ecef; height: 150px; border-radius: 4px;">
+                                        <div style="background: #007bff; color: white; padding: 1rem; border-radius: 4px; text-align: center;">
+                                            🎯 Perfectly Centered<br>
+                                            <small>Horizontally & Vertically</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="example-pane" data-tab="code">
+                                <div class="code-container">
+                                    <div class="code-header">
+                                        <span class="code-language">CSS</span>
+                                        <button class="copy-btn" onclick="copyCode(this)">
+                                            <i class="bi bi-clipboard"></i>Copy Code
+                                        </button>
+                                    </div>
+                                    <div class="code-block">
+                                        <pre><code class="language-css">.center-everything {
     display: flex;
-    justify-content: center;  /* horizontal */
-    align-items: center;      /* vertical */
+    justify-content: center;  /* horizontal centering */
+    align-items: center;      /* vertical centering */
     height: 100vh;            /* full viewport height */
-}</code></pre>
-                        </div>
-                        <div class="example-output">
-                            <div style="display: flex; justify-content: center; align-items: center; background: #e9ecef; height: 120px; border-radius: 4px;">
-                                <div style="background: #007bff; color: white; padding: 1rem; border-radius: 4px;">🎯 Perfectly Centered</div>
-                            </div>
-                        </div>
-                    </div>
+}
 
-                    <h4>Equal Height Cards</h4>
-                    <div class="example-container">
-                        <div class="code-block">
-                            <button class="copy-btn" onclick="copyCode(this)">
-                                <i class="bi bi-clipboard"></i>Copy
-                            </button>
-                            <pre><code class="language-css">.card-container {
+/* Works for any content: text, images, entire layouts */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     display: flex;
-    gap: 1rem;
-}
-
-.card {
-    flex: 1;                  /* equal width */
-    display: flex;
-    flex-direction: column;
-}
-
-.card-content {
-    flex: 1;                  /* push footer to bottom */
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.5);
 }</code></pre>
-                        </div>
-                        <div class="example-output">
-                            <div style="display: flex; gap: 1rem;">
-                                <div style="flex: 1; display: flex; flex-direction: column; background: white; border: 1px solid #dee2e6; border-radius: 4px; padding: 1rem;">
-                                    <h6>Card 1</h6>
-                                    <div style="flex: 1;">Short content</div>
-                                    <button class="btn btn-primary btn-sm mt-2">Action</button>
+                                    </div>
                                 </div>
-                                <div style="flex: 1; display: flex; flex-direction: column; background: white; border: 1px solid #dee2e6; border-radius: 4px; padding: 1rem;">
-                                    <h6>Card 2</h6>
-                                    <div style="flex: 1;">Much longer content that takes up more space in this card</div>
-                                    <button class="btn btn-primary btn-sm mt-2">Action</button>
-                                </div>
-                                <div style="flex: 1; display: flex; flex-direction: column; background: white; border: 1px solid #dee2e6; border-radius: 4px; padding: 1rem;">
-                                    <h6>Card 3</h6>
-                                    <div style="flex: 1;">Medium content</div>
-                                    <button class="btn btn-primary btn-sm mt-2">Action</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <h4>Sticky Footer Layout</h4>
-                    <div class="example-container">
-                        <div class="code-block">
-                            <button class="copy-btn" onclick="copyCode(this)">
-                                <i class="bi bi-clipboard"></i>Copy
-                            </button>
-                            <pre><code class="language-css">body {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-}
-
-main {
-    flex: 1;  /* main content grows to fill space */
-}
-
-footer {
-    /* footer stays at bottom */
-}</code></pre>
-                        </div>
-                        <div class="example-output">
-                            <div style="display: flex; flex-direction: column; height: 200px; border: 1px solid #dee2e6; border-radius: 4px;">
-                                <div style="background: #007bff; color: white; padding: 0.5rem;">Header</div>
-                                <div style="flex: 1; background: #f8f9fa; padding: 1rem; display: flex; align-items: center; justify-content: center;">
-                                    Main content grows to fill space
-                                </div>
-                                <div style="background: #6c757d; color: white; padding: 0.5rem;">Footer stays at bottom</div>
                             </div>
                         </div>
                     </div>
 
                     <h4>Navigation Bar</h4>
                     <div class="example-container">
-                        <div class="code-block">
-                            <button class="copy-btn" onclick="copyCode(this)">
-                                <i class="bi bi-clipboard"></i>Copy
+                        <div class="example-header">
+                            <h6 class="example-title">
+                                <i class="bi bi-compass"></i>
+                                Responsive Navigation Layout
+                            </h6>
+                        </div>
+                        <div class="example-tabs">
+                            <button class="example-tab active" onclick="switchTab(this, 'preview')">
+                                <i class="bi bi-eye"></i>Preview
                             </button>
-                            <pre><code class="language-css">.navbar {
+                            <button class="example-tab" onclick="switchTab(this, 'code')">
+                                <i class="bi bi-code"></i>CSS Code
+                            </button>
+                        </div>
+                        <div class="example-content">
+                            <div class="example-pane active" data-tab="preview">
+                                <div class="example-output">
+                                    <nav style="display: flex; justify-content: space-between; align-items: center; background: #343a40; color: white; padding: 1rem; border-radius: 4px;">
+                                        <div style="font-weight: bold; font-size: 1.2rem;">🏠 MyBrand</div>
+                                        <div style="display: flex; gap: 1.5rem; align-items: center;">
+                                            <a href="#" style="color: white; text-decoration: none;">Home</a>
+                                            <a href="#" style="color: white; text-decoration: none;">About</a>
+                                            <a href="#" style="color: white; text-decoration: none;">Services</a>
+                                            <a href="#" style="color: white; text-decoration: none;">Contact</a>
+                                            <button style="background: #007bff; color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px;">Login</button>
+                                        </div>
+                                    </nav>
+                                </div>
+                            </div>
+                            <div class="example-pane" data-tab="code">
+                                <div class="code-container">
+                                    <div class="code-header">
+                                        <span class="code-language">CSS</span>
+                                        <button class="copy-btn" onclick="copyCode(this)">
+                                            <i class="bi bi-clipboard"></i>Copy Code
+                                        </button>
+                                    </div>
+                                    <div class="code-block">
+                                        <pre><code class="language-css">.navbar {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    justify-content: space-between;  /* Logo left, menu right */
+    align-items: center;             /* Vertical center alignment */
     padding: 1rem;
+    background: #343a40;
+    color: white;
 }
 
-.nav-links {
+.logo {
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.nav-menu {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+.nav-link {
+    color: white;
+    text-decoration: none;
+    transition: opacity 0.3s;
+}
+
+.nav-link:hover {
+    opacity: 0.8;
+}
+
+/* Responsive: stack on mobile */
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        gap: 1rem;
+    }
+}</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4>Equal Height Cards</h4>
+                    <div class="example-container">
+                        <div class="example-header">
+                            <h6 class="example-title">
+                                <i class="bi bi-card-list"></i>
+                                Cards with Equal Heights
+                            </h6>
+                        </div>
+                        <div class="example-tabs">
+                            <button class="example-tab active" onclick="switchTab(this, 'preview')">
+                                <i class="bi bi-eye"></i>Preview
+                            </button>
+                            <button class="example-tab" onclick="switchTab(this, 'code')">
+                                <i class="bi bi-code"></i>CSS Code
+                            </button>
+                        </div>
+                        <div class="example-content">
+                            <div class="example-pane active" data-tab="preview">
+                                <div class="example-output">
+                                    <div style="display: flex; gap: 1rem;">
+                                        <div style="flex: 1; display: flex; flex-direction: column; background: white; border: 1px solid #dee2e6; border-radius: 8px; padding: 1.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                            <h6 style="color: #007bff; margin-top: 0;">Card 1</h6>
+                                            <div style="flex: 1; margin: 1rem 0;">Short content here.</div>
+                                            <button class="btn btn-primary btn-sm">Action</button>
+                                        </div>
+                                        <div style="flex: 1; display: flex; flex-direction: column; background: white; border: 1px solid #dee2e6; border-radius: 8px; padding: 1.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                            <h6 style="color: #28a745; margin-top: 0;">Card 2</h6>
+                                            <div style="flex: 1; margin: 1rem 0;">Much longer content that takes up more space in this particular card to demonstrate the equal height behavior.</div>
+                                            <button class="btn btn-success btn-sm">Action</button>
+                                        </div>
+                                        <div style="flex: 1; display: flex; flex-direction: column; background: white; border: 1px solid #dee2e6; border-radius: 8px; padding: 1.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                            <h6 style="color: #ffc107; margin-top: 0;">Card 3</h6>
+                                            <div style="flex: 1; margin: 1rem 0;">Medium amount of content goes here.</div>
+                                            <button class="btn btn-warning btn-sm">Action</button>
+                                        </div>
+                                    </div>
+                                    <small class="text-muted mt-2 d-block">All cards have equal height, buttons align at bottom</small>
+                                </div>
+                            </div>
+                            <div class="example-pane" data-tab="code">
+                                <div class="code-container">
+                                    <div class="code-header">
+                                        <span class="code-language">CSS</span>
+                                        <button class="copy-btn" onclick="copyCode(this)">
+                                            <i class="bi bi-clipboard"></i>Copy Code
+                                        </button>
+                                    </div>
+                                    <div class="code-block">
+                                        <pre><code class="language-css">.card-container {
     display: flex;
     gap: 1rem;
-    margin-left: auto;  /* push to right */
+}
+
+.card {
+    flex: 1;                    /* Equal width cards */
+    display: flex;              /* Make card a flex container */
+    flex-direction: column;     /* Stack content vertically */
+    
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.card-content {
+    flex: 1;                    /* Content takes available space */
+    margin: 1rem 0;
+}
+
+.card-action {
+    /* Action button stays at bottom */
+    margin-top: auto;
+}
+
+/* Responsive: stack on mobile */
+@media (max-width: 768px) {
+    .card-container {
+        flex-direction: column;
+    }
 }</code></pre>
-                        </div>
-                        <div class="example-output">
-                            <div style="display: flex; justify-content: space-between; align-items: center; background: #343a40; color: white; padding: 1rem; border-radius: 4px;">
-                                <div style="font-weight: bold;">Logo</div>
-                                <div style="display: flex; gap: 1rem;">
-                                    <a href="#" style="color: white; text-decoration: none;">Home</a>
-                                    <a href="#" style="color: white; text-decoration: none;">About</a>
-                                    <a href="#" style="color: white; text-decoration: none;">Contact</a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1128,373 +1401,151 @@ footer {
 
                     <h4>Responsive Direction</h4>
                     <div class="example-container">
-                        <div class="code-block">
-                            <button class="copy-btn" onclick="copyCode(this)">
-                                <i class="bi bi-clipboard"></i>Copy
+                        <div class="example-header">
+                            <h6 class="example-title">
+                                <i class="bi bi-phone"></i>
+                                Mobile-First Responsive Layout
+                            </h6>
+                        </div>
+                        <div class="example-tabs">
+                            <button class="example-tab active" onclick="switchTab(this, 'preview')">
+                                <i class="bi bi-eye"></i>Preview
                             </button>
-                            <pre><code class="language-css">.responsive-flex {
+                            <button class="example-tab" onclick="switchTab(this, 'code')">
+                                <i class="bi bi-code"></i>CSS Code
+                            </button>
+                        </div>
+                        <div class="example-content">
+                            <div class="example-pane active" data-tab="preview">
+                                <div class="example-output">
+                                    <div class="responsive-demo" style="display: flex; flex-direction: column; gap: 1rem; background: #e9ecef; padding: 1rem; border-radius: 6px;">
+                                        <div style="background: #007bff; color: white; padding: 1rem; border-radius: 4px; text-align: center;">
+                                            📱 Mobile: Stacked Vertically
+                                        </div>
+                                        <div style="background: #28a745; color: white; padding: 1rem; border-radius: 4px; text-align: center;">
+                                            💻 Desktop: Side by Side
+                                        </div>
+                                        <div style="background: #ffc107; color: black; padding: 1rem; border-radius: 4px; text-align: center;">
+                                            🖥️ Responsive Layout
+                                        </div>
+                                    </div>
+                                    <small class="text-muted mt-2 d-block">Resize browser to see responsive behavior</small>
+                                </div>
+                            </div>
+                            <div class="example-pane" data-tab="code">
+                                <div class="code-container">
+                                    <div class="code-header">
+                                        <span class="code-language">CSS</span>
+                                        <button class="copy-btn" onclick="copyCode(this)">
+                                            <i class="bi bi-clipboard"></i>Copy Code
+                                        </button>
+                                    </div>
+                                    <div class="code-block">
+                                        <pre><code class="language-css">/* Mobile-first approach */
+.responsive-container {
     display: flex;
-    flex-direction: column;  /* mobile first: stack vertically */
+    flex-direction: column;  /* Mobile: stack vertically */
+    gap: 1rem;
 }
 
+/* Tablet and up: horizontal layout */
 @media (min-width: 768px) {
-    .responsive-flex {
-        flex-direction: row;  /* tablet+: horizontal layout */
+    .responsive-container {
+        flex-direction: row;  /* Desktop: side by side */
     }
+}
+
+/* Alternative: flex-wrap approach */
+.wrap-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.wrap-item {
+    flex: 1 1 300px;  /* Grow, shrink, min 300px width */
+    /* Items wrap to new lines when less than 300px */
 }</code></pre>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
                     <h4>Flexible Grid</h4>
                     <div class="example-container">
-                        <div class="code-block">
-                            <button class="copy-btn" onclick="copyCode(this)">
-                                <i class="bi bi-clipboard"></i>Copy
+                        <div class="example-header">
+                            <h6 class="example-title">
+                                <i class="bi bi-grid"></i>
+                                Auto-Responsive Grid Layout
+                            </h6>
+                        </div>
+                        <div class="example-tabs">
+                            <button class="example-tab active" onclick="switchTab(this, 'preview')">
+                                <i class="bi bi-eye"></i>Preview
                             </button>
-                            <pre><code class="language-css">.flex-grid {
+                            <button class="example-tab" onclick="switchTab(this, 'code')">
+                                <i class="bi bi-code"></i>CSS Code
+                            </button>
+                        </div>
+                        <div class="example-content">
+                            <div class="example-pane active" data-tab="preview">
+                                <div class="example-output">
+                                    <div style="display: flex; flex-wrap: wrap; gap: 1rem; background: #e9ecef; padding: 1rem; border-radius: 4px;">
+                                        <div style="flex: 1 1 200px; background: #007bff; color: white; padding: 1rem; border-radius: 4px; text-align: center; min-height: 80px; display: flex; align-items: center; justify-content: center;">Item 1</div>
+                                        <div style="flex: 1 1 200px; background: #28a745; color: white; padding: 1rem; border-radius: 4px; text-align: center; min-height: 80px; display: flex; align-items: center; justify-content: center;">Item 2</div>
+                                        <div style="flex: 1 1 200px; background: #ffc107; color: black; padding: 1rem; border-radius: 4px; text-align: center; min-height: 80px; display: flex; align-items: center; justify-content: center;">Item 3</div>
+                                        <div style="flex: 1 1 200px; background: #dc3545; color: white; padding: 1rem; border-radius: 4px; text-align: center; min-height: 80px; display: flex; align-items: center; justify-content: center;">Item 4</div>
+                                        <div style="flex: 1 1 200px; background: #6f42c1; color: white; padding: 1rem; border-radius: 4px; text-align: center; min-height: 80px; display: flex; align-items: center; justify-content: center;">Item 5</div>
+                                        <div style="flex: 1 1 200px; background: #fd7e14; color: white; padding: 1rem; border-radius: 4px; text-align: center; min-height: 80px; display: flex; align-items: center; justify-content: center;">Item 6</div>
+                                    </div>
+                                    <small class="text-muted mt-2 d-block">Items automatically wrap and resize based on available space</small>
+                                </div>
+                            </div>
+                            <div class="example-pane" data-tab="code">
+                                <div class="code-container">
+                                    <div class="code-header">
+                                        <span class="code-language">CSS</span>
+                                        <button class="copy-btn" onclick="copyCode(this)">
+                                            <i class="bi bi-clipboard"></i>Copy Code
+                                        </button>
+                                    </div>
+                                    <div class="code-block">
+                                        <pre><code class="language-css">.flex-grid {
     display: flex;
     flex-wrap: wrap;
     gap: 1rem;
 }
 
 .flex-item {
-    flex: 1 1 300px;  /* grow, shrink, minimum 300px */
-    /* Items wrap to new lines when less than 300px wide */
-}</code></pre>
-                        </div>
-                        <div class="example-output">
-                            <div style="display: flex; flex-wrap: wrap; gap: 1rem; background: #e9ecef; padding: 1rem; border-radius: 4px;">
-                                <div style="flex: 1 1 150px; background: #007bff; color: white; padding: 1rem; border-radius: 4px; min-height: 60px;">Item 1</div>
-                                <div style="flex: 1 1 150px; background: #28a745; color: white; padding: 1rem; border-radius: 4px; min-height: 60px;">Item 2</div>
-                                <div style="flex: 1 1 150px; background: #ffc107; color: black; padding: 1rem; border-radius: 4px; min-height: 60px;">Item 3</div>
-                                <div style="flex: 1 1 150px; background: #dc3545; color: white; padding: 1rem; border-radius: 4px; min-height: 60px;">Item 4</div>
-                            </div>
-                            <small class="text-muted mt-2 d-block">Resize browser to see responsive behavior</small>
-                        </div>
-                    </div>
-
-                    <h4>Order Changes</h4>
-                    <div class="example-container">
-                        <div class="code-block">
-                            <button class="copy-btn" onclick="copyCode(this)">
-                                <i class="bi bi-clipboard"></i>Copy
-                            </button>
-                            <pre><code class="language-css">/* Mobile: sidebar after main content */
-.main { order: 1; }
-.sidebar { order: 2; }
-
-/* Desktop: sidebar before main content */
-@media (min-width: 768px) {
-    .main { order: 2; }
-    .sidebar { order: 1; }
-}</code></pre>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Real-world Examples -->
-                <section id="real-world" class="content-section">
-                    <div class="d-flex align-items-center mb-4">
-                        <h2 class="mb-0">Real-world Examples</h2>
-                        <span class="badge bg-info ms-3 badge-level">Practical</span>
-                    </div>
-
-                    <h4>E-commerce Product Grid</h4>
-                    <div class="example-container">
-                        <div class="code-block">
-                            <button class="copy-btn" onclick="copyCode(this)">
-                                <i class="bi bi-clipboard"></i>Copy
-                            </button>
-                            <pre><code class="language-css">.product-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 2rem;
+    flex: 1 1 250px;  /* grow, shrink, minimum 250px */
+    /* 
+    - flex-grow: 1 (grow to fill space)
+    - flex-shrink: 1 (shrink if needed)
+    - flex-basis: 250px (minimum width)
+    */
+    
     padding: 1rem;
+    text-align: center;
+    border-radius: 4px;
 }
 
-.product-card {
-    flex: 1 1 250px;        /* responsive, min 250px */
-    max-width: 350px;       /* don't get too wide */
-    display: flex;
-    flex-direction: column;
-}
+/* Auto-responsive behavior:
+   - 1 item per row on small screens
+   - 2 items per row on medium screens  
+   - 3+ items per row on large screens
+   All automatic based on 250px minimum!
+*/
 
-.product-image {
-    aspect-ratio: 1 / 1;    /* square images */
-    object-fit: cover;
-}
-
-.product-info {
-    flex: 1;               /* grow to fill space */
-    padding: 1rem;
-}
-
-.product-price {
-    margin-top: auto;      /* push to bottom */
-    font-weight: bold;
+/* For equal-width items regardless of content: */
+.equal-flex-item {
+    flex: 1 1 0%;  /* Equal distribution */
+    min-width: 250px;  /* But with minimum width */
 }</code></pre>
-                        </div>
-                    </div>
-
-                    <h4>Dashboard Layout</h4>
-                    <div class="example-container">
-                        <div class="code-block">
-                            <button class="copy-btn" onclick="copyCode(this)">
-                                <i class="bi bi-clipboard"></i>Copy
-                            </button>
-                            <pre><code class="language-css">.dashboard {
-    display: flex;
-    min-height: 100vh;
-}
-
-.sidebar {
-    flex: 0 0 250px;       /* fixed width sidebar */
-    background: #f8f9fa;
-}
-
-.main-content {
-    flex: 1;               /* remaining space */
-    display: flex;
-    flex-direction: column;
-}
-
-.header {
-    flex: 0 0 60px;        /* fixed height header */
-    background: white;
-    border-bottom: 1px solid #dee2e6;
-}
-
-.content {
-    flex: 1;               /* scrollable content area */
-    padding: 2rem;
-    overflow-y: auto;
-}</code></pre>
-                        </div>
-                    </div>
-
-                    <h4>Form Layout</h4>
-                    <div class="example-container">
-                        <div class="code-block">
-                            <button class="copy-btn" onclick="copyCode(this)">
-                                <i class="bi bi-clipboard"></i>Copy
-                            </button>
-                            <pre><code class="language-css">.form-row {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 1rem;
-}
-
-.form-group {
-    flex: 1;               /* equal width fields */
-    display: flex;
-    flex-direction: column;
-}
-
-.form-group.quarter {
-    flex: 0 0 25%;         /* specific width */
-}
-
-.form-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 1rem;
-    margin-top: 2rem;
-}</code></pre>
-                        </div>
-                        <div class="example-output">
-                            <form>
-                                <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
-                                    <div style="flex: 1; display: flex; flex-direction: column;">
-                                        <label class="form-label">First Name</label>
-                                        <input type="text" class="form-control" placeholder="John">
-                                    </div>
-                                    <div style="flex: 1; display: flex; flex-direction: column;">
-                                        <label class="form-label">Last Name</label>
-                                        <input type="text" class="form-control" placeholder="Doe">
                                     </div>
                                 </div>
-                                <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
-                                    <div style="flex: 1; display: flex; flex-direction: column;">
-                                        <label class="form-label">Email</label>
-                                        <input type="email" class="form-control" placeholder="john@example.com">
-                                    </div>
-                                    <div style="flex: 0 0 25%; display: flex; flex-direction: column;">
-                                        <label class="form-label">Age</label>
-                                        <input type="number" class="form-control" placeholder="25">
-                                    </div>
-                                </div>
-                                <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2rem;">
-                                    <button type="button" class="btn btn-secondary">Cancel</button>
-                                    <button type="submit" class="btn btn-primary">Submit</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Troubleshooting -->
-                <section id="troubleshooting" class="content-section">
-                    <div class="d-flex align-items-center mb-4">
-                        <h2 class="mb-0">Common Issues & Solutions</h2>
-                        <span class="badge bg-warning ms-3 badge-level">Debugging</span>
-                    </div>
-
-                    <h4>Issue 1: Items Not Taking Full Height</h4>
-                    <div class="example-container">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <h6 class="text-danger">❌ Problem</h6>
-                                <div class="code-block">
-                                    <button class="copy-btn" onclick="copyCode(this)">
-                                        <i class="bi bi-clipboard"></i>Copy
-                                    </button>
-                                    <pre><code class="language-css">.container {
-    display: flex;
-    height: 200px;
-}
-
-.item {
-    /* Items don't fill height */
-    background: blue;
-}</code></pre>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <h6 class="text-success">✅ Solution</h6>
-                                <div class="code-block">
-                                    <button class="copy-btn" onclick="copyCode(this)">
-                                        <i class="bi bi-clipboard"></i>Copy
-                                    </button>
-                                    <pre><code class="language-css">.container {
-    display: flex;
-    height: 200px;
-    align-items: stretch; /* default, ensures full height */
-}
-
-.item {
-    /* Now items fill container height */
-    background: blue;
-}</code></pre>
-                                </div>
                             </div>
                         </div>
-                    </div>
-
-                    <h4>Issue 2: Items Overflowing Container</h4>
-                    <div class="example-container">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <h6 class="text-danger">❌ Problem</h6>
-                                <div class="code-block">
-                                    <button class="copy-btn" onclick="copyCode(this)">
-                                        <i class="bi bi-clipboard"></i>Copy
-                                    </button>
-                                    <pre><code class="language-css">.container {
-    display: flex;
-    width: 300px;
-}
-
-.item {
-    min-width: 150px; /* Items won't shrink below 150px */
-}</code></pre>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <h6 class="text-success">✅ Solution</h6>
-                                <div class="code-block">
-                                    <button class="copy-btn" onclick="copyCode(this)">
-                                        <i class="bi bi-clipboard"></i>Copy
-                                    </button>
-                                    <pre><code class="language-css">.container {
-    display: flex;
-    flex-wrap: wrap; /* Allow wrapping */
-    width: 300px;
-}
-
-.item {
-    flex: 1 1 150px; /* flex-basis instead of min-width */
-}</code></pre>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <h4>Issue 3: Unexpected Spacing</h4>
-                    <div class="example-container">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <h6 class="text-danger">❌ Problem</h6>
-                                <div class="code-block">
-                                    <button class="copy-btn" onclick="copyCode(this)">
-                                        <i class="bi bi-clipboard"></i>Copy
-                                    </button>
-                                    <pre><code class="language-css">.container {
-    display: flex;
-    justify-content: space-between;
-}
-
-/* Only one item - unexpected positioning */</code></pre>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <h6 class="text-success">✅ Solution</h6>
-                                <div class="code-block">
-                                    <button class="copy-btn" onclick="copyCode(this)">
-                                        <i class="bi bi-clipboard"></i>Copy
-                                    </button>
-                                    <pre><code class="language-css">.container {
-    display: flex;
-    /* Use appropriate justify-content */
-    justify-content: flex-start; /* or center */
-}
-
-/* Or use margin-left: auto on last item */</code></pre>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <h4>Issue 4: Flex Items Not Growing</h4>
-                    <div class="example-container">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <h6 class="text-danger">❌ Problem</h6>
-                                <div class="code-block">
-                                    <button class="copy-btn" onclick="copyCode(this)">
-                                        <i class="bi bi-clipboard"></i>Copy
-                                    </button>
-                                    <pre><code class="language-css">.item {
-    flex-grow: 1;
-    width: 200px; /* Fixed width prevents growing */
-}</code></pre>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <h6 class="text-success">✅ Solution</h6>
-                                <div class="code-block">
-                                    <button class="copy-btn" onclick="copyCode(this)">
-                                        <i class="bi bi-clipboard"></i>Copy
-                                    </button>
-                                    <pre><code class="language-css">.item {
-    flex: 1; /* Shorthand that sets flex-basis: 0% */
-    /* Or explicitly: */
-    flex-grow: 1;
-    flex-basis: 0%;
-}</code></pre>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="best-practice">
-                        <h6><i class="bi bi-tools text-success me-2"></i>Debugging Tips</h6>
-                        <ul class="mb-0">
-                            <li>Use browser dev tools to visualize flex containers</li>
-                            <li>Add temporary borders to see element boundaries</li>
-                            <li>Check for conflicting CSS properties (width, min-width, etc.)</li>
-                            <li>Verify flex container has defined height for vertical alignment</li>
-                            <li>Use Firefox Flexbox Inspector for detailed analysis</li>
-                        </ul>
                     </div>
                 </section>
 
@@ -1508,49 +1559,17 @@ footer {
                     <div class="row g-4">
                         <div class="col-md-6">
                             <div class="card h-100">
-                                <div class="card-header bg-primary text-white">
-                                    <h5 class="mb-0"><i class="bi bi-speedometer2 me-2"></i>Performance</h5>
-                                </div>
-                                <div class="card-body">
-                                    <ul class="mb-0">
-                                        <li>Flexbox is generally more performant than float-based layouts</li>
-                                        <li>Avoid frequent changes to flex properties during animations</li>
-                                        <li>Use <code>will-change</code> property for animated flex items</li>
-                                        <li>Consider <code>content-visibility</code> for large flex containers</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-md-6">
-                            <div class="card h-100">
                                 <div class="card-header bg-success text-white">
-                                    <h5 class="mb-0"><i class="bi bi-universal-access-circle me-2"></i>Accessibility</h5>
+                                    <h5 class="mb-0"><i class="bi bi-check-circle me-2"></i>Do's</h5>
                                 </div>
                                 <div class="card-body">
                                     <ul class="mb-0">
-                                        <li>Visual order should match logical order when possible</li>
-                                        <li>Use <code>order</code> carefully - screen readers follow DOM order</li>
-                                        <li>Ensure sufficient contrast and focus indicators</li>
-                                        <li>Test with keyboard navigation</li>
-                                        <li>Use semantic HTML elements within flex containers</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-md-6">
-                            <div class="card h-100">
-                                <div class="card-header bg-info text-white">
-                                    <h5 class="mb-0"><i class="bi bi-phone me-2"></i>Responsive Design</h5>
-                                </div>
-                                <div class="card-body">
-                                    <ul class="mb-0">
-                                        <li>Use Flexbox for one-dimensional layouts (row or column)</li>
+                                        <li>Use Flexbox for one-dimensional layouts</li>
+                                        <li>Use <code>gap</code> instead of margins for spacing</li>
+                                        <li>Use <code>flex: 1</code> for equal distribution</li>
+                                        <li>Start with mobile-first responsive design</li>
                                         <li>Combine with CSS Grid for complex layouts</li>
-                                        <li>Design mobile-first with flex-direction changes</li>
-                                        <li>Test on multiple screen sizes and orientations</li>
-                                        <li>Consider touch-friendly interfaces on mobile</li>
+                                        <li>Test with varying content lengths</li>
                                     </ul>
                                 </div>
                             </div>
@@ -1559,139 +1578,59 @@ footer {
                         <div class="col-md-6">
                             <div class="card h-100">
                                 <div class="card-header bg-warning text-dark">
-                                    <h5 class="mb-0"><i class="bi bi-code-slash me-2"></i>Code Quality</h5>
+                                    <h5 class="mb-0"><i class="bi bi-exclamation-triangle me-2"></i>Don'ts</h5>
                                 </div>
                                 <div class="card-body">
                                     <ul class="mb-0">
-                                        <li>Use <code>gap</code> instead of margins for spacing</li>
-                                        <li>Use <code>flex: 1</code> for equal distribution</li>
-                                        <li>Document complex flex layouts</li>
-                                        <li>Follow consistent naming conventions</li>
-                                        <li>Regular code reviews and testing</li>
+                                        <li>Don't use Flexbox for complex 2D layouts</li>
+                                        <li>Don't rely on <code>order</code> for content sequence</li>
+                                        <li>Don't forget about IE11 if supporting it</li>
+                                        <li>Don't use percentage widths with flex-basis unnecessarily</li>
+                                        <li>Don't forget flex items create stacking contexts</li>
+                                        <li>Don't use margins for spacing between flex items</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="mb-0"><i class="bi bi-speedometer2 me-2"></i>Performance</h5>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="mb-0">
+                                        <li>Flexbox is generally more performant than floats</li>
+                                        <li>Avoid frequent changes to flex properties during animations</li>
+                                        <li>Use <code>will-change</code> for animated flex items</li>
+                                        <li>Consider <code>content-visibility</code> for large containers</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-header bg-info text-white">
+                                    <h5 class="mb-0"><i class="bi bi-universal-access me-2"></i>Accessibility</h5>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="mb-0">
+                                        <li>Visual order should match logical order</li>
+                                        <li>Use <code>order</code> carefully with screen readers</li>
+                                        <li>Ensure sufficient focus indicators</li>
+                                        <li>Test with keyboard navigation</li>
+                                        <li>Use semantic HTML within flex containers</li>
                                     </ul>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="best-practice">
-                        <h6><i class="bi bi-check-circle text-success me-2"></i>Do's</h6>
-                        <ul class="mb-0">
-                            <li>Use Flexbox for one-dimensional layouts (row or column)</li>
-                            <li>Combine with CSS Grid for complex layouts</li>
-                            <li>Use <code>gap</code> instead of margins for spacing</li>
-                            <li>Use <code>flex: 1</code> for equal distribution</li>
-                            <li>Consider accessibility when reordering with <code>order</code></li>
-                            <li>Test on different screen sizes and content lengths</li>
-                        </ul>
-                    </div>
-
-                    <div class="warning-box">
-                        <h6><i class="bi bi-exclamation-triangle text-warning me-2"></i>Don'ts</h6>
-                        <ul class="mb-0">
-                            <li>Don't use Flexbox for complex 2D layouts (use CSS Grid)</li>
-                            <li>Don't rely on <code>order</code> for meaningful content sequence</li>
-                            <li>Don't forget about IE11 if you need to support it</li>
-                            <li>Don't use percentage widths with flex-basis unnecessarily</li>
-                            <li>Don't forget that flex items create new stacking contexts</li>
-                        </ul>
-                    </div>
-
-                    <h4 class="mt-5">Browser Support</h4>
-                    <div class="table-responsive">
-                        <table class="table table-striped table-hover">
-                            <thead class="table-dark">
-                                <tr>
-                                    <th>Feature</th>
-                                    <th>Chrome</th>
-                                    <th>Firefox</th>
-                                    <th>Safari</th>
-                                    <th>IE/Edge</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Basic Flexbox</td>
-                                    <td class="text-success">29+</td>
-                                    <td class="text-success">20+</td>
-                                    <td class="text-success">9+</td>
-                                    <td class="text-warning">11+ (prefixed)</td>
-                                </tr>
-                                <tr>
-                                    <td>Gap Property</td>
-                                    <td class="text-success">84+</td>
-                                    <td class="text-success">63+</td>
-                                    <td class="text-success">14.1+</td>
-                                    <td class="text-danger">Not supported</td>
-                                </tr>
-                                <tr>
-                                    <td>Modern Syntax</td>
-                                    <td class="text-success">29+</td>
-                                    <td class="text-success">28+</td>
-                                    <td class="text-success">9+</td>
-                                    <td class="text-success">Edge 12+</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </section>
-
-                <!-- Practice Exercises -->
-                <section class="content-section">
-                    <h2><i class="bi bi-pencil-square me-2"></i>Practice Exercises</h2>
-                    
-                    <div class="row g-4">
+                    <h4 class="mt-5">Quick Reference Cheat Sheet</h4>
+                    <div class="row g-3">
                         <div class="col-md-6">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h5 class="card-title">Exercise 1: Navigation Bar</h5>
-                                    <p class="card-text">Create a responsive navigation bar with logo on left and menu items on right.</p>
-                                    <a href="flexbox-playground.html" class="btn btn-primary btn-sm">Try in Playground</a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h5 class="card-title">Exercise 2: Card Layout</h5>
-                                    <p class="card-text">Build a responsive card grid that adapts from 1 to 4 columns based on screen size.</p>
-                                    <a href="flexbox-playground.html" class="btn btn-primary btn-sm">Try in Playground</a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h5 class="card-title">Exercise 3: Sticky Footer</h5>
-                                    <p class="card-text">Create a layout where the footer sticks to the bottom regardless of content height.</p>
-                                    <a href="flexbox-playground.html" class="btn btn-primary btn-sm">Try in Playground</a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h5 class="card-title">Exercise 4: Holy Grail Layout</h5>
-                                    <p class="card-text">Build the classic 3-column layout with header and footer using only Flexbox.</p>
-                                    <a href="flexbox-playground.html" class="btn btn-primary btn-sm">Try in Playground</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="alert alert-info mt-4">
-                        <h6><i class="bi bi-lightbulb me-2"></i>Ready for More?</h6>
-                        <p class="mb-0">Try our interactive <a href="flexbox-playground.html" class="alert-link">Flexbox Playground</a> to experiment with all these concepts hands-on, or check out the <a href="css-guide.html" class="alert-link">CSS Guide</a> for more advanced layout techniques with CSS Grid.</p>
-                    </div>
-                </section>
-
-                <!-- Quick Reference -->
-                <section class="content-section">
-                    <h2><i class="bi bi-bookmark me-2"></i>Quick Reference</h2>
-                    
-                    <div class="row g-4">
-                        <div class="col-md-6">
-                            <h5>Container Properties</h5>
+                            <h6>Container Properties</h6>
                             <div class="table-responsive">
                                 <table class="table table-sm">
                                     <tbody>
@@ -1706,7 +1645,7 @@ footer {
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <h5>Item Properties</h5>
+                            <h6>Item Properties</h6>
                             <div class="table-responsive">
                                 <table class="table table-sm">
                                     <tbody>
@@ -1722,26 +1661,75 @@ footer {
                         </div>
                     </div>
 
-                    <h5 class="mt-4">Common Values</h5>
+                    <h6 class="mt-4">Common Flex Values</h6>
                     <div class="row g-3">
                         <div class="col-md-4">
-                            <div class="bg-light p-3 rounded">
+                            <div class="bg-light p-3 rounded text-center">
                                 <h6><code>flex: 1</code></h6>
                                 <small>Equal distribution</small>
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <div class="bg-light p-3 rounded">
+                            <div class="bg-light p-3 rounded text-center">
                                 <h6><code>flex: 0 0 auto</code></h6>
                                 <small>Keep natural size</small>
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <div class="bg-light p-3 rounded">
+                            <div class="bg-light p-3 rounded text-center">
                                 <h6><code>flex: 1 1 200px</code></h6>
                                 <small>Flexible with minimum</small>
                             </div>
                         </div>
+                    </div>
+                </section>
+
+                <!-- Practice Exercises -->
+                <section class="content-section">
+                    <h2><i class="bi bi-pencil-square me-2"></i>Practice Exercises</h2>
+                    
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Exercise 1: Navigation Bar</h5>
+                                    <p class="card-text">Create a responsive navigation bar with logo on left and menu items on right.</p>
+                                    <a href="#" onclick="showComingSoon('Flexbox Playground')" class="btn btn-primary btn-sm">Try in Playground</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Exercise 2: Card Layout</h5>
+                                    <p class="card-text">Build a responsive card grid that adapts from 1 to 4 columns based on screen size.</p>
+                                    <a href="#" onclick="showComingSoon('Flexbox Playground')" class="btn btn-primary btn-sm">Try in Playground</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Exercise 3: Sticky Footer</h5>
+                                    <p class="card-text">Create a layout where the footer sticks to the bottom regardless of content height.</p>
+                                    <a href="#" onclick="showComingSoon('Flexbox Playground')" class="btn btn-primary btn-sm">Try in Playground</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Exercise 4: Holy Grail Layout</h5>
+                                    <p class="card-text">Build the classic 3-column layout with header and footer using only Flexbox.</p>
+                                    <a href="#" onclick="showComingSoon('Flexbox Playground')" class="btn btn-primary btn-sm">Try in Playground</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info mt-4">
+                        <h6><i class="bi bi-lightbulb me-2"></i>Ready for More?</h6>
+                        <p class="mb-0">Try our interactive Flexbox Playground to experiment with all these concepts hands-on, or explore CSS Grid for more complex 2D layouts.</p>
                     </div>
                 </section>
 
@@ -1753,25 +1741,34 @@ footer {
                         
                         <div class="row g-3 mt-4">
                             <div class="col-md-4">
-                                <a href="flexbox-playground.html" class="btn btn-primary w-100">
+                                <button class="btn btn-primary w-100" onclick="showComingSoon('Flexbox Playground')">
                                     <i class="bi bi-grid-3x3 me-2"></i>Practice with Flexbox Playground
-                                </a>
+                                </button>
                             </div>
                             <div class="col-md-4">
-                                <a href="css-guide.html" class="btn btn-success w-100">
-                                    <i class="bi bi-palette me-2"></i>Learn CSS Grid
-                                </a>
+                                <button class="btn btn-success w-100" onclick="showComingSoon('CSS Grid Guide')">
+                                    <i class="bi bi-grid me-2"></i>Learn CSS Grid
+                                </button>
                             </div>
                             <div class="col-md-4">
-                                <a href="bootstrap-guide.html" class="btn btn-info w-100">
+                                <button class="btn btn-info w-100" onclick="showComingSoon('Bootstrap Guide')">
                                     <i class="bi bi-bootstrap me-2"></i>Master Bootstrap
-                                </a>
+                                </button>
                             </div>
                         </div>
 
-                        <div class="mt-4 p-4 bg-light rounded">
-                            <h5>Next Steps</h5>
-                            <p class="mb-0">Continue your learning journey by exploring CSS Grid for complex 2D layouts, and combining Flexbox with Grid for powerful layout systems. Practice building real-world components and experiment with advanced responsive design patterns.</p>
+                        <div class="mt-4 p-4" style="background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 12px; color: white;">
+                            <h5 class="mb-3">Next Steps in Your Flexbox Journey</h5>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <h6><i class="bi bi-trophy me-2"></i>Build Projects</h6>
+                                    <p class="small mb-0">Apply what you've learned by building real websites and components</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6><i class="bi bi-people me-2"></i>Join the Community</h6>
+                                    <p class="small mb-0">Connect with other developers and continue learning together</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -1793,562 +1790,244 @@ footer {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
 
-    <!-- Security Utils (MUST be loaded before main script) -->
     <script>
-        // Security utility functions
-        const SecurityUtils = {
-            // Input validation and sanitization
-            sanitizeHTML: function(input) {
-                if (typeof input !== 'string') return '';
-                
-                // Remove dangerous tags and attributes
-                const div = document.createElement('div');
-                div.textContent = input;
-                let sanitized = div.innerHTML;
-                
-                // Remove script tags and event handlers
-                sanitized = sanitized.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
-                sanitized = sanitized.replace(/on\w+\s*=\s*"[^"]*"/gi, '');
-                sanitized = sanitized.replace(/on\w+\s*=\s*'[^']*'/gi, '');
-                sanitized = sanitized.replace(/javascript:/gi, '');
-                
-                return sanitized;
-            },
-
-            // Rate limiting for user actions
-            rateLimiter: {
-                actions: new Map(),
-                
-                isAllowed: function(action, limit = 10, window = 60000) {
-                    const now = Date.now();
-                    const key = action;
-                    
-                    if (!this.actions.has(key)) {
-                        this.actions.set(key, []);
-                    }
-                    
-                    const timestamps = this.actions.get(key);
-                    
-                    // Remove old timestamps
-                    while (timestamps.length > 0 && now - timestamps[0] > window) {
-                        timestamps.shift();
-                    }
-                    
-                    if (timestamps.length >= limit) {
-                        return false;
-                    }
-                    
-                    timestamps.push(now);
-                    return true;
-                }
-            },
-
-            // Error handling
-            handleError: function(error, context = '') {
-                console.error(`Security Error ${context}:`, error);
-                
-                // Log to a secure endpoint in production
-                if (typeof window.reportError === 'function') {
-                    window.reportError({
-                        error: error.message,
-                        context: context,
-                        timestamp: new Date().toISOString(),
-                        userAgent: navigator.userAgent
-                    });
-                }
+        // Tab switching functionality
+        function switchTab(button, tabName) {
+            const container = button.closest('.example-container');
+            const tabs = container.querySelectorAll('.example-tab');
+            const panes = container.querySelectorAll('.example-pane');
+            
+            // Remove active class from all tabs
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            // Remove active class from all panes
+            panes.forEach(pane => pane.classList.remove('active'));
+            
+            // Add active class to clicked tab
+            button.classList.add('active');
+            
+            // Show corresponding pane
+            const targetPane = container.querySelector(`[data-tab="${tabName}"]`);
+            if (targetPane) {
+                targetPane.classList.add('active');
             }
-        };
+        }
 
-        // Global error handlers
-        window.addEventListener('error', function(event) {
-            SecurityUtils.handleError(event.error, 'Global Error Handler');
-        });
+        // Interactive demo functions
+        function updateJustifyContent(value) {
+            const demo = document.getElementById('justify-demo');
+            demo.style.justifyContent = value;
+            demo.style.gap = value.includes('space') ? '0' : '0.5rem';
+        }
 
-        window.addEventListener('unhandledrejection', function(event) {
-            SecurityUtils.handleError(event.reason, 'Unhandled Promise Rejection');
-        });
-    </script>
+        function updateAlignItems(value) {
+            const demo = document.getElementById('align-demo');
+            demo.style.alignItems = value;
+        }
 
-    <!-- Main Application Script -->
-    <script>
-        // Initialize on page load
+        function updateFlexDirection(value) {
+            const demo = document.getElementById('direction-demo');
+            demo.style.flexDirection = value;
+        }
+
+        // Enhanced copy functionality
+        function copyCode(button) {
+            const codeBlock = button.closest('.code-container').querySelector('code');
+            if (!codeBlock) return;
+
+            const codeText = codeBlock.textContent || codeBlock.innerText || '';
+            
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(codeText).then(() => {
+                    showCopySuccess(button);
+                }).catch(() => {
+                    fallbackCopy(codeText, button);
+                });
+            } else {
+                fallbackCopy(codeText, button);
+            }
+        }
+
+        function fallbackCopy(text, button) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.opacity = '0';
+            textArea.style.left = '-9999px';
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            showCopySuccess(button);
+        }
+
+        function showCopySuccess(button) {
+            const originalHTML = button.innerHTML;
+            
+            button.classList.add('copied');
+            button.innerHTML = '<i class="bi bi-check"></i>Copied!';
+            
+            setTimeout(() => {
+                button.classList.remove('copied');
+                button.innerHTML = originalHTML;
+            }, 2000);
+            
+            showToast('Code copied to clipboard!', 'success');
+        }
+
+        // Navigation functionality
+        function goHome() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            showToast('Welcome to Flexbox Learning Guide!', 'info');
+        }
+
+        // Show coming soon message
+        function showComingSoon(feature) {
+            showToast(`${feature} coming soon!`, 'info');
+        }
+
+        // Show about message
+        function showAbout() {
+            showToast('Flexbox Learning Guide - Interactive learning with tabbed examples', 'info');
+        }
+
+        // Scroll to top functionality
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // Update navigation to first item
+            const firstNavLink = document.querySelector('.guide-nav .nav-link');
+            if (firstNavLink) {
+                document.querySelectorAll('.guide-nav .nav-link').forEach(link => 
+                    link.classList.remove('active')
+                );
+                firstNavLink.classList.add('active');
+            }
+            
+            showToast('Scrolled to top of page', 'info');
+        }
+
+        // Toast notification system
+        function showToast(message, type = 'info') {
+            const toastContainer = document.getElementById('toast-container');
+            if (!toastContainer) return;
+
+            const toast = document.createElement('div');
+            toast.className = `toast-custom show`;
+            
+            const iconMap = {
+                success: 'check-circle',
+                warning: 'exclamation-triangle',
+                error: 'x-circle',
+                info: 'info-circle'
+            };
+
+            const colorMap = {
+                success: '#28a745',
+                warning: '#ffc107',
+                error: '#dc3545',
+                info: '#17a2b8'
+            };
+
+            toast.innerHTML = `
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-${iconMap[type]} me-2" style="color: ${colorMap[type]}; font-size: 1.2rem;"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+
+            toastContainer.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.animation = 'slideIn 0.3s ease reverse';
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toastContainer.removeChild(toast);
+                    }
+                }, 300);
+            }, 3000);
+        }
+
+        // Initialize navigation and scroll effects
         document.addEventListener('DOMContentLoaded', function() {
-            try {
-                initializeNavigation();
-                initializeScrollEffects();
-                updateProgress();
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Initialization');
-            }
-        });
-
-        // Navigation functionality with security
-        function initializeNavigation() {
-            try {
-                const navLinks = document.querySelectorAll('.guide-nav .nav-link');
-                const sections = document.querySelectorAll('.content-section');
-
-                // Add click handlers to navigation links
-                navLinks.forEach(link => {
-                    link.addEventListener('click', function(e) {
-                        try {
-                            if (!SecurityUtils.rateLimiter.isAllowed('navClick', 30, 10000)) {
-                                console.warn('Rate limit exceeded for navigation');
-                                return;
-                            }
-
-                            e.preventDefault();
-                            const href = this.getAttribute('href');
-                            
-                            if (href && href.startsWith('#')) {
-                                const targetId = href.substring(1);
-                                const targetElement = document.getElementById(targetId);
-                                
-                                if (targetElement) {
-                                    // Update active navigation
-                                    navLinks.forEach(nav => nav.classList.remove('active'));
-                                    this.classList.add('active');
-                                    
-                                    // Smooth scroll to target
-                                    targetElement.scrollIntoView({
-                                        behavior: 'smooth',
-                                        block: 'start'
-                                    });
-                                    
-                                    // Update URL without triggering page reload
-                                    history.pushState(null, null, href);
-                                    
-                                    // Announce change for accessibility
-                                    announceChange(`Navigated to ${this.textContent.trim()}`);
-                                }
-                            }
-                        } catch (error) {
-                            SecurityUtils.handleError(error, 'Navigation Click');
-                        }
-                    });
-                });
-
-                // Handle browser back/forward buttons
-                window.addEventListener('popstate', function() {
-                    try {
-                        const hash = window.location.hash;
-                        if (hash) {
-                            const targetElement = document.querySelector(hash);
-                            if (targetElement) {
-                                targetElement.scrollIntoView({
-                                    behavior: 'smooth',
-                                    block: 'start'
-                                });
-                                updateActiveNavigation(hash);
-                            }
-                        }
-                    } catch (error) {
-                        SecurityUtils.handleError(error, 'Popstate Handler');
+            // Smooth scrolling for navigation links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
                     }
                 });
+            });
 
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Initialize Navigation');
-            }
-        }
-
-        // Scroll effects and progress tracking
-        function initializeScrollEffects() {
-            try {
-                const progressIndicator = document.getElementById('progress-indicator');
-                const backToTopBtn = document.getElementById('back-to-top');
-                const navLinks = document.querySelectorAll('.guide-nav .nav-link');
-                const sections = document.querySelectorAll('.content-section');
-
-                window.addEventListener('scroll', function() {
-                    try {
-                        // Throttle scroll events for performance
-                        if (this.scrollThrottleTimer) return;
-                        this.scrollThrottleTimer = setTimeout(() => {
-                            this.scrollThrottleTimer = null;
-                            
-                            // Update progress indicator
-                            updateProgress();
-                            
-                            // Show/hide back to top button
-                            if (window.scrollY > 300) {
-                                backToTopBtn.classList.add('show');
-                            } else {
-                                backToTopBtn.classList.remove('show');
-                            }
-                            
-                            // Update active navigation based on scroll position
-                            updateActiveNavigationOnScroll(sections, navLinks);
-                            
-                        }, 16); // ~60fps
-                    } catch (error) {
-                        SecurityUtils.handleError(error, 'Scroll Handler');
-                    }
-                });
-
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Initialize Scroll Effects');
-            }
-        }
-
-        // Update progress indicator
-        function updateProgress() {
-            try {
-                const progressIndicator = document.getElementById('progress-indicator');
-                if (!progressIndicator) return;
-
-                const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-                const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-                const scrolled = (winScroll / height) * 100;
-                
-                progressIndicator.style.width = Math.min(scrolled, 100) + '%';
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Update Progress');
-            }
-        }
-
-        // Update active navigation on scroll
-        function updateActiveNavigationOnScroll(sections, navLinks) {
-            try {
-                let currentSection = '';
-                const scrollPos = window.scrollY + 150; // Offset for header
+            // Update active navigation on scroll
+            const sections = document.querySelectorAll('.content-section[id]');
+            const navLinks = document.querySelectorAll('.guide-nav .nav-link');
+            
+            window.addEventListener('scroll', () => {
+                let current = '';
+                const scrollPos = window.scrollY + 150;
 
                 sections.forEach(section => {
                     const sectionTop = section.offsetTop;
                     const sectionHeight = section.offsetHeight;
                     
                     if (scrollPos >= sectionTop && scrollPos < sectionTop + sectionHeight) {
-                        currentSection = section.getAttribute('id');
+                        current = section.getAttribute('id');
                     }
                 });
 
-                if (currentSection) {
-                    navLinks.forEach(link => {
-                        link.classList.remove('active');
-                        if (link.getAttribute('href') === '#' + currentSection) {
-                            link.classList.add('active');
-                        }
-                    });
-                }
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Update Active Navigation on Scroll');
-            }
-        }
-
-        // Update active navigation manually
-        function updateActiveNavigation(hash) {
-            try {
-                const navLinks = document.querySelectorAll('.guide-nav .nav-link');
                 navLinks.forEach(link => {
                     link.classList.remove('active');
-                    if (link.getAttribute('href') === hash) {
+                    if (link.getAttribute('href') === '#' + current) {
                         link.classList.add('active');
                     }
                 });
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Update Active Navigation');
-            }
-        }
 
-        // Copy code functionality with security
-        function copyCode(button) {
-            try {
-                if (!SecurityUtils.rateLimiter.isAllowed('copyCode', 10, 60000)) {
-                    console.warn('Rate limit exceeded for copy operations');
-                    return;
-                }
-
-                const codeBlock = button.parentElement.querySelector('code');
-                if (!codeBlock) return;
-
-                const codeText = codeBlock.textContent || codeBlock.innerText || '';
-                
-                if (navigator.clipboard && navigator.clipboard.writeText) {
-                    navigator.clipboard.writeText(codeText).then(() => {
-                        showCopySuccess(button);
-                    }).catch((error) => {
-                        SecurityUtils.handleError(error, 'Clipboard API');
-                        fallbackCopy(codeText, button);
-                    });
+                // Show/hide back to top button
+                const backToTop = document.getElementById('back-to-top');
+                if (window.scrollY > 300) {
+                    backToTop.classList.add('show');
                 } else {
-                    fallbackCopy(codeText, button);
+                    backToTop.classList.remove('show');
                 }
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Copy Code');
-            }
-        }
+            });
 
-        function fallbackCopy(text, button) {
-            try {
-                const textArea = document.createElement('textarea');
-                textArea.value = text;
-                textArea.style.position = 'fixed';
-                textArea.style.opacity = '0';
-                textArea.style.left = '-9999px';
-                document.body.appendChild(textArea);
-                textArea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textArea);
-                showCopySuccess(button);
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Fallback Copy');
+            // Initialize first section as active
+            if (navLinks.length > 0) {
+                navLinks[0].classList.add('active');
             }
-        }
 
-        function showCopySuccess(button) {
-            try {
-                const originalHTML = button.innerHTML;
-                
-                button.classList.add('copied');
-                button.innerHTML = '<i class="bi bi-check"></i>Copied!';
-                
-                setTimeout(() => {
-                    button.classList.remove('copied');
-                    button.innerHTML = originalHTML;
-                }, 2000);
-                
-                showToast('Code copied to clipboard!', 'success');
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Copy Success Display');
-            }
-        }
-
-        // Scroll to top functionality
-        function scrollToTop() {
-            try {
-                if (!SecurityUtils.rateLimiter.isAllowed('scrollToTop', 10, 30000)) {
-                    console.warn('Rate limit exceeded for scroll to top');
-                    return;
+            // Add responsive demo update for larger screens
+            function updateResponsiveDemo() {
+                const responsiveDemo = document.querySelector('.responsive-demo');
+                if (responsiveDemo && window.innerWidth >= 768) {
+                    responsiveDemo.style.flexDirection = 'row';
+                } else if (responsiveDemo) {
+                    responsiveDemo.style.flexDirection = 'column';
                 }
-
-                window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth'
-                });
-                
-                // Update navigation to first item
-                const firstNavLink = document.querySelector('.guide-nav .nav-link');
-                if (firstNavLink) {
-                    document.querySelectorAll('.guide-nav .nav-link').forEach(link => 
-                        link.classList.remove('active')
-                    );
-                    firstNavLink.classList.add('active');
-                }
-                
-                announceChange('Scrolled to top of page');
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Scroll to Top');
             }
-        }
 
-        // Toggle all examples visibility
-        function toggleAllExamples() {
-            try {
-                if (!SecurityUtils.rateLimiter.isAllowed('toggleExamples', 5, 30000)) {
-                    console.warn('Rate limit exceeded for toggle examples');
-                    return;
-                }
+            // Update on resize
+            window.addEventListener('resize', updateResponsiveDemo);
+            
+            // Initial update
+            updateResponsiveDemo();
 
-                const examples = document.querySelectorAll('.example-container, .example-output');
-                const isVisible = examples[0] && examples[0].style.display !== 'none';
-                
-                examples.forEach(example => {
-                    example.style.display = isVisible ? 'none' : '';
-                });
-                
-                const toggleBtn = event.target;
-                const icon = toggleBtn.querySelector('i');
-                const text = toggleBtn.childNodes[toggleBtn.childNodes.length - 1];
-                
-                if (isVisible) {
-                    icon.className = 'bi bi-eye-slash me-1';
-                    text.textContent = 'Show Examples';
-                    showToast('Examples hidden', 'info');
-                } else {
-                    icon.className = 'bi bi-eye me-1';
-                    text.textContent = 'Hide Examples';
-                    showToast('Examples shown', 'info');
-                }
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Toggle Examples');
-            }
-        }
-
-        // Toast notification system
-        function showToast(message, type = 'info') {
-            try {
-                if (!SecurityUtils.rateLimiter.isAllowed('showToast', 20, 30000)) {
-                    return;
-                }
-
-                const toastContainer = document.getElementById('toast-container');
-                if (!toastContainer) return;
-
-                const toast = document.createElement('div');
-                toast.className = `toast-custom show`;
-                
-                const iconMap = {
-                    success: 'check-circle',
-                    warning: 'exclamation-triangle',
-                    error: 'x-circle',
-                    info: 'info-circle'
-                };
-
-                const colorMap = {
-                    success: '#28a745',
-                    warning: '#ffc107',
-                    error: '#dc3545',
-                    info: '#17a2b8'
-                };
-
-                toast.innerHTML = `
-                    <div class="d-flex align-items-center">
-                        <i class="bi bi-${iconMap[type]} me-2" style="color: ${colorMap[type]}; font-size: 1.2rem;"></i>
-                        <span>${SecurityUtils.sanitizeHTML(message)}</span>
-                    </div>
-                `;
-
-                toastContainer.appendChild(toast);
-
-                setTimeout(() => {
-                    toast.style.animation = 'slideIn 0.3s ease reverse';
-                    setTimeout(() => {
-                        if (toast.parentNode) {
-                            toastContainer.removeChild(toast);
-                        }
-                    }, 300);
-                }, 3000);
-
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Show Toast');
-            }
-        }
+            showToast('Welcome to the Flexbox Learning Guide! Try the interactive demos.', 'success');
+        });
 
         // Keyboard shortcuts
         document.addEventListener('keydown', function(e) {
-            try {
-                // Ctrl/Cmd + K to focus search (placeholder)
-                if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-                    e.preventDefault();
-                    showToast('Search functionality coming soon!', 'info');
-                }
-                
-                // Escape to scroll to top
-                if (e.key === 'Escape') {
-                    e.preventDefault();
-                    scrollToTop();
-                }
-                
-                // Arrow keys for navigation
-                if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
-                    const activeLink = document.querySelector('.guide-nav .nav-link.active');
-                    if (activeLink) {
-                        const navLinks = Array.from(document.querySelectorAll('.guide-nav .nav-link'));
-                        const currentIndex = navLinks.indexOf(activeLink);
-                        let nextIndex;
-                        
-                        if (e.key === 'ArrowUp') {
-                            nextIndex = currentIndex > 0 ? currentIndex - 1 : navLinks.length - 1;
-                        } else {
-                            nextIndex = currentIndex < navLinks.length - 1 ? currentIndex + 1 : 0;
-                        }
-                        
-                        if (e.ctrlKey || e.metaKey) {
-                            e.preventDefault();
-                            navLinks[nextIndex].click();
-                        }
-                    }
-                }
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Keyboard Shortcuts');
+            // Escape to scroll to top
+            if (e.key === 'Escape') {
+                scrollToTop();
             }
         });
-
-        // Accessibility announcements
-        function announceChange(message) {
-            try {
-                const announcement = document.createElement('div');
-                announcement.setAttribute('aria-live', 'polite');
-                announcement.setAttribute('aria-atomic', 'true');
-                announcement.className = 'visually-hidden';
-                announcement.textContent = SecurityUtils.sanitizeHTML(message);
-                document.body.appendChild(announcement);
-                
-                setTimeout(() => {
-                    if (announcement.parentNode) {
-                        document.body.removeChild(announcement);
-                    }
-                }, 1000);
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Accessibility Announcement');
-            }
-        }
-
-        // Performance monitoring
-        if ('performance' in window && 'mark' in performance) {
-            performance.mark('flexbox-guide-loaded');
-        }
-    </script>
-
-    <!-- Error Boundary and Monitoring -->
-    <script>
-        // Additional security monitoring
-        (function() {
-            'use strict';
-            
-            // Monitor for suspicious activity
-            let suspiciousActivity = 0;
-            const MAX_SUSPICIOUS_ACTIVITY = 10;
-            
-            // Monitor DOM modifications
-            const observer = new MutationObserver(function(mutations) {
-                mutations.forEach(function(mutation) {
-                    // Check for suspicious script injections
-                    if (mutation.type === 'childList') {
-                        mutation.addedNodes.forEach(function(node) {
-                            if (node.nodeType === Node.ELEMENT_NODE) {
-                                if (node.tagName === 'SCRIPT' || 
-                                    node.innerHTML.includes('<script') ||
-                                    node.innerHTML.includes('javascript:') ||
-                                    node.innerHTML.includes('data:text/html')) {
-                                    suspiciousActivity++;
-                                    console.warn('Suspicious content detected and blocked');
-                                    node.remove();
-                                    
-                                    if (suspiciousActivity >= MAX_SUSPICIOUS_ACTIVITY) {
-                                        console.error('Maximum suspicious activity threshold reached');
-                                        // Could implement additional security measures here
-                                    }
-                                }
-                            }
-                        });
-                    }
-                });
-            });
-
-            // Start observing
-            observer.observe(document.body, {
-                childList: true,
-                subtree: true,
-                characterData: true
-            });
-
-            // Content Security Policy violation handler
-            document.addEventListener('securitypolicyviolation', function(event) {
-                SecurityUtils.handleError({
-                    message: 'CSP Violation',
-                    violatedDirective: event.violatedDirective,
-                    blockedURI: event.blockedURI,
-                    lineNumber: event.lineNumber,
-                    sourceFile: event.sourceFile
-                }, 'CSP Violation');
-            });
-
-            // Performance monitoring
-            if ('performance' in window && 'mark' in performance) {
-                performance.mark('flexbox-guide-security-loaded');
-            }
-        })();
     </script>
 </body>
 </html>

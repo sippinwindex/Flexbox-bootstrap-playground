@@ -3,18 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Interactive Flexbox playground for learning CSS Flexbox layout">
-    <meta name="keywords" content="CSS, Flexbox, playground, learning, interactive, web development">
-    <title>Flexbox Master Playground - Secure Edition</title>
-    
-    <!-- Security Headers -->
-    <meta http-equiv="X-Content-Type-Options" content="nosniff">
-    <meta http-equiv="X-Frame-Options" content="DENY">
-    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    <meta name="description" content="Interactive Flexbox playground with nested containers for learning CSS Flexbox layout">
+    <title>Enhanced Flexbox Playground - Nested Containers</title>
     
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" 
-          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <style>
@@ -23,12 +16,12 @@
             --success-gradient: linear-gradient(135deg, #28a745, #20c997);
             --warning-gradient: linear-gradient(135deg, #ffc107, #ff8c00);
             --info-gradient: linear-gradient(135deg, #17a2b8, #20c997);
+            --container-gradient: linear-gradient(135deg, #e74c3c, #c0392b);
             --bg-light: #f8f9fa;
             --border-color: #dee2e6;
             --text-muted: #6c757d;
             --shadow-sm: 0 2px 8px rgba(0,0,0,0.1);
             --shadow-md: 0 4px 15px rgba(0,0,0,0.15);
-            --shadow-lg: 0 8px 25px rgba(0,0,0,0.2);
         }
 
         body {
@@ -58,30 +51,11 @@
             position: relative;
         }
 
-        .playground-header.success { background: var(--success-gradient); }
-        .playground-header.warning { background: var(--warning-gradient); }
-        .playground-header.info { background: var(--info-gradient); }
-
         .controls-panel {
             background: #f8f9fa;
             border-right: 1px solid var(--border-color);
             max-height: 85vh;
             overflow-y: auto;
-            scrollbar-width: thin;
-            scrollbar-color: #667eea #f1f1f1;
-        }
-
-        .controls-panel::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .controls-panel::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-
-        .controls-panel::-webkit-scrollbar-thumb {
-            background: #667eea;
-            border-radius: 3px;
         }
 
         .control-group {
@@ -90,12 +64,6 @@
             box-shadow: var(--shadow-sm);
             margin-bottom: 1rem;
             overflow: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .control-group:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
         }
 
         .control-group h6 {
@@ -111,6 +79,317 @@
             padding: 1rem;
         }
 
+        /* Main flex container */
+        .flex-container {
+            background: white;
+            border: 3px dashed #667eea;
+            border-radius: 12px;
+            padding: 20px;
+            min-height: 400px;
+            display: flex;
+            position: relative;
+            transition: all 0.3s ease;
+            overflow: visible;
+        }
+
+        .flex-container::before {
+            content: 'Main Container';
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            z-index: 10;
+        }
+
+        /* Nested flex containers */
+        .nested-container {
+            background: rgba(231, 76, 60, 0.1);
+            border: 2px dashed #e74c3c;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 5px;
+            display: flex;
+            position: relative;
+            min-height: 100px;
+            transition: all 0.3s ease;
+        }
+
+        .nested-container::before {
+            content: 'Container Group';
+            position: absolute;
+            top: -10px;
+            left: 15px;
+            background: #e74c3c;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            z-index: 5;
+        }
+
+        .nested-container.selected::before {
+            content: 'Container Group (Selected)';
+            background: #ffc107;
+            color: #000;
+        }
+
+        /* Flex items */
+        .flex-item {
+            position: relative;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border-radius: 8px;
+            margin: 5px;
+        }
+
+        .flex-item.selected {
+            outline: 3px solid #ffc107;
+            outline-offset: 2px;
+        }
+
+        .nested-container.selected {
+            outline: 3px solid #ffc107;
+            outline-offset: 2px;
+            background: rgba(255, 193, 7, 0.1);
+        }
+
+        .flex-item:hover:not(.nested-container) {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .item-controls {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            background: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-md);
+            z-index: 20;
+        }
+
+        .flex-item:hover .item-controls {
+            opacity: 1;
+        }
+
+        .delete-btn {
+            position: absolute;
+            top: -8px;
+            left: -8px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            cursor: pointer;
+            z-index: 20;
+        }
+
+        .flex-item:hover .delete-btn {
+            opacity: 1;
+        }
+
+        /* Drag and drop styles */
+        .drag-over {
+            background: rgba(40, 167, 69, 0.1) !important;
+            border-color: #28a745 !important;
+        }
+
+        .dragging {
+            opacity: 0.5;
+            transform: rotate(2deg);
+        }
+
+        .drop-indicator {
+            background: #28a745;
+            height: 3px;
+            border-radius: 2px;
+            margin: 2px 0;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .drop-indicator.active {
+            opacity: 1;
+        }
+
+        /* Specific element styles */
+        .navbar-element {
+            background: #343a40;
+            color: white;
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            border-radius: 8px;
+        }
+
+        .card-element {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 1.5rem;
+            max-width: 300px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .image-element {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            border-radius: 8px;
+            min-width: 150px;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .button-element {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .text-element {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 1rem;
+            border-radius: 6px;
+            color: #495057;
+        }
+
+        .sidebar-element {
+            background: #6c757d;
+            color: white;
+            padding: 1.5rem;
+            min-height: 200px;
+            width: 200px;
+            border-radius: 8px;
+        }
+
+        .code-output {
+            background: #1a1a1a;
+            color: #e6e6e6;
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            max-height: 400px;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .element-btn {
+            width: 100%;
+            margin-bottom: 0.5rem;
+            padding: 0.75rem;
+            border: 2px solid #dee2e6;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .element-btn:hover {
+            border-color: #667eea;
+            background: #f8f9fa;
+        }
+
+        .element-btn.container-btn {
+            border-color: #e74c3c;
+        }
+
+        .element-btn.container-btn:hover {
+            border-color: #c0392b;
+            background: #fff5f5;
+        }
+
+        .css-property { color: #79b6f2; }
+        .css-value { color: #90ee90; }
+        .css-selector { color: #ffd700; }
+        .html-tag { color: #ff6b6b; }
+        .html-attr { color: #4ecdc4; }
+        .css-comment { color: #999; }
+
+        .live-indicator {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #28a745;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .preset-example {
+            border: 2px dashed #28a745;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .preset-example:hover {
+            border-color: #20c997;
+            background: #f8fff9;
+        }
+
         .property-tabs {
             display: flex;
             background: #f8f9fa;
@@ -118,7 +397,6 @@
             padding: 0.25rem;
             margin-bottom: 1rem;
             flex-wrap: wrap;
-            gap: 0.25rem;
         }
 
         .tab-btn {
@@ -141,11 +419,6 @@
             color: #667eea;
         }
 
-        .tab-btn:hover:not(.active) {
-            background: rgba(255,255,255,0.7);
-            color: #495057;
-        }
-
         .tab-content {
             display: none;
         }
@@ -154,352 +427,68 @@
             display: block;
         }
 
-        .flex-container {
-            background: white;
-            border: 3px dashed #667eea;
-            border-radius: 12px;
-            padding: 20px;
-            min-height: 400px;
-            display: flex;
-            position: relative;
-            transition: all 0.3s ease;
-            overflow: hidden;
-        }
-
-        .flex-container::before {
-            content: 'Flex Container';
-            position: absolute;
-            top: -12px;
-            left: 20px;
-            background: #667eea;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            z-index: 10;
-        }
-
-        .flex-container.has-content {
-            border-style: solid;
-            border-color: #28a745;
-        }
-
-        .flex-item {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            padding: 20px;
-            margin: 5px;
-            border-radius: 8px;
-            font-weight: 600;
-            text-align: center;
-            min-width: 80px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            position: relative;
-            cursor: pointer;
-            user-select: none;
-        }
-
-        .flex-item:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .flex-item.selected {
-            outline: 3px solid #ffc107;
-            outline-offset: 2px;
-            transform: scale(1.05);
-        }
-
-        .flex-item:nth-child(1) { background: linear-gradient(135deg, #ff6b6b, #ee5a52); }
-        .flex-item:nth-child(2) { background: linear-gradient(135deg, #4ecdc4, #26d0ce); }
-        .flex-item:nth-child(3) { background: linear-gradient(135deg, #45b7d1, #96c93d); }
-        .flex-item:nth-child(4) { background: linear-gradient(135deg, #f9ca24, #f0932b); }
-        .flex-item:nth-child(5) { background: linear-gradient(135deg, #6c5ce7, #a29bfe); }
-        .flex-item:nth-child(6) { background: linear-gradient(135deg, #fd79a8, #fdcb6e); }
-        .flex-item:nth-child(7) { background: linear-gradient(135deg, #00b894, #00cec9); }
-        .flex-item:nth-child(8) { background: linear-gradient(135deg, #e84393, #fd79a8); }
-
-        .item-controls {
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            background: white;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: var(--shadow-md);
-        }
-
-        .flex-item:hover .item-controls {
-            opacity: 1;
-        }
-
-        .code-output {
-            background: #1a1a1a;
-            color: #e6e6e6;
-            border-radius: 8px;
-            padding: 1rem;
-            font-family: 'Consolas', 'Monaco', monospace;
-            font-size: 13px;
-            line-height: 1.5;
-            max-height: 400px;
-            overflow-y: auto;
-            white-space: pre;
-            position: relative;
-        }
-
-        .copy-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: #28a745;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            padding: 5px 10px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            opacity: 0.8;
-            transition: all 0.2s;
-            z-index: 10;
-        }
-
-        .copy-btn:hover {
-            opacity: 1;
-            transform: scale(1.05);
-        }
-
-        .copy-btn.copied {
-            background: #17a2b8;
-        }
-
-        .range-value {
-            font-weight: 600;
-            color: #667eea;
-            font-size: 0.9rem;
-            min-width: 3rem;
-            display: inline-block;
-            text-align: center;
-        }
-
-        .live-indicator {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: #28a745;
-            color: white;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 0.7rem;
-            font-weight: bold;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-
-        /* CSS Syntax Highlighting */
-        .css-property { color: #79b6f2; font-weight: 500; }
-        .css-value { color: #90ee90; }
-        .css-selector { color: #ffd700; font-weight: 500; }
-        .css-comment { color: #9ca3af; font-style: italic; }
-
-        .preset-btn {
-            padding: 0.375rem 0.75rem;
-            border: 2px solid #667eea;
-            background: white;
-            color: #667eea;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin: 0.25rem;
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
-
-        .preset-btn:hover,
-        .preset-btn.active {
-            background: #667eea;
-            color: white;
-            transform: translateY(-1px);
-        }
-
-        .real-world-demo {
-            background: white;
-            border: 2px dashed #28a745;
-            border-radius: 8px;
-            padding: 20px;
-            min-height: 200px;
-            display: flex;
-            position: relative;
-            margin: 1rem 0;
-        }
-
-        .real-world-demo::before {
-            content: 'Real-World Example';
-            position: absolute;
-            top: -12px;
-            left: 20px;
-            background: #28a745;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .example-card {
-            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 1rem;
-            margin: 0.5rem;
-            text-align: center;
-            transition: all 0.3s ease;
-            flex: 1;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .example-card:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .axis-indicator {
-            position: absolute;
-            font-size: 0.8rem;
-            color: #6c757d;
-            font-weight: 500;
-            z-index: 10;
-            pointer-events: none;
-        }
-
-        .main-axis-indicator {
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(220, 53, 69, 0.9);
-            color: white;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 0.7rem;
-        }
-
-        .cross-axis-indicator {
-            top: 10px;
-            right: 50px;
-            background: rgba(23, 162, 184, 0.9);
-            color: white;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 0.7rem;
-        }
-
-        .visual-guide {
-            position: absolute;
-            pointer-events: none;
-            z-index: 5;
-        }
-
-        .main-axis-line {
-            border-top: 2px dashed #dc3545;
-            width: 80%;
-            top: 50%;
-            left: 10%;
-            opacity: 0.7;
-        }
-
-        .cross-axis-line {
-            border-left: 2px dashed #17a2b8;
-            height: 80%;
-            left: 50%;
-            top: 10%;
-            opacity: 0.7;
-        }
-
         .description-text {
             font-size: 0.9rem;
             color: var(--text-muted);
             margin-bottom: 0.75rem;
-            line-height: 1.4;
         }
 
-        .learning-tip {
-            background: linear-gradient(135deg, #e7f3ff, #cce7ff);
-            border-left: 4px solid #0066cc;
-            padding: 0.75rem;
-            margin: 1rem 0;
-            border-radius: 0 6px 6px 0;
+        .container-breadcrumb {
+            background: #e9ecef;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
             font-size: 0.9rem;
-            position: relative;
         }
 
-        .learning-tip::before {
-            content: '💡';
-            position: absolute;
-            left: -2px;
-            top: -2px;
-            font-size: 1.2rem;
+        .breadcrumb-item {
+            color: #6c757d;
+            cursor: pointer;
         }
 
-        .toast-container {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1050;
+        .breadcrumb-item.active {
+            color: #495057;
+            font-weight: 600;
         }
 
-        .toast-custom {
-            background: white;
-            border-radius: 8px;
-            box-shadow: var(--shadow-lg);
-            padding: 1rem;
-            margin-bottom: 0.5rem;
-            display: none;
-            min-width: 300px;
-        }
-
-        .toast-custom.show {
-            display: block;
-            animation: slideIn 0.3s ease;
-        }
-
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-
-        @media (max-width: 768px) {
-            .property-tabs {
-                flex-direction: column;
-            }
-            .tab-btn {
-                flex: none;
-                margin: 0.125rem 0;
-            }
-            .controls-panel {
-                max-height: none;
-                margin-bottom: 1rem;
-            }
+        .breadcrumb-item:hover:not(.active) {
+            color: #007bff;
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
-    <!-- Toast Container -->
-    <div class="toast-container" id="toast-container"></div>
+    <!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">
+            <i class="bi bi-code-square me-2"></i>Live Coding Playground
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="#"><i class="bi bi-house me-1"></i>Home</a>
+                <a class="nav-link" href="#"><i class="bi bi-grid-3x3 me-1"></i>Flexbox</a>
+                <a class="nav-link" href="#"><i class="bi bi-code me-1"></i>HTML</a>
+                <a class="nav-link" href="#"><i class="bi bi-bootstrap me-1"></i>Bootstrap</a>
+                <a class="nav-link active" href="#"><i class="bi bi-play-circle me-1"></i>Live Coding</a>
+                <div class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-grid-3x3-gap me-1"></i>More
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#" onclick="showComingSoon('CSS Playground')"><i class="bi bi-palette me-2"></i>CSS Playground</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="showComingSoon('JavaScript Guide')"><i class="bi bi-lightning me-2"></i>JavaScript Guide</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#" onclick="showAbout()"><i class="bi bi-info-circle me-2"></i>About</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
 
     <!-- Hero Section -->
     <section class="hero-section">
@@ -507,9 +496,14 @@
             <div class="row align-items-center">
                 <div class="col-lg-8">
                     <h1 class="display-6 fw-bold mb-3">
-                        <i class="bi bi-grid-3x3 me-3"></i>Flexbox Master Playground
+                        <i class="bi bi-grid-3x3 me-3"></i>Enhanced Flexbox Playground
                     </h1>
-                    <p class="lead mb-0">Master CSS Flexbox with interactive controls, real-time demos, visual guides, and hands-on challenges. Learn through experimentation!</p>
+                    <p class="lead mb-0">Build complex layouts with nested containers! Create navbar columns with card rows, and more.</p>
+                    <div class="mt-3">
+                        <span class="badge bg-light text-dark me-2"><i class="bi bi-plus-circle me-1"></i>Nested Containers</span>
+                        <span class="badge bg-light text-dark me-2"><i class="bi bi-arrows-move me-1"></i>Drag & Drop</span>
+                        <span class="badge bg-light text-dark"><i class="bi bi-code me-1"></i>Live Code</span>
+                    </div>
                 </div>
                 <div class="col-lg-4 text-center">
                     <div class="d-flex justify-content-center align-items-center" style="height: 120px;">
@@ -519,7 +513,7 @@
                                 <div style="width: 20px; height: 20px; background: #4ecdc4; border-radius: 4px;"></div>
                                 <div style="width: 20px; height: 20px; background: #45b7d1; border-radius: 4px;"></div>
                             </div>
-                            <small class="opacity-75">Interactive Flexbox</small>
+                            <small class="opacity-75">Nested Layout Builder</small>
                         </div>
                     </div>
                 </div>
@@ -527,40 +521,20 @@
         </div>
     </section>
 
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="index.html">
-                <i class="bi bi-arrow-left me-2"></i>Flexbox Playground
-            </a>
-            <div class="navbar-nav ms-auto">
-                <a class="nav-link" href="css-playground.html">
-                    <i class="bi bi-palette me-1"></i>CSS Properties
-                </a>
-                <a class="nav-link" href="bootstrap-playground.html">
-                    <i class="bi bi-bootstrap me-1"></i>Bootstrap
-                </a>
-                <a class="nav-link" href="index.html">
-                    <i class="bi bi-house me-1"></i>Home
-                </a>
-            </div>
-        </div>
-    </nav>
-
     <div class="container-fluid p-3">
         <!-- Property Categories -->
         <div class="property-tabs">
-            <button class="tab-btn active" onclick="switchTab('container')">
+            <button class="tab-btn active" onclick="switchTab('builder')">
+                <i class="bi bi-plus-square me-1"></i>Element Builder
+            </button>
+            <button class="tab-btn" onclick="switchTab('container')">
                 <i class="bi bi-box me-1"></i>Container Props
             </button>
             <button class="tab-btn" onclick="switchTab('items')">
                 <i class="bi bi-square me-1"></i>Item Props
             </button>
             <button class="tab-btn" onclick="switchTab('examples')">
-                <i class="bi bi-grid me-1"></i>Real Examples
-            </button>
-            <button class="tab-btn" onclick="switchTab('cheatsheet')">
-                <i class="bi bi-book me-1"></i>Cheat Sheet
+                <i class="bi bi-grid me-1"></i>Quick Examples
             </button>
         </div>
 
@@ -568,42 +542,122 @@
             <!-- Controls Panel -->
             <div class="col-lg-3">
                 <div class="controls-panel p-3">
-                    <!-- Container Properties Tab -->
-                    <div id="container-tab" class="tab-content active">
+                    <!-- Element Builder Tab -->
+                    <div id="builder-tab" class="tab-content active">
                         <h5 class="text-center mb-3">
-                            <i class="bi bi-sliders me-2"></i>Flex Container Properties
+                            <i class="bi bi-plus-square me-2"></i>Add Elements
                         </h5>
 
-                        <!-- Display -->
+                        <!-- Container Elements -->
                         <div class="control-group">
-                            <h6><i class="bi bi-eye me-2"></i>Display</h6>
+                            <h6><i class="bi bi-boxes me-2"></i>Containers</h6>
                             <div class="control-body">
-                                <div class="description-text">Enables flexbox layout for the container</div>
-                                <select class="form-select form-select-sm" id="display" onchange="updateContainer()">
-                                    <option value="block">Block</option>
-                                    <option value="flex" selected>Flex</option>
-                                    <option value="inline-flex">Inline Flex</option>
-                                </select>
-                                <div class="learning-tip mt-2">
-                                    <strong>Key:</strong> <code>display: flex</code> is what makes flexbox work!
-                                </div>
+                                <button class="element-btn container-btn" onclick="addElement('container')">
+                                    <i class="bi bi-box text-danger"></i>
+                                    <div>
+                                        <strong>Container Group</strong>
+                                        <div class="small text-muted">Nested flex container</div>
+                                    </div>
+                                </button>
                             </div>
+                        </div>
+
+                        <!-- UI Components -->
+                        <div class="control-group">
+                            <h6><i class="bi bi-collection me-2"></i>UI Components</h6>
+                            <div class="control-body">
+                                <button class="element-btn" onclick="addElement('navbar')">
+                                    <i class="bi bi-menu-button-wide text-primary"></i>
+                                    <div>
+                                        <strong>Navigation Bar</strong>
+                                        <div class="small text-muted">Header with logo & menu</div>
+                                    </div>
+                                </button>
+                                
+                                <button class="element-btn" onclick="addElement('card')">
+                                    <i class="bi bi-card-list text-success"></i>
+                                    <div>
+                                        <strong>Card</strong>
+                                        <div class="small text-muted">Content card with text</div>
+                                    </div>
+                                </button>
+                                
+                                <button class="element-btn" onclick="addElement('image')">
+                                    <i class="bi bi-image text-info"></i>
+                                    <div>
+                                        <strong>Image Placeholder</strong>
+                                        <div class="small text-muted">Visual image block</div>
+                                    </div>
+                                </button>
+                                
+                                <button class="element-btn" onclick="addElement('button')">
+                                    <i class="bi bi-hand-index text-warning"></i>
+                                    <div>
+                                        <strong>Button</strong>
+                                        <div class="small text-muted">Interactive button</div>
+                                    </div>
+                                </button>
+                                
+                                <button class="element-btn" onclick="addElement('text')">
+                                    <i class="bi bi-text-paragraph text-secondary"></i>
+                                    <div>
+                                        <strong>Text Block</strong>
+                                        <div class="small text-muted">Text content area</div>
+                                    </div>
+                                </button>
+                                
+                                <button class="element-btn" onclick="addElement('sidebar')">
+                                    <i class="bi bi-layout-sidebar text-danger"></i>
+                                    <div>
+                                        <strong>Sidebar</strong>
+                                        <div class="small text-muted">Side navigation panel</div>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="control-group">
+                            <h6><i class="bi bi-tools me-2"></i>Actions</h6>
+                            <div class="control-body">
+                                <button class="btn btn-warning w-100 mb-2" onclick="clearContainer()">
+                                    <i class="bi bi-trash me-1"></i>Clear All
+                                </button>
+                                <button class="btn btn-success w-100" onclick="generateFullCode()">
+                                    <i class="bi bi-code me-1"></i>Generate Code
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Container Properties Tab -->
+                    <div id="container-tab" class="tab-content">
+                        <h5 class="text-center mb-3">
+                            <i class="bi bi-sliders me-2"></i>Container Properties
+                        </h5>
+
+                        <!-- Container Breadcrumb -->
+                        <div class="container-breadcrumb" id="container-breadcrumb">
+                            <i class="bi bi-house me-1"></i>
+                            <span class="breadcrumb-item active">Main Container</span>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle me-2"></i>
+                            <strong>Container controls:</strong> These affect the selected container and its direct children.
                         </div>
 
                         <!-- Flex Direction -->
                         <div class="control-group">
                             <h6><i class="bi bi-arrow-right me-2"></i>Flex Direction</h6>
                             <div class="control-body">
-                                <div class="description-text">Sets the main axis direction for flex items</div>
-                                <select class="form-select form-select-sm" id="flex-direction" onchange="updateContainer()">
-                                    <option value="row" selected>Row →</option>
-                                    <option value="row-reverse">Row Reverse ←</option>
-                                    <option value="column">Column ↓</option>
-                                    <option value="column-reverse">Column Reverse ↑</option>
+                                <div class="description-text">Sets the main axis direction for this container</div>
+                                <select class="form-select form-select-sm" id="flex-direction" onchange="updateActiveContainer()">
+                                    <option value="row" selected>Row → (horizontal)</option>
+                                    <option value="row-reverse">Row Reverse ← (horizontal reversed)</option>
+                                    <option value="column">Column ↓ (vertical)</option>
+                                    <option value="column-reverse">Column Reverse ↑ (vertical reversed)</option>
                                 </select>
-                                <div class="learning-tip mt-2">
-                                    <strong>Remember:</strong> This defines your main axis. Items flow along this direction.
-                                </div>
                             </div>
                         </div>
 
@@ -611,18 +665,15 @@
                         <div class="control-group">
                             <h6><i class="bi bi-distribute-horizontal me-2"></i>Justify Content</h6>
                             <div class="control-body">
-                                <div class="description-text">Controls alignment along the main axis</div>
-                                <select class="form-select form-select-sm" id="justify-content" onchange="updateContainer()">
-                                    <option value="flex-start" selected>Flex Start</option>
-                                    <option value="center">Center</option>
-                                    <option value="flex-end">Flex End</option>
-                                    <option value="space-between">Space Between</option>
-                                    <option value="space-around">Space Around</option>
-                                    <option value="space-evenly">Space Evenly</option>
+                                <div class="description-text">How elements are distributed along main axis</div>
+                                <select class="form-select form-select-sm" id="justify-content" onchange="updateActiveContainer()">
+                                    <option value="flex-start" selected>Flex Start (left/top)</option>
+                                    <option value="center">Center (middle)</option>
+                                    <option value="flex-end">Flex End (right/bottom)</option>
+                                    <option value="space-between">Space Between (spread apart)</option>
+                                    <option value="space-around">Space Around (equal space around each)</option>
+                                    <option value="space-evenly">Space Evenly (perfectly equal spacing)</option>
                                 </select>
-                                <div class="learning-tip mt-2">
-                                    <strong>Popular:</strong> <code>center</code> and <code>space-between</code> are most commonly used.
-                                </div>
                             </div>
                         </div>
 
@@ -630,17 +681,14 @@
                         <div class="control-group">
                             <h6><i class="bi bi-distribute-vertical me-2"></i>Align Items</h6>
                             <div class="control-body">
-                                <div class="description-text">Controls alignment along the cross axis</div>
-                                <select class="form-select form-select-sm" id="align-items" onchange="updateContainer()">
-                                    <option value="stretch" selected>Stretch</option>
-                                    <option value="flex-start">Flex Start</option>
-                                    <option value="center">Center</option>
-                                    <option value="flex-end">Flex End</option>
-                                    <option value="baseline">Baseline</option>
+                                <div class="description-text">How elements align on cross axis</div>
+                                <select class="form-select form-select-sm" id="align-items" onchange="updateActiveContainer()">
+                                    <option value="stretch" selected>Stretch (fill height/width)</option>
+                                    <option value="flex-start">Flex Start (top/left edge)</option>
+                                    <option value="center">Center (middle)</option>
+                                    <option value="flex-end">Flex End (bottom/right edge)</option>
+                                    <option value="baseline">Baseline (text baseline)</option>
                                 </select>
-                                <div class="learning-tip mt-2">
-                                    <strong>Tip:</strong> Use <code>center</code> to vertically center items easily!
-                                </div>
                             </div>
                         </div>
 
@@ -648,15 +696,12 @@
                         <div class="control-group">
                             <h6><i class="bi bi-arrow-down-up me-2"></i>Flex Wrap</h6>
                             <div class="control-body">
-                                <div class="description-text">Controls whether items wrap to new lines</div>
-                                <select class="form-select form-select-sm" id="flex-wrap" onchange="updateContainer()">
-                                    <option value="nowrap" selected>No Wrap</option>
-                                    <option value="wrap">Wrap</option>
-                                    <option value="wrap-reverse">Wrap Reverse</option>
+                                <div class="description-text">Whether elements can wrap to new lines</div>
+                                <select class="form-select form-select-sm" id="flex-wrap" onchange="updateActiveContainer()">
+                                    <option value="nowrap" selected>No Wrap (single line)</option>
+                                    <option value="wrap">Wrap (allow multiple lines)</option>
+                                    <option value="wrap-reverse">Wrap Reverse (wrap in reverse order)</option>
                                 </select>
-                                <div class="learning-tip mt-2">
-                                    <strong>Responsive:</strong> Use <code>wrap</code> for responsive layouts!
-                                </div>
                             </div>
                         </div>
 
@@ -664,13 +709,10 @@
                         <div class="control-group">
                             <h6><i class="bi bi-plus-square me-2"></i>Gap</h6>
                             <div class="control-body">
-                                <div class="description-text">Modern CSS property for spacing between items</div>
+                                <div class="description-text">Space between elements in this container</div>
                                 <div class="d-flex align-items-center gap-2">
-                                    <input type="range" class="form-range flex-grow-1" id="gap" min="0" max="50" value="10" oninput="updateGap()" onchange="updateContainer()">
-                                    <span class="range-value" id="gap-value">10px</span>
-                                </div>
-                                <div class="learning-tip mt-2">
-                                    <strong>Modern:</strong> Much cleaner than using margins!
+                                    <input type="range" class="form-range" id="gap" min="0" max="50" value="10" oninput="updateGapValue(); updateActiveContainer();">
+                                    <span class="badge bg-primary" id="gap-value">10px</span>
                                 </div>
                             </div>
                         </div>
@@ -679,31 +721,11 @@
                         <div class="control-group">
                             <h6><i class="bi bi-aspect-ratio me-2"></i>Container Height</h6>
                             <div class="control-body">
-                                <div class="description-text">Adjust container height to see alignment effects</div>
+                                <div class="description-text">Height of this container</div>
                                 <div class="d-flex align-items-center gap-2">
-                                    <input type="range" class="form-range flex-grow-1" id="container-height" min="200" max="600" value="400" oninput="updateHeight()" onchange="updateContainer()">
-                                    <span class="range-value" id="height-value">400px</span>
+                                    <input type="range" class="form-range" id="container-height" min="100" max="600" value="400" oninput="updateContainerHeight(); updateActiveContainer();">
+                                    <span class="badge bg-secondary" id="height-value">400px</span>
                                 </div>
-                            </div>
-                        </div>
-
-                        <!-- Quick Container Presets -->
-                        <div class="control-group">
-                            <h6><i class="bi bi-lightning me-2"></i>Quick Container Presets</h6>
-                            <div class="control-body">
-                                <div class="description-text">Common flexbox patterns for quick setup</div>
-                                <button class="preset-btn w-100 mb-2" onclick="applyContainerPreset('center-all')">
-                                    <i class="bi bi-bullseye me-1"></i>Perfect Center
-                                </button>
-                                <button class="preset-btn w-100 mb-2" onclick="applyContainerPreset('space-between')">
-                                    <i class="bi bi-distribute-horizontal me-1"></i>Space Between
-                                </button>
-                                <button class="preset-btn w-100 mb-2" onclick="applyContainerPreset('column-center')">
-                                    <i class="bi bi-distribute-vertical me-1"></i>Column Center
-                                </button>
-                                <button class="preset-btn w-100 mb-2" onclick="applyContainerPreset('wrap-grid')">
-                                    <i class="bi bi-grid me-1"></i>Responsive Grid
-                                </button>
                             </div>
                         </div>
                     </div>
@@ -711,263 +733,153 @@
                     <!-- Item Properties Tab -->
                     <div id="items-tab" class="tab-content">
                         <h5 class="text-center mb-3">
-                            <i class="bi bi-square me-2"></i>Flex Item Properties
+                            <i class="bi bi-square me-2"></i>Selected Item Properties
                         </h5>
-
-                        <!-- Item Selection -->
-                        <div class="control-group">
-                            <h6><i class="bi bi-cursor me-2"></i>Select Item</h6>
-                            <div class="control-body">
-                                <div class="description-text">Click an item above or select here to modify its properties</div>
-                                <select class="form-select form-select-sm" id="selected-item" onchange="selectItemFromDropdown()">
-                                    <option value="1">Item 1</option>
-                                    <option value="2">Item 2</option>
-                                    <option value="3">Item 3</option>
-                                </select>
-                                <div class="text-center mt-2">
-                                    <small class="text-muted">Selected item: <span class="fw-bold text-primary" id="selected-indicator">Item 1</span></small>
-                                </div>
-                            </div>
+                        
+                        <div class="alert alert-warning" id="no-selection-alert">
+                            <i class="bi bi-info-circle me-2"></i>
+                            Click on an element to modify its individual flex properties
                         </div>
 
-                        <!-- Flex Grow -->
-                        <div class="control-group">
-                            <h6><i class="bi bi-arrows-expand me-2"></i>Flex Grow</h6>
-                            <div class="control-body">
-                                <div class="description-text">How much the item should grow relative to other items</div>
-                                <div class="d-flex align-items-center gap-2">
-                                    <input type="range" class="form-range flex-grow-1" id="flex-grow" min="0" max="5" value="0" oninput="updateGrow()" onchange="updateSelectedItem()">
-                                    <span class="range-value" id="grow-value">0</span>
-                                </div>
-                                <div class="learning-tip mt-2">
-                                    <strong>Growth:</strong> Higher values = more space taken. Try setting to 1 for equal distribution!
+                        <div id="item-controls-panel" style="display: none;">
+                            <div class="alert alert-success">
+                                <i class="bi bi-check-circle me-2"></i>
+                                <strong id="selected-element-name">Element Selected</strong>
+                                <div class="small">Individual properties - affects ONLY this element</div>
+                            </div>
+
+                            <!-- Flex Grow -->
+                            <div class="control-group">
+                                <h6><i class="bi bi-arrows-expand me-2"></i>Flex Grow</h6>
+                                <div class="control-body">
+                                    <div class="description-text">How much this item should grow relative to others</div>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <input type="range" class="form-range" id="flex-grow" min="0" max="5" value="0" oninput="updateGrowValue(); updateSelectedItem();">
+                                        <span class="badge bg-success" id="grow-value">0</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Flex Shrink -->
-                        <div class="control-group">
-                            <h6><i class="bi bi-arrows-collapse me-2"></i>Flex Shrink</h6>
-                            <div class="control-body">
-                                <div class="description-text">How much the item should shrink when space is limited</div>
-                                <div class="d-flex align-items-center gap-2">
-                                    <input type="range" class="form-range flex-grow-1" id="flex-shrink" min="0" max="5" value="1" oninput="updateShrink()" onchange="updateSelectedItem()">
-                                    <span class="range-value" id="shrink-value">1</span>
-                                </div>
-                                <div class="learning-tip mt-2">
-                                    <strong>Shrinking:</strong> Set to 0 to prevent shrinking. Default is 1.
+                            <!-- Flex Shrink -->
+                            <div class="control-group">
+                                <h6><i class="bi bi-arrows-collapse me-2"></i>Flex Shrink</h6>
+                                <div class="control-body">
+                                    <div class="description-text">How much this item should shrink when space is limited</div>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <input type="range" class="form-range" id="flex-shrink" min="0" max="5" value="1" oninput="updateShrinkValue(); updateSelectedItem();">
+                                        <span class="badge bg-warning" id="shrink-value">1</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Flex Basis -->
-                        <div class="control-group">
-                            <h6><i class="bi bi-rulers me-2"></i>Flex Basis</h6>
-                            <div class="control-body">
-                                <div class="description-text">Initial main size before free space is distributed</div>
-                                <select class="form-select form-select-sm" id="flex-basis" onchange="updateSelectedItem()">
-                                    <option value="auto" selected>Auto</option>
-                                    <option value="0">0</option>
-                                    <option value="50px">50px</option>
-                                    <option value="100px">100px</option>
-                                    <option value="150px">150px</option>
-                                    <option value="200px">200px</option>
-                                    <option value="25%">25%</option>
-                                    <option value="50%">50%</option>
-                                    <option value="content">Content</option>
-                                </select>
-                                <div class="learning-tip mt-2">
-                                    <strong>Basis:</strong> <code>0</code> for equal distribution, <code>auto</code> for content-based sizing.
+                            <!-- Flex Basis -->
+                            <div class="control-group">
+                                <h6><i class="bi bi-rulers me-2"></i>Flex Basis</h6>
+                                <div class="control-body">
+                                    <div class="description-text">Initial size before growing/shrinking</div>
+                                    <select class="form-select form-select-sm" id="flex-basis" onchange="updateSelectedItem();">
+                                        <option value="auto" selected>Auto (content size)</option>
+                                        <option value="0">0 (equal distribution)</option>
+                                        <option value="50px">50px</option>
+                                        <option value="100px">100px</option>
+                                        <option value="150px">150px</option>
+                                        <option value="200px">200px</option>
+                                        <option value="25%">25%</option>
+                                        <option value="50%">50%</option>
+                                        <option value="75%">75%</option>
+                                        <option value="100%">100%</option>
+                                    </select>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Align Self -->
-                        <div class="control-group">
-                            <h6><i class="bi bi-arrow-up-down me-2"></i>Align Self</h6>
-                            <div class="control-body">
-                                <div class="description-text">Override container's align-items for this specific item</div>
-                                <select class="form-select form-select-sm" id="align-self" onchange="updateSelectedItem()">
-                                    <option value="auto" selected>Auto (inherit)</option>
-                                    <option value="flex-start">Flex Start</option>
-                                    <option value="center">Center</option>
-                                    <option value="flex-end">Flex End</option>
-                                    <option value="stretch">Stretch</option>
-                                    <option value="baseline">Baseline</option>
-                                </select>
-                                <div class="learning-tip mt-2">
-                                    <strong>Override:</strong> Great for making one item behave differently!
+                            <!-- Align Self -->
+                            <div class="control-group">
+                                <h6><i class="bi bi-arrow-up-down me-2"></i>Align Self</h6>
+                                <div class="control-body">
+                                    <div class="description-text">Override container's align-items for this element only</div>
+                                    <select class="form-select form-select-sm" id="align-self" onchange="updateSelectedItem()">
+                                        <option value="auto" selected>Auto (inherit from container)</option>
+                                        <option value="flex-start">Flex Start (top/left)</option>
+                                        <option value="center">Center</option>
+                                        <option value="flex-end">Flex End (bottom/right)</option>
+                                        <option value="stretch">Stretch (fill container)</option>
+                                        <option value="baseline">Baseline (text baseline)</option>
+                                    </select>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Order -->
-                        <div class="control-group">
-                            <h6><i class="bi bi-sort-numeric-down me-2"></i>Order</h6>
-                            <div class="control-body">
-                                <div class="description-text">Change visual order without changing HTML structure</div>
-                                <div class="d-flex align-items-center gap-2">
-                                    <input type="range" class="form-range flex-grow-1" id="order" min="-3" max="3" value="0" oninput="updateOrder()" onchange="updateSelectedItem()">
-                                    <span class="range-value" id="order-value">0</span>
-                                </div>
-                                <div class="learning-tip mt-2">
-                                    <strong>Ordering:</strong> Negative values move left/up, positive values move right/down.
+                            <!-- Order -->
+                            <div class="control-group">
+                                <h6><i class="bi bi-sort-numeric-down me-2"></i>Order</h6>
+                                <div class="control-body">
+                                    <div class="description-text">Change visual order without changing HTML</div>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <input type="range" class="form-range" id="order" min="-5" max="5" value="0" oninput="updateOrderValue(); updateSelectedItem();">
+                                        <span class="badge bg-info" id="order-value">0</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Item Actions -->
-                        <div class="control-group">
-                            <h6><i class="bi bi-plus-minus me-2"></i>Item Management</h6>
-                            <div class="control-body">
-                                <button class="btn btn-success btn-sm w-100 mb-2" onclick="addItem()">
-                                    <i class="bi bi-plus me-1"></i>Add New Item
-                                </button>
-                                <button class="btn btn-danger btn-sm w-100 mb-2" onclick="removeItem()">
-                                    <i class="bi bi-dash me-1"></i>Remove Selected Item
-                                </button>
-                                <button class="btn btn-warning btn-sm w-100" onclick="resetItems()">
-                                    <i class="bi bi-arrow-clockwise me-1"></i>Reset All Items
-                                </button>
+                            <!-- Quick Individual Presets -->
+                            <div class="control-group">
+                                <h6><i class="bi bi-lightning me-2"></i>Quick Item Presets</h6>
+                                <div class="control-body">
+                                    <button class="btn btn-outline-primary btn-sm w-100 mb-2" onclick="applyItemPreset('flexible')">
+                                        <i class="bi bi-arrows-expand me-1"></i>Flexible (grows and shrinks)
+                                    </button>
+                                    <button class="btn btn-outline-success btn-sm w-100 mb-2" onclick="applyItemPreset('fixed')">
+                                        <i class="bi bi-lock me-1"></i>Fixed Size (no grow/shrink)
+                                    </button>
+                                    <button class="btn btn-outline-info btn-sm w-100 mb-2" onclick="applyItemPreset('center-self')">
+                                        <i class="bi bi-bullseye me-1"></i>Center Self
+                                    </button>
+                                    <button class="btn btn-outline-warning btn-sm w-100 mb-2" onclick="applyItemPreset('move-end')">
+                                        <i class="bi bi-arrow-right me-1"></i>Move to End
+                                    </button>
+                                    <button class="btn btn-outline-secondary btn-sm w-100" onclick="resetItemProperties()">
+                                        <i class="bi bi-arrow-clockwise me-1"></i>Reset Item
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Real-World Examples Tab -->
+                    <!-- Quick Examples Tab -->
                     <div id="examples-tab" class="tab-content">
                         <h5 class="text-center mb-3">
-                            <i class="bi bi-grid me-2"></i>Real-World Examples
+                            <i class="bi bi-grid me-2"></i>Nested Examples
                         </h5>
 
-                        <div class="control-group">
-                            <h6><i class="bi bi-layout-text-window me-2"></i>Common UI Patterns</h6>
-                            <div class="control-body">
-                                <div class="description-text">Click to see how flexbox solves real design problems</div>
-                                
-                                <div class="d-grid gap-2">
-                                    <button class="btn btn-outline-primary btn-sm" onclick="loadExample('navbar')">
-                                        <i class="bi bi-menu-button-wide me-2"></i>Navigation Bar
-                                    </button>
-                                    
-                                    <button class="btn btn-outline-primary btn-sm" onclick="loadExample('card-layout')">
-                                        <i class="bi bi-card-list me-2"></i>Card Grid
-                                    </button>
-                                    
-                                    <button class="btn btn-outline-primary btn-sm" onclick="loadExample('sidebar')">
-                                        <i class="bi bi-layout-sidebar me-2"></i>Sidebar Layout
-                                    </button>
-                                    
-                                    <button class="btn btn-outline-primary btn-sm" onclick="loadExample('footer')">
-                                        <i class="bi bi-window-sidebar me-2"></i>Sticky Footer
-                                    </button>
-                                    
-                                    <button class="btn btn-outline-primary btn-sm" onclick="loadExample('form')">
-                                        <i class="bi bi-ui-checks me-2"></i>Form Layout
-                                    </button>
-                                    
-                                    <button class="btn btn-outline-primary btn-sm" onclick="loadExample('media')">
-                                        <i class="bi bi-image me-2"></i>Media Object
-                                    </button>
-                                </div>
+                        <div class="preset-example" onclick="loadExample('navbar-cards')">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-layers text-primary me-2"></i>
+                                <strong>Navbar + Cards</strong>
                             </div>
+                            <div class="small text-muted">Column navbar with horizontal cards</div>
                         </div>
 
-                        <div class="control-group">
-                            <h6><i class="bi bi-info-circle me-2"></i>Example Details</h6>
-                            <div class="control-body">
-                                <div id="example-description">
-                                    <div class="text-center text-muted">
-                                        <i class="bi bi-lightbulb fs-1 mb-2"></i>
-                                        <p>Choose an example above to see real-world flexbox implementations with detailed explanations.</p>
-                                    </div>
-                                </div>
+                        <div class="preset-example" onclick="loadExample('sidebar-content')">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-layout-three-columns text-success me-2"></i>
+                                <strong>Sidebar Layout</strong>
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- Cheat Sheet Tab -->
-                    <div id="cheatsheet-tab" class="tab-content">
-                        <h5 class="text-center mb-3">
-                            <i class="bi bi-book me-2"></i>Flexbox Cheat Sheet
-                        </h5>
-
-                        <div class="control-group">
-                            <h6><i class="bi bi-box me-2"></i>Container Properties</h6>
-                            <div class="control-body">
-                                <div class="small">
-                                    <div class="mb-2">
-                                        <code class="text-primary">display: flex</code>
-                                        <div class="text-muted">Enables flexbox layout</div>
-                                    </div>
-                                    <div class="mb-2">
-                                        <code class="text-primary">flex-direction</code>
-                                        <div class="text-muted">row | row-reverse | column | column-reverse</div>
-                                    </div>
-                                    <div class="mb-2">
-                                        <code class="text-primary">justify-content</code>
-                                        <div class="text-muted">flex-start | center | flex-end | space-between | space-around | space-evenly</div>
-                                    </div>
-                                    <div class="mb-2">
-                                        <code class="text-primary">align-items</code>
-                                        <div class="text-muted">stretch | flex-start | center | flex-end | baseline</div>
-                                    </div>
-                                    <div class="mb-2">
-                                        <code class="text-primary">flex-wrap</code>
-                                        <div class="text-muted">nowrap | wrap | wrap-reverse</div>
-                                    </div>
-                                    <div class="mb-2">
-                                        <code class="text-primary">gap</code>
-                                        <div class="text-muted">Sets space between items</div>
-                                    </div>
-                                </div>
-                            </div>
+                            <div class="small text-muted">Sidebar with nested content areas</div>
                         </div>
 
-                        <div class="control-group">
-                            <h6><i class="bi bi-square me-2"></i>Item Properties</h6>
-                            <div class="control-body">
-                                <div class="small">
-                                    <div class="mb-2">
-                                        <code class="text-success">flex-grow</code>
-                                        <div class="text-muted">How much item should grow (0 = no grow)</div>
-                                    </div>
-                                    <div class="mb-2">
-                                        <code class="text-success">flex-shrink</code>
-                                        <div class="text-muted">How much item should shrink (0 = no shrink)</div>
-                                    </div>
-                                    <div class="mb-2">
-                                        <code class="text-success">flex-basis</code>
-                                        <div class="text-muted">Initial size before growing/shrinking</div>
-                                    </div>
-                                    <div class="mb-2">
-                                        <code class="text-success">align-self</code>
-                                        <div class="text-muted">Override container's align-items</div>
-                                    </div>
-                                    <div class="mb-2">
-                                        <code class="text-success">order</code>
-                                        <div class="text-muted">Change visual order (default: 0)</div>
-                                    </div>
-                                </div>
+                        <div class="preset-example" onclick="loadExample('hero-cards')">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-image text-info me-2"></i>
+                                <strong>Hero + Card Grid</strong>
                             </div>
+                            <div class="small text-muted">Hero section with card grid below</div>
                         </div>
-                    </div>
 
-                    <!-- Global Actions -->
-                    <div class="control-group">
-                        <h6><i class="bi bi-tools me-2"></i>Playground Actions</h6>
-                        <div class="control-body">
-                            <button class="btn btn-success w-100 mb-2" onclick="generateCode()">
-                                <i class="bi bi-code me-2"></i>Generate CSS Code
-                            </button>
-                            <button class="btn btn-warning w-100 mb-2" onclick="showAxisGuides()">
-                                <i class="bi bi-rulers me-2"></i>Toggle Axis Guides
-                            </button>
-                            <button class="btn btn-info w-100 mb-2" onclick="exportCode()">
-                                <i class="bi bi-download me-2"></i>Export Code
-                            </button>
-                            <button class="btn btn-danger w-100" onclick="resetAll()">
-                                <i class="bi bi-arrow-clockwise me-2"></i>Reset Everything
-                            </button>
+                        <div class="preset-example" onclick="loadExample('complex-layout')">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-grid-3x3 text-warning me-2"></i>
+                                <strong>Complex Layout</strong>
+                            </div>
+                            <div class="small text-muted">Multi-level nested containers</div>
                         </div>
                     </div>
                 </div>
@@ -978,1475 +890,1131 @@
                 <div class="playground-container">
                     <div class="playground-header">
                         <h5 class="mb-0">
-                            <i class="bi bi-eye me-2"></i>Live Flexbox Demo
+                            <i class="bi bi-eye me-2"></i>Live Nested Flexbox Builder
                         </h5>
-                        <small>Interactive flexbox container with real-time updates</small>
+                        <small>Click containers/elements to select. Drag & drop to move (coming soon).</small>
                         <div class="live-indicator">LIVE</div>
                     </div>
                     
                     <div class="p-3">
-                        <div class="flex-container" id="flex-container">
-                            <!-- Visual guides for axis -->
-                            <div class="visual-guide main-axis-line" id="main-axis-line" style="display: none;"></div>
-                            <div class="visual-guide cross-axis-line" id="cross-axis-line" style="display: none;"></div>
-                            <div class="axis-indicator main-axis-indicator" id="main-axis-indicator" style="display: none;">Main Axis</div>
-                            <div class="axis-indicator cross-axis-indicator" id="cross-axis-indicator" style="display: none;">Cross Axis</div>
-                            
-                            <!-- Flex items -->
-                            <div class="flex-item" data-item="1" onclick="selectItem(1)">
-                                <div class="item-controls">
-                                    <i class="bi bi-gear text-primary"></i>
-                                </div>
-                                Item 1
+                        <div class="flex-container" id="flex-container" onclick="selectContainer('main-container')">
+                            <!-- Elements will be added here dynamically -->
+                            <div class="text-center text-muted py-5">
+                                <i class="bi bi-plus-circle fs-1 mb-3"></i>
+                                <h5>Start Building!</h5>
+                                <p class="mb-2">Add a <strong>Container Group</strong> first, then add elements inside it</p>
+                                <p class="small">Or add elements directly to the main container</p>
                             </div>
-                            <div class="flex-item" data-item="2" onclick="selectItem(2)">
-                                <div class="item-controls">
-                                    <i class="bi bi-gear text-primary"></i>
-                                </div>
-                                Item 2
-                            </div>
-                            <div class="flex-item" data-item="3" onclick="selectItem(3)">
-                                <div class="item-controls">
-                                    <i class="bi bi-gear text-primary"></i>
-                                </div>
-                                Item 3
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Real World Demo Section -->
-                <div class="playground-container">
-                    <div class="playground-header success">
-                        <h5 class="mb-0">
-                            <i class="bi bi-grid-3x3 me-2"></i>Real-World Example
-                        </h5>
-                        <small>See flexbox in action with realistic content</small>
-                    </div>
-                    <div class="p-3">
-                        <div class="real-world-demo" id="real-world-demo">
-                            <div class="example-card">
-                                <h6><i class="bi bi-file-text me-1"></i>Article</h6>
-                                <p class="mb-0 small">Blog post preview with title and excerpt text content area.</p>
-                            </div>
-                            <div class="example-card">
-                                <h6><i class="bi bi-image me-1"></i>Media</h6>
-                                <p class="mb-0 small">Featured image or video content display area.</p>
-                            </div>
-                            <div class="example-card">
-                                <h6><i class="bi bi-hand-index me-1"></i>Actions</h6>
-                                <p class="mb-0 small">Interactive buttons and navigation links section.</p>
-                            </div>
-                        </div>
-                        <div class="d-flex gap-2 mt-3">
-                            <button class="btn btn-success btn-sm" onclick="applyToRealWorld()">
-                                <i class="bi bi-arrow-right me-1"></i>Apply Current Settings
-                            </button>
-                            <button class="btn btn-outline-secondary btn-sm" onclick="resetRealWorld()">
-                                <i class="bi bi-arrow-clockwise me-1"></i>Reset Example
-                            </button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Code & Documentation -->
+            <!-- Code Output -->
             <div class="col-lg-3">
                 <!-- Live CSS Output -->
                 <div class="playground-container">
-                    <div class="playground-header info">
+                    <div class="playground-header" style="background: var(--info-gradient);">
                         <h5 class="mb-0">
                             <i class="bi bi-code-slash me-2"></i>Generated CSS
                         </h5>
-                        <small>Copy-ready flexbox code</small>
                         <div class="live-indicator">LIVE</div>
                     </div>
                     <div class="position-relative">
-                        <button class="copy-btn" onclick="copyCSS()" id="copy-css-btn">
-                            <i class="bi bi-clipboard me-1"></i>Copy
+                        <button class="copy-btn" onclick="copyCSS()">
+                            <i class="bi bi-clipboard"></i> Copy
                         </button>
-                        <div class="code-output" id="css-output">/* CSS will be generated here */</div>
+                        <div class="code-output" id="css-output">/* Add elements to see CSS code */</div>
                     </div>
                 </div>
 
-                <!-- HTML Structure -->
+                <!-- Live HTML Output -->
                 <div class="playground-container">
-                    <div class="playground-header warning">
+                    <div class="playground-header" style="background: var(--warning-gradient);">
                         <h5 class="mb-0">
-                            <i class="bi bi-file-code me-2"></i>HTML Structure
+                            <i class="bi bi-file-code me-2"></i>Generated HTML
                         </h5>
-                        <small>Complete markup</small>
+                        <div class="live-indicator">LIVE</div>
                     </div>
                     <div class="position-relative">
-                        <button class="copy-btn" onclick="copyHTML()" id="copy-html-btn">
-                            <i class="bi bi-clipboard me-1"></i>Copy
+                        <button class="copy-btn" onclick="copyHTML()">
+                            <i class="bi bi-clipboard"></i> Copy
                         </button>
-                        <div class="code-output" id="html-output"><!-- HTML will be generated here --></div>
+                        <div class="code-output" id="html-output"><!-- Add elements to see HTML structure --></div>
                     </div>
                 </div>
 
-                <!-- Quick Reference -->
+                <!-- Export Options -->
                 <div class="playground-container">
-                    <div class="playground-header" style="background: linear-gradient(135deg, #6f42c1, #e83e8c);">
+                    <div class="playground-header" style="background: var(--success-gradient);">
                         <h6 class="mb-0">
-                            <i class="bi bi-bookmark me-2"></i>Quick Reference
+                            <i class="bi bi-download me-2"></i>Export Options
                         </h6>
                     </div>
                     <div class="p-3">
-                        <div class="small" id="flexbox-reference">
-                            <div class="mb-3">
-                                <strong class="text-primary">Container Properties:</strong><br>
-                                <code>display: flex</code> - Enable flexbox<br>
-                                <code>flex-direction</code> - Main axis direction<br>
-                                <code>justify-content</code> - Main axis alignment<br>
-                                <code>align-items</code> - Cross axis alignment<br>
-                                <code>flex-wrap</code> - Wrapping behavior<br>
-                                <code>gap</code> - Spacing between items
-                            </div>
-                            <div>
-                                <strong class="text-success">Item Properties:</strong><br>
-                                <code>flex-grow</code> - Growth factor<br>
-                                <code>flex-shrink</code> - Shrink factor<br>
-                                <code>flex-basis</code> - Initial size<br>
-                                <code>align-self</code> - Individual alignment<br>
-                                <code>order</code> - Visual order
-                            </div>
-                        </div>
+                        <button class="btn btn-success w-100 mb-2" onclick="exportCodePen()">
+                            <i class="bi bi-box-arrow-up-right me-1"></i>Open in CodePen
+                        </button>
+                        <button class="btn btn-outline-success w-100 mb-2" onclick="downloadHTML()">
+                            <i class="bi bi-download me-1"></i>Download HTML
+                        </button>
+                        <button class="btn btn-outline-success w-100" onclick="copyFullCode()">
+                            <i class="bi bi-clipboard me-1"></i>Copy Complete Code
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" 
-            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" 
-            crossorigin="anonymous"></script>
-
-    <!-- Security Utils (MUST be loaded before main script) -->
     <script>
-        // Security utility functions
-        const SecurityUtils = {
-            // Input validation and sanitization
-            sanitizeHTML: function(input) {
-                if (typeof input !== 'string') return '';
-                
-                // Remove dangerous tags and attributes
-                const div = document.createElement('div');
-                div.textContent = input;
-                let sanitized = div.innerHTML;
-                
-                // Remove script tags and event handlers
-                sanitized = sanitized.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
-                sanitized = sanitized.replace(/on\w+\s*=\s*"[^"]*"/gi, '');
-                sanitized = sanitized.replace(/on\w+\s*=\s*'[^']*'/gi, '');
-                sanitized = sanitized.replace(/javascript:/gi, '');
-                
-                return sanitized;
-            },
-
-            // CSS property validation
-            validateCSSProperty: function(property, value) {
-                const allowedProperties = [
-                    'display', 'flex-direction', 'justify-content', 'align-items', 
-                    'flex-wrap', 'align-content', 'gap', 'min-height', 'height',
-                    'flex-grow', 'flex-shrink', 'flex-basis', 'align-self', 'order'
-                ];
-                
-                if (!allowedProperties.includes(property)) return false;
-                
-                // Basic value validation
-                if (typeof value !== 'string') return false;
-                if (value.length > 50) return false;
-                if (/[<>'"]/g.test(value)) return false;
-                
-                return true;
-            },
-
-            // Numeric value validation
-            validateNumeric: function(value, min = 0, max = 1000) {
-                const num = parseFloat(value);
-                return !isNaN(num) && num >= min && num <= max;
-            },
-
-            // Rate limiting for user actions
-            rateLimiter: {
-                actions: new Map(),
-                
-                isAllowed: function(action, limit = 10, window = 60000) {
-                    const now = Date.now();
-                    const key = action;
-                    
-                    if (!this.actions.has(key)) {
-                        this.actions.set(key, []);
-                    }
-                    
-                    const timestamps = this.actions.get(key);
-                    
-                    // Remove old timestamps
-                    while (timestamps.length > 0 && now - timestamps[0] > window) {
-                        timestamps.shift();
-                    }
-                    
-                    if (timestamps.length >= limit) {
-                        return false;
-                    }
-                    
-                    timestamps.push(now);
-                    return true;
-                }
-            },
-
-            // Error handling
-            handleError: function(error, context = '') {
-                console.error(`Security Error ${context}:`, error);
-                
-                // Log to a secure endpoint in production
-                if (typeof window.reportError === 'function') {
-                    window.reportError({
-                        error: error.message,
-                        context: context,
-                        timestamp: new Date().toISOString(),
-                        userAgent: navigator.userAgent
-                    });
+        let elementCounter = 0;
+        let containerCounter = 0;
+        let selectedElement = null;
+        let activeContainer = 'main-container';
+        let elements = [];
+        let containers = {
+            'main-container': {
+                id: 'main-container',
+                element: null, // Will be set to the main flex-container div
+                properties: {
+                    flexDirection: 'row',
+                    justifyContent: 'flex-start',
+                    alignItems: 'stretch',
+                    flexWrap: 'nowrap',
+                    gap: '10',
+                    minHeight: '400'
                 }
             }
         };
 
-        // Global error handlers
-        window.addEventListener('error', function(event) {
-            SecurityUtils.handleError(event.error, 'Global Error Handler');
-        });
-
-        window.addEventListener('unhandledrejection', function(event) {
-            SecurityUtils.handleError(event.reason, 'Unhandled Promise Rejection');
-        });
-    </script>
-
-    <!-- Main Application Script -->
-    <script>
-        // Global state with validation
-        let itemCount = 3;
-        let currentSelectedItem = 1;
-        let guidesVisible = false;
-        let itemProperties = {
-            1: { flexGrow: 0, flexShrink: 1, flexBasis: 'auto', alignSelf: 'auto', order: 0 },
-            2: { flexGrow: 0, flexShrink: 1, flexBasis: 'auto', alignSelf: 'auto', order: 0 },
-            3: { flexGrow: 0, flexShrink: 1, flexBasis: 'auto', alignSelf: 'auto', order: 0 }
-        };
-
-        // Real-world examples with validation
-        const examples = {
-            'navbar': {
-                title: 'Navigation Bar',
-                description: 'A typical website navigation with logo on the left and menu items on the right. This pattern uses space-between to push elements to opposite ends.',
-                settings: {
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    flexDirection: 'row'
-                }
-            },
-            'card-layout': {
-                title: 'Card Grid Layout',
-                description: 'Responsive card layout where cards wrap to new lines and maintain equal heights. Perfect for product grids or blog post listings.',
-                settings: {
-                    flexWrap: 'wrap',
-                    justifyContent: 'space-around',
-                    alignItems: 'stretch',
-                    gap: '1rem'
-                }
-            },
-            'sidebar': {
-                title: 'Sidebar Layout',
-                description: 'A layout with a fixed-width sidebar and flexible main content area. Common in admin dashboards and documentation sites.',
-                settings: {
-                    flexDirection: 'row',
-                    alignItems: 'stretch'
-                }
-            },
-            'footer': {
-                title: 'Sticky Footer',
-                description: 'A layout where the footer always stays at the bottom of the viewport, even with minimal content.',
-                settings: {
-                    flexDirection: 'column',
-                    justifyContent: 'space-between',
-                    alignItems: 'stretch'
-                }
-            },
-            'form': {
-                title: 'Form Layout',
-                description: 'A flexible form layout that adapts to different screen sizes while keeping proper alignment.',
-                settings: {
-                    flexDirection: 'column',
-                    alignItems: 'stretch',
-                    gap: '1rem'
-                }
-            },
-            'media': {
-                title: 'Media Object',
-                description: 'The classic media object pattern - image on one side, content on the other. Used in comments, testimonials, and social media posts.',
-                settings: {
-                    flexDirection: 'row',
-                    alignItems: 'flex-start',
-                    gap: '1rem'
-                }
-            }
-        };
-
-        // Initialize on page load with error handling
+        // Initialize
         document.addEventListener('DOMContentLoaded', function() {
-            try {
-                updateContainer();
-                updateAllCode();
-                selectItem(1);
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Initialization');
-            }
+            containers['main-container'].element = document.getElementById('flex-container');
+            updateActiveContainer();
+            generateCode();
         });
 
-        // Tab switching with validation
+        // Tab switching
         function switchTab(tabName) {
-            try {
-                if (!SecurityUtils.rateLimiter.isAllowed('switchTab', 20, 10000)) {
-                    console.warn('Rate limit exceeded for tab switching');
-                    return;
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabName + '-tab').classList.add('active');
+        }
+
+        // Add element to container
+        function addElement(type) {
+            if (type === 'container') {
+                addNestedContainer();
+                return;
+            }
+
+            const targetContainer = getTargetContainer();
+            
+            // Clear placeholder if it exists in main container
+            if (targetContainer.id === 'flex-container') {
+                const placeholder = targetContainer.querySelector('.text-center.text-muted');
+                if (placeholder) {
+                    placeholder.remove();
                 }
+            }
 
-                const validTabs = ['container', 'items', 'examples', 'cheatsheet'];
-                if (!validTabs.includes(tabName)) {
-                    throw new Error('Invalid tab name');
+            elementCounter++;
+            const elementId = `element-${elementCounter}`;
+            
+            const element = document.createElement('div');
+            element.className = `flex-item ${type}-element`;
+            element.id = elementId;
+            element.onclick = (e) => {
+                e.stopPropagation();
+                selectElement(elementId);
+            };
+            
+            // Element content based on type
+            const elementData = createElementContent(type, elementCounter);
+            element.innerHTML = elementData.html;
+            
+            // Add control buttons
+            element.innerHTML += `
+                <div class="item-controls" onclick="event.stopPropagation(); selectElement('${elementId}');">
+                    <i class="bi bi-gear text-primary"></i>
+                </div>
+                <button class="delete-btn" onclick="event.stopPropagation(); deleteElement('${elementId}');">
+                    <i class="bi bi-x"></i>
+                </button>
+            `;
+
+            targetContainer.appendChild(element);
+            
+            // Store element data
+            elements.push({
+                id: elementId,
+                type: type,
+                content: elementData.content,
+                styles: elementData.styles || {},
+                parentContainer: activeContainer
+            });
+
+            selectElement(elementId);
+            generateCode();
+        }
+
+        // Add nested container
+        function addNestedContainer() {
+            const targetContainer = getTargetContainer();
+            
+            // Clear placeholder if it exists in main container
+            if (targetContainer.id === 'flex-container') {
+                const placeholder = targetContainer.querySelector('.text-center.text-muted');
+                if (placeholder) {
+                    placeholder.remove();
                 }
+            }
 
-                // Update tab buttons
-                document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-                const activeBtn = event?.target || document.querySelector(`button[onclick="switchTab('${tabName}')"]`);
-                if (activeBtn) activeBtn.classList.add('active');
+            containerCounter++;
+            const containerId = `container-${containerCounter}`;
+            
+            const container = document.createElement('div');
+            container.className = 'flex-item nested-container';
+            container.id = containerId;
+            container.onclick = (e) => {
+                e.stopPropagation();
+                selectContainer(containerId);
+            };
+            
+            // Add control buttons
+            container.innerHTML = `
+                <div class="item-controls" onclick="event.stopPropagation(); selectContainer('${containerId}');">
+                    <i class="bi bi-gear text-primary"></i>
+                </div>
+                <button class="delete-btn" onclick="event.stopPropagation(); deleteContainer('${containerId}');">
+                    <i class="bi bi-x"></i>
+                </button>
+                <div class="text-center text-muted py-3" style="width: 100%;">
+                    <i class="bi bi-plus-circle fs-4 mb-2"></i>
+                    <div>Drop elements here</div>
+                    <small>This container can have its own flex properties</small>
+                </div>
+            `;
 
-                // Update tab content
-                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-                const activeContent = document.getElementById(`${tabName}-tab`);
-                if (activeContent) activeContent.classList.add('active');
+            targetContainer.appendChild(container);
+            
+            // Store container data
+            containers[containerId] = {
+                id: containerId,
+                element: container,
+                parentContainer: activeContainer,
+                properties: {
+                    flexDirection: 'row',
+                    justifyContent: 'flex-start',
+                    alignItems: 'stretch',
+                    flexWrap: 'nowrap',
+                    gap: '10',
+                    minHeight: '100'
+                }
+            };
 
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Tab Switching');
+            selectContainer(containerId);
+            generateCode();
+        }
+
+        // Get target container for new elements
+        function getTargetContainer() {
+            if (activeContainer === 'main-container') {
+                return document.getElementById('flex-container');
+            } else {
+                return document.getElementById(activeContainer);
             }
         }
 
-        // Update container with security validation
-        function updateContainer() {
-            try {
-                if (!SecurityUtils.rateLimiter.isAllowed('updateContainer', 50, 10000)) {
-                    console.warn('Rate limit exceeded for container updates');
-                    return;
+        // Select container
+        function selectContainer(containerId) {
+            // Remove previous selection
+            document.querySelectorAll('.flex-item, .flex-container').forEach(el => {
+                el.classList.remove('selected');
+            });
+            
+            selectedElement = null;
+            activeContainer = containerId;
+            
+            // Add selection to current container
+            const container = containerId === 'main-container' 
+                ? document.getElementById('flex-container')
+                : document.getElementById(containerId);
+                
+            if (container) {
+                container.classList.add('selected');
+            }
+            
+            // Update breadcrumb
+            updateBreadcrumb(containerId);
+            
+            // Load container properties
+            loadContainerProperties(containerId);
+            
+            // Hide item controls
+            document.getElementById('no-selection-alert').style.display = 'block';
+            document.getElementById('item-controls-panel').style.display = 'none';
+            
+            generateCode();
+        }
+
+        // Select element
+        function selectElement(elementId) {
+            // Remove previous selection
+            document.querySelectorAll('.flex-item, .flex-container').forEach(el => {
+                el.classList.remove('selected');
+            });
+            
+            // Add selection to current element
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.classList.add('selected');
+                selectedElement = elementId;
+                
+                // Show item controls panel and hide no-selection alert
+                document.getElementById('no-selection-alert').style.display = 'none';
+                document.getElementById('item-controls-panel').style.display = 'block';
+                
+                // Get element data
+                const elementData = elements.find(el => el.id === elementId);
+                if (elementData) {
+                    document.getElementById('selected-element-name').textContent = elementData.content.text || 'Selected Element';
+                    
+                    // Load flex properties if they exist
+                    if (elementData.flexProperties) {
+                        document.getElementById('flex-grow').value = elementData.flexProperties.flexGrow || '0';
+                        document.getElementById('flex-shrink').value = elementData.flexProperties.flexShrink || '1';
+                        document.getElementById('align-self').value = elementData.flexProperties.alignSelf || 'auto';
+                        document.getElementById('order').value = elementData.flexProperties.order || '0';
+                        document.getElementById('flex-basis').value = elementData.flexProperties.flexBasis || 'auto';
+                    } else {
+                        // Reset to defaults
+                        document.getElementById('flex-grow').value = '0';
+                        document.getElementById('flex-shrink').value = '1';
+                        document.getElementById('align-self').value = 'auto';
+                        document.getElementById('order').value = '0';
+                        document.getElementById('flex-basis').value = 'auto';
+                    }
+                    
+                    // Update display values
+                    updateGrowValue();
+                    updateShrinkValue();
+                    updateOrderValue();
                 }
+            }
+        }
 
-                const container = document.getElementById('flex-container');
-                if (!container) return;
+        // Update breadcrumb
+        function updateBreadcrumb(containerId) {
+            const breadcrumb = document.getElementById('container-breadcrumb');
+            let breadcrumbHTML = '<i class="bi bi-house me-1"></i>';
+            
+            if (containerId === 'main-container') {
+                breadcrumbHTML += '<span class="breadcrumb-item active">Main Container</span>';
+            } else {
+                breadcrumbHTML += '<span class="breadcrumb-item" onclick="selectContainer(\'main-container\')">Main Container</span>';
+                breadcrumbHTML += ' <i class="bi bi-chevron-right mx-1"></i> ';
+                breadcrumbHTML += `<span class="breadcrumb-item active">Container Group</span>`;
+            }
+            
+            breadcrumb.innerHTML = breadcrumbHTML;
+        }
 
-                // Get values with validation
-                const display = document.getElementById('display')?.value || 'flex';
-                const flexDirection = document.getElementById('flex-direction')?.value || 'row';
-                const justifyContent = document.getElementById('justify-content')?.value || 'flex-start';
-                const alignItems = document.getElementById('align-items')?.value || 'stretch';
-                const flexWrap = document.getElementById('flex-wrap')?.value || 'nowrap';
-                const gap = document.getElementById('gap')?.value || '10';
-                const height = document.getElementById('container-height')?.value || '400';
+        // Load container properties
+        function loadContainerProperties(containerId) {
+            const containerData = containers[containerId];
+            if (containerData) {
+                document.getElementById('flex-direction').value = containerData.properties.flexDirection;
+                document.getElementById('justify-content').value = containerData.properties.justifyContent;
+                document.getElementById('align-items').value = containerData.properties.alignItems;
+                document.getElementById('flex-wrap').value = containerData.properties.flexWrap;
+                document.getElementById('gap').value = containerData.properties.gap;
+                document.getElementById('container-height').value = containerData.properties.minHeight;
+                
+                updateGapValue();
+                updateContainerHeight();
+            }
+        }
 
-                // Validate CSS values
-                const cssProperties = {
-                    display, 'flex-direction': flexDirection, 'justify-content': justifyContent,
-                    'align-items': alignItems, 'flex-wrap': flexWrap, gap: gap + 'px',
-                    'min-height': height + 'px'
-                };
+        // Create element content based on type
+        function createElementContent(type, counter) {
+            const contentMap = {
+                navbar: {
+                    html: `
+                        <div class="d-flex justify-content-between align-items-center w-100">
+                            <div class="fw-bold">Brand Logo</div>
+                            <div class="d-flex gap-3">
+                                <span>Home</span>
+                                <span>About</span>
+                                <span>Contact</span>
+                            </div>
+                        </div>
+                    `,
+                    content: { text: 'Navigation Bar', logo: 'Brand Logo', menu: ['Home', 'About', 'Contact'] }
+                },
+                card: {
+                    html: `
+                        <div>
+                            <h6 class="mb-2">Card Title ${counter}</h6>
+                            <p class="mb-2 small">This is a sample card with some content. Cards are great for displaying information in an organized way.</p>
+                            <button class="btn btn-primary btn-sm">Learn More</button>
+                        </div>
+                    `,
+                    content: { text: `Card ${counter}`, title: `Card Title ${counter}` }
+                },
+                image: {
+                    html: `
+                        <div class="d-flex flex-column align-items-center">
+                            <i class="bi bi-image fs-1 mb-2"></i>
+                            <span>Image ${counter}</span>
+                        </div>
+                    `,
+                    content: { text: `Image ${counter}` }
+                },
+                button: {
+                    html: `Button ${counter}`,
+                    content: { text: `Button ${counter}` }
+                },
+                text: {
+                    html: `
+                        <div>
+                            <h6>Text Block ${counter}</h6>
+                            <p class="mb-0">This is a text content area. You can use this for paragraphs, articles, or any textual content in your layout.</p>
+                        </div>
+                    `,
+                    content: { text: `Text Block ${counter}` }
+                },
+                sidebar: {
+                    html: `
+                        <div>
+                            <h6 class="mb-3">Sidebar ${counter}</h6>
+                            <div class="small">
+                                <div class="mb-2">Navigation Item 1</div>
+                                <div class="mb-2">Navigation Item 2</div>
+                                <div class="mb-2">Navigation Item 3</div>
+                            </div>
+                        </div>
+                    `,
+                    content: { text: `Sidebar ${counter}` }
+                }
+            };
 
-                let validatedStyles = {};
-                for (const [prop, value] of Object.entries(cssProperties)) {
-                    if (SecurityUtils.validateCSSProperty(prop, value)) {
-                        validatedStyles[prop] = value;
+            return contentMap[type] || { html: `Element ${counter}`, content: { text: `Element ${counter}` } };
+        }
+
+        // Delete element
+        function deleteElement(elementId) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.remove();
+                elements = elements.filter(el => el.id !== elementId);
+                
+                if (selectedElement === elementId) {
+                    selectedElement = null;
+                    document.getElementById('no-selection-alert').style.display = 'block';
+                    document.getElementById('item-controls-panel').style.display = 'none';
+                }
+                
+                generateCode();
+            }
+        }
+
+        // Delete container
+        function deleteContainer(containerId) {
+            const container = document.getElementById(containerId);
+            if (container) {
+                container.remove();
+                delete containers[containerId];
+                
+                // Remove all elements that were in this container
+                elements = elements.filter(el => el.parentContainer !== containerId);
+                
+                if (activeContainer === containerId) {
+                    selectContainer('main-container');
+                }
+                
+                generateCode();
+            }
+        }
+
+        // Clear container
+        function clearContainer() {
+            const container = document.getElementById('flex-container');
+            container.innerHTML = `
+                <div class="text-center text-muted py-5">
+                    <i class="bi bi-plus-circle fs-1 mb-3"></i>
+                    <h5>Start Building!</h5>
+                    <p class="mb-2">Add a <strong>Container Group</strong> first, then add elements inside it</p>
+                    <p class="small">Or add elements directly to the main container</p>
+                </div>
+            `;
+            elements = [];
+            
+            // Reset containers (keep main container)
+            containers = {
+                'main-container': {
+                    id: 'main-container',
+                    element: container,
+                    properties: {
+                        flexDirection: 'row',
+                        justifyContent: 'flex-start',
+                        alignItems: 'stretch',
+                        flexWrap: 'nowrap',
+                        gap: '10',
+                        minHeight: '400'
                     }
                 }
-
-                // Apply styles safely
-                Object.assign(container.style, validatedStyles);
-
-                // Update axis guides if visible
-                if (guidesVisible) {
-                    updateAxisGuides();
-                }
-
-                // Update code output
-                updateAllCode();
-
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Container Update');
-            }
+            };
+            
+            selectedElement = null;
+            selectContainer('main-container');
+            generateCode();
         }
 
-        // Update gap value display
-        function updateGap() {
-            try {
-                const gapSlider = document.getElementById('gap');
-                const gapValue = document.getElementById('gap-value');
-                if (gapSlider && gapValue) {
-                    const value = parseInt(gapSlider.value);
-                    if (SecurityUtils.validateNumeric(value, 0, 50)) {
-                        gapValue.textContent = value + 'px';
-                    }
-                }
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Gap Update');
+        // Update active container properties
+        function updateActiveContainer() {
+            const containerData = containers[activeContainer];
+            if (!containerData) return;
+            
+            const flexDirection = document.getElementById('flex-direction').value;
+            const justifyContent = document.getElementById('justify-content').value;
+            const alignItems = document.getElementById('align-items').value;
+            const flexWrap = document.getElementById('flex-wrap').value;
+            const gap = document.getElementById('gap').value;
+            const height = document.getElementById('container-height').value;
+            
+            // Update container styles
+            const container = containerData.element;
+            container.style.flexDirection = flexDirection;
+            container.style.justifyContent = justifyContent;
+            container.style.alignItems = alignItems;
+            container.style.flexWrap = flexWrap;
+            container.style.gap = gap + 'px';
+            
+            if (activeContainer === 'main-container') {
+                container.style.minHeight = height + 'px';
+            } else {
+                container.style.minHeight = height + 'px';
             }
-        }
-
-        // Update height value display
-        function updateHeight() {
-            try {
-                const heightSlider = document.getElementById('container-height');
-                const heightValue = document.getElementById('height-value');
-                if (heightSlider && heightValue) {
-                    const value = parseInt(heightSlider.value);
-                    if (SecurityUtils.validateNumeric(value, 200, 600)) {
-                        heightValue.textContent = value + 'px';
-                    }
-                }
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Height Update');
-            }
-        }
-
-        // Item selection with validation
-        function selectItem(itemNumber) {
-            try {
-                if (!SecurityUtils.rateLimiter.isAllowed('selectItem', 30, 10000)) {
-                    console.warn('Rate limit exceeded for item selection');
-                    return;
-                }
-
-                const validItemNumbers = Object.keys(itemProperties).map(Number);
-                if (!validItemNumbers.includes(itemNumber)) {
-                    throw new Error('Invalid item number');
-                }
-
-                currentSelectedItem = itemNumber;
-
-                // Update visual selection
-                document.querySelectorAll('.flex-item').forEach(item => item.classList.remove('selected'));
-                const selectedItem = document.querySelector(`[data-item="${itemNumber}"]`);
-                if (selectedItem) selectedItem.classList.add('selected');
-
-                // Update controls
-                updateItemControls();
-
-                // Update indicator
-                const indicator = document.getElementById('selected-indicator');
-                if (indicator) indicator.textContent = `Item ${itemNumber}`;
-
-                // Update dropdown
-                const dropdown = document.getElementById('selected-item');
-                if (dropdown) dropdown.value = itemNumber.toString();
-
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Item Selection');
-            }
-        }
-
-        function selectItemFromDropdown() {
-            try {
-                const dropdown = document.getElementById('selected-item');
-                if (dropdown) {
-                    const itemNumber = parseInt(dropdown.value);
-                    selectItem(itemNumber);
-                }
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Item Selection from Dropdown');
-            }
-        }
-
-        // Update item controls with current values
-        function updateItemControls() {
-            try {
-                const props = itemProperties[currentSelectedItem];
-                if (!props) return;
-
-                const controls = {
-                    'flex-grow': props.flexGrow,
-                    'flex-shrink': props.flexShrink,
-                    'flex-basis': props.flexBasis,
-                    'align-self': props.alignSelf,
-                    'order': props.order
-                };
-
-                for (const [controlId, value] of Object.entries(controls)) {
-                    const control = document.getElementById(controlId);
-                    if (control) {
-                        control.value = value;
-                    }
-                }
-
-                // Update display values
-                updateGrow();
-                updateShrink();
-                updateOrder();
-
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Item Controls Update');
-            }
-        }
-
-        // Update grow value display
-        function updateGrow() {
-            try {
-                const growSlider = document.getElementById('flex-grow');
-                const growValue = document.getElementById('grow-value');
-                if (growSlider && growValue) {
-                    const value = parseInt(growSlider.value);
-                    if (SecurityUtils.validateNumeric(value, 0, 5)) {
-                        growValue.textContent = value;
-                        if (itemProperties[currentSelectedItem]) {
-                            itemProperties[currentSelectedItem].flexGrow = value;
-                        }
-                    }
-                }
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Grow Update');
-            }
-        }
-
-        // Update shrink value display
-        function updateShrink() {
-            try {
-                const shrinkSlider = document.getElementById('flex-shrink');
-                const shrinkValue = document.getElementById('shrink-value');
-                if (shrinkSlider && shrinkValue) {
-                    const value = parseInt(shrinkSlider.value);
-                    if (SecurityUtils.validateNumeric(value, 0, 5)) {
-                        shrinkValue.textContent = value;
-                        if (itemProperties[currentSelectedItem]) {
-                            itemProperties[currentSelectedItem].flexShrink = value;
-                        }
-                    }
-                }
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Shrink Update');
-            }
-        }
-
-        // Update order value display
-        function updateOrder() {
-            try {
-                const orderSlider = document.getElementById('order');
-                const orderValue = document.getElementById('order-value');
-                if (orderSlider && orderValue) {
-                    const value = parseInt(orderSlider.value);
-                    if (SecurityUtils.validateNumeric(value, -3, 3)) {
-                        orderValue.textContent = value;
-                        if (itemProperties[currentSelectedItem]) {
-                            itemProperties[currentSelectedItem].order = value;
-                        }
-                    }
-                }
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Order Update');
-            }
+            
+            // Update stored properties
+            containerData.properties = {
+                flexDirection,
+                justifyContent,
+                alignItems,
+                flexWrap,
+                gap,
+                minHeight: height
+            };
+            
+            generateCode();
         }
 
         // Update selected item properties
         function updateSelectedItem() {
-            try {
-                if (!SecurityUtils.rateLimiter.isAllowed('updateSelectedItem', 50, 10000)) {
-                    console.warn('Rate limit exceeded for item updates');
-                    return;
-                }
-
-                const props = itemProperties[currentSelectedItem];
-                if (!props) return;
-
-                // Get values with validation
-                const flexGrow = document.getElementById('flex-grow')?.value || '0';
-                const flexShrink = document.getElementById('flex-shrink')?.value || '1';
-                const flexBasis = document.getElementById('flex-basis')?.value || 'auto';
-                const alignSelf = document.getElementById('align-self')?.value || 'auto';
-                const order = document.getElementById('order')?.value || '0';
-
-                // Update properties
-                props.flexGrow = parseInt(flexGrow);
-                props.flexShrink = parseInt(flexShrink);
-                props.flexBasis = flexBasis;
-                props.alignSelf = alignSelf;
-                props.order = parseInt(order);
-
-                // Apply styles to the selected item
-                const selectedItem = document.querySelector(`[data-item="${currentSelectedItem}"]`);
-                if (selectedItem) {
-                    const cssProperties = {
-                        'flex-grow': props.flexGrow.toString(),
-                        'flex-shrink': props.flexShrink.toString(),
-                        'flex-basis': props.flexBasis,
-                        'align-self': props.alignSelf,
-                        'order': props.order.toString()
+            if (!selectedElement) return;
+            
+            const element = document.getElementById(selectedElement);
+            const flexGrow = document.getElementById('flex-grow').value;
+            const flexShrink = document.getElementById('flex-shrink').value;
+            const alignSelf = document.getElementById('align-self').value;
+            const order = document.getElementById('order').value;
+            const flexBasis = document.getElementById('flex-basis').value;
+            
+            if (element) {
+                element.style.flexGrow = flexGrow;
+                element.style.flexShrink = flexShrink;
+                element.style.alignSelf = alignSelf;
+                element.style.order = order;
+                element.style.flexBasis = flexBasis;
+                
+                // Update stored element data
+                const elementData = elements.find(el => el.id === selectedElement);
+                if (elementData) {
+                    elementData.flexProperties = {
+                        flexGrow: flexGrow,
+                        flexShrink: flexShrink,
+                        alignSelf: alignSelf,
+                        order: order,
+                        flexBasis: flexBasis
                     };
-
-                    let validatedStyles = {};
-                    for (const [prop, value] of Object.entries(cssProperties)) {
-                        if (SecurityUtils.validateCSSProperty(prop, value)) {
-                            validatedStyles[prop] = value;
-                        }
-                    }
-
-                    Object.assign(selectedItem.style, validatedStyles);
                 }
-
-                updateAllCode();
-
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Selected Item Update');
+                
+                generateCode();
             }
         }
 
-        // Add new item with validation
-        function addItem() {
-            try {
-                if (!SecurityUtils.rateLimiter.isAllowed('addItem', 10, 60000)) {
-                    console.warn('Rate limit exceeded for adding items');
-                    return;
-                }
-
-                if (itemCount >= 8) {
-                    showToast('Maximum of 8 items allowed', 'warning');
-                    return;
-                }
-
-                itemCount++;
-                const container = document.getElementById('flex-container');
-                if (!container) return;
-
-                // Create new item
-                const newItem = document.createElement('div');
-                newItem.className = 'flex-item';
-                newItem.setAttribute('data-item', itemCount.toString());
-                newItem.onclick = () => selectItem(itemCount);
-                newItem.innerHTML = `
-                    <div class="item-controls">
-                        <i class="bi bi-gear text-primary"></i>
-                    </div>
-                    Item ${itemCount}
-                `;
-
-                container.appendChild(newItem);
-
-                // Initialize properties
-                itemProperties[itemCount] = {
-                    flexGrow: 0,
-                    flexShrink: 1,
-                    flexBasis: 'auto',
-                    alignSelf: 'auto',
-                    order: 0
-                };
-
-                // Update dropdown
-                updateItemDropdown();
-                updateAllCode();
-                showToast('New item added successfully!', 'success');
-
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Add Item');
-            }
+        // Update range value displays
+        function updateGapValue() {
+            const gap = document.getElementById('gap').value;
+            document.getElementById('gap-value').textContent = gap + 'px';
         }
 
-        // Remove item with validation
-        function removeItem() {
-            try {
-                if (!SecurityUtils.rateLimiter.isAllowed('removeItem', 10, 60000)) {
-                    console.warn('Rate limit exceeded for removing items');
-                    return;
-                }
+        function updateGrowValue() {
+            const grow = document.getElementById('flex-grow').value;
+            document.getElementById('grow-value').textContent = grow;
+        }
 
-                if (itemCount <= 1) {
-                    showToast('At least one item must remain', 'warning');
-                    return;
-                }
+        function updateShrinkValue() {
+            const shrink = document.getElementById('flex-shrink').value;
+            document.getElementById('shrink-value').textContent = shrink;
+        }
 
-                const itemToRemove = document.querySelector(`[data-item="${currentSelectedItem}"]`);
-                if (itemToRemove) {
-                    itemToRemove.remove();
-                    delete itemProperties[currentSelectedItem];
+        function updateOrderValue() {
+            const order = document.getElementById('order').value;
+            document.getElementById('order-value').textContent = order;
+        }
+
+        function updateContainerHeight() {
+            const height = document.getElementById('container-height').value;
+            document.getElementById('height-value').textContent = height + 'px';
+        }
+
+        // Apply item presets
+        function applyItemPreset(presetType) {
+            if (!selectedElement) return;
+            
+            switch(presetType) {
+                case 'flexible':
+                    document.getElementById('flex-grow').value = '1';
+                    document.getElementById('flex-shrink').value = '1';
+                    document.getElementById('flex-basis').value = '0';
+                    document.getElementById('align-self').value = 'auto';
+                    break;
                     
-                    // Select first available item
-                    const remainingItems = Object.keys(itemProperties).map(Number).sort();
-                    if (remainingItems.length > 0) {
-                        selectItem(remainingItems[0]);
-                    }
+                case 'fixed':
+                    document.getElementById('flex-grow').value = '0';
+                    document.getElementById('flex-shrink').value = '0';
+                    document.getElementById('flex-basis').value = 'auto';
+                    document.getElementById('align-self').value = 'auto';
+                    break;
+                    
+                case 'center-self':
+                    document.getElementById('align-self').value = 'center';
+                    break;
+                    
+                case 'move-end':
+                    document.getElementById('order').value = '1';
+                    break;
+            }
+            
+            updateGrowValue();
+            updateShrinkValue();
+            updateOrderValue();
+            updateSelectedItem();
+        }
 
-                    updateItemDropdown();
-                    updateAllCode();
-                    showToast('Item removed successfully!', 'success');
-                }
+        // Reset item properties
+        function resetItemProperties() {
+            if (!selectedElement) return;
+            
+            document.getElementById('flex-grow').value = '0';
+            document.getElementById('flex-shrink').value = '1';
+            document.getElementById('align-self').value = 'auto';
+            document.getElementById('order').value = '0';
+            document.getElementById('flex-basis').value = 'auto';
+            
+            updateGrowValue();
+            updateShrinkValue();
+            updateOrderValue();
+            updateSelectedItem();
+        }
 
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Remove Item');
+        // Load example layouts
+        function loadExample(exampleType) {
+            clearContainer();
+            
+            switch(exampleType) {
+                case 'navbar-cards':
+                    // Main container column direction
+                    document.getElementById('flex-direction').value = 'column';
+                    document.getElementById('align-items').value = 'stretch';
+                    updateActiveContainer();
+                    
+                    // Add navbar directly to main container
+                    addElement('navbar');
+                    
+                    // Add container for cards
+                    addElement('container');
+                    
+                    // Select the new container and set it to row
+                    const newContainer = document.querySelector('.nested-container');
+                    selectContainer(newContainer.id);
+                    document.getElementById('flex-direction').value = 'row';
+                    document.getElementById('justify-content').value = 'space-around';
+                    document.getElementById('gap').value = '15';
+                    updateGapValue();
+                    updateActiveContainer();
+                    
+                    // Add cards to the nested container
+                    addElement('card');
+                    addElement('card');
+                    addElement('card');
+                    break;
+                    
+                case 'sidebar-content':
+                    // Main container row direction
+                    document.getElementById('flex-direction').value = 'row';
+                    document.getElementById('align-items').value = 'stretch';
+                    updateActiveContainer();
+                    
+                    // Add sidebar
+                    addElement('sidebar');
+                    
+                    // Add container for content
+                    addElement('container');
+                    
+                    // Select content container and set it to column
+                    const contentContainer = document.querySelector('.nested-container');
+                    selectContainer(contentContainer.id);
+                    document.getElementById('flex-direction').value = 'column';
+                    document.getElementById('gap').value = '20';
+                    updateGapValue();
+                    updateActiveContainer();
+                    
+                    // Add content elements
+                    addElement('text');
+                    addElement('card');
+                    break;
+                    
+                case 'hero-cards':
+                    // Main container column direction
+                    document.getElementById('flex-direction').value = 'column';
+                    updateActiveContainer();
+                    
+                    // Add hero section container
+                    addElement('container');
+                    let heroContainer = document.querySelector('.nested-container');
+                    selectContainer(heroContainer.id);
+                    document.getElementById('justify-content').value = 'center';
+                    document.getElementById('align-items').value = 'center';
+                    document.getElementById('container-height').value = '200';
+                    updateContainerHeight();
+                    updateActiveContainer();
+                    
+                    // Add hero content
+                    addElement('text');
+                    addElement('button');
+                    
+                    // Go back to main container
+                    selectContainer('main-container');
+                    
+                    // Add cards container
+                    addElement('container');
+                    const cardsContainer = document.querySelectorAll('.nested-container')[1];
+                    selectContainer(cardsContainer.id);
+                    document.getElementById('flex-direction').value = 'row';
+                    document.getElementById('flex-wrap').value = 'wrap';
+                    document.getElementById('justify-content').value = 'space-around';
+                    updateActiveContainer();
+                    
+                    // Add cards
+                    addElement('card');
+                    addElement('card');
+                    addElement('card');
+                    break;
+                    
+                case 'complex-layout':
+                    // Create a complex nested structure
+                    document.getElementById('flex-direction').value = 'column';
+                    updateActiveContainer();
+                    
+                    // Header container
+                    addElement('container');
+                    let headerContainer = document.querySelector('.nested-container');
+                    selectContainer(headerContainer.id);
+                    document.getElementById('flex-direction').value = 'row';
+                    document.getElementById('justify-content').value = 'space-between';
+                    document.getElementById('align-items').value = 'center';
+                    updateActiveContainer();
+                    
+                    // Add header content
+                    addElement('navbar');
+                    addElement('button');
+                    
+                    // Back to main, add main content container
+                    selectContainer('main-container');
+                    addElement('container');
+                    const mainContainer = document.querySelectorAll('.nested-container')[1];
+                    selectContainer(mainContainer.id);
+                    document.getElementById('flex-direction').value = 'row';
+                    document.getElementById('container-height').value = '300';
+                    updateContainerHeight();
+                    updateActiveContainer();
+                    
+                    // Add sidebar and content area
+                    addElement('sidebar');
+                    addElement('container');
+                    
+                    // Configure content area
+                    const contentArea = document.querySelectorAll('.nested-container')[2];
+                    selectContainer(contentArea.id);
+                    document.getElementById('flex-direction').value = 'column';
+                    updateActiveContainer();
+                    
+                    // Add content
+                    addElement('card');
+                    addElement('card');
+                    break;
             }
         }
 
-        // Reset all items
-        function resetItems() {
-            try {
-                if (!SecurityUtils.rateLimiter.isAllowed('resetItems', 5, 60000)) {
-                    console.warn('Rate limit exceeded for reset operations');
-                    return;
-                }
-
-                const container = document.getElementById('flex-container');
-                if (!container) return;
-
-                // Remove all existing items
-                container.querySelectorAll('.flex-item').forEach(item => item.remove());
-
-                // Reset state
-                itemCount = 3;
-                currentSelectedItem = 1;
-                itemProperties = {
-                    1: { flexGrow: 0, flexShrink: 1, flexBasis: 'auto', alignSelf: 'auto', order: 0 },
-                    2: { flexGrow: 0, flexShrink: 1, flexBasis: 'auto', alignSelf: 'auto', order: 0 },
-                    3: { flexGrow: 0, flexShrink: 1, flexBasis: 'auto', alignSelf: 'auto', order: 0 }
-                };
-
-                // Recreate default items
-                for (let i = 1; i <= 3; i++) {
-                    const item = document.createElement('div');
-                    item.className = 'flex-item';
-                    item.setAttribute('data-item', i.toString());
-                    item.onclick = () => selectItem(i);
-                    item.innerHTML = `
-                        <div class="item-controls">
-                            <i class="bi bi-gear text-primary"></i>
-                        </div>
-                        Item ${i}
-                    `;
-                    container.appendChild(item);
-                }
-
-                updateItemDropdown();
-                selectItem(1);
-                updateAllCode();
-                showToast('All items reset successfully!', 'success');
-
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Reset Items');
-            }
-        }
-
-        // Update item dropdown options
-        function updateItemDropdown() {
-            try {
-                const dropdown = document.getElementById('selected-item');
-                if (!dropdown) return;
-
-                dropdown.innerHTML = '';
-                const itemNumbers = Object.keys(itemProperties).map(Number).sort();
-                
-                itemNumbers.forEach(num => {
-                    const option = document.createElement('option');
-                    option.value = num.toString();
-                    option.textContent = `Item ${num}`;
-                    dropdown.appendChild(option);
-                });
-
-                dropdown.value = currentSelectedItem.toString();
-
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Update Item Dropdown');
-            }
-        }
-
-        // Container presets with validation
-        function applyContainerPreset(presetName) {
-            try {
-                if (!SecurityUtils.rateLimiter.isAllowed('applyPreset', 20, 60000)) {
-                    console.warn('Rate limit exceeded for applying presets');
-                    return;
-                }
-
-                const presets = {
-                    'center-all': {
-                        'justify-content': 'center',
-                        'align-items': 'center',
-                        'flex-direction': 'row'
-                    },
-                    'space-between': {
-                        'justify-content': 'space-between',
-                        'align-items': 'center',
-                        'flex-direction': 'row'
-                    },
-                    'column-center': {
-                        'flex-direction': 'column',
-                        'justify-content': 'center',
-                        'align-items': 'center'
-                    },
-                    'wrap-grid': {
-                        'flex-wrap': 'wrap',
-                        'justify-content': 'space-around',
-                        'align-items': 'stretch'
-                    }
-                };
-
-                const preset = presets[presetName];
-                if (!preset) {
-                    throw new Error('Invalid preset name');
-                }
-
-                // Apply preset values to controls
-                for (const [property, value] of Object.entries(preset)) {
-                    const control = document.getElementById(property);
-                    if (control) {
-                        control.value = value;
-                    }
-                }
-
-                updateContainer();
-                showToast(`Applied ${presetName.replace('-', ' ')} preset!`, 'success');
-
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Apply Container Preset');
-            }
-        }
-
-        // Load example with validation
-        function loadExample(exampleName) {
-            try {
-                if (!SecurityUtils.rateLimiter.isAllowed('loadExample', 15, 60000)) {
-                    console.warn('Rate limit exceeded for loading examples');
-                    return;
-                }
-
-                const example = examples[exampleName];
-                if (!example) {
-                    throw new Error('Invalid example name');
-                }
-
-                // Update description
-                const descriptionEl = document.getElementById('example-description');
-                if (descriptionEl) {
-                    descriptionEl.innerHTML = `
-                        <h6 class="text-primary mb-2">${SecurityUtils.sanitizeHTML(example.title)}</h6>
-                        <p class="mb-3">${SecurityUtils.sanitizeHTML(example.description)}</p>
-                        <div class="small text-muted">
-                            <strong>Properties used:</strong><br>
-                            ${Object.entries(example.settings).map(([prop, value]) => 
-                                `<code>${prop}: ${value}</code>`
-                            ).join('<br>')}
-                        </div>
-                    `;
-                }
-
-                // Apply settings
-                for (const [property, value] of Object.entries(example.settings)) {
-                    const control = document.getElementById(property.replace(/([A-Z])/g, '-$1').toLowerCase());
-                    if (control) {
-                        control.value = value;
-                    }
-                }
-
-                updateContainer();
-                showToast(`Loaded ${example.title} example!`, 'success');
-
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Load Example');
-            }
-        }
-
-        // Show/hide axis guides
-        function showAxisGuides() {
-            try {
-                if (!SecurityUtils.rateLimiter.isAllowed('showAxisGuides', 20, 30000)) {
-                    console.warn('Rate limit exceeded for axis guides');
-                    return;
-                }
-
-                guidesVisible = !guidesVisible;
-                
-                const guides = ['main-axis-line', 'cross-axis-line', 'main-axis-indicator', 'cross-axis-indicator'];
-                guides.forEach(guideId => {
-                    const guide = document.getElementById(guideId);
-                    if (guide) {
-                        guide.style.display = guidesVisible ? 'block' : 'none';
-                    }
-                });
-
-                if (guidesVisible) {
-                    updateAxisGuides();
-                }
-
-                const button = event?.target;
-                if (button) {
-                    button.classList.toggle('active');
-                }
-
-                showToast(`Axis guides ${guidesVisible ? 'enabled' : 'disabled'}!`, 'info');
-
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Show Axis Guides');
-            }
-        }
-
-        // Update axis guide positions
-        function updateAxisGuides() {
-            try {
-                const flexDirection = document.getElementById('flex-direction')?.value || 'row';
-                const mainAxisLine = document.getElementById('main-axis-line');
-                const crossAxisLine = document.getElementById('cross-axis-line');
-
-                if (mainAxisLine && crossAxisLine) {
-                    // Reset styles
-                    mainAxisLine.style.cssText = 'position: absolute; pointer-events: none; z-index: 5; opacity: 0.7;';
-                    crossAxisLine.style.cssText = 'position: absolute; pointer-events: none; z-index: 5; opacity: 0.7;';
-
-                    if (flexDirection === 'row' || flexDirection === 'row-reverse') {
-                        mainAxisLine.style.borderTop = '2px dashed #dc3545';
-                        mainAxisLine.style.width = '80%';
-                        mainAxisLine.style.top = '50%';
-                        mainAxisLine.style.left = '10%';
-
-                        crossAxisLine.style.borderLeft = '2px dashed #17a2b8';
-                        crossAxisLine.style.height = '80%';
-                        crossAxisLine.style.left = '50%';
-                        crossAxisLine.style.top = '10%';
-                    } else {
-                        mainAxisLine.style.borderLeft = '2px dashed #dc3545';
-                        mainAxisLine.style.height = '80%';
-                        mainAxisLine.style.left = '50%';
-                        mainAxisLine.style.top = '10%';
-
-                        crossAxisLine.style.borderTop = '2px dashed #17a2b8';
-                        crossAxisLine.style.width = '80%';
-                        crossAxisLine.style.top = '50%';
-                        crossAxisLine.style.left = '10%';
-                    }
-                }
-
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Update Axis Guides');
-            }
-        }
-
-        // Apply current settings to real-world demo
-        function applyToRealWorld() {
-            try {
-                if (!SecurityUtils.rateLimiter.isAllowed('applyToRealWorld', 10, 30000)) {
-                    console.warn('Rate limit exceeded for real-world apply');
-                    return;
-                }
-
-                const realWorldDemo = document.getElementById('real-world-demo');
-                if (!realWorldDemo) return;
-
-                // Get current container styles
-                const container = document.getElementById('flex-container');
-                if (!container) return;
-
-                const styles = {
-                    display: container.style.display || 'flex',
-                    flexDirection: container.style.flexDirection || 'row',
-                    justifyContent: container.style.justifyContent || 'flex-start',
-                    alignItems: container.style.alignItems || 'stretch',
-                    flexWrap: container.style.flexWrap || 'nowrap',
-                    gap: container.style.gap || '10px'
-                };
-
-                // Apply validated styles
-                let validatedStyles = {};
-                for (const [prop, value] of Object.entries(styles)) {
-                    if (SecurityUtils.validateCSSProperty(prop, value)) {
-                        validatedStyles[prop] = value;
-                    }
-                }
-
-                Object.assign(realWorldDemo.style, validatedStyles);
-                showToast('Settings applied to real-world example!', 'success');
-
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Apply To Real World');
-            }
-        }
-
-        // Reset real-world demo
-        function resetRealWorld() {
-            try {
-                const realWorldDemo = document.getElementById('real-world-demo');
-                if (realWorldDemo) {
-                    realWorldDemo.style.cssText = `
-                        background: white;
-                        border: 2px dashed #28a745;
-                        border-radius: 8px;
-                        padding: 20px;
-                        min-height: 200px;
-                        display: flex;
-                        position: relative;
-                        margin: 1rem 0;
-                    `;
-                }
-                showToast('Real-world example reset!', 'success');
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Reset Real World');
-            }
-        }
-
-        // Generate and update all code outputs
-        function updateAllCode() {
-            try {
-                updateCSSOutput();
-                updateHTMLOutput();
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Update All Code');
-            }
-        }
-
-        // Update CSS output with syntax highlighting
-        function updateCSSOutput() {
-            try {
-                const container = document.getElementById('flex-container');
-                if (!container) return;
-
-                let css = '/* Flex Container */\n.flex-container {\n';
-                
-                const containerStyles = {
-                    display: container.style.display || 'flex',
-                    'flex-direction': container.style.flexDirection || 'row',
-                    'justify-content': container.style.justifyContent || 'flex-start',
-                    'align-items': container.style.alignItems || 'stretch',
-                    'flex-wrap': container.style.flexWrap || 'nowrap',
-                    gap: container.style.gap || '10px',
-                    'min-height': container.style.minHeight || '400px'
-                };
-
-                for (const [prop, value] of Object.entries(containerStyles)) {
-                    if (value && value !== 'auto') {
-                        css += `  ${prop}: ${value};\n`;
-                    }
-                }
-                css += '}\n\n';
-
-                // Add item styles
-                const hasCustomItems = Object.values(itemProperties).some(props => 
-                    props.flexGrow !== 0 || props.flexShrink !== 1 || 
-                    props.flexBasis !== 'auto' || props.alignSelf !== 'auto' || props.order !== 0
-                );
-
-                if (hasCustomItems) {
-                    css += '/* Flex Items */\n';
-                    for (const [itemNum, props] of Object.entries(itemProperties)) {
-                        const hasCustomProps = props.flexGrow !== 0 || props.flexShrink !== 1 || 
-                                             props.flexBasis !== 'auto' || props.alignSelf !== 'auto' || props.order !== 0;
-                        
-                        if (hasCustomProps) {
-                            css += `.flex-item:nth-child(${itemNum}) {\n`;
-                            if (props.flexGrow !== 0) css += `  flex-grow: ${props.flexGrow};\n`;
-                            if (props.flexShrink !== 1) css += `  flex-shrink: ${props.flexShrink};\n`;
-                            if (props.flexBasis !== 'auto') css += `  flex-basis: ${props.flexBasis};\n`;
-                            if (props.alignSelf !== 'auto') css += `  align-self: ${props.alignSelf};\n`;
-                            if (props.order !== 0) css += `  order: ${props.order};\n`;
-                            css += '}\n\n';
-                        }
-                    }
-                }
-
-                // Apply syntax highlighting
-                const highlightedCSS = css
-                    .replace(/(\/\*.*?\*\/)/g, '<span class="css-comment">$1</span>')
-                    .replace(/(\.[a-zA-Z-]+)/g, '<span class="css-selector">$1</span>')
-                    .replace(/([a-zA-Z-]+):/g, '<span class="css-property">$1</span>:')
-                    .replace(/:\s*([^;]+);/g, ': <span class="css-value">$1</span>;');
-
-                const cssOutput = document.getElementById('css-output');
-                if (cssOutput) {
-                    cssOutput.innerHTML = highlightedCSS;
-                }
-
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Update CSS Output');
-            }
-        }
-
-        // Update HTML output
-        function updateHTMLOutput() {
-            try {
-                const itemElements = document.querySelectorAll('.flex-item');
-                let html = '<div class="flex-container">\n';
-                
-                itemElements.forEach((item, index) => {
-                    const itemText = item.textContent.replace('⚙', '').trim();
-                    html += `  <div class="flex-item">${SecurityUtils.sanitizeHTML(itemText)}</div>\n`;
-                });
-                
-                html += '</div>';
-
-                // Apply syntax highlighting
-                const highlightedHTML = html
-                    .replace(/</g, '&lt;')
-                    .replace(/>/g, '&gt;')
-                    .replace(/&lt;(\/?[a-zA-Z][a-zA-Z0-9]*)/g, '&lt;<span class="html-tag">$1</span>')
-                    .replace(/class=&quot;([^&quot;]*)&quot;/g, '<span class="css-property">class</span>=<span class="css-value">&quot;$1&quot;</span>')
-                    .replace(/&gt;([^&lt;]+)&lt;/g, '&gt;<span class="css-value">$1</span>&lt;');
-
-                const htmlOutput = document.getElementById('html-output');
-                if (htmlOutput) {
-                    htmlOutput.innerHTML = highlightedHTML;
-                }
-
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Update HTML Output');
-            }
-        }
-
-        // Copy CSS to clipboard
-        function copyCSS() {
-            try {
-                if (!SecurityUtils.rateLimiter.isAllowed('copyCSS', 10, 60000)) {
-                    console.warn('Rate limit exceeded for copy operations');
-                    return;
-                }
-
-                const cssContent = document.getElementById('css-output')?.textContent || '';
-                
-                if (navigator.clipboard && navigator.clipboard.writeText) {
-                    navigator.clipboard.writeText(cssContent).then(() => {
-                        showCopySuccess('copy-css-btn');
-                    }).catch((error) => {
-                        SecurityUtils.handleError(error, 'Clipboard API CSS');
-                        fallbackCopy(cssContent, 'copy-css-btn');
-                    });
-                } else {
-                    fallbackCopy(cssContent, 'copy-css-btn');
-                }
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Copy CSS');
-            }
-        }
-
-        // Copy HTML to clipboard
-        function copyHTML() {
-            try {
-                if (!SecurityUtils.rateLimiter.isAllowed('copyHTML', 10, 60000)) {
-                    console.warn('Rate limit exceeded for copy operations');
-                    return;
-                }
-
-                const htmlContent = document.getElementById('html-output')?.textContent || '';
-                
-                if (navigator.clipboard && navigator.clipboard.writeText) {
-                    navigator.clipboard.writeText(htmlContent).then(() => {
-                        showCopySuccess('copy-html-btn');
-                    }).catch((error) => {
-                        SecurityUtils.handleError(error, 'Clipboard API HTML');
-                        fallbackCopy(htmlContent, 'copy-html-btn');
-                    });
-                } else {
-                    fallbackCopy(htmlContent, 'copy-html-btn');
-                }
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Copy HTML');
-            }
-        }
-
-        // Fallback copy method
-        function fallbackCopy(text, buttonId) {
-            try {
-                const textArea = document.createElement('textarea');
-                textArea.value = text;
-                textArea.style.position = 'fixed';
-                textArea.style.opacity = '0';
-                document.body.appendChild(textArea);
-                textArea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textArea);
-                showCopySuccess(buttonId);
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Fallback Copy');
-            }
-        }
-
-        // Show copy success feedback
-        function showCopySuccess(buttonId) {
-            try {
-                const button = document.getElementById(buttonId);
-                if (!button) return;
-                
-                const originalHTML = button.innerHTML;
-                
-                button.classList.add('copied');
-                button.innerHTML = '<i class="bi bi-check me-1"></i>Copied!';
-                
-                setTimeout(() => {
-                    button.classList.remove('copied');
-                    button.innerHTML = originalHTML;
-                }, 2000);
-                
-                showToast('Code copied to clipboard!', 'success');
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Copy Success Display');
-            }
-        }
-
-        // Generate code for download
+        // Generate code
         function generateCode() {
-            try {
-                if (!SecurityUtils.rateLimiter.isAllowed('generateCode', 5, 60000)) {
-                    console.warn('Rate limit exceeded for code generation');
-                    return;
-                }
-
-                updateAllCode();
-                showToast('CSS and HTML code generated!', 'success');
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Generate Code');
-            }
+            generateCSS();
+            generateHTML();
         }
 
-        // Export code as file
-        function exportCode() {
-            try {
-                if (!SecurityUtils.rateLimiter.isAllowed('exportCode', 3, 60000)) {
-                    console.warn('Rate limit exceeded for export operations');
-                    return;
-                }
-
-                const cssContent = document.getElementById('css-output')?.textContent || '';
-                const htmlContent = document.getElementById('html-output')?.textContent || '';
-                
-                const fullContent = `/* Generated by Flexbox Master Playground */\n\n${cssContent}\n\n/* HTML Structure:\n${htmlContent}\n*/`;
-                
-                const blob = new Blob([fullContent], { type: 'text/css' });
-                const url = URL.createObjectURL(blob);
-                
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'flexbox-styles.css';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-                
-                showToast('Code exported successfully!', 'success');
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Export Code');
+        // Generate CSS
+        function generateCSS() {
+            let css = '/* Main Flex Container */\n.flex-container {\n';
+            css += '  display: flex;\n';
+            
+            const mainContainer = containers['main-container'];
+            if (mainContainer.properties.flexDirection !== 'row') {
+                css += `  flex-direction: ${mainContainer.properties.flexDirection};\n`;
             }
-        }
-
-        // Reset everything
-        function resetAll() {
-            try {
-                if (!SecurityUtils.rateLimiter.isAllowed('resetAll', 3, 60000)) {
-                    console.warn('Rate limit exceeded for reset operations');
-                    return;
-                }
-
-                // Reset container controls
-                const containerControls = {
-                    'display': 'flex',
-                    'flex-direction': 'row',
-                    'justify-content': 'flex-start',
-                    'align-items': 'stretch',
-                    'flex-wrap': 'nowrap',
-                    'gap': '10',
-                    'container-height': '400'
-                };
-
-                for (const [controlId, defaultValue] of Object.entries(containerControls)) {
-                    const control = document.getElementById(controlId);
-                    if (control) {
-                        control.value = defaultValue;
-                    }
-                }
-
-                // Update display values
-                updateGap();
-                updateHeight();
-
-                // Reset items
-                resetItems();
-
-                // Reset container
-                updateContainer();
-
-                // Hide guides
-                if (guidesVisible) {
-                    showAxisGuides();
-                }
-
-                // Reset real-world demo
-                resetRealWorld();
-
-                showToast('Everything reset to defaults!', 'success');
-
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Reset All');
+            if (mainContainer.properties.justifyContent !== 'flex-start') {
+                css += `  justify-content: ${mainContainer.properties.justifyContent};\n`;
             }
-        }
+            if (mainContainer.properties.alignItems !== 'stretch') {
+                css += `  align-items: ${mainContainer.properties.alignItems};\n`;
+            }
+            if (mainContainer.properties.flexWrap !== 'nowrap') {
+                css += `  flex-wrap: ${mainContainer.properties.flexWrap};\n`;
+            }
+            if (mainContainer.properties.gap !== '0') {
+                css += `  gap: ${mainContainer.properties.gap}px;\n`;
+            }
+            
+            css += `  min-height: ${mainContainer.properties.minHeight}px;\n`;
+            css += '  padding: 20px;\n';
+            css += '}\n\n';
 
-        // Toast notification system
-        function showToast(message, type = 'info') {
-            try {
-                if (!SecurityUtils.rateLimiter.isAllowed('showToast', 20, 30000)) {
-                    return;
-                }
-
-                const toastContainer = document.getElementById('toast-container');
-                if (!toastContainer) return;
-
-                const toast = document.createElement('div');
-                toast.className = `toast-custom show`;
+            // Add nested container styles
+            Object.values(containers).forEach(containerData => {
+                if (containerData.id === 'main-container') return;
                 
-                const iconMap = {
-                    success: 'check-circle',
-                    warning: 'exclamation-triangle',
-                    error: 'x-circle',
-                    info: 'info-circle'
-                };
+                css += `/* ${containerData.id.replace('-', ' ').toUpperCase()} */\n`;
+                css += `.nested-container {\n`;
+                css += '  display: flex;\n';
+                
+                if (containerData.properties.flexDirection !== 'row') {
+                    css += `  flex-direction: ${containerData.properties.flexDirection};\n`;
+                }
+                if (containerData.properties.justifyContent !== 'flex-start') {
+                    css += `  justify-content: ${containerData.properties.justifyContent};\n`;
+                }
+                if (containerData.properties.alignItems !== 'stretch') {
+                    css += `  align-items: ${containerData.properties.alignItems};\n`;
+                }
+                if (containerData.properties.flexWrap !== 'nowrap') {
+                    css += `  flex-wrap: ${containerData.properties.flexWrap};\n`;
+                }
+                if (containerData.properties.gap !== '0') {
+                    css += `  gap: ${containerData.properties.gap}px;\n`;
+                }
+                
+                css += `  min-height: ${containerData.properties.minHeight}px;\n`;
+                css += '  padding: 15px;\n';
+                css += '  margin: 5px;\n';
+                css += '}\n\n';
+                
+                // Only add one nested-container style block
+                return;
+            });
 
-                const colorMap = {
-                    success: '#28a745',
-                    warning: '#ffc107',
-                    error: '#dc3545',
-                    info: '#17a2b8'
-                };
+            // Add element-specific styles
+            const elementTypes = [...new Set(elements.map(el => el.type))];
+            elementTypes.forEach(type => {
+                css += `/* ${type.toUpperCase()} ELEMENTS */\n`;
+                css += `.${type}-element {\n`;
+                
+                const defaultStyles = getDefaultElementStyles(type);
+                Object.entries(defaultStyles).forEach(([prop, value]) => {
+                    css += `  ${prop}: ${value};\n`;
+                });
+                
+                css += '}\n\n';
+            });
 
-                toast.innerHTML = `
-                    <div class="d-flex align-items-center">
-                        <i class="bi bi-${iconMap[type]} me-2" style="color: ${colorMap[type]}; font-size: 1.2rem;"></i>
-                        <span>${SecurityUtils.sanitizeHTML(message)}</span>
-                    </div>
-                `;
-
-                toastContainer.appendChild(toast);
-
-                setTimeout(() => {
-                    toast.style.animation = 'slideIn 0.3s ease reverse';
-                    setTimeout(() => {
-                        if (toast.parentNode) {
-                            toastContainer.removeChild(toast);
+            // Add individual flex properties
+            elements.forEach((elementData, index) => {
+                if (elementData.flexProperties) {
+                    const hasFlexProps = Object.values(elementData.flexProperties).some(value => 
+                        value !== 'auto' && value !== '0' && value !== '1' && value !== ''
+                    );
+                    
+                    if (hasFlexProps) {
+                        css += `/* Individual flex properties for ${elementData.content.text} */\n`;
+                        css += `#${elementData.id} {\n`;
+                        
+                        if (elementData.flexProperties.flexGrow && elementData.flexProperties.flexGrow !== '0') {
+                            css += `  flex-grow: ${elementData.flexProperties.flexGrow};\n`;
                         }
-                    }, 300);
-                }, 3000);
+                        if (elementData.flexProperties.flexShrink && elementData.flexProperties.flexShrink !== '1') {
+                            css += `  flex-shrink: ${elementData.flexProperties.flexShrink};\n`;
+                        }
+                        if (elementData.flexProperties.flexBasis && elementData.flexProperties.flexBasis !== 'auto') {
+                            css += `  flex-basis: ${elementData.flexProperties.flexBasis};\n`;
+                        }
+                        if (elementData.flexProperties.alignSelf && elementData.flexProperties.alignSelf !== 'auto') {
+                            css += `  align-self: ${elementData.flexProperties.alignSelf};\n`;
+                        }
+                        if (elementData.flexProperties.order && elementData.flexProperties.order !== '0') {
+                            css += `  order: ${elementData.flexProperties.order};\n`;
+                        }
+                        
+                        css += '}\n\n';
+                    }
+                }
+            });
 
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Show Toast');
-            }
+            // Apply syntax highlighting
+            const highlightedCSS = css
+                .replace(/(\/\*.*?\*\/)/g, '<span class="css-comment">$1</span>')
+                .replace(/(\.[a-zA-Z-]+|\#[a-zA-Z-]+)/g, '<span class="css-selector">$1</span>')
+                .replace(/([a-zA-Z-]+):/g, '<span class="css-property">$1</span>:')
+                .replace(/:\s*([^;]+);/g, ': <span class="css-value">$1</span>;');
+
+            document.getElementById('css-output').innerHTML = highlightedCSS;
         }
 
-        // Keyboard shortcuts
-        document.addEventListener('keydown', function(e) {
-            try {
-                // Ctrl/Cmd + Enter to generate code
-                if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-                    e.preventDefault();
-                    generateCode();
+        // Generate HTML
+        function generateHTML() {
+            function generateContainerHTML(containerId, depth = 0) {
+                const indent = '  '.repeat(depth);
+                let html = '';
+                
+                if (containerId === 'main-container') {
+                    html += `${indent}<div class="flex-container">\n`;
+                } else {
+                    html += `${indent}<div class="nested-container">\n`;
                 }
                 
-                // Ctrl/Cmd + D to toggle axis guides
-                if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
-                    e.preventDefault();
-                    showAxisGuides();
-                }
+                // Get elements in this container
+                const containerElements = elements.filter(el => el.parentContainer === containerId);
+                const childContainers = Object.values(containers).filter(c => c.parentContainer === containerId);
                 
-                // Arrow keys to select items
-                if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
-                    e.preventDefault();
-                    const itemNumbers = Object.keys(itemProperties).map(Number).sort();
-                    const currentIndex = itemNumbers.indexOf(currentSelectedItem);
-                    let newIndex;
-                    
-                    if (e.key === 'ArrowLeft') {
-                        newIndex = currentIndex > 0 ? currentIndex - 1 : itemNumbers.length - 1;
+                // Add elements and child containers
+                [...containerElements, ...childContainers].sort((a, b) => {
+                    // Sort by DOM order (simplified)
+                    return 0;
+                }).forEach(item => {
+                    if (item.type) {
+                        // It's an element
+                        html += `${indent}  <div class="${item.type}-element">\n`;
+                        html += `${indent}    ${getCleanHTML(document.getElementById(item.id))}\n`;
+                        html += `${indent}  </div>\n`;
                     } else {
-                        newIndex = currentIndex < itemNumbers.length - 1 ? currentIndex + 1 : 0;
-                    }
-                    
-                    selectItem(itemNumbers[newIndex]);
-                }
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Keyboard Shortcuts');
-            }
-        });
-
-        // Accessibility announcements
-        function announceChange(message) {
-            try {
-                const announcement = document.createElement('div');
-                announcement.setAttribute('aria-live', 'polite');
-                announcement.setAttribute('aria-atomic', 'true');
-                announcement.className = 'visually-hidden';
-                announcement.textContent = SecurityUtils.sanitizeHTML(message);
-                document.body.appendChild(announcement);
-                
-                setTimeout(() => {
-                    if (announcement.parentNode) {
-                        document.body.removeChild(announcement);
-                    }
-                }, 1000);
-            } catch (error) {
-                SecurityUtils.handleError(error, 'Accessibility Announcement');
-            }
-        }
-    </script>
-
-    <!-- Error Boundary and Monitoring -->
-    <script>
-        // Additional security monitoring
-        (function() {
-            'use strict';
-            
-            // Monitor for suspicious activity
-            let suspiciousActivity = 0;
-            const MAX_SUSPICIOUS_ACTIVITY = 10;
-            
-            // Monitor DOM modifications
-            const observer = new MutationObserver(function(mutations) {
-                mutations.forEach(function(mutation) {
-                    // Check for suspicious script injections
-                    if (mutation.type === 'childList') {
-                        mutation.addedNodes.forEach(function(node) {
-                            if (node.nodeType === Node.ELEMENT_NODE) {
-                                if (node.tagName === 'SCRIPT' || 
-                                    node.innerHTML.includes('<script') ||
-                                    node.innerHTML.includes('javascript:') ||
-                                    node.innerHTML.includes('data:text/html')) {
-                                    suspiciousActivity++;
-                                    console.warn('Suspicious content detected and blocked');
-                                    node.remove();
-                                    
-                                    if (suspiciousActivity >= MAX_SUSPICIOUS_ACTIVITY) {
-                                        console.error('Maximum suspicious activity threshold reached');
-                                        // Could implement additional security measures here
-                                    }
-                                }
-                            }
-                        });
+                        // It's a container
+                        html += generateContainerHTML(item.id, depth + 1);
                     }
                 });
-            });
-
-            // Start observing
-            observer.observe(document.body, {
-                childList: true,
-                subtree: true,
-                characterData: true
-            });
-
-            // Content Security Policy violation handler
-            document.addEventListener('securitypolicyviolation', function(event) {
-                SecurityUtils.handleError({
-                    message: 'CSP Violation',
-                    violatedDirective: event.violatedDirective,
-                    blockedURI: event.blockedURI,
-                    lineNumber: event.lineNumber,
-                    sourceFile: event.sourceFile
-                }, 'CSP Violation');
-            });
-
-            // Performance monitoring
-            if ('performance' in window && 'mark' in performance) {
-                performance.mark('flexbox-playground-loaded');
+                
+                html += `${indent}</div>\n`;
+                return html;
             }
-        })();
+            
+            const html = generateContainerHTML('main-container');
+
+            // Apply syntax highlighting
+            const highlightedHTML = html
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/&lt;(\/?[a-zA-Z][a-zA-Z0-9]*)/g, '&lt;<span class="html-tag">$1</span>')
+                .replace(/class=&quot;([^&quot;]*)&quot;/g, '<span class="html-attr">class</span>=<span class="css-value">&quot;$1&quot;</span>')
+                .replace(/&gt;([^&lt;]+)&lt;/g, '&gt;<span class="css-value">$1</span>&lt;');
+
+            document.getElementById('html-output').innerHTML = highlightedHTML;
+        }
+
+        // Get clean HTML content without controls
+        function getCleanHTML(element) {
+            if (!element) return '';
+            const clone = element.cloneNode(true);
+            // Remove control elements
+            const controls = clone.querySelectorAll('.item-controls, .delete-btn');
+            controls.forEach(control => control.remove());
+            return clone.innerHTML;
+        }
+
+        // Get default styles for element types
+        function getDefaultElementStyles(type) {
+            const styleMap = {
+                navbar: {
+                    'background-color': '#343a40',
+                    'color': 'white',
+                    'padding': '1rem 1.5rem',
+                    'border-radius': '8px',
+                    'width': '100%'
+                },
+                card: {
+                    'background-color': 'white',
+                    'border': '1px solid #dee2e6',
+                    'border-radius': '8px',
+                    'padding': '1.5rem',
+                    'max-width': '300px',
+                    'box-shadow': '0 2px 8px rgba(0,0,0,0.1)'
+                },
+                image: {
+                    'background': 'linear-gradient(135deg, #667eea, #764ba2)',
+                    'color': 'white',
+                    'padding': '2rem',
+                    'text-align': 'center',
+                    'border-radius': '8px',
+                    'min-width': '150px',
+                    'min-height': '100px'
+                },
+                button: {
+                    'background-color': '#007bff',
+                    'color': 'white',
+                    'border': 'none',
+                    'padding': '0.75rem 1.5rem',
+                    'border-radius': '6px',
+                    'cursor': 'pointer'
+                },
+                text: {
+                    'background-color': '#f8f9fa',
+                    'border': '1px solid #dee2e6',
+                    'padding': '1rem',
+                    'border-radius': '6px'
+                },
+                sidebar: {
+                    'background-color': '#6c757d',
+                    'color': 'white',
+                    'padding': '1.5rem',
+                    'min-height': '200px',
+                    'width': '200px',
+                    'border-radius': '8px'
+                }
+            };
+            
+            return styleMap[type] || {};
+        }
+
+        // Copy functions
+        function copyCSS() {
+            const cssContent = document.getElementById('css-output').textContent;
+            navigator.clipboard.writeText(cssContent).then(() => {
+                showToast('CSS copied to clipboard!');
+            });
+        }
+
+        function copyHTML() {
+            const htmlContent = document.getElementById('html-output').textContent;
+            navigator.clipboard.writeText(htmlContent).then(() => {
+                showToast('HTML copied to clipboard!');
+            });
+        }
+
+        function copyFullCode() {
+            const cssContent = document.getElementById('css-output').textContent;
+            const htmlContent = document.getElementById('html-output').textContent;
+            const fullCode = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nested Flexbox Layout</title>
+    <style>
+${cssContent}
+    </style>
+</head>
+<body>
+    ${htmlContent}
+</body>
+</html>`;
+            
+            navigator.clipboard.writeText(fullCode).then(() => {
+                showToast('Complete code copied to clipboard!');
+            });
+        }
+
+        // Export functions
+        function exportCodePen() {
+            const cssContent = document.getElementById('css-output').textContent;
+            const htmlContent = document.getElementById('html-output').textContent;
+            
+            const data = {
+                title: 'Nested Flexbox Layout from Playground',
+                description: 'Created with Enhanced Flexbox Playground - Nested Containers',
+                html: htmlContent,
+                css: cssContent,
+                editors: '110'
+            };
+
+            const form = document.createElement('form');
+            form.action = 'https://codepen.io/pen/define';
+            form.method = 'POST';
+            form.target = '_blank';
+            
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'data';
+            input.value = JSON.stringify(data);
+            
+            form.appendChild(input);
+            document.body.appendChild(form);
+            form.submit();
+            document.body.removeChild(form);
+        }
+
+        function downloadHTML() {
+            const cssContent = document.getElementById('css-output').textContent;
+            const htmlContent = document.getElementById('html-output').textContent;
+            const fullCode = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nested Flexbox Layout</title>
+    <style>
+${cssContent}
+    </style>
+</head>
+<body>
+    ${htmlContent}
+</body>
+</html>`;
+            
+            const blob = new Blob([fullCode], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'nested-flexbox-layout.html';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Toast notification
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'position-fixed top-0 end-0 m-3 alert alert-success alert-dismissible';
+            toast.style.zIndex = '9999';
+            toast.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    document.body.removeChild(toast);
+                }
+            }, 3000);
+        }
+
+        // Generate full code
+        function generateFullCode() {
+            generateCode();
+            showToast('Code generated successfully!');
+        }
     </script>
 </body>
 </html>

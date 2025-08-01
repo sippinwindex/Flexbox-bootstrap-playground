@@ -1,0 +1,1390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interactive terminal playground for learning command line basics">
+    <title>Terminal Learning Playground - Interactive Command Line</title>
+    
+    <!-- Security Headers -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success-gradient: linear-gradient(135deg, #28a745, #20c997);
+            --warning-gradient: linear-gradient(135deg, #ffc107, #ff8c00);
+            --info-gradient: linear-gradient(135deg, #17a2b8, #20c997);
+            --danger-gradient: linear-gradient(135deg, #dc3545, #c82333);
+            --dark-gradient: linear-gradient(135deg, #343a40, #495057);
+            --terminal-bg: #1e1e1e;
+            --terminal-text: #d4d4d4;
+            --terminal-green: #4fc3f7;
+            --terminal-yellow: #ffeb3b;
+            --terminal-red: #f44336;
+            --terminal-blue: #2196f3;
+            --bg-light: #f8f9fa;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.1);
+            --shadow-md: 0 4px 15px rgba(0,0,0,0.15);
+        }
+
+        body {
+            background: var(--bg-light);
+            font-family: system-ui, -apple-system, sans-serif;
+            overflow-x: hidden;
+        }
+
+        .playground-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            margin-bottom: 1rem;
+            height: calc(100vh - 200px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .terminal-container {
+            background: var(--terminal-bg);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            position: relative;
+        }
+
+        .terminal-header {
+            background: #2d2d30;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #3e3e42;
+        }
+
+        .terminal-tabs {
+            display: flex;
+            gap: 4px;
+        }
+
+        .terminal-tab {
+            background: var(--terminal-bg);
+            color: var(--terminal-text);
+            padding: 6px 12px;
+            border-radius: 4px 4px 0 0;
+            font-size: 0.85rem;
+            cursor: pointer;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .terminal-tab.active {
+            background: var(--terminal-bg);
+            border-bottom: 2px solid var(--terminal-blue);
+        }
+
+        .terminal-controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .terminal-btn {
+            background: transparent;
+            border: 1px solid #555;
+            color: var(--terminal-text);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .terminal-btn:hover {
+            background: #555;
+        }
+
+        .terminal-output {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            background: var(--terminal-bg);
+            color: var(--terminal-text);
+            font-size: 14px;
+            line-height: 1.4;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .terminal-line {
+            margin-bottom: 4px;
+        }
+
+        .terminal-prompt {
+            color: var(--terminal-green);
+        }
+
+        .terminal-path {
+            color: var(--terminal-blue);
+        }
+
+        .terminal-command {
+            color: var(--terminal-text);
+        }
+
+        .terminal-error {
+            color: var(--terminal-red);
+        }
+
+        .terminal-success {
+            color: var(--terminal-green);
+        }
+
+        .terminal-warning {
+            color: var(--terminal-yellow);
+        }
+
+        .terminal-info {
+            color: var(--terminal-blue);
+        }
+
+        .terminal-input-container {
+            background: var(--terminal-bg);
+            padding: 12px 16px;
+            border-top: 1px solid #3e3e42;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .terminal-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--terminal-text);
+            font-family: inherit;
+            font-size: 14px;
+            outline: none;
+            caret-color: var(--terminal-green);
+        }
+
+        .terminal-input::placeholder {
+            color: #666;
+        }
+
+        .file-explorer {
+            background: #252526;
+            width: 300px;
+            border-right: 1px solid #3e3e42;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .explorer-header {
+            background: #2d2d30;
+            padding: 8px 12px;
+            color: var(--terminal-text);
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-bottom: 1px solid #3e3e42;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .explorer-content {
+            flex: 1;
+            padding: 8px 0;
+            overflow-y: auto;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            padding: 4px 12px;
+            color: var(--terminal-text);
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: background 0.2s;
+            gap: 8px;
+        }
+
+        .file-item:hover {
+            background: #2a2d2e;
+        }
+
+        .file-item.selected {
+            background: #094771;
+        }
+
+        .file-item.folder {
+            font-weight: 500;
+        }
+
+        .file-item .indent {
+            width: 16px;
+            flex-shrink: 0;
+        }
+
+        .file-icon {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+
+        .folder-icon {
+            color: #dcb67a;
+        }
+
+        .file-icon.html {
+            color: #e34c26;
+        }
+
+        .file-icon.css {
+            color: #1572b6;
+        }
+
+        .file-icon.js {
+            color: #f7df1e;
+        }
+
+        .file-icon.json {
+            color: #cbcb41;
+        }
+
+        .file-icon.md {
+            color: #083fa1;
+        }
+
+        .help-panel {
+            background: white;
+            width: 350px;
+            border-left: 1px solid #dee2e6;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .help-header {
+            background: var(--info-gradient);
+            color: white;
+            padding: 12px 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .help-content {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            font-size: 0.9rem;
+        }
+
+        .command-help {
+            margin-bottom: 24px;
+        }
+
+        .command-help h6 {
+            color: #495057;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .command-example {
+            background: #f8f9fa;
+            border-left: 4px solid var(--terminal-blue);
+            padding: 8px 12px;
+            margin: 8px 0;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.85rem;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .command-desc {
+            color: #6c757d;
+            margin-bottom: 8px;
+        }
+
+        .quick-actions {
+            padding: 16px;
+            border-top: 1px solid #dee2e6;
+            background: #f8f9fa;
+        }
+
+        .quick-btn {
+            width: 100%;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+            padding: 8px 12px;
+        }
+
+        .main-content {
+            display: flex;
+            height: 100%;
+        }
+
+        .terminal-section {
+            flex: 1;
+            display: flex;
+        }
+
+        .status-bar {
+            background: var(--terminal-blue);
+            color: white;
+            padding: 4px 16px;
+            font-size: 0.8rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .tutorial-mode {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--warning-gradient);
+            color: white;
+            padding: 8px 16px;
+            text-align: center;
+            font-size: 0.9rem;
+            font-weight: 600;
+            z-index: 100;
+        }
+
+        .tutorial-mode.hidden {
+            display: none;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .terminal-toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #2d2d30;
+            color: var(--terminal-text);
+            padding: 12px 16px;
+            border-radius: 8px;
+            border-left: 4px solid var(--terminal-green);
+            z-index: 2000;
+            box-shadow: var(--shadow-md);
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .terminal-toast.show {
+            transform: translateX(0);
+        }
+
+        .terminal-toast.error {
+            border-left-color: var(--terminal-red);
+        }
+
+        .terminal-toast.warning {
+            border-left-color: var(--terminal-yellow);
+        }
+
+        .breadcrumb-nav {
+            background: #2d2d30;
+            padding: 8px 16px;
+            border-bottom: 1px solid #3e3e42;
+            font-size: 0.85rem;
+            color: var(--terminal-text);
+        }
+
+        .breadcrumb-nav a {
+            color: var(--terminal-blue);
+            text-decoration: none;
+        }
+
+        .breadcrumb-nav a:hover {
+            text-decoration: underline;
+        }
+
+        .tree-line {
+            color: #666;
+        }
+
+        .tree-folder {
+            color: var(--terminal-yellow);
+            font-weight: 600;
+        }
+
+        .tree-file {
+            color: var(--terminal-text);
+        }
+
+        @media (max-width: 768px) {
+            .file-explorer,
+            .help-panel {
+                width: 250px;
+            }
+            
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .terminal-section {
+                min-height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">
+            <i class="bi bi-terminal me-2"></i>Terminal Learning Playground
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="#"><i class="bi bi-house me-1"></i>Home</a>
+                <a class="nav-link" href="#"><i class="bi bi-grid-3x3 me-1"></i>Flexbox</a>
+                <a class="nav-link" href="#"><i class="bi bi-code me-1"></i>HTML</a>
+                <a class="nav-link" href="#"><i class="bi bi-bootstrap me-1"></i>Bootstrap</a>
+                <a class="nav-link" href="#"><i class="bi bi-play-circle me-1"></i>Live Coding</a>
+                <a class="nav-link active" href="#"><i class="bi bi-terminal me-1"></i>Terminal</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="bg-gradient text-white py-4" style="background: var(--dark-gradient);">
+    <div class="container-fluid">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h1 class="h3 fw-bold mb-2">
+                    <i class="bi bi-terminal me-2"></i>Terminal Learning Playground
+                </h1>
+                <p class="mb-0">Master the command line with an interactive terminal simulation. Learn essential commands with real-time feedback!</p>
+            </div>
+            <div class="col-lg-4 text-end">
+                <div class="d-flex justify-content-end gap-2">
+                    <span class="badge bg-light text-dark"><i class="bi bi-lightning me-1"></i>Interactive</span>
+                    <span class="badge bg-light text-dark"><i class="bi bi-folder me-1"></i>File System</span>
+                    <span class="badge bg-light text-dark"><i class="bi bi-search me-1"></i>Auto-complete</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Tutorial Mode Banner -->
+<div class="tutorial-mode" id="tutorial-banner">
+    <i class="bi bi-lightbulb me-2"></i>
+    Tutorial Mode: Type 'help' to see available commands, 'tutorial' to start guided learning, or 'clear' to clear the screen
+    <button class="btn btn-sm btn-outline-light ms-3" onclick="hideTutorial()">Hide Tutorial</button>
+</div>
+
+<!-- Main Content -->
+<div class="container-fluid p-0">
+    <div class="playground-container">
+        <div class="main-content">
+            <!-- File Explorer -->
+            <div class="file-explorer">
+                <div class="explorer-header">
+                    <span><i class="bi bi-folder me-1"></i>EXPLORER</span>
+                    <div>
+                        <button class="terminal-btn" onclick="createNewFile()" title="New File">
+                            <i class="bi bi-file-plus"></i>
+                        </button>
+                        <button class="terminal-btn" onclick="createNewFolder()" title="New Folder">
+                            <i class="bi bi-folder-plus"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Breadcrumb Navigation -->
+                <div class="breadcrumb-nav" id="breadcrumb-nav">
+                    <i class="bi bi-house me-1"></i>
+                    <a href="#" onclick="navigateToBreadcrumb('/')">~</a>
+                </div>
+                
+                <div class="explorer-content" id="file-explorer">
+                    <!-- File tree will be populated here -->
+                </div>
+            </div>
+
+            <!-- Terminal Section -->
+            <div class="terminal-section">
+                <div class="terminal-container">
+                    <div class="terminal-header">
+                        <div class="terminal-tabs">
+                            <div class="terminal-tab active">
+                                <i class="bi bi-terminal"></i>
+                                Terminal
+                            </div>
+                        </div>
+                        <div class="terminal-controls">
+                            <button class="terminal-btn" onclick="clearTerminal()">
+                                <i class="bi bi-trash"></i> Clear
+                            </button>
+                            <button class="terminal-btn" onclick="showHistory()">
+                                <i class="bi bi-clock-history"></i> History
+                            </button>
+                            <button class="terminal-btn" onclick="toggleTutorial()">
+                                <i class="bi bi-question-circle"></i> Help
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="terminal-output" id="terminal-output"></div>
+
+                    <div class="terminal-input-container">
+                        <span class="terminal-prompt">student@learning:</span>
+                        <span class="terminal-path" id="current-path">~</span>
+                        <span class="terminal-prompt">$</span>
+                        <input type="text" class="terminal-input" id="terminal-input" placeholder="Type a command..." autocomplete="off" spellcheck="false">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Help Panel -->
+            <div class="help-panel">
+                <div class="help-header">
+                    <i class="bi bi-book"></i>
+                    Command Reference
+                </div>
+                <div class="help-content" id="help-content">
+                    <div class="command-help">
+                        <h6><i class="bi bi-folder text-warning"></i>Navigation</h6>
+                        <div class="command-desc">Move around the file system</div>
+                        <div class="command-example">ls - list files and directories</div>
+                        <div class="command-example">cd &lt;directory&gt; - change directory</div>
+                        <div class="command-example">pwd - show current directory</div>
+                        <div class="command-example">cd .. - go up one directory</div>
+                        <div class="command-example">cd ~ - go to home directory</div>
+                    </div>
+
+                    <div class="command-help">
+                        <h6><i class="bi bi-file-plus text-success"></i>File Operations</h6>
+                        <div class="command-desc">Create and manage files</div>
+                        <div class="command-example">touch &lt;filename&gt; - create file</div>
+                        <div class="command-example">mkdir &lt;dirname&gt; - create directory</div>
+                        <div class="command-example">rm &lt;filename&gt; - remove file</div>
+                        <div class="command-example">rmdir &lt;dirname&gt; - remove directory</div>
+                        <div class="command-example">cp &lt;src&gt; &lt;dest&gt; - copy file</div>
+                        <div class="command-example">mv &lt;src&gt; &lt;dest&gt; - move/rename</div>
+                    </div>
+
+                    <div class="command-help">
+                        <h6><i class="bi bi-tree text-info"></i>Display & Info</h6>
+                        <div class="command-desc">View file system structure</div>
+                        <div class="command-example">tree - show directory tree</div>
+                        <div class="command-example">cat &lt;filename&gt; - show file content</div>
+                        <div class="command-example">ls -la - detailed file listing</div>
+                        <div class="command-example">file &lt;filename&gt; - show file type</div>
+                    </div>
+
+                    <div class="command-help">
+                        <h6><i class="bi bi-gear text-secondary"></i>System</h6>
+                        <div class="command-desc">Terminal and system commands</div>
+                        <div class="command-example">clear - clear terminal screen</div>
+                        <div class="command-example">history - show command history</div>
+                        <div class="command-example">help - show all commands</div>
+                        <div class="command-example">tutorial - start guided tutorial</div>
+                    </div>
+                </div>
+
+                <div class="quick-actions">
+                    <button class="btn btn-primary quick-btn" onclick="runTutorial()">
+                        <i class="bi bi-play me-1"></i>Start Tutorial
+                    </button>
+                    <button class="btn btn-outline-primary quick-btn" onclick="loadSampleProject()">
+                        <i class="bi bi-folder me-1"></i>Load Sample Project
+                    </button>
+                    <button class="btn btn-outline-secondary quick-btn" onclick="resetFileSystem()">
+                        <i class="bi bi-arrow-clockwise me-1"></i>Reset File System
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div>
+                <span id="current-directory">~/</span>
+                <span class="ms-3">Files: <span id="file-count">3</span></span>
+            </div>
+            <div>
+                <span>Last command: <span id="last-command">-</span></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Terminal Toast -->
+<div class="terminal-toast" id="terminal-toast"></div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // Global variables
+    let fileSystem = {};
+    let currentPath = '/home/student';
+    let commandHistory = [];
+    let historyIndex = -1;
+    let expandedFolders = new Set();
+
+    // Initialize the terminal
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeFileSystem();
+        setupEventListeners();
+        renderFileExplorer();
+        displayWelcomeMessage();
+        focusTerminal();
+    });
+
+    // Initialize default file system
+    function initializeFileSystem() {
+        fileSystem = {
+            '/': {
+                type: 'directory',
+                children: {
+                    'home': {
+                        type: 'directory',
+                        children: {
+                            'student': {
+                                type: 'directory',
+                                children: {
+                                    'documents': {
+                                        type: 'directory',
+                                        children: {
+                                            'resume.pdf': { type: 'file', content: 'PDF document', size: '2.4KB' },
+                                            'notes.txt': { type: 'file', content: 'My study notes for full-stack development', size: '1.2KB' },
+                                            'todo.md': { type: 'file', content: 'Todo list for learning', size: '856B' }
+                                        }
+                                    },
+                                    'projects': {
+                                        type: 'directory',
+                                        children: {
+                                            'my-website': {
+                                                type: 'directory',
+                                                children: {
+                                                    'index.html': { type: 'file', content: 'HTML website file', size: '2.1KB' },
+                                                    'style.css': { type: 'file', content: 'CSS styles', size: '1.8KB' },
+                                                    'script.js': { type: 'file', content: 'JavaScript code', size: '1.5KB' }
+                                                }
+                                            }
+                                        }
+                                    },
+                                    'downloads': {
+                                        type: 'directory',
+                                        children: {
+                                            'cheatsheet.pdf': { type: 'file', content: 'Terminal commands cheat sheet', size: '3.2MB' }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        };
+        currentPath = '/home/student';
+        expandedFolders.add('/');
+        expandedFolders.add('/home');
+        expandedFolders.add('/home/student');
+    }
+
+    // Setup event listeners
+    function setupEventListeners() {
+        const terminalInput = document.getElementById('terminal-input');
+        terminalInput.addEventListener('keydown', handleKeyDown);
+        document.getElementById('terminal-output').addEventListener('click', focusTerminal);
+        window.addEventListener('focus', focusTerminal);
+    }
+
+    // Handle keyboard input
+    function handleKeyDown(e) {
+        const input = e.target;
+        
+        switch(e.key) {
+            case 'Enter':
+                e.preventDefault();
+                executeCommand(input.value.trim());
+                input.value = '';
+                break;
+                
+            case 'ArrowUp':
+                e.preventDefault();
+                navigateHistory('up');
+                break;
+                
+            case 'ArrowDown':
+                e.preventDefault();
+                navigateHistory('down');
+                break;
+        }
+    }
+
+    // Execute terminal command
+    function executeCommand(command) {
+        if (!command) return;
+        
+        // Add to history
+        if (commandHistory.length === 0 || commandHistory[commandHistory.length - 1] !== command) {
+            commandHistory.push(command);
+        }
+        historyIndex = commandHistory.length;
+        
+        // Display command in terminal
+        addToTerminal(`<span class="terminal-prompt">student@learning:</span><span class="terminal-path">${getDisplayPath()}</span><span class="terminal-prompt">$ </span><span class="terminal-command">${escapeHtml(command)}</span>`);
+        
+        // Parse and execute command
+        const parts = command.split(' ').filter(part => part.length > 0);
+        const cmd = parts[0];
+        const args = parts.slice(1);
+        
+        executeTerminalCommand(cmd, args);
+        
+        // Update status
+        document.getElementById('last-command').textContent = cmd;
+        updateFileCount();
+        scrollToBottom();
+    }
+
+    // Execute specific terminal commands
+    function executeTerminalCommand(cmd, args) {
+        switch(cmd) {
+            case 'ls':
+                listFiles(args);
+                break;
+            case 'cd':
+                changeDirectory(args[0] || '~');
+                break;
+            case 'pwd':
+                printWorkingDirectory();
+                break;
+            case 'mkdir':
+                createDirectory(args[0]);
+                break;
+            case 'touch':
+                createFile(args[0]);
+                break;
+            case 'rm':
+                removeFile(args[0]);
+                break;
+            case 'tree':
+                showTree(args[0] || '.');
+                break;
+            case 'cat':
+                showFileContent(args[0]);
+                break;
+            case 'clear':
+                clearTerminal();
+                break;
+            case 'help':
+                showHelp();
+                break;
+            case 'history':
+                showCommandHistory();
+                break;
+            case 'tutorial':
+                startTutorial();
+                break;
+            case 'whoami':
+                addToTerminal('student');
+                break;
+            case 'date':
+                addToTerminal(new Date().toString());
+                break;
+            case 'echo':
+                addToTerminal(args.join(' '));
+                break;
+            default:
+                addToTerminal(`<span class="terminal-error">Command not found: ${cmd}</span>`);
+                addToTerminal(`<span class="terminal-warning">Type 'help' to see available commands</span>`);
+        }
+    }
+
+    // Command implementations
+    function listFiles(args) {
+        const currentDir = getCurrentDirectory();
+        if (!currentDir || !currentDir.children) {
+            addToTerminal('<span class="terminal-error">Not a directory</span>');
+            return;
+        }
+        
+        const items = Object.entries(currentDir.children).sort(([a], [b]) => a.localeCompare(b));
+        
+        if (items.length === 0) {
+            addToTerminal('<span class="terminal-warning">(empty directory)</span>');
+            return;
+        }
+        
+        items.forEach(([name, item]) => {
+            const color = item.type === 'directory' ? 'terminal-blue' : 'terminal-text';
+            const icon = item.type === 'directory' ? '📁' : '📄';
+            addToTerminal(`${icon} <span class="${color}">${name}</span>`);
+        });
+    }
+
+    function changeDirectory(path) {
+        if (!path || path === '~') {
+            currentPath = '/home/student';
+            updateCurrentPath();
+            updateBreadcrumb();
+            renderFileExplorer();
+            return;
+        }
+        
+        let newPath = resolvePath(path);
+        const targetDir = getDirectoryAtPath(newPath);
+        
+        if (!targetDir) {
+            addToTerminal(`<span class="terminal-error">cd: ${path}: No such file or directory</span>`);
+            return;
+        }
+        
+        if (targetDir.type !== 'directory') {
+            addToTerminal(`<span class="terminal-error">cd: ${path}: Not a directory</span>`);
+            return;
+        }
+        
+        currentPath = newPath;
+        expandedFolders.add(newPath);
+        updateCurrentPath();
+        updateBreadcrumb();
+        renderFileExplorer();
+        
+        showToast(`Changed directory to ${getDisplayPath()}`, 'success');
+    }
+
+    function printWorkingDirectory() {
+        addToTerminal(currentPath);
+    }
+
+    function createDirectory(name) {
+        if (!name) {
+            addToTerminal('<span class="terminal-error">mkdir: missing operand</span>');
+            return;
+        }
+        
+        const currentDir = getCurrentDirectory();
+        if (!currentDir) {
+            addToTerminal('<span class="terminal-error">mkdir: cannot create directory</span>');
+            return;
+        }
+        
+        if (currentDir.children[name]) {
+            addToTerminal(`<span class="terminal-error">mkdir: cannot create directory '${name}': File exists</span>`);
+            return;
+        }
+        
+        currentDir.children[name] = {
+            type: 'directory',
+            children: {}
+        };
+        
+        addToTerminal(`<span class="terminal-success">Directory '${name}' created successfully</span>`);
+        renderFileExplorer();
+        updateFileCount();
+    }
+
+    function createFile(name) {
+        if (!name) {
+            addToTerminal('<span class="terminal-error">touch: missing operand</span>');
+            return;
+        }
+        
+        const currentDir = getCurrentDirectory();
+        if (!currentDir) {
+            addToTerminal('<span class="terminal-error">touch: cannot create file</span>');
+            return;
+        }
+        
+        if (!currentDir.children[name]) {
+            currentDir.children[name] = {
+                type: 'file',
+                content: '',
+                size: '0B'
+            };
+            addToTerminal(`<span class="terminal-success">File '${name}' created successfully</span>`);
+        } else if (currentDir.children[name].type === 'file') {
+            addToTerminal(`<span class="terminal-warning">File '${name}' timestamp updated</span>`);
+        } else {
+            addToTerminal(`<span class="terminal-error">touch: '${name}' is a directory</span>`);
+            return;
+        }
+        
+        renderFileExplorer();
+        updateFileCount();
+    }
+
+    function removeFile(name) {
+        if (!name) {
+            addToTerminal('<span class="terminal-error">rm: missing operand</span>');
+            return;
+        }
+        
+        const currentDir = getCurrentDirectory();
+        if (!currentDir || !currentDir.children[name]) {
+            addToTerminal(`<span class="terminal-error">rm: cannot remove '${name}': No such file or directory</span>`);
+            return;
+        }
+        
+        if (currentDir.children[name].type === 'directory') {
+            addToTerminal(`<span class="terminal-error">rm: cannot remove '${name}': Is a directory</span>`);
+            return;
+        }
+        
+        delete currentDir.children[name];
+        addToTerminal(`<span class="terminal-success">File '${name}' removed successfully</span>`);
+        renderFileExplorer();
+        updateFileCount();
+    }
+
+    function showTree(path) {
+        const targetPath = resolvePath(path);
+        const targetDir = getDirectoryAtPath(targetPath);
+        
+        if (!targetDir) {
+            addToTerminal(`<span class="terminal-error">tree: ${path}: No such file or directory</span>`);
+            return;
+        }
+        
+        if (targetDir.type !== 'directory') {
+            addToTerminal(`<span class="terminal-error">tree: ${path}: Not a directory</span>`);
+            return;
+        }
+        
+        addToTerminal(`<span class="tree-folder">${path === '.' ? getBaseName(currentPath) : path}</span>`);
+        const stats = renderTree(targetDir, '');
+        addToTerminal('');
+        addToTerminal(`<span class="terminal-info">${stats.dirs} directories, ${stats.files} files</span>`);
+    }
+
+    function renderTree(dir, prefix) {
+        const items = Object.entries(dir.children).sort(([a], [b]) => a.localeCompare(b));
+        let stats = { dirs: 0, files: 0 };
+        
+        items.forEach(([name, item], index) => {
+            const isLast = index === items.length - 1;
+            const connector = isLast ? '└── ' : '├── ';
+            const nextPrefix = prefix + (isLast ? '    ' : '│   ');
+            
+            if (item.type === 'directory') {
+                stats.dirs++;
+                addToTerminal(`<span class="tree-line">${prefix}${connector}</span>📁 <span class="tree-folder">${name}/</span>`);
+                const subStats = renderTree(item, nextPrefix);
+                stats.dirs += subStats.dirs;
+                stats.files += subStats.files;
+            } else {
+                stats.files++;
+                const size = item.size ? ` <span class="terminal-info">(${item.size})</span>` : '';
+                addToTerminal(`<span class="tree-line">${prefix}${connector}</span>📄 <span class="tree-file">${name}</span>${size}`);
+            }
+        });
+        
+        return stats;
+    }
+
+    function showFileContent(name) {
+        if (!name) {
+            addToTerminal('<span class="terminal-error">cat: missing operand</span>');
+            return;
+        }
+        
+        const currentDir = getCurrentDirectory();
+        if (!currentDir || !currentDir.children[name]) {
+            addToTerminal(`<span class="terminal-error">cat: ${name}: No such file or directory</span>`);
+            return;
+        }
+        
+        const file = currentDir.children[name];
+        if (file.type === 'directory') {
+            addToTerminal(`<span class="terminal-error">cat: ${name}: Is a directory</span>`);
+            return;
+        }
+        
+        const content = file.content || '(empty file)';
+        addToTerminal('');
+        addToTerminal(escapeHtml(content));
+        addToTerminal('');
+    }
+
+    // Utility functions
+    function getCurrentDirectory() {
+        return getDirectoryAtPath(currentPath);
+    }
+
+    function getDirectoryAtPath(path) {
+        const parts = path.split('/').filter(part => part.length > 0);
+        let current = fileSystem['/'];
+        
+        for (const part of parts) {
+            if (!current.children || !current.children[part]) {
+                return null;
+            }
+            current = current.children[part];
+        }
+        
+        return current;
+    }
+
+    function resolvePath(path) {
+        if (path.startsWith('/')) {
+            return path;
+        }
+        
+        if (path === '~') {
+            return '/home/student';
+        }
+        
+        if (path === '.') {
+            return currentPath;
+        }
+        
+        if (path === '..') {
+            const parts = currentPath.split('/').filter(part => part.length > 0);
+            if (parts.length > 0) {
+                parts.pop();
+            }
+            return '/' + parts.join('/');
+        }
+        
+        return currentPath + (currentPath.endsWith('/') ? '' : '/') + path;
+    }
+
+    function getBaseName(path) {
+        const parts = path.split('/').filter(part => part.length > 0);
+        return parts[parts.length - 1] || '/';
+    }
+
+    function getDisplayPath() {
+        if (currentPath === '/home/student') {
+            return '~';
+        }
+        return currentPath.replace('/home/student', '~');
+    }
+
+    function updateCurrentPath() {
+        document.getElementById('current-path').textContent = getDisplayPath();
+        document.getElementById('current-directory').textContent = getDisplayPath();
+    }
+
+    function updateBreadcrumb() {
+        const breadcrumb = document.getElementById('breadcrumb-nav');
+        const parts = currentPath.split('/').filter(part => part.length > 0);
+        
+        let breadcrumbHTML = '<i class="bi bi-house me-1"></i>';
+        breadcrumbHTML += '<a href="#" onclick="navigateToBreadcrumb(\'/home/student\')">~</a>';
+        
+        let currentBreadcrumbPath = '/home/student';
+        for (let i = 2; i < parts.length; i++) {
+            currentBreadcrumbPath += '/' + parts[i];
+            breadcrumbHTML += ' / ';
+            breadcrumbHTML += `<a href="#" onclick="navigateToBreadcrumb('${currentBreadcrumbPath}')">${parts[i]}</a>`;
+        }
+        
+        breadcrumb.innerHTML = breadcrumbHTML;
+    }
+
+    function navigateToBreadcrumb(path) {
+        currentPath = path;
+        updateCurrentPath();
+        updateBreadcrumb();
+        renderFileExplorer();
+        focusTerminal();
+    }
+
+    function updateFileCount() {
+        const currentDir = getCurrentDirectory();
+        const count = currentDir ? Object.keys(currentDir.children).length : 0;
+        document.getElementById('file-count').textContent = count;
+    }
+
+    // Terminal display functions
+    function addToTerminal(content) {
+        const output = document.getElementById('terminal-output');
+        const line = document.createElement('div');
+        line.className = 'terminal-line';
+        line.innerHTML = content;
+        output.appendChild(line);
+        scrollToBottom();
+    }
+
+    function clearTerminal() {
+        document.getElementById('terminal-output').innerHTML = '';
+    }
+
+    function scrollToBottom() {
+        const output = document.getElementById('terminal-output');
+        output.scrollTop = output.scrollHeight;
+    }
+
+    function focusTerminal() {
+        document.getElementById('terminal-input').focus();
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // History functionality
+    function navigateHistory(direction) {
+        if (commandHistory.length === 0) return;
+        
+        const input = document.getElementById('terminal-input');
+        
+        if (direction === 'up') {
+            if (historyIndex > 0) {
+                historyIndex--;
+                input.value = commandHistory[historyIndex];
+            }
+        } else {
+            if (historyIndex < commandHistory.length - 1) {
+                historyIndex++;
+                input.value = commandHistory[historyIndex];
+            } else {
+                historyIndex = commandHistory.length;
+                input.value = '';
+            }
+        }
+    }
+
+    function showHistory() {
+        addToTerminal('<span class="terminal-info">Command History:</span>');
+        if (commandHistory.length === 0) {
+            addToTerminal('<span class="terminal-warning">No command history</span>');
+            return;
+        }
+        
+        commandHistory.forEach((cmd, index) => {
+            addToTerminal(`${(index + 1).toString().padStart(4)} ${cmd}`);
+        });
+    }
+
+    function showCommandHistory() {
+        showHistory();
+    }
+
+    // File explorer rendering
+    function renderFileExplorer() {
+        const explorer = document.getElementById('file-explorer');
+        explorer.innerHTML = '';
+        renderDirectoryTree(fileSystem['/'], '', 0, '/');
+    }
+
+    function renderDirectoryTree(dir, name, depth, path) {
+        const explorer = document.getElementById('file-explorer');
+        
+        if (depth === 0) {
+            const item = createFileItem('/', 'folder', 0, '/', true);
+            explorer.appendChild(item);
+            
+            if (dir.children) {
+                Object.entries(dir.children).forEach(([childName, child]) => {
+                    renderDirectoryTree(child, childName, 1, '/' + childName);
+                });
+            }
+        } else {
+            const item = createFileItem(name, dir.type === 'directory' ? 'folder' : 'file', depth, path);
+            explorer.appendChild(item);
+            
+            if (dir.type === 'directory' && dir.children && expandedFolders.has(path)) {
+                Object.entries(dir.children).forEach(([childName, child]) => {
+                    const childPath = path + (path.endsWith('/') ? '' : '/') + childName;
+                    renderDirectoryTree(child, childName, depth + 1, childPath);
+                });
+            }
+        }
+    }
+
+    function createFileItem(name, type, depth, path, isRoot = false) {
+        const item = document.createElement('div');
+        item.className = `file-item ${type}`;
+        
+        if (path === currentPath || (isRoot && currentPath === '/')) {
+            item.classList.add('selected');
+        }
+        
+        const indent = document.createElement('span');
+        indent.className = 'indent';
+        indent.style.width = (depth * 16) + 'px';
+        
+        const icon = document.createElement('i');
+        if (type === 'folder') {
+            icon.className = 'bi bi-folder folder-icon file-icon';
+        } else {
+            icon.className = 'bi bi-file-text file-icon';
+        }
+        
+        const text = document.createElement('span');
+        text.textContent = name;
+        
+        item.appendChild(indent);
+        item.appendChild(icon);
+        item.appendChild(text);
+        
+        item.addEventListener('click', () => {
+            if (type === 'folder') {
+                changeDirectory(path);
+                focusTerminal();
+            } else {
+                executeCommand(`cat ${name}`);
+                focusTerminal();
+            }
+        });
+        
+        return item;
+    }
+
+    // Helper functions
+    function createNewFile() {
+        const name = prompt('Enter file name:');
+        if (name) {
+            executeCommand(`touch ${name}`);
+        }
+        focusTerminal();
+    }
+
+    function createNewFolder() {
+        const name = prompt('Enter folder name:');
+        if (name) {
+            executeCommand(`mkdir ${name}`);
+        }
+        focusTerminal();
+    }
+
+    function showHelp() {
+        addToTerminal('<span class="terminal-success">🚀 Terminal Learning Playground - Command Reference</span>');
+        addToTerminal('');
+        addToTerminal('<span class="terminal-blue">📁 Navigation Commands:</span>');
+        addToTerminal('  ls              - list files and directories');
+        addToTerminal('  cd <directory>  - change directory');
+        addToTerminal('  pwd             - print working directory');
+        addToTerminal('  tree            - show directory tree structure');
+        addToTerminal('');
+        addToTerminal('<span class="terminal-blue">📝 File Operations:</span>');
+        addToTerminal('  touch <file>    - create empty file');
+        addToTerminal('  mkdir <dir>     - create directory');
+        addToTerminal('  rm <file>       - remove file');
+        addToTerminal('  cat <file>      - show file contents');
+        addToTerminal('');
+        addToTerminal('<span class="terminal-blue">🛠️  Terminal Control:</span>');
+        addToTerminal('  clear           - clear terminal screen');
+        addToTerminal('  history         - show command history');
+        addToTerminal('  help            - show this help message');
+        addToTerminal('  tutorial        - start interactive tutorial');
+        addToTerminal('');
+        addToTerminal('<span class="terminal-warning">💡 Pro Tips:</span>');
+        addToTerminal('  • Use ↑/↓ arrow keys for command history');
+        addToTerminal('  • Click on files in explorer to view them');
+        addToTerminal('  • Click on folders in explorer to navigate');
+        addToTerminal('');
+    }
+
+    function displayWelcomeMessage() {
+        addToTerminal('<span class="terminal-success">🎉 Welcome to Terminal Learning Playground!</span>');
+        addToTerminal('');
+        addToTerminal('This interactive terminal simulates a real command-line environment.');
+        addToTerminal('Perfect for learning essential terminal commands and file system navigation.');
+        addToTerminal('');
+        addToTerminal('🚀 <span class="terminal-blue">Quick Start:</span>');
+        addToTerminal('  • Type <span class="terminal-command">help</span> to see all available commands');
+        addToTerminal('  • Type <span class="terminal-command">tutorial</span> to start the guided tutorial');
+        addToTerminal('  • Type <span class="terminal-command">ls</span> to see files in the current directory');
+        addToTerminal('  • Type <span class="terminal-command">tree</span> to see the full directory structure');
+        addToTerminal('');
+        addToTerminal('🎯 <span class="terminal-warning">Ready to start your terminal journey?</span>');
+        addToTerminal('Type your first command below! ✨');
+        addToTerminal('');
+    }
+
+    function startTutorial() {
+        addToTerminal('<span class="terminal-success">🎓 Starting Terminal Tutorial!</span>');
+        addToTerminal('');
+        addToTerminal('This tutorial will guide you through basic terminal commands.');
+        addToTerminal('Try these commands in order:');
+        addToTerminal('');
+        addToTerminal('1. <span class="terminal-command">pwd</span> - see your current directory');
+        addToTerminal('2. <span class="terminal-command">ls</span> - list files in current directory');
+        addToTerminal('3. <span class="terminal-command">cd documents</span> - navigate to documents folder');
+        addToTerminal('4. <span class="terminal-command">ls</span> - see what is in documents');
+        addToTerminal('5. <span class="terminal-command">cat notes.txt</span> - read a file');
+        addToTerminal('6. <span class="terminal-command">cd ..</span> - go back to parent directory');
+        addToTerminal('7. <span class="terminal-command">tree</span> - see directory structure');
+        addToTerminal('');
+    }
+
+    function runTutorial() {
+        startTutorial();
+    }
+
+    function loadSampleProject() {
+        changeDirectory('/home/student/projects/my-website');
+        addToTerminal('<span class="terminal-success">🚀 Sample project loaded!</span>');
+        addToTerminal('');
+        addToTerminal('You are now in a sample web development project. Try these commands:');
+        addToTerminal('  • <span class="terminal-command">ls</span> - see project files');
+        addToTerminal('  • <span class="terminal-command">cat index.html</span> - view the HTML');
+        addToTerminal('  • <span class="terminal-command">tree</span> - see the project structure');
+        addToTerminal('');
+        focusTerminal();
+    }
+
+    function resetFileSystem() {
+        if (confirm('Are you sure you want to reset the file system? This will remove all your changes.')) {
+            initializeFileSystem();
+            renderFileExplorer();
+            updateCurrentPath();
+            updateBreadcrumb();
+            updateFileCount();
+            clearTerminal();
+            displayWelcomeMessage();
+            showToast('File system reset successfully', 'success');
+        }
+        focusTerminal();
+    }
+
+    function toggleTutorial() {
+        const banner = document.getElementById('tutorial-banner');
+        banner.classList.toggle('hidden');
+        focusTerminal();
+    }
+
+    function hideTutorial() {
+        document.getElementById('tutorial-banner').classList.add('hidden');
+        focusTerminal();
+    }
+
+    function showToast(message, type = 'success') {
+        const toast = document.getElementById('terminal-toast');
+        toast.textContent = message;
+        toast.className = `terminal-toast ${type}`;
+        toast.classList.add('show');
+        
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 3000);
+    }
+</script>
+</body>
+</html>

@@ -6,7 +6,7 @@
     <meta http-equiv="X-Frame-Options" content="DENY">
     <meta http-equiv="X-XSS-Protection" content="1; mode=block">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bootstrap Interactive Playground - Enhanced</title>
+    <title>Enhanced Bootstrap Playground - Nested Containers</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
@@ -15,6 +15,8 @@
         :root {
             --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             --success-gradient: linear-gradient(135deg, #28a745, #20c997);
+            --warning-gradient: linear-gradient(135deg, #ffc107, #ff8c00);
+            --info-gradient: linear-gradient(135deg, #17a2b8, #20c997);
             --bg-light: #f8f9fa;
             --border-color: #dee2e6;
             --text-muted: #6c757d;
@@ -25,6 +27,7 @@
 
         body {
             background: var(--bg-light);
+            font-family: system-ui, -apple-system, sans-serif;
         }
 
         .playground-container {
@@ -32,6 +35,7 @@
             border-radius: 12px;
             box-shadow: var(--shadow-md);
             overflow: hidden;
+            margin-bottom: 1.5rem;
         }
 
         .controls-panel {
@@ -61,6 +65,162 @@
             padding: 0.75rem 1rem;
             border-radius: 8px 8px 0 0;
             font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .control-body {
+            padding: 1rem;
+        }
+
+        /* Bootstrap Structure Visualization */
+        .bootstrap-container {
+            background: rgba(220, 53, 69, 0.1);
+            border: 2px solid #dc3545;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 5px;
+            position: relative;
+            min-height: 60px;
+            transition: all var(--transition-base);
+        }
+
+        .bootstrap-container::before {
+            content: 'Container';
+            position: absolute;
+            top: -10px;
+            left: 15px;
+            background: #dc3545;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            z-index: 5;
+        }
+
+        .bootstrap-row {
+            background: rgba(40, 167, 69, 0.1);
+            border: 2px dashed #28a745;
+            border-radius: 6px;
+            padding: 10px;
+            margin: 5px 0;
+            position: relative;
+            min-height: 50px;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .bootstrap-row::before {
+            content: 'Row';
+            position: absolute;
+            top: -8px;
+            left: 10px;
+            background: #28a745;
+            color: white;
+            padding: 1px 6px;
+            border-radius: 10px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            z-index: 4;
+        }
+
+        .bootstrap-column {
+            background: rgba(23, 162, 184, 0.1);
+            border: 1px solid #17a2b8;
+            border-radius: 4px;
+            padding: 8px;
+            margin: 2px;
+            position: relative;
+            min-height: 40px;
+            flex: 1;
+        }
+
+        .bootstrap-column::before {
+            content: 'Col';
+            position: absolute;
+            top: -6px;
+            left: 8px;
+            background: #17a2b8;
+            color: white;
+            padding: 1px 4px;
+            border-radius: 8px;
+            font-size: 0.6rem;
+            font-weight: 600;
+            z-index: 3;
+        }
+
+        /* Component Styles */
+        .component-item {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 1rem;
+            margin: 5px;
+            position: relative;
+            transition: all var(--transition-base);
+            cursor: pointer;
+        }
+
+        .component-item:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .component-item.selected,
+        .bootstrap-container.selected,
+        .bootstrap-row.selected,
+        .bootstrap-column.selected {
+            outline: 3px solid #ffc107;
+            outline-offset: 2px;
+            background: rgba(255, 193, 7, 0.1);
+        }
+
+        .component-controls {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            opacity: 0;
+            transition: opacity var(--transition-base);
+            background: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-md);
+            z-index: 20;
+        }
+
+        .delete-btn {
+            position: absolute;
+            top: -8px;
+            left: -8px;
+            opacity: 0;
+            transition: opacity var(--transition-base);
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            cursor: pointer;
+            z-index: 20;
+        }
+
+        .component-item:hover .component-controls,
+        .bootstrap-container:hover .component-controls,
+        .bootstrap-row:hover .component-controls,
+        .bootstrap-column:hover .component-controls,
+        .component-item:hover .delete-btn,
+        .bootstrap-container:hover .delete-btn,
+        .bootstrap-row:hover .delete-btn,
+        .bootstrap-column:hover .delete-btn {
+            opacity: 1;
         }
 
         .preview-area {
@@ -76,33 +236,6 @@
         .preview-area.has-content {
             border-style: solid;
             border-color: #28a745;
-        }
-
-        .component-item {
-            background: white;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            position: relative;
-            transition: all var(--transition-base);
-        }
-
-        .component-item:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .component-controls {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            opacity: 0;
-            transition: opacity var(--transition-base);
-        }
-
-        .component-item:hover .component-controls {
-            opacity: 1;
         }
 
         .code-output {
@@ -131,6 +264,7 @@
             cursor: pointer;
             opacity: 0.8;
             transition: all 0.2s;
+            z-index: 10;
         }
 
         .copy-btn:hover {
@@ -148,10 +282,28 @@
             text-align: left;
             transition: all var(--transition-base);
             border-radius: 8px;
+            padding: 0.75rem;
+            border: 2px solid #dee2e6;
+            background: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .component-btn:hover {
             transform: translateX(5px);
+            border-color: #667eea;
+            background: #f8f9fa;
+        }
+
+        .component-btn.structure-btn {
+            border-color: #dc3545;
+        }
+
+        .component-btn.structure-btn:hover {
+            border-color: #c82333;
+            background: #fff5f5;
         }
 
         .live-indicator {
@@ -172,14 +324,15 @@
             50% { opacity: 0.7; }
         }
 
-        .grid-demo {
-            background: rgba(102, 126, 234, 0.1);
-            border: 1px solid #667eea;
-            padding: 0.75rem;
-            text-align: center;
-            margin-bottom: 0.5rem;
-            border-radius: 4px;
-            font-size: 0.85rem;
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
         }
 
         .property-tabs {
@@ -194,15 +347,15 @@
         .tab-btn {
             flex: 1;
             min-width: 80px;
-            padding: 0.5rem 0.75rem;
+            padding: 0.75rem;
             border: none;
             background: transparent;
             border-radius: 6px;
             cursor: pointer;
             transition: all 0.3s ease;
             font-weight: 500;
-            font-size: 0.8rem;
-            margin: 0.125rem;
+            font-size: 0.85rem;
+            color: #6c757d;
         }
 
         .tab-btn.active {
@@ -211,223 +364,656 @@
             color: #667eea;
         }
 
-        .component-preview {
-            background: #f8f9fa;
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .breadcrumb-container {
+            background: #e9ecef;
+            padding: 0.5rem 1rem;
             border-radius: 6px;
-            padding: 1rem;
-            margin: 0.5rem 0;
-            border: 1px solid var(--border-color);
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .breadcrumb-item {
+            color: #6c757d;
+            cursor: pointer;
+        }
+
+        .breadcrumb-item.active {
+            color: #495057;
+            font-weight: 600;
+        }
+
+        .breadcrumb-item:hover:not(.active) {
+            color: #007bff;
+            text-decoration: underline;
         }
 
         .utility-input {
+            margin-bottom: 0.75rem;
+        }
+
+        .preset-example {
+            border: 2px dashed #28a745;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .preset-example:hover {
+            border-color: #20c997;
+            background: #f8fff9;
+            transform: translateY(-2px);
+        }
+
+        .grid-12-indicator {
+            display: flex;
+            height: 20px;
+            background: rgba(102, 126, 234, 0.1);
+            border: 1px solid #667eea;
+            border-radius: 4px;
             margin-bottom: 0.5rem;
+        }
+
+        .grid-12-indicator > div {
+            flex: 1;
+            border-right: 1px solid #667eea;
+            font-size: 0.6rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #667eea;
+        }
+
+        .grid-12-indicator > div:last-child {
+            border-right: none;
+        }
+
+        .responsive-preview {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .responsive-btn {
+            padding: 0.25rem 0.5rem;
+            border: 1px solid #dee2e6;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.75rem;
+        }
+
+        .responsive-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
         }
 
         .css-property { color: #4CAF50; font-weight: 500; }
         .css-value { color: #FFA726; }
         .css-selector { color: #42A5F5; font-weight: 500; }
         .css-comment { color: #9CA3AF; font-style: italic; }
+        .html-tag { color: #ff6b6b; }
+        .html-attr { color: #4ecdc4; }
+
+        .description-text {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+        }
     </style>
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="index.html">
-                <i class="bi bi-arrow-left me-2"></i>Bootstrap Playground Enhanced
-            </a>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">
+            <i class="bi bi-code-square me-2"></i>Live Coding Playground
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
             <div class="navbar-nav ms-auto">
-                <a class="nav-link" href="index.html"><i class="bi bi-house me-1"></i>Home</a>
-                <a class="nav-link" href="bootstrap-guide.html"><i class="bi bi-book me-1"></i>Guide</a>
+                <a class="nav-link" href="#"><i class="bi bi-house me-1"></i>Home</a>
+                <a class="nav-link" href="#"><i class="bi bi-grid-3x3 me-1"></i>Flexbox</a>
+                <a class="nav-link" href="#"><i class="bi bi-code me-1"></i>HTML</a>
+                <a class="nav-link" href="#"><i class="bi bi-bootstrap me-1"></i>Bootstrap</a>
+                <a class="nav-link active" href="#"><i class="bi bi-play-circle me-1"></i>Live Coding</a>
+                <div class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-grid-3x3-gap me-1"></i>More
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#" onclick="showComingSoon('CSS Playground')"><i class="bi bi-palette me-2"></i>CSS Playground</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="showComingSoon('JavaScript Guide')"><i class="bi bi-lightning me-2"></i>JavaScript Guide</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#" onclick="showAbout()"><i class="bi bi-info-circle me-2"></i>About</a></li>
+                    </ul>
+                </div>
             </div>
         </div>
-    </nav>
+    </div>
+</nav>
+
+    <!-- Hero Section -->
+    <section class="bg-gradient" style="background: var(--primary-gradient); color: white; padding: 2rem 0;">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="display-6 fw-bold mb-3">
+                        <i class="bi bi-bootstrap me-3"></i>Enhanced Bootstrap Playground
+                    </h1>
+                    <p class="lead mb-0">Build complex Bootstrap layouts with nested containers, rows, and columns. Master the Bootstrap grid system!</p>
+                    <div class="mt-3">
+                        <span class="badge bg-light text-dark me-2"><i class="bi bi-boxes me-1"></i>Nested Structure</span>
+                        <span class="badge bg-light text-dark me-2"><i class="bi bi-grid-3x3 me-1"></i>Advanced Grid</span>
+                        <span class="badge bg-light text-dark"><i class="bi bi-phone me-1"></i>Responsive</span>
+                    </div>
+                </div>
+                <div class="col-lg-4 text-center">
+                    <div class="d-flex justify-content-center align-items-center" style="height: 120px;">
+                        <div class="d-flex flex-column align-items-center">
+                            <div class="d-flex gap-2 mb-2">
+                                <div style="width: 20px; height: 20px; background: #dc3545; border-radius: 4px;"></div>
+                                <div style="width: 20px; height: 20px; background: #28a745; border-radius: 4px;"></div>
+                                <div style="width: 20px; height: 20px; background: #17a2b8; border-radius: 4px;"></div>
+                            </div>
+                            <small class="opacity-75">Container + Row + Column</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <div class="container-fluid mt-4">
+        <!-- Property Categories -->
+        <div class="property-tabs">
+            <button class="tab-btn active" onclick="switchTab('builder')">
+                <i class="bi bi-plus-square me-1"></i>Builder
+            </button>
+            <button class="tab-btn" onclick="switchTab('structure')">
+                <i class="bi bi-boxes me-1"></i>Structure
+            </button>
+            <button class="tab-btn" onclick="switchTab('components')">
+                <i class="bi bi-puzzle me-1"></i>Components
+            </button>
+            <button class="tab-btn" onclick="switchTab('utilities')">
+                <i class="bi bi-tools me-1"></i>Utilities
+            </button>
+            <button class="tab-btn" onclick="switchTab('examples')">
+                <i class="bi bi-grid me-1"></i>Examples
+            </button>
+        </div>
+
         <div class="row">
             <!-- Controls Panel -->
             <div class="col-lg-3">
                 <div class="controls-panel p-3">
-                    <h5 class="text-center mb-3">
-                        <i class="bi bi-bootstrap me-2"></i>Bootstrap Builder
-                    </h5>
+                    <!-- Builder Tab -->
+                    <div id="builder-tab" class="tab-content active">
+                        <h5 class="text-center mb-3">
+                            <i class="bi bi-plus-square me-2"></i>Add Elements
+                        </h5>
 
-                    <!-- Component Categories -->
-                    <div class="property-tabs">
-                        <button class="tab-btn active" onclick="switchTab('layout')">Layout</button>
-                        <button class="tab-btn" onclick="switchTab('components')">Components</button>
-                        <button class="tab-btn" onclick="switchTab('utilities')">Utilities</button>
-                        <button class="tab-btn" onclick="switchTab('grid')">Grid</button>
-                    </div>
-
-                    <!-- Layout Components -->
-                    <div id="layout-tab" class="tab-content" style="display: block;">
+                        <!-- Bootstrap Structure -->
                         <div class="control-group">
-                            <h6><i class="bi bi-grid me-2"></i>Layout Components</h6>
-                            <div class="p-3">
-                                <button class="btn btn-outline-primary component-btn" onclick="addComponent('container')">
-                                    <i class="bi bi-square me-2"></i>Container
+                            <h6><i class="bi bi-boxes me-2"></i>Bootstrap Structure</h6>
+                            <div class="control-body">
+                                <button class="component-btn structure-btn" onclick="addElement('container')">
+                                    <i class="bi bi-box text-danger"></i>
+                                    <div>
+                                        <strong>Container</strong>
+                                        <div class="small text-muted">Bootstrap container wrapper</div>
+                                    </div>
                                 </button>
-                                <button class="btn btn-outline-primary component-btn" onclick="addComponent('row')">
-                                    <i class="bi bi-columns me-2"></i>Row
+                                
+                                <button class="component-btn structure-btn" onclick="addElement('row')">
+                                    <i class="bi bi-distribute-horizontal text-success"></i>
+                                    <div>
+                                        <strong>Row</strong>
+                                        <div class="small text-muted">Horizontal row for columns</div>
+                                    </div>
                                 </button>
-                                <button class="btn btn-outline-primary component-btn" onclick="addComponent('column')">
-                                    <i class="bi bi-layout-three-columns me-2"></i>Column
+                                
+                                <button class="component-btn structure-btn" onclick="addElement('column')">
+                                    <i class="bi bi-layout-three-columns text-info"></i>
+                                    <div>
+                                        <strong>Column</strong>
+                                        <div class="small text-muted">Responsive column</div>
+                                    </div>
                                 </button>
-                                <button class="btn btn-outline-primary component-btn" onclick="addComponent('navbar')">
-                                    <i class="bi bi-menu-button me-2"></i>Navbar
+                            </div>
+                        </div>
+
+                        <!-- UI Components -->
+                        <div class="control-group">
+                            <h6><i class="bi bi-puzzle me-2"></i>UI Components</h6>
+                            <div class="control-body">
+                                <button class="component-btn" onclick="addElement('navbar')">
+                                    <i class="bi bi-menu-button-wide text-primary"></i>
+                                    <div>
+                                        <strong>Navbar</strong>
+                                        <div class="small text-muted">Navigation bar</div>
+                                    </div>
+                                </button>
+                                
+                                <button class="component-btn" onclick="addElement('card')">
+                                    <i class="bi bi-card-image text-success"></i>
+                                    <div>
+                                        <strong>Card</strong>
+                                        <div class="small text-muted">Content card</div>
+                                    </div>
+                                </button>
+                                
+                                <button class="component-btn" onclick="addElement('button')">
+                                    <i class="bi bi-cursor text-warning"></i>
+                                    <div>
+                                        <strong>Button</strong>
+                                        <div class="small text-muted">Interactive button</div>
+                                    </div>
+                                </button>
+                                
+                                <button class="component-btn" onclick="addElement('alert')">
+                                    <i class="bi bi-exclamation-triangle text-danger"></i>
+                                    <div>
+                                        <strong>Alert</strong>
+                                        <div class="small text-muted">Alert message</div>
+                                    </div>
+                                </button>
+                                
+                                <button class="component-btn" onclick="addElement('form')">
+                                    <i class="bi bi-ui-checks text-secondary"></i>
+                                    <div>
+                                        <strong>Form</strong>
+                                        <div class="small text-muted">Form elements</div>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="control-group">
+                            <h6><i class="bi bi-lightning me-2"></i>Actions</h6>
+                            <div class="control-body">
+                                <button class="btn btn-warning w-100 mb-2" onclick="clearPreview()">
+                                    <i class="bi bi-trash me-1"></i>Clear All
+                                </button>
+                                <button class="btn btn-success w-100" onclick="generateCode()">
+                                    <i class="bi bi-code me-1"></i>Generate Code
                                 </button>
                             </div>
                         </div>
                     </div>
 
+                    <!-- Structure Tab -->
+                    <div id="structure-tab" class="tab-content">
+                        <h5 class="text-center mb-3">
+                            <i class="bi bi-boxes me-2"></i>Structure Properties
+                        </h5>
+
+                        <!-- Breadcrumb -->
+                        <div class="breadcrumb-container" id="structure-breadcrumb">
+                            <i class="bi bi-house me-1"></i>
+                            <span class="breadcrumb-item active">Preview Area</span>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle me-2"></i>
+                            <strong>Structure controls:</strong> These affect the selected container, row, or column.
+                        </div>
+
+                        <!-- Container Properties -->
+                        <div id="container-properties" style="display: none;">
+                            <div class="control-group">
+                                <h6><i class="bi bi-box me-2"></i>Container Type</h6>
+                                <div class="control-body">
+                                    <div class="description-text">Choose container type and behavior</div>
+                                    <select class="form-select form-select-sm" id="container-type" onchange="updateSelectedStructure()">
+                                        <option value="container">Container (fixed width)</option>
+                                        <option value="container-fluid">Container Fluid (full width)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Row Properties -->
+                        <div id="row-properties" style="display: none;">
+                            <div class="control-group">
+                                <h6><i class="bi bi-distribute-horizontal me-2"></i>Row Properties</h6>
+                                <div class="control-body">
+                                    <div class="description-text">Row alignment and spacing</div>
+                                    <div class="mb-3">
+                                        <label class="form-label small">Justify Content:</label>
+                                        <select class="form-select form-select-sm" id="row-justify" onchange="updateSelectedStructure()">
+                                            <option value="">Default</option>
+                                            <option value="justify-content-start">Start</option>
+                                            <option value="justify-content-center">Center</option>
+                                            <option value="justify-content-end">End</option>
+                                            <option value="justify-content-around">Around</option>
+                                            <option value="justify-content-between">Between</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label small">Align Items:</label>
+                                        <select class="form-select form-select-sm" id="row-align" onchange="updateSelectedStructure()">
+                                            <option value="">Default</option>
+                                            <option value="align-items-start">Start</option>
+                                            <option value="align-items-center">Center</option>
+                                            <option value="align-items-end">End</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label small">Gutter:</label>
+                                        <select class="form-select form-select-sm" id="row-gutter" onchange="updateSelectedStructure()">
+                                            <option value="">Default (g-3)</option>
+                                            <option value="g-0">No Gutter (g-0)</option>
+                                            <option value="g-1">Small (g-1)</option>
+                                            <option value="g-2">Medium (g-2)</option>
+                                            <option value="g-4">Large (g-4)</option>
+                                            <option value="g-5">Extra Large (g-5)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Column Properties -->
+                        <div id="column-properties" style="display: none;">
+                            <div class="control-group">
+                                <h6><i class="bi bi-layout-three-columns me-2"></i>Column Properties</h6>
+                                <div class="control-body">
+                                    <div class="description-text">Responsive column sizing</div>
+                                    
+                                    <!-- Grid Visualizer -->
+                                    <div class="mb-3">
+                                        <label class="small text-muted">Bootstrap 12-Column Grid:</label>
+                                        <div class="grid-12-indicator">
+                                            <div>1</div><div>2</div><div>3</div><div>4</div>
+                                            <div>5</div><div>6</div><div>7</div><div>8</div>
+                                            <div>9</div><div>10</div><div>11</div><div>12</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label small">Mobile (xs):</label>
+                                        <select class="form-select form-select-sm" id="col-xs" onchange="updateSelectedStructure()">
+                                            <option value="">Auto</option>
+                                            <option value="col-1">1/12 (col-1)</option>
+                                            <option value="col-2">2/12 (col-2)</option>
+                                            <option value="col-3">3/12 (col-3)</option>
+                                            <option value="col-4">4/12 (col-4)</option>
+                                            <option value="col-6">6/12 (col-6)</option>
+                                            <option value="col-8">8/12 (col-8)</option>
+                                            <option value="col-12">12/12 (col-12)</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label small">Small (sm):</label>
+                                        <select class="form-select form-select-sm" id="col-sm" onchange="updateSelectedStructure()">
+                                            <option value="">Auto</option>
+                                            <option value="col-sm-1">1/12 (col-sm-1)</option>
+                                            <option value="col-sm-2">2/12 (col-sm-2)</option>
+                                            <option value="col-sm-3">3/12 (col-sm-3)</option>
+                                            <option value="col-sm-4">4/12 (col-sm-4)</option>
+                                            <option value="col-sm-6">6/12 (col-sm-6)</option>
+                                            <option value="col-sm-8">8/12 (col-sm-8)</option>
+                                            <option value="col-sm-12">12/12 (col-sm-12)</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label small">Medium (md):</label>
+                                        <select class="form-select form-select-sm" id="col-md" onchange="updateSelectedStructure()">
+                                            <option value="">Auto</option>
+                                            <option value="col-md-1">1/12 (col-md-1)</option>
+                                            <option value="col-md-2">2/12 (col-md-2)</option>
+                                            <option value="col-md-3">3/12 (col-md-3)</option>
+                                            <option value="col-md-4" selected>4/12 (col-md-4)</option>
+                                            <option value="col-md-6">6/12 (col-md-6)</option>
+                                            <option value="col-md-8">8/12 (col-md-8)</option>
+                                            <option value="col-md-12">12/12 (col-md-12)</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label small">Large (lg):</label>
+                                        <select class="form-select form-select-sm" id="col-lg" onchange="updateSelectedStructure()">
+                                            <option value="">Auto</option>
+                                            <option value="col-lg-1">1/12 (col-lg-1)</option>
+                                            <option value="col-lg-2">2/12 (col-lg-2)</option>
+                                            <option value="col-lg-3">3/12 (col-lg-3)</option>
+                                            <option value="col-lg-4">4/12 (col-lg-4)</option>
+                                            <option value="col-lg-6">6/12 (col-lg-6)</option>
+                                            <option value="col-lg-8">8/12 (col-lg-8)</option>
+                                            <option value="col-lg-12">12/12 (col-lg-12)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-warning" id="no-structure-selected">
+                            <i class="bi bi-info-circle me-2"></i>
+                            Click on a container, row, or column to modify its properties
+                        </div>
+                    </div>
+
                     <!-- Components Tab -->
-                    <div id="components-tab" class="tab-content" style="display: none;">
-                        <div class="control-group">
-                            <h6><i class="bi bi-puzzle me-2"></i>UI Components</h6>
-                            <div class="p-3">
-                                <button class="btn btn-outline-success component-btn" onclick="addComponent('card')">
-                                    <i class="bi bi-card-image me-2"></i>Card
-                                </button>
-                                <button class="btn btn-outline-success component-btn" onclick="addComponent('button')">
-                                    <i class="bi bi-cursor me-2"></i>Button
-                                </button>
-                                <button class="btn btn-outline-success component-btn" onclick="addComponent('alert')">
-                                    <i class="bi bi-exclamation-triangle me-2"></i>Alert
-                                </button>
-                                <button class="btn btn-outline-success component-btn" onclick="addComponent('badge')">
-                                    <i class="bi bi-award me-2"></i>Badge
-                                </button>
-                                <button class="btn btn-outline-success component-btn" onclick="addComponent('form')">
-                                    <i class="bi bi-ui-checks me-2"></i>Form
-                                </button>
-                                <button class="btn btn-outline-success component-btn" onclick="addComponent('table')">
-                                    <i class="bi bi-table me-2"></i>Table
-                                </button>
+                    <div id="components-tab" class="tab-content">
+                        <h5 class="text-center mb-3">
+                            <i class="bi bi-puzzle me-2"></i>Component Properties
+                        </h5>
+                        
+                        <div class="alert alert-warning" id="no-component-selected">
+                            <i class="bi bi-info-circle me-2"></i>
+                            Click on a component to modify its properties
+                        </div>
+
+                        <div id="component-properties" style="display: none;">
+                            <div class="alert alert-success">
+                                <i class="bi bi-check-circle me-2"></i>
+                                <strong id="selected-component-name">Component Selected</strong>
+                                <div class="small">Customize this component's properties</div>
+                            </div>
+
+                            <div class="control-group">
+                                <h6><i class="bi bi-pencil me-2"></i>Component Editor</h6>
+                                <div class="control-body">
+                                    <div class="mb-3">
+                                        <label class="form-label small">Content:</label>
+                                        <input type="text" class="form-control form-control-sm" id="component-content" oninput="updateSelectedComponent()">
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label small">Variant:</label>
+                                        <select class="form-select form-select-sm" id="component-variant" onchange="updateSelectedComponent()">
+                                            <option value="primary">Primary</option>
+                                            <option value="secondary">Secondary</option>
+                                            <option value="success">Success</option>
+                                            <option value="danger">Danger</option>
+                                            <option value="warning">Warning</option>
+                                            <option value="info">Info</option>
+                                            <option value="light">Light</option>
+                                            <option value="dark">Dark</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label small">Size:</label>
+                                        <select class="form-select form-select-sm" id="component-size" onchange="updateSelectedComponent()">
+                                            <option value="">Default</option>
+                                            <option value="btn-sm">Small</option>
+                                            <option value="btn-lg">Large</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label small">Additional Classes:</label>
+                                        <input type="text" class="form-control form-control-sm" id="component-classes" oninput="updateSelectedComponent()" placeholder="text-center w-100">
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Utilities Tab -->
-                    <div id="utilities-tab" class="tab-content" style="display: none;">
+                    <div id="utilities-tab" class="tab-content">
+                        <h5 class="text-center mb-3">
+                            <i class="bi bi-tools me-2"></i>Bootstrap Utilities
+                        </h5>
+
                         <div class="control-group">
-                            <h6><i class="bi bi-tools me-2"></i>Utility Classes</h6>
-                            <div class="p-3">
+                            <h6><i class="bi bi-rulers me-2"></i>Spacing Utilities</h6>
+                            <div class="control-body">
                                 <div class="utility-input">
-                                    <label class="form-label small">Spacing:</label>
-                                    <select class="form-select form-select-sm" id="spacing-utility" onchange="applyUtility()">
+                                    <label class="form-label small">Margin:</label>
+                                    <select class="form-select form-select-sm" id="margin-utility" onchange="applyUtilities()">
                                         <option value="">None</option>
-                                        <option value="p-1">Padding 1</option>
-                                        <option value="p-2">Padding 2</option>
-                                        <option value="p-3">Padding 3</option>
-                                        <option value="m-1">Margin 1</option>
-                                        <option value="m-2">Margin 2</option>
-                                        <option value="m-3">Margin 3</option>
+                                        <option value="m-0">No Margin (m-0)</option>
+                                        <option value="m-1">Small (m-1)</option>
+                                        <option value="m-2">Medium (m-2)</option>
+                                        <option value="m-3">Large (m-3)</option>
+                                        <option value="m-4">X-Large (m-4)</option>
+                                        <option value="m-5">XX-Large (m-5)</option>
+                                        <option value="mx-auto">Center (mx-auto)</option>
                                     </select>
                                 </div>
+                                
                                 <div class="utility-input">
-                                    <label class="form-label small">Text:</label>
-                                    <select class="form-select form-select-sm" id="text-utility" onchange="applyUtility()">
+                                    <label class="form-label small">Padding:</label>
+                                    <select class="form-select form-select-sm" id="padding-utility" onchange="applyUtilities()">
                                         <option value="">None</option>
-                                        <option value="text-center">Center</option>
+                                        <option value="p-0">No Padding (p-0)</option>
+                                        <option value="p-1">Small (p-1)</option>
+                                        <option value="p-2">Medium (p-2)</option>
+                                        <option value="p-3">Large (p-3)</option>
+                                        <option value="p-4">X-Large (p-4)</option>
+                                        <option value="p-5">XX-Large (p-5)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <h6><i class="bi bi-type me-2"></i>Text Utilities</h6>
+                            <div class="control-body">
+                                <div class="utility-input">
+                                    <label class="form-label small">Text Alignment:</label>
+                                    <select class="form-select form-select-sm" id="text-align-utility" onchange="applyUtilities()">
+                                        <option value="">Default</option>
                                         <option value="text-start">Start</option>
+                                        <option value="text-center">Center</option>
                                         <option value="text-end">End</option>
-                                        <option value="fw-bold">Bold</option>
-                                        <option value="fst-italic">Italic</option>
                                     </select>
                                 </div>
+                                
                                 <div class="utility-input">
-                                    <label class="form-label small">Colors:</label>
-                                    <select class="form-select form-select-sm" id="color-utility" onchange="applyUtility()">
-                                        <option value="">None</option>
-                                        <option value="text-primary">Text Primary</option>
-                                        <option value="bg-primary">BG Primary</option>
-                                        <option value="text-success">Text Success</option>
-                                        <option value="bg-success">BG Success</option>
-                                        <option value="text-warning">Text Warning</option>
-                                        <option value="bg-warning">BG Warning</option>
+                                    <label class="form-label small">Font Weight:</label>
+                                    <select class="form-select form-select-sm" id="font-weight-utility" onchange="applyUtilities()">
+                                        <option value="">Default</option>
+                                        <option value="fw-light">Light</option>
+                                        <option value="fw-normal">Normal</option>
+                                        <option value="fw-bold">Bold</option>
+                                        <option value="fw-bolder">Bolder</option>
                                     </select>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Grid Tab -->
-                    <div id="grid-tab" class="tab-content" style="display: none;">
                         <div class="control-group">
-                            <h6><i class="bi bi-grid-3x3 me-2"></i>Grid Builder</h6>
-                            <div class="p-3">
-                                <div class="mb-3">
-                                    <label class="form-label small">Columns:</label>
-                                    <select class="form-select form-select-sm" id="grid-columns" onchange="updateGridPreview()">
-                                        <option value="1">1 Column</option>
-                                        <option value="2">2 Columns</option>
-                                        <option value="3" selected>3 Columns</option>
-                                        <option value="4">4 Columns</option>
-                                        <option value="6">6 Columns</option>
+                            <h6><i class="bi bi-palette me-2"></i>Color Utilities</h6>
+                            <div class="control-body">
+                                <div class="utility-input">
+                                    <label class="form-label small">Text Color:</label>
+                                    <select class="form-select form-select-sm" id="text-color-utility" onchange="applyUtilities()">
+                                        <option value="">Default</option>
+                                        <option value="text-primary">Primary</option>
+                                        <option value="text-secondary">Secondary</option>
+                                        <option value="text-success">Success</option>
+                                        <option value="text-danger">Danger</option>
+                                        <option value="text-warning">Warning</option>
+                                        <option value="text-info">Info</option>
+                                        <option value="text-light">Light</option>
+                                        <option value="text-dark">Dark</option>
+                                        <option value="text-muted">Muted</option>
                                     </select>
                                 </div>
-                                <div class="mb-3">
-                                    <label class="form-label small">Breakpoint:</label>
-                                    <select class="form-select form-select-sm" id="grid-breakpoint" onchange="updateGridPreview()">
-                                        <option value="">All sizes</option>
-                                        <option value="sm">Small (sm)</option>
-                                        <option value="md" selected>Medium (md)</option>
-                                        <option value="lg">Large (lg)</option>
-                                        <option value="xl">Extra Large (xl)</option>
+                                
+                                <div class="utility-input">
+                                    <label class="form-label small">Background Color:</label>
+                                    <select class="form-select form-select-sm" id="bg-color-utility" onchange="applyUtilities()">
+                                        <option value="">Default</option>
+                                        <option value="bg-primary">Primary</option>
+                                        <option value="bg-secondary">Secondary</option>
+                                        <option value="bg-success">Success</option>
+                                        <option value="bg-danger">Danger</option>
+                                        <option value="bg-warning">Warning</option>
+                                        <option value="bg-info">Info</option>
+                                        <option value="bg-light">Light</option>
+                                        <option value="bg-dark">Dark</option>
                                     </select>
                                 </div>
-                                <div class="component-preview" id="grid-preview">
-                                    <!-- Grid preview will be generated here -->
-                                </div>
-                                <button class="btn btn-primary btn-sm w-100" onclick="addGridToPreview()">
-                                    <i class="bi bi-plus me-1"></i>Add Grid
-                                </button>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Selected Component Editor -->
-                    <div class="control-group" id="component-editor" style="display: none;">
-                        <h6><i class="bi bi-gear me-2"></i>Edit Component</h6>
-                        <div class="p-3">
-                            <div class="mb-3">
-                                <label class="form-label small">Content:</label>
-                                <input type="text" class="form-control form-control-sm" id="component-content" oninput="updateSelectedComponent()">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label small">Classes:</label>
-                                <input type="text" class="form-control form-control-sm" id="component-classes" oninput="updateSelectedComponent()" placeholder="btn-primary text-center">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label small">Variant:</label>
-                                <select class="form-select form-select-sm" id="component-variant" onchange="updateSelectedComponent()">
-                                    <option value="primary">Primary</option>
-                                    <option value="secondary">Secondary</option>
-                                    <option value="success">Success</option>
-                                    <option value="danger">Danger</option>
-                                    <option value="warning">Warning</option>
-                                    <option value="info">Info</option>
-                                    <option value="light">Light</option>
-                                    <option value="dark">Dark</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
+                    <!-- Examples Tab -->
+                    <div id="examples-tab" class="tab-content">
+                        <h5 class="text-center mb-3">
+                            <i class="bi bi-grid me-2"></i>Bootstrap Examples
+                        </h5>
 
-                    <!-- Actions -->
-                    <div class="control-group">
-                        <h6><i class="bi bi-lightning me-2"></i>Actions</h6>
-                        <div class="p-3">
-                            <button class="btn btn-success w-100 mb-2" onclick="generateCode()">
-                                <i class="bi bi-code me-2"></i>Generate Code
-                            </button>
-                            <button class="btn btn-warning w-100 mb-2" onclick="copyCode()">
-                                <i class="bi bi-clipboard me-2"></i>Copy Code
-                            </button>
-                            <button class="btn btn-danger w-100" onclick="clearPreview()">
-                                <i class="bi bi-trash me-2"></i>Clear All
-                            </button>
+                        <div class="preset-example" onclick="loadExample('landing-page')">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-layout-text-window text-primary me-2"></i>
+                                <strong>Landing Page</strong>
+                            </div>
+                            <div class="small text-muted">Hero section + features + footer</div>
+                        </div>
+
+                        <div class="preset-example" onclick="loadExample('dashboard')">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-layout-sidebar text-success me-2"></i>
+                                <strong>Dashboard Layout</strong>
+                            </div>
+                            <div class="small text-muted">Sidebar + main content area</div>
+                        </div>
+
+                        <div class="preset-example" onclick="loadExample('card-grid')">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-grid-3x3 text-info me-2"></i>
+                                <strong>Card Grid</strong>
+                            </div>
+                            <div class="small text-muted">Responsive card layout</div>
+                        </div>
+
+                        <div class="preset-example" onclick="loadExample('form-layout')">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-ui-checks text-warning me-2"></i>
+                                <strong>Form Layout</strong>
+                            </div>
+                            <div class="small text-muted">Complex form with validation</div>
+                        </div>
+
+                        <div class="preset-example" onclick="loadExample('ecommerce')">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-shop text-danger me-2"></i>
+                                <strong>E-commerce</strong>
+                            </div>
+                            <div class="small text-muted">Product grid + filters</div>
                         </div>
                     </div>
                 </div>
@@ -436,18 +1022,35 @@
             <!-- Preview Area -->
             <div class="col-lg-6">
                 <div class="playground-container">
-                    <div class="p-3 bg-primary text-white position-relative">
+                    <div class="p-3 text-white position-relative" style="background: var(--primary-gradient);">
                         <h5 class="mb-0">
-                            <i class="bi bi-eye me-2"></i>Live Preview
+                            <i class="bi bi-eye me-2"></i>Live Bootstrap Preview
                         </h5>
-                        <small>Interactive Bootstrap components</small>
+                        <small>Interactive nested Bootstrap structure</small>
                         <div class="live-indicator">LIVE</div>
                     </div>
-                    <div class="preview-area" id="preview-area">
+                    
+                    <!-- Responsive Preview Controls -->
+                    <div class="p-2 bg-light border-bottom">
+                        <div class="responsive-preview">
+                            <button class="responsive-btn active" onclick="setPreviewSize('100%')" title="Desktop">
+                                <i class="bi bi-display"></i>
+                            </button>
+                            <button class="responsive-btn" onclick="setPreviewSize('768px')" title="Tablet">
+                                <i class="bi bi-tablet"></i>
+                            </button>
+                            <button class="responsive-btn" onclick="setPreviewSize('480px')" title="Mobile">
+                                <i class="bi bi-phone"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="preview-area" id="preview-area" onclick="selectStructure('preview-area')">
                         <div class="text-center text-muted py-5">
                             <i class="bi bi-plus-circle display-4 mb-3"></i>
                             <h5>Start Building</h5>
-                            <p>Choose components from the sidebar to build your layout</p>
+                            <p class="mb-2">Add a <strong>Container</strong> first, then add <strong>Rows</strong> and <strong>Columns</strong></p>
+                            <p class="small">Or try one of the examples to get started quickly</p>
                         </div>
                     </div>
                 </div>
@@ -455,12 +1058,13 @@
 
             <!-- Code Output -->
             <div class="col-lg-3">
+                <!-- Live HTML Output -->
                 <div class="playground-container">
-                    <div class="p-3 bg-success text-white position-relative">
+                    <div class="p-3 text-white position-relative" style="background: var(--success-gradient);">
                         <h5 class="mb-0">
-                            <i class="bi bi-code-slash me-2"></i>Generated Code
+                            <i class="bi bi-code-slash me-2"></i>Generated HTML
                         </h5>
-                        <small>Copy-ready HTML</small>
+                        <small>Copy-ready Bootstrap code</small>
                         <div class="live-indicator">LIVE</div>
                     </div>
                     <div class="position-relative">
@@ -468,16 +1072,16 @@
                             <i class="bi bi-clipboard me-1"></i>Copy
                         </button>
                         <div class="code-output" id="code-output">
-                            <span class="css-comment"><!-- Click "Generate Code" to see HTML --></span>
+                            <span class="css-comment"><!-- Add components to see HTML code --></span>
                         </div>
                     </div>
                 </div>
 
                 <!-- Bootstrap Classes Reference -->
-                <div class="playground-container mt-3">
-                    <div class="p-3 bg-info text-white">
+                <div class="playground-container">
+                    <div class="p-3 text-white" style="background: var(--info-gradient);">
                         <h6 class="mb-0">
-                            <i class="bi bi-book me-2"></i>Quick Reference
+                            <i class="bi bi-book me-2"></i>Bootstrap Reference
                         </h6>
                     </div>
                     <div class="p-3">
@@ -488,6 +1092,26 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Export Options -->
+                <div class="playground-container">
+                    <div class="p-3 text-white" style="background: var(--warning-gradient);">
+                        <h6 class="mb-0">
+                            <i class="bi bi-download me-2"></i>Export Options
+                        </h6>
+                    </div>
+                    <div class="p-3">
+                        <button class="btn btn-success w-100 mb-2" onclick="exportCodePen()">
+                            <i class="bi bi-box-arrow-up-right me-1"></i>Open in CodePen
+                        </button>
+                        <button class="btn btn-outline-success w-100 mb-2" onclick="downloadHTML()">
+                            <i class="bi bi-download me-1"></i>Download HTML
+                        </button>
+                        <button class="btn btn-outline-success w-100" onclick="copyFullCode()">
+                            <i class="bi bi-clipboard me-1"></i>Copy Complete Code
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -496,288 +1120,718 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        let componentCounter = 0;
-        let selectedComponent = null;
-        let components = [];
+        let elementCounter = 0;
+        let selectedElement = null;
+        let selectedStructure = null;
+        let activeContainer = 'preview-area';
+        let elements = [];
+        let structures = [];
 
         // Component templates
         const componentTemplates = {
-            container: '<div class="container">\n  <!-- Content goes here -->\n</div>',
-            row: '<div class="row">\n  <!-- Columns go here -->\n</div>',
-            column: '<div class="col-md-4">\n  Column content\n</div>',
-            navbar: `<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#">Brand</a>
-    <div class="navbar-nav">
-      <a class="nav-link" href="#">Home</a>
-      <a class="nav-link" href="#">About</a>
-    </div>
-  </div>
-</nav>`,
-            card: `<div class="card" style="width: 18rem;">
-  <div class="card-body">
-    <h5 class="card-title">Card Title</h5>
-    <p class="card-text">Some quick example text to build on the card title.</p>
-    <a href="#" class="btn btn-primary">Go somewhere</a>
-  </div>
-</div>`,
-            button: '<button type="button" class="btn btn-primary">Primary Button</button>',
-            alert: '<div class="alert alert-primary" role="alert">\n  A simple primary alert—check it out!\n</div>',
-            badge: '<span class="badge bg-primary">Primary Badge</span>',
-            form: `<form>
-  <div class="mb-3">
-    <label for="email" class="form-label">Email</label>
-    <input type="email" class="form-control" id="email">
-  </div>
-  <div class="mb-3">
-    <label for="password" class="form-label">Password</label>
-    <input type="password" class="form-control" id="password">
-  </div>
-  <button type="submit" class="btn btn-primary">Submit</button>
-</form>`,
-            table: `<table class="table">
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Email</th>
-      <th>Role</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>John Doe</td>
-      <td>john@example.com</td>
-      <td>Admin</td>
-    </tr>
-  </tbody>
-</table>`
+            navbar: {
+                html: '<nav class="navbar navbar-expand-lg navbar-dark bg-primary"><div class="container-fluid"><a class="navbar-brand" href="#">Brand</a><button class="navbar-toggler" type="button"><span class="navbar-toggler-icon"></span></button><div class="collapse navbar-collapse"><div class="navbar-nav ms-auto"><a class="nav-link" href="#">Home</a><a class="nav-link" href="#">About</a><a class="nav-link" href="#">Contact</a></div></div></div></nav>',
+                content: { text: 'Navigation Bar' }
+            },
+            card: {
+                html: '<div class="card"><div class="card-body"><h5 class="card-title">Card Title</h5><p class="card-text">Some quick example text to build on the card title and make up the bulk of the card content.</p><a href="#" class="btn btn-primary">Go somewhere</a></div></div>',
+                content: { text: 'Card' }
+            },
+            button: {
+                html: '<button type="button" class="btn btn-primary">Primary Button</button>',
+                content: { text: 'Primary Button' }
+            },
+            alert: {
+                html: '<div class="alert alert-primary" role="alert">A simple primary alert—check it out!</div>',
+                content: { text: 'A simple primary alert—check it out!' }
+            },
+            form: {
+                html: '<form><div class="mb-3"><label for="email" class="form-label">Email address</label><input type="email" class="form-control" id="email" placeholder="name@example.com"></div><div class="mb-3"><label for="password" class="form-label">Password</label><input type="password" class="form-control" id="password"></div><div class="mb-3 form-check"><input type="checkbox" class="form-check-input" id="check"><label class="form-check-label" for="check">Check me out</label></div><button type="submit" class="btn btn-primary">Submit</button></form>',
+                content: { text: 'Form' }
+            }
         };
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
-            updateGridPreview();
+            generateCode();
             rotateTips();
         });
 
         // Tab switching
         function switchTab(tabName) {
             document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.style.display = 'none';
+                tab.classList.remove('active');
             });
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
             
-            document.getElementById(tabName + '-tab').style.display = 'block';
+            document.getElementById(tabName + '-tab').classList.add('active');
             event.target.classList.add('active');
         }
 
-        // Add component
-        function addComponent(type) {
-            componentCounter++;
-            const previewArea = document.getElementById('preview-area');
+        // Add element to container
+        function addElement(type) {
+            const targetContainer = getTargetContainer();
             
-            // Clear placeholder if it exists
-            const placeholder = previewArea.querySelector('.text-center.text-muted');
-            if (placeholder) {
-                placeholder.remove();
-                previewArea.classList.add('has-content');
+            // Clear placeholder if it exists in main preview
+            if (targetContainer.id === 'preview-area') {
+                const placeholder = targetContainer.querySelector('.text-center.text-muted');
+                if (placeholder) {
+                    placeholder.remove();
+                    targetContainer.classList.add('has-content');
+                }
             }
 
-            const componentDiv = document.createElement('div');
-            componentDiv.className = 'component-item';
-            componentDiv.id = `component-${componentCounter}`;
-            componentDiv.innerHTML = `
-                <div class="component-controls">
-                    <button class="btn btn-sm btn-outline-primary me-1" onclick="selectComponent(${componentCounter})">
-                        <i class="bi bi-gear"></i>
-                    </button>
-                    <button class="btn btn-sm btn-outline-danger" onclick="removeComponent(${componentCounter})">
-                        <i class="bi bi-x"></i>
-                    </button>
-                </div>
-                ${componentTemplates[type]}
-            `;
-
-            previewArea.appendChild(componentDiv);
+            elementCounter++;
+            const elementId = 'element-' + elementCounter;
             
-            // Store component data
-            components.push({
-                id: componentCounter,
-                type: type,
-                template: componentTemplates[type]
-            });
-
-            showToast(`${type.charAt(0).toUpperCase() + type.slice(1)} added!`);
+            if (type === 'container' || type === 'row' || type === 'column') {
+                addStructureElement(type, elementId, targetContainer);
+            } else {
+                addComponentElement(type, elementId, targetContainer);
+            }
+            
             generateCode();
         }
 
-        // Select component for editing
-        function selectComponent(id) {
-            selectedComponent = id;
-            const component = components.find(c => c.id === id);
+        // Add structure element (container, row, column)
+        function addStructureElement(type, elementId, targetContainer) {
+            const element = document.createElement('div');
+            element.id = elementId;
+            element.onclick = function(e) {
+                e.stopPropagation();
+                selectStructure(elementId);
+            };
             
-            if (component) {
-                document.getElementById('component-editor').style.display = 'block';
-                document.getElementById('component-content').value = extractContent(component.template);
-                document.getElementById('component-classes').value = '';
-                
-                // Highlight selected component
-                document.querySelectorAll('.component-item').forEach(item => {
-                    item.style.border = '1px solid var(--border-color)';
-                });
-                document.getElementById(`component-${id}`).style.border = '2px solid #667eea';
+            let className = '';
+            let content = '';
+            
+            if (type === 'container') {
+                className = 'bootstrap-container';
+                element.className = className;
+                content = '<div class="component-controls"><i class="bi bi-gear text-primary"></i></div><button class="delete-btn" onclick="event.stopPropagation(); deleteElement(\'' + elementId + '\');"><i class="bi bi-x"></i></button><div class="text-center text-muted py-2"><i class="bi bi-plus-circle me-2"></i>Add rows here</div>';
+            } else if (type === 'row') {
+                className = 'bootstrap-row';
+                element.className = className;
+                content = '<div class="component-controls"><i class="bi bi-gear text-primary"></i></div><button class="delete-btn" onclick="event.stopPropagation(); deleteElement(\'' + elementId + '\');"><i class="bi bi-x"></i></button><div class="text-center text-muted py-2 w-100"><i class="bi bi-plus-circle me-2"></i>Add columns here</div>';
+            } else if (type === 'column') {
+                className = 'bootstrap-column col-md-4';
+                element.className = className;
+                content = '<div class="component-controls"><i class="bi bi-gear text-primary"></i></div><button class="delete-btn" onclick="event.stopPropagation(); deleteElement(\'' + elementId + '\');"><i class="bi bi-x"></i></button><div class="text-center text-muted py-2"><i class="bi bi-plus-circle me-1"></i>Add content</div>';
+            }
+            
+            element.innerHTML = content;
+            targetContainer.appendChild(element);
+            
+            // Store structure data
+            structures.push({
+                id: elementId,
+                type: type,
+                parentContainer: activeContainer,
+                properties: getDefaultStructureProperties(type)
+            });
+
+            selectStructure(elementId);
+        }
+
+        // Add component element
+        function addComponentElement(type, elementId, targetContainer) {
+            const element = document.createElement('div');
+            element.className = 'component-item';
+            element.id = elementId;
+            element.onclick = function(e) {
+                e.stopPropagation();
+                selectElement(elementId);
+            };
+            
+            const template = componentTemplates[type];
+            element.innerHTML = '<div class="component-controls"><i class="bi bi-gear text-primary"></i></div><button class="delete-btn" onclick="event.stopPropagation(); deleteElement(\'' + elementId + '\');"><i class="bi bi-x"></i></button>' + template.html;
+
+            targetContainer.appendChild(element);
+            
+            // Store element data
+            elements.push({
+                id: elementId,
+                type: type,
+                template: template.html,
+                content: template.content,
+                parentContainer: activeContainer,
+                properties: {
+                    variant: 'primary',
+                    size: '',
+                    classes: ''
+                }
+            });
+
+            selectElement(elementId);
+        }
+
+        // Get target container for new elements
+        function getTargetContainer() {
+            if (activeContainer === 'preview-area') {
+                return document.getElementById('preview-area');
+            } else {
+                return document.getElementById(activeContainer);
             }
         }
 
-        function extractContent(template) {
-            // Extract text content from template
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = template;
-            return tempDiv.textContent.trim() || 'Content';
+        // Get default structure properties
+        function getDefaultStructureProperties(type) {
+            const defaults = {
+                container: {
+                    type: 'container',
+                    classes: ''
+                },
+                row: {
+                    justify: '',
+                    align: '',
+                    gutter: '',
+                    classes: ''
+                },
+                column: {
+                    xs: '',
+                    sm: '',
+                    md: 'col-md-4',
+                    lg: '',
+                    classes: ''
+                }
+            };
+            
+            return defaults[type] || {};
+        }
+
+        // Select structure element
+        function selectStructure(structureId) {
+            // Remove previous selections
+            document.querySelectorAll('.bootstrap-container, .bootstrap-row, .bootstrap-column, .component-item, .preview-area').forEach(function(el) {
+                el.classList.remove('selected');
+            });
+            
+            selectedElement = null;
+            selectedStructure = structureId;
+            activeContainer = structureId;
+            
+            // Add selection to current structure
+            const structure = document.getElementById(structureId);
+            if (structure) {
+                structure.classList.add('selected');
+            }
+            
+            // Update breadcrumb and show appropriate controls
+            updateStructureBreadcrumb(structureId);
+            showStructureControls(structureId);
+            
+            // Hide component controls
+            document.getElementById('no-component-selected').style.display = 'block';
+            document.getElementById('component-properties').style.display = 'none';
+            
+            generateCode();
+        }
+
+        // Select component element
+        function selectElement(elementId) {
+            // Remove previous selections
+            document.querySelectorAll('.bootstrap-container, .bootstrap-row, .bootstrap-column, .component-item').forEach(function(el) {
+                el.classList.remove('selected');
+            });
+            
+            selectedStructure = null;
+            selectedElement = elementId;
+            
+            // Add selection to current element
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.classList.add('selected');
+            }
+            
+            // Show component controls
+            showComponentControls(elementId);
+            
+            // Hide structure controls
+            hideStructureControls();
+            
+            generateCode();
+        }
+
+        // Update structure breadcrumb
+        function updateStructureBreadcrumb(structureId) {
+            const breadcrumb = document.getElementById('structure-breadcrumb');
+            let breadcrumbHTML = '<i class="bi bi-house me-1"></i>';
+            
+            if (structureId === 'preview-area') {
+                breadcrumbHTML += '<span class="breadcrumb-item active">Preview Area</span>';
+            } else {
+                const structure = structures.find(function(s) { return s.id === structureId; });
+                if (structure) {
+                    breadcrumbHTML += '<span class="breadcrumb-item" onclick="selectStructure(\'preview-area\')">Preview Area</span>';
+                    breadcrumbHTML += ' <i class="bi bi-chevron-right mx-1"></i> ';
+                    breadcrumbHTML += '<span class="breadcrumb-item active">' + structure.type.charAt(0).toUpperCase() + structure.type.slice(1) + '</span>';
+                }
+            }
+            
+            breadcrumb.innerHTML = breadcrumbHTML;
+        }
+
+        // Show structure controls
+        function showStructureControls(structureId) {
+            // Hide all structure property panels
+            document.getElementById('container-properties').style.display = 'none';
+            document.getElementById('row-properties').style.display = 'none';
+            document.getElementById('column-properties').style.display = 'none';
+            document.getElementById('no-structure-selected').style.display = 'none';
+            
+            if (structureId === 'preview-area') {
+                document.getElementById('no-structure-selected').style.display = 'block';
+                return;
+            }
+            
+            const structure = structures.find(function(s) { return s.id === structureId; });
+            if (structure) {
+                // Show appropriate controls based on structure type
+                if (structure.type === 'container') {
+                    document.getElementById('container-properties').style.display = 'block';
+                    loadContainerProperties(structure);
+                } else if (structure.type === 'row') {
+                    document.getElementById('row-properties').style.display = 'block';
+                    loadRowProperties(structure);
+                } else if (structure.type === 'column') {
+                    document.getElementById('column-properties').style.display = 'block';
+                    loadColumnProperties(structure);
+                }
+            }
+        }
+
+        // Hide structure controls
+        function hideStructureControls() {
+            document.getElementById('container-properties').style.display = 'none';
+            document.getElementById('row-properties').style.display = 'none';
+            document.getElementById('column-properties').style.display = 'none';
+            document.getElementById('no-structure-selected').style.display = 'block';
+        }
+
+        // Load structure properties into controls
+        function loadContainerProperties(structure) {
+            document.getElementById('container-type').value = structure.properties.type || 'container';
+        }
+
+        function loadRowProperties(structure) {
+            document.getElementById('row-justify').value = structure.properties.justify || '';
+            document.getElementById('row-align').value = structure.properties.align || '';
+            document.getElementById('row-gutter').value = structure.properties.gutter || '';
+        }
+
+        function loadColumnProperties(structure) {
+            document.getElementById('col-xs').value = structure.properties.xs || '';
+            document.getElementById('col-sm').value = structure.properties.sm || '';
+            document.getElementById('col-md').value = structure.properties.md || 'col-md-4';
+            document.getElementById('col-lg').value = structure.properties.lg || '';
+        }
+
+        // Show component controls
+        function showComponentControls(elementId) {
+            document.getElementById('no-component-selected').style.display = 'none';
+            document.getElementById('component-properties').style.display = 'block';
+            
+            const element = elements.find(function(el) { return el.id === elementId; });
+            if (element) {
+                document.getElementById('selected-component-name').textContent = element.content.text || element.type;
+                document.getElementById('component-content').value = element.content.text || '';
+                document.getElementById('component-variant').value = element.properties.variant || 'primary';
+                document.getElementById('component-size').value = element.properties.size || '';
+                document.getElementById('component-classes').value = element.properties.classes || '';
+            }
+        }
+
+        // Update selected structure
+        function updateSelectedStructure() {
+            if (!selectedStructure || selectedStructure === 'preview-area') return;
+            
+            const structure = structures.find(function(s) { return s.id === selectedStructure; });
+            if (!structure) return;
+            
+            const element = document.getElementById(selectedStructure);
+            if (!element) return;
+            
+            if (structure.type === 'container') {
+                const type = document.getElementById('container-type').value;
+                structure.properties.type = type;
+                
+                // Update element class
+                element.className = element.className.replace(/container(-fluid)?/, type);
+                if (!element.className.includes(type)) {
+                    element.className += ' ' + type;
+                }
+            } else if (structure.type === 'row') {
+                const justify = document.getElementById('row-justify').value;
+                const align = document.getElementById('row-align').value;
+                const gutter = document.getElementById('row-gutter').value;
+                
+                structure.properties.justify = justify;
+                structure.properties.align = align;
+                structure.properties.gutter = gutter;
+                
+                // Update element classes
+                let classes = 'bootstrap-row row';
+                if (justify) classes += ' ' + justify;
+                if (align) classes += ' ' + align;
+                if (gutter) classes += ' ' + gutter;
+                
+                element.className = classes;
+            } else if (structure.type === 'column') {
+                const xs = document.getElementById('col-xs').value;
+                const sm = document.getElementById('col-sm').value;
+                const md = document.getElementById('col-md').value;
+                const lg = document.getElementById('col-lg').value;
+                
+                structure.properties.xs = xs;
+                structure.properties.sm = sm;
+                structure.properties.md = md;
+                structure.properties.lg = lg;
+                
+                // Update element classes
+                let classes = 'bootstrap-column';
+                if (xs) classes += ' ' + xs;
+                if (sm) classes += ' ' + sm;
+                if (md) classes += ' ' + md;
+                if (lg) classes += ' ' + lg;
+                
+                element.className = classes;
+            }
+            
+            generateCode();
         }
 
         // Update selected component
         function updateSelectedComponent() {
-            if (!selectedComponent) return;
+            if (!selectedElement) return;
+            
+            const element = elements.find(function(el) { return el.id === selectedElement; });
+            if (!element) return;
             
             const content = document.getElementById('component-content').value;
-            const classes = document.getElementById('component-classes').value;
             const variant = document.getElementById('component-variant').value;
+            const size = document.getElementById('component-size').value;
+            const classes = document.getElementById('component-classes').value;
             
-            const componentElement = document.getElementById(`component-${selectedComponent}`);
-            if (componentElement) {
-                // Update component based on type
-                const component = components.find(c => c.id === selectedComponent);
-                if (component) {
-                    let updatedTemplate = component.template;
-                    
-                    // Apply variant classes
-                    if (component.type === 'button') {
-                        updatedTemplate = `<button type="button" class="btn btn-${variant} ${classes}">${content}</button>`;
-                    } else if (component.type === 'alert') {
-                        updatedTemplate = `<div class="alert alert-${variant} ${classes}" role="alert">${content}</div>`;
-                    } else if (component.type === 'badge') {
-                        updatedTemplate = `<span class="badge bg-${variant} ${classes}">${content}</span>`;
-                    }
-                    
-                    componentElement.innerHTML = `
-                        <div class="component-controls">
-                            <button class="btn btn-sm btn-outline-primary me-1" onclick="selectComponent(${selectedComponent})">
-                                <i class="bi bi-gear"></i>
-                            </button>
-                            <button class="btn btn-sm btn-outline-danger" onclick="removeComponent(${selectedComponent})">
-                                <i class="bi bi-x"></i>
-                            </button>
-                        </div>
-                        ${updatedTemplate}
-                    `;
-                    
-                    component.template = updatedTemplate;
-                    generateCode();
-                }
+            // Update element properties
+            element.content.text = content;
+            element.properties.variant = variant;
+            element.properties.size = size;
+            element.properties.classes = classes;
+            
+            // Update template based on component type
+            let updatedTemplate = element.template;
+            
+            if (element.type === 'button') {
+                let buttonClasses = 'btn btn-' + variant;
+                if (size) buttonClasses += ' ' + size;
+                if (classes) buttonClasses += ' ' + classes;
+                updatedTemplate = '<button type="button" class="' + buttonClasses + '">' + content + '</button>';
+            } else if (element.type === 'alert') {
+                let alertClasses = 'alert alert-' + variant;
+                if (classes) alertClasses += ' ' + classes;
+                updatedTemplate = '<div class="' + alertClasses + '" role="alert">' + content + '</div>';
+            } else if (element.type === 'card') {
+                let cardClasses = 'card';
+                if (classes) cardClasses += ' ' + classes;
+                updatedTemplate = '<div class="' + cardClasses + '"><div class="card-body"><h5 class="card-title">' + content + '</h5><p class="card-text">Some quick example text to build on the card title and make up the bulk of the card content.</p><a href="#" class="btn btn-' + variant + '">Go somewhere</a></div></div>';
             }
+            
+            element.template = updatedTemplate;
+            
+            // Update DOM element
+            const domElement = document.getElementById(selectedElement);
+            if (domElement) {
+                domElement.innerHTML = '<div class="component-controls"><i class="bi bi-gear text-primary"></i></div><button class="delete-btn" onclick="event.stopPropagation(); deleteElement(\'' + selectedElement + '\');"><i class="bi bi-x"></i></button>' + updatedTemplate;
+            }
+            
+            generateCode();
         }
 
-        // Remove component
-        function removeComponent(id) {
-            const componentElement = document.getElementById(`component-${id}`);
-            if (componentElement) {
-                componentElement.remove();
-                components = components.filter(c => c.id !== id);
+        // Apply utilities
+        function applyUtilities() {
+            if (!selectedElement) {
+                showToast('Select a component first!', 'warning');
+                return;
+            }
+            
+            const margin = document.getElementById('margin-utility').value;
+            const padding = document.getElementById('padding-utility').value;
+            const textAlign = document.getElementById('text-align-utility').value;
+            const fontWeight = document.getElementById('font-weight-utility').value;
+            const textColor = document.getElementById('text-color-utility').value;
+            const bgColor = document.getElementById('bg-color-utility').value;
+            
+            const utilities = [margin, padding, textAlign, fontWeight, textColor, bgColor].filter(function(u) { return u; }).join(' ');
+            
+            document.getElementById('component-classes').value = utilities;
+            updateSelectedComponent();
+        }
+
+        // Delete element
+        function deleteElement(elementId) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.remove();
                 
-                if (selectedComponent === id) {
-                    selectedComponent = null;
-                    document.getElementById('component-editor').style.display = 'none';
+                // Remove from appropriate array
+                elements = elements.filter(function(el) { return el.id !== elementId; });
+                structures = structures.filter(function(s) { return s.id !== elementId; });
+                
+                // Reset selections if deleted element was selected
+                if (selectedElement === elementId) {
+                    selectedElement = null;
+                    document.getElementById('no-component-selected').style.display = 'block';
+                    document.getElementById('component-properties').style.display = 'none';
+                }
+                
+                if (selectedStructure === elementId) {
+                    selectedStructure = null;
+                    selectStructure('preview-area');
                 }
                 
                 generateCode();
-                showToast('Component removed!');
+                showToast('Element deleted!');
             }
         }
 
-        // Grid functions
-        function updateGridPreview() {
-            const columns = parseInt(document.getElementById('grid-columns').value);
-            const breakpoint = document.getElementById('grid-breakpoint').value;
-            const colClass = breakpoint ? `col-${breakpoint}-${12/columns}` : `col-${12/columns}`;
-            
-            let gridHTML = '<div class="row">\n';
-            for (let i = 0; i < columns; i++) {
-                gridHTML += `  <div class="${colClass}">
-    <div class="grid-demo">Column ${i + 1}</div>
-  </div>\n`;
-            }
-            gridHTML += '</div>';
-            
-            document.getElementById('grid-preview').innerHTML = gridHTML;
-        }
-
-        function addGridToPreview() {
-            const gridHTML = document.getElementById('grid-preview').innerHTML;
-            componentCounter++;
-            
+        // Clear preview
+        function clearPreview() {
             const previewArea = document.getElementById('preview-area');
-            const placeholder = previewArea.querySelector('.text-center.text-muted');
-            if (placeholder) {
-                placeholder.remove();
-                previewArea.classList.add('has-content');
-            }
-
-            const componentDiv = document.createElement('div');
-            componentDiv.className = 'component-item';
-            componentDiv.id = `component-${componentCounter}`;
-            componentDiv.innerHTML = `
-                <div class="component-controls">
-                    <button class="btn btn-sm btn-outline-danger" onclick="removeComponent(${componentCounter})">
-                        <i class="bi bi-x"></i>
-                    </button>
-                </div>
-                ${gridHTML}
-            `;
-
-            previewArea.appendChild(componentDiv);
+            previewArea.innerHTML = '<div class="text-center text-muted py-5"><i class="bi bi-plus-circle display-4 mb-3"></i><h5>Start Building</h5><p class="mb-2">Add a <strong>Container</strong> first, then add <strong>Rows</strong> and <strong>Columns</strong></p><p class="small">Or try one of the examples to get started quickly</p></div>';
+            previewArea.classList.remove('has-content');
             
-            components.push({
-                id: componentCounter,
-                type: 'grid',
-                template: gridHTML
-            });
-
+            elements = [];
+            structures = [];
+            elementCounter = 0;
+            selectedElement = null;
+            selectedStructure = null;
+            activeContainer = 'preview-area';
+            
+            hideStructureControls();
+            document.getElementById('no-component-selected').style.display = 'block';
+            document.getElementById('component-properties').style.display = 'none';
+            updateStructureBreadcrumb('preview-area');
+            
             generateCode();
-            showToast('Grid added!');
+            showToast('Preview cleared!');
+        }
+
+        // Set responsive preview size
+        function setPreviewSize(width) {
+            const previewArea = document.getElementById('preview-area');
+            previewArea.style.maxWidth = width;
+            previewArea.style.margin = width === '100%' ? '0' : '0 auto';
+            
+            // Update active button
+            document.querySelectorAll('.responsive-btn').forEach(function(btn) { btn.classList.remove('active'); });
+            event.target.classList.add('active');
+        }
+
+        // Load example layouts
+        function loadExample(exampleType) {
+            clearPreview();
+            
+            switch(exampleType) {
+                case 'landing-page':
+                    addElement('container');
+                    addElement('row');
+                    const heroRow = document.querySelector('.bootstrap-row');
+                    selectStructure(heroRow.id);
+                    addElement('column');
+                    const heroCol = document.querySelector('.bootstrap-column');
+                    selectStructure(heroCol.id);
+                    document.getElementById('col-md').value = 'col-md-12';
+                    updateSelectedStructure();
+                    addElement('navbar');
+                    addElement('card');
+                    selectStructure(document.querySelector('.bootstrap-container').id);
+                    addElement('row');
+                    const featuresRow = document.querySelectorAll('.bootstrap-row')[1];
+                    selectStructure(featuresRow.id);
+                    for (let i = 0; i < 3; i++) {
+                        addElement('column');
+                        addElement('card');
+                    }
+                    break;
+                    
+                case 'dashboard':
+                    addElement('container');
+                    selectStructure(document.querySelector('.bootstrap-container').id);
+                    document.getElementById('container-type').value = 'container-fluid';
+                    updateSelectedStructure();
+                    addElement('row');
+                    const mainRow = document.querySelector('.bootstrap-row');
+                    selectStructure(mainRow.id);
+                    addElement('column');
+                    const sidebarCol = document.querySelector('.bootstrap-column');
+                    selectStructure(sidebarCol.id);
+                    document.getElementById('col-md').value = 'col-md-3';
+                    updateSelectedStructure();
+                    addElement('card');
+                    selectStructure(mainRow.id);
+                    addElement('column');
+                    const mainCol = document.querySelectorAll('.bootstrap-column')[1];
+                    selectStructure(mainCol.id);
+                    document.getElementById('col-md').value = 'col-md-9';
+                    updateSelectedStructure();
+                    addElement('card');
+                    addElement('card');
+                    break;
+                    
+                case 'card-grid':
+                    addElement('container');
+                    addElement('row');
+                    const gridRow = document.querySelector('.bootstrap-row');
+                    selectStructure(gridRow.id);
+                    for (let i = 0; i < 6; i++) {
+                        addElement('column');
+                        const col = document.querySelectorAll('.bootstrap-column')[i];
+                        selectStructure(col.id);
+                        document.getElementById('col-md').value = 'col-md-4';
+                        document.getElementById('col-lg').value = 'col-lg-4';
+                        updateSelectedStructure();
+                        addElement('card');
+                    }
+                    break;
+                    
+                case 'form-layout':
+                    addElement('container');
+                    addElement('row');
+                    const formRow = document.querySelector('.bootstrap-row');
+                    selectStructure(formRow.id);
+                    document.getElementById('row-justify').value = 'justify-content-center';
+                    updateSelectedStructure();
+                    addElement('column');
+                    const formCol = document.querySelector('.bootstrap-column');
+                    selectStructure(formCol.id);
+                    document.getElementById('col-md').value = 'col-md-8';
+                    document.getElementById('col-lg').value = 'col-lg-6';
+                    updateSelectedStructure();
+                    addElement('card');
+                    addElement('form');
+                    break;
+                    
+                case 'ecommerce':
+                    addElement('navbar');
+                    addElement('container');
+                    addElement('row');
+                    const filterRow = document.querySelector('.bootstrap-row');
+                    selectStructure(filterRow.id);
+                    addElement('column');
+                    const filterCol = document.querySelector('.bootstrap-column');
+                    selectStructure(filterCol.id);
+                    document.getElementById('col-md').value = 'col-md-3';
+                    updateSelectedStructure();
+                    addElement('card');
+                    selectStructure(filterRow.id);
+                    addElement('column');
+                    const productsCol = document.querySelectorAll('.bootstrap-column')[1];
+                    selectStructure(productsCol.id);
+                    document.getElementById('col-md').value = 'col-md-9';
+                    updateSelectedStructure();
+                    addElement('row');
+                    const productsRow = document.querySelectorAll('.bootstrap-row')[1];
+                    selectStructure(productsRow.id);
+                    for (let i = 0; i < 8; i++) {
+                        addElement('column');
+                        const productCol = document.querySelectorAll('.bootstrap-column')[i + 2];
+                        selectStructure(productCol.id);
+                        document.getElementById('col-md').value = 'col-md-6';
+                        document.getElementById('col-lg').value = 'col-lg-3';
+                        updateSelectedStructure();
+                        addElement('card');
+                    }
+                    break;
+            }
+            
+            generateCode();
         }
 
         // Generate code
         function generateCode() {
-            let html = '';
-            components.forEach(component => {
-                html += component.template + '\n\n';
-            });
+            function generateStructureHTML(containerId, depth) {
+                depth = depth || 0;
+                const indent = '  '.repeat(depth);
+                let html = '';
+                
+                if (containerId === 'preview-area') {
+                    const directChildren = structures.filter(function(s) { return s.parentContainer === 'preview-area'; }).concat(elements.filter(function(e) { return e.parentContainer === 'preview-area'; }));
+                    
+                    directChildren.forEach(function(item) {
+                        if (item.type === 'container' || item.type === 'row' || item.type === 'column') {
+                            html += generateStructureHTML(item.id, depth);
+                        } else {
+                            html += indent + item.template + '\n';
+                        }
+                    });
+                } else {
+                    const structure = structures.find(function(s) { return s.id === containerId; });
+                    if (!structure) return '';
+                    
+                    if (structure.type === 'container') {
+                        const containerType = structure.properties.type || 'container';
+                        html += indent + '<div class="' + containerType + '">\n';
+                    } else if (structure.type === 'row') {
+                        let rowClasses = 'row';
+                        if (structure.properties.justify) rowClasses += ' ' + structure.properties.justify;
+                        if (structure.properties.align) rowClasses += ' ' + structure.properties.align;
+                        if (structure.properties.gutter) rowClasses += ' ' + structure.properties.gutter;
+                        html += indent + '<div class="' + rowClasses + '">\n';
+                    } else if (structure.type === 'column') {
+                        let colClasses = '';
+                        if (structure.properties.xs) colClasses += structure.properties.xs + ' ';
+                        if (structure.properties.sm) colClasses += structure.properties.sm + ' ';
+                        if (structure.properties.md) colClasses += structure.properties.md + ' ';
+                        if (structure.properties.lg) colClasses += structure.properties.lg + ' ';
+                        colClasses = colClasses.trim() || 'col';
+                        html += indent + '<div class="' + colClasses + '">\n';
+                    }
+                    
+                    const childStructures = structures.filter(function(s) { return s.parentContainer === containerId; });
+                    const childElements = elements.filter(function(e) { return e.parentContainer === containerId; });
+                    const allChildren = childStructures.concat(childElements);
+                    
+                    allChildren.forEach(function(child) {
+                        if (child.type === 'container' || child.type === 'row' || child.type === 'column') {
+                            html += generateStructureHTML(child.id, depth + 1);
+                        } else {
+                            html += indent + '  ' + child.template + '\n';
+                        }
+                    });
+                    
+                    html += indent + '</div>\n';
+                }
+                
+                return html;
+            }
             
-            // Add syntax highlighting
-            let highlightedHTML = html
+            const html = generateStructureHTML('preview-area');
+            
+            // Apply syntax highlighting
+            const highlightedHTML = html
                 .replace(/</g, '&lt;')
                 .replace(/>/g, '&gt;')
-                .replace(/&lt;(\/?[a-zA-Z][a-zA-Z0-9]*)/g, '&lt;<span class="css-selector">$1</span>')
-                .replace(/([a-zA-Z-]+)=&quot;([^&quot;]*)&quot;/g, '<span class="css-property">$1</span>=<span class="css-value">&quot;$2&quot;</span>')
+                .replace(/&lt;(\/?[a-zA-Z][a-zA-Z0-9-]*)/g, '&lt;<span class="html-tag">$1</span>')
+                .replace(/([a-zA-Z-]+)=&quot;([^&quot;]*)&quot;/g, '<span class="html-attr">$1</span>=<span class="css-value">&quot;$2&quot;</span>')
                 .replace(/&lt;!--([^--]*)--&gt;/g, '<span class="css-comment">&lt;!--$1--&gt;</span>');
             
-            document.getElementById('code-output').innerHTML = highlightedHTML || '<span class="css-comment"><!-- No components added yet --></span>';
+            document.getElementById('code-output').innerHTML = highlightedHTML || '<span class="css-comment"><!-- Add components to see HTML code --></span>';
         }
 
-        // Copy code
+        // Copy functions
         function copyCode() {
             const codeContent = document.getElementById('code-output').textContent;
             
-            navigator.clipboard.writeText(codeContent).then(() => {
+            navigator.clipboard.writeText(codeContent).then(function() {
                 const button = document.getElementById('copy-btn');
                 const originalHTML = button.innerHTML;
                 
                 button.classList.add('copied');
                 button.innerHTML = '<i class="bi bi-check me-1"></i>Copied!';
                 
-                setTimeout(() => {
+                setTimeout(function() {
                     button.classList.remove('copied');
                     button.innerHTML = originalHTML;
                 }, 2000);
@@ -786,73 +1840,78 @@
             });
         }
 
-        // Clear preview
-        function clearPreview() {
-            const previewArea = document.getElementById('preview-area');
-            previewArea.innerHTML = `
-                <div class="text-center text-muted py-5">
-                    <i class="bi bi-plus-circle display-4 mb-3"></i>
-                    <h5>Start Building</h5>
-                    <p>Choose components from the sidebar to build your layout</p>
-                </div>
-            `;
-            previewArea.classList.remove('has-content');
+        function copyFullCode() {
+            const htmlContent = document.getElementById('code-output').textContent;
+            const fullCode = '<!DOCTYPE html>\n<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <title>Bootstrap Layout</title>\n    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">\n</head>\n<body>\n    ' + htmlContent + '    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"><\/script>\n</body>\n</html>';
             
-            components = [];
-            componentCounter = 0;
-            selectedComponent = null;
-            document.getElementById('component-editor').style.display = 'none';
-            generateCode();
-            
-            showToast('Preview cleared!');
+            navigator.clipboard.writeText(fullCode).then(function() {
+                showToast('Complete code copied to clipboard!');
+            });
         }
 
-        // Apply utility classes
-        function applyUtility() {
-            if (!selectedComponent) {
-                showToast('Select a component first!', 'warning');
-                return;
-            }
+        // Export functions
+        function exportCodePen() {
+            const htmlContent = document.getElementById('code-output').textContent;
             
-            const spacing = document.getElementById('spacing-utility').value;
-            const text = document.getElementById('text-utility').value;
-            const color = document.getElementById('color-utility').value;
+            const data = {
+                title: 'Bootstrap Layout from Enhanced Playground',
+                description: 'Created with Enhanced Bootstrap Playground',
+                html: htmlContent,
+                css: '',
+                css_external: 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css',
+                js_external: 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js',
+                editors: '100'
+            };
+
+            const form = document.createElement('form');
+            form.action = 'https://codepen.io/pen/define';
+            form.method = 'POST';
+            form.target = '_blank';
             
-            const classes = [spacing, text, color].filter(c => c).join(' ');
-            document.getElementById('component-classes').value = classes;
-            updateSelectedComponent();
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'data';
+            input.value = JSON.stringify(data);
+            
+            form.appendChild(input);
+            document.body.appendChild(form);
+            form.submit();
+            document.body.removeChild(form);
+        }
+
+        function downloadHTML() {
+            const htmlContent = document.getElementById('code-output').textContent;
+            const fullCode = '<!DOCTYPE html>\n<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <title>Bootstrap Layout</title>\n    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">\n</head>\n<body>\n    ' + htmlContent + '    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"><\/script>\n</body>\n</html>';
+            
+            const blob = new Blob([fullCode], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'bootstrap-layout.html';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
         }
 
         // Toast notifications
-        function showToast(message, type = 'success') {
+        function showToast(message, type) {
+            type = type || 'success';
             const toastContainer = document.querySelector('.toast-container') || createToastContainer();
             
             const toast = document.createElement('div');
             toast.className = 'toast show';
-            toast.style.cssText = `
-                background: ${type === 'success' ? '#28a745' : '#ffc107'};
-                color: white;
-                padding: 12px 20px;
-                border-radius: 8px;
-                margin-bottom: 10px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-                animation: slideIn 0.3s ease;
-            `;
+            toast.style.cssText = 'background: ' + (type === 'success' ? '#28a745' : '#ffc107') + '; color: white; padding: 12px 20px; border-radius: 8px; margin-bottom: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); animation: slideIn 0.3s ease;';
             toast.textContent = message;
             
             toastContainer.appendChild(toast);
-            setTimeout(() => toast.remove(), 3000);
+            setTimeout(function() { toast.remove(); }, 3000);
         }
 
         function createToastContainer() {
             const container = document.createElement('div');
             container.className = 'toast-container';
-            container.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                z-index: 10000;
-            `;
+            container.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 10000;';
             document.body.appendChild(container);
             return container;
         }
@@ -860,23 +1919,22 @@
         // Tips rotation
         function rotateTips() {
             const tips = [
-                '<strong>Grid:</strong> Use <code>.col-md-6</code> for 50% width on medium+ screens',
-                '<strong>Spacing:</strong> <code>.p-3</code> adds padding, <code>.m-3</code> adds margin',
-                '<strong>Colors:</strong> <code>.text-primary</code> for text, <code>.bg-primary</code> for background',
-                '<strong>Flexbox:</strong> <code>.d-flex</code> enables flexbox layout',
-                '<strong>Display:</strong> <code>.d-none</code> hides, <code>.d-block</code> shows',
-                '<strong>Text:</strong> <code>.text-center</code> centers text horizontally'
+                '<strong>Grid:</strong><br><code>.col-md-6</code> = 50% width on medium+ screens<br><code>.col-sm-12</code> = 100% width on small+ screens',
+                '<strong>Spacing:</strong><br><code>.p-3</code> adds padding<br><code>.m-3</code> adds margin<br><code>.mx-auto</code> centers',
+                '<strong>Colors:</strong><br><code>.text-primary</code> for text<br><code>.bg-primary</code> for background<br>8 color variants available',
+                '<strong>Structure:</strong><br><code>.container</code> → <code>.row</code> → <code>.col</code><br>Always follow this hierarchy',
+                '<strong>Responsive:</strong><br><code>.col-sm-6 .col-lg-4</code><br>Different sizes on different screens',
+                '<strong>Utilities:</strong><br><code>.d-flex .justify-content-center</code><br>Powerful utility classes'
             ];
             
             const tipsElement = document.getElementById('bootstrap-tips');
             let currentTip = 0;
             
-            setInterval(() => {
+            setInterval(function() {
                 currentTip = (currentTip + 1) % tips.length;
                 tipsElement.innerHTML = tips[currentTip];
             }, 4000);
         }
     </script>
-    <script src="security-utils.js"></script>
 </body>
 </html>

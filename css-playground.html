@@ -426,19 +426,40 @@
     <!-- Toast Container -->
     <div class="toast-container" id="toast-container"></div>
 
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
-        <div class="container">
-            <a class="navbar-brand" href="index.html">
-                <i class="bi bi-code-square me-2"></i>CSS Master Playground
-            </a>
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+    <div class="container">
+        <!-- Change this line -->
+        <a class="navbar-brand" href="index.html">
+            <i class="bi bi-house me-2"></i>CSS Learning Guide
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
             <div class="navbar-nav ms-auto">
+                <!-- Change this line -->
                 <a class="nav-link" href="index.html"><i class="bi bi-house me-1"></i>Home</a>
-                <a class="nav-link" href="flexbox-playground.html"><i class="bi bi-grid-3x3 me-1"></i>Flexbox</a>
-                <a class="nav-link" href="html-playground.html"><i class="bi bi-code me-1"></i>HTML</a>
+                <a class="nav-link" href="#getting-started"><i class="bi bi-play-circle me-1"></i>Get Started</a>
+                <a class="nav-link" href="#selectors"><i class="bi bi-cursor me-1"></i>Selectors</a>
+                <a class="nav-link" href="#flexbox"><i class="bi bi-grid-3x3 me-1"></i>Flexbox</a>
+                <a class="nav-link" href="#responsive"><i class="bi bi-phone me-1"></i>Responsive</a>
+                <div class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-grid-3x3-gap me-1"></i>More
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#" onclick="showComingSoon('CSS Playground')"><i class="bi bi-palette me-2"></i>CSS Playground</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="showComingSoon('Flexbox Playground')"><i class="bi bi-grid-3x3 me-2"></i>Flexbox Playground</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="showComingSoon('HTML Guide')"><i class="bi bi-code me-2"></i>HTML Guide</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#" onclick="showAbout()"><i class="bi bi-info-circle me-2"></i>About</a></li>
+                    </ul>
+                </div>
             </div>
         </div>
-    </nav>
+    </div>
+</nav>
 
     <!-- Hero Section -->
     <section class="hero-section">
