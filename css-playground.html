@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Properties Master Playground</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --info-color: #17a2b8;
+            --bg-light: #f8f9fa;
+            --border-color: #dee2e6;
+            --text-muted: #6c757d;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.1);
+            --shadow-md: 0 4px 15px rgba(0,0,0,0.15);
+        }
+
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: var(--bg-light);
+            line-height: 1.6;
+        }
+
+        .hero-section {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 2rem 0;
+        }
+
+        .property-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .property-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .property-header {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-bottom: none;
+        }
+
+        .property-body {
+            padding: 1.5rem;
+        }
+
+        .demo-container {
+            background: #f8f9fa;
+            border: 3px dashed #667eea;
+            border-radius: 12px;
+            padding: 2rem;
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 1rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .demo-element {
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+            color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            position: relative;
+            min-width: 120px;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .demo-text {
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: #333;
+            line-height: 1.6;
+            max-width: 400px;
+        }
+
+        .code-output {
+            background: #1a1a1a;
+            color: #e6e6e6;
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            max-height: 300px;
+            overflow-y: auto;
+            position: relative;
+            margin: 1rem 0;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--success-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            opacity: 0.8;
+            transition: all 0.2s;
+            z-index: 10;
+        }
+
+        .copy-btn:hover {
+            opacity: 1;
+            transform: scale(1.05);
+        }
+
+        .copy-btn.copied {
+            background: var(--info-color);
+        }
+
+        .css-property { color: #79b6f2; }
+        .css-value { color: #90ee90; }
+        .css-selector { color: #ffd700; }
+        .css-comment { color: #9ca3af; font-style: italic; }
+
+        .control-group {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid #667eea;
+        }
+
+        .control-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .range-value {
+            font-weight: 600;
+            color: #667eea;
+            min-width: 4rem;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .property-tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 0.25rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            flex: 1;
+            min-width: 100px;
+            padding: 0.75rem;
+            border: none;
+            background: transparent;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: 0.85rem;
+            margin: 0.125rem;
+        }
+
+        .tab-btn.active {
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .info-badge {
+            background: #e7f3ff;
+            color: #0066cc;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .preset-btn {
+            padding: 0.375rem 0.75rem;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0.25rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .preset-btn:hover,
+        .preset-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .description-text {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        .live-indicator {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #28a745;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Specific demo styles */
+        .animation-demo {
+            animation-duration: 2s;
+            animation-iteration-count: infinite;
+        }
+
+        .filter-demo {
+            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23667eea"/><circle cx="25" cy="25" r="15" fill="%23ff6b6b"/><circle cx="75" cy="75" r="15" fill="%234ecdc4"/></svg>');
+            background-size: cover;
+        }
+
+        .text-demo {
+            font-family: Georgia, serif;
+            font-size: 1.5rem;
+            line-height: 1.8;
+        }
+
+        @media (max-width: 768px) {
+            .property-tabs {
+                flex-direction: column;
+            }
+            .tab-btn {
+                flex: none;
+                margin: 0.125rem 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="bi bi-code-square me-2"></i>CSS Master Playground
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="index.html"><i class="bi bi-house me-1"></i>Home</a>
+                <a class="nav-link" href="css-guide.html"><i class="bi bi-book me-1"></i>CSS Guide</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="display-6 fw-bold mb-3">CSS Properties Master Playground</h1>
+                    <p class="lead mb-0">Master ALL CSS properties with interactive examples, live demos, and instant feedback. From basics to advanced techniques.</p>
+                </div>
+                <div class="col-lg-4 text-center">
+                    <i class="bi bi-palette2 display-1 opacity-75"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="container mt-4">
+        <!-- Property Categories -->
+        <div class="property-tabs">
+            <button class="tab-btn active" onclick="switchPropertyTab('layout')">
+                <i class="bi bi-grid me-1"></i>Layout
+            </button>
+            <button class="tab-btn" onclick="switchPropertyTab('typography')">
+                <i class="bi bi-type me-1"></i>Typography
+            </button>
+            <button class="tab-btn" onclick="switchPropertyTab('colors')">
+                <i class="bi bi-palette me-1"></i>Colors
+            </button>
+            <button class="tab-btn" onclick="switchPropertyTab('sizing')">
+                <i class="bi bi-arrows-move me-1"></i>Sizing
+            </button>
+            <button class="tab-btn" onclick="switchPropertyTab('borders')">
+                <i class="bi bi-square me-1"></i>Borders
+            </button>
+            <button class="tab-btn" onclick="switchPropertyTab('effects')">
+                <i class="bi bi-stars me-1"></i>Effects
+            </button>
+            <button class="tab-btn" onclick="switchPropertyTab('animations')">
+                <i class="bi bi-arrow-repeat me-1"></i>Animations
+            </button>
+            <button class="tab-btn" onclick="switchPropertyTab('advanced')">
+                <i class="bi bi-gear me-1"></i>Advanced
+            </button>
+        </div>
+
+        <!-- Layout Properties -->
+        <div id="layout-tab" class="tab-content active">
+            <div class="property-card">
+                <div class="property-header">
+                    <h3 class="mb-0"><i class="bi bi-grid me-2"></i>Layout & Positioning</h3>
+                    <p class="mb-0 opacity-75">Control element positioning, display types, and layout behavior</p>
+                </div>
+                <div class="property-body">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <!-- Display -->
+                            <div class="control-group">
+                                <label class="control-label">Display</label>
+                                <div class="description-text">Defines how an element is displayed and participates in layout</div>
+                                <select class="form-select" id="display" onchange="updateDemo()">
+                                    <option value="block">block</option>
+                                    <option value="inline">inline</option>
+                                    <option value="inline-block">inline-block</option>
+                                    <option value="flex" selected>flex</option>
+                                    <option value="inline-flex">inline-flex</option>
+                                    <option value="grid">grid</option>
+                                    <option value="none">none</option>
+                                    <option value="table">table</option>
+                                    <option value="table-cell">table-cell</option>
+                                </select>
+                            </div>
+
+                            <!-- Position -->
+                            <div class="control-group">
+                                <label class="control-label">Position</label>
+                                <div class="description-text">Determines the positioning method for an element</div>
+                                <select class="form-select" id="position" onchange="updateDemo()">
+                                    <option value="static">static</option>
+                                    <option value="relative" selected>relative</option>
+                                    <option value="absolute">absolute</option>
+                                    <option value="fixed">fixed</option>
+                                    <option value="sticky">sticky</option>
+                                </select>
+                            </div>
+
+                            <!-- Position Offsets -->
+                            <div class="control-group" id="position-offsets">
+                                <label class="control-label">Position Offsets</label>
+                                <div class="row g-2">
+                                    <div class="col-6">
+                                        <label class="form-label small">Top: <span class="range-value" id="top-value">0px</span></label>
+                                        <input type="range" class="form-range" id="top" min="-100" max="100" value="0" oninput="updatePositionValue('top')" onchange="updateDemo()">
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label small">Left: <span class="range-value" id="left-value">0px</span></label>
+                                        <input type="range" class="form-range" id="left" min="-100" max="100" value="0" oninput="updatePositionValue('left')" onchange="updateDemo()">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Z-Index -->
+                            <div class="control-group">
+                                <label class="control-label">Z-Index: <span class="range-value" id="z-index-value">1</span></label>
+                                <div class="description-text">Controls stacking order of positioned elements</div>
+                                <input type="range" class="form-range" id="z-index" min="-10" max="10" value="1" oninput="updateRangeValue('z-index')" onchange="updateDemo()">
+                            </div>
+
+                            <!-- Float -->
+                            <div class="control-group">
+                                <label class="control-label">Float</label>
+                                <div class="description-text">Makes element float to left or right (legacy layout)</div>
+                                <select class="form-select" id="float" onchange="updateDemo()">
+                                    <option value="none" selected>none</option>
+                                    <option value="left">left</option>
+                                    <option value="right">right</option>
+                                </select>
+                            </div>
+
+                            <!-- Clear -->
+                            <div class="control-group">
+                                <label class="control-label">Clear</label>
+                                <div class="description-text">Prevents element from wrapping around floated elements</div>
+                                <select class="form-select" id="clear" onchange="updateDemo()">
+                                    <option value="none" selected>none</option>
+                                    <option value="left">left</option>
+                                    <option value="right">right</option>
+                                    <option value="both">both</option>
+                                </select>
+                            </div>
+
+                            <!-- Overflow -->
+                            <div class="control-group">
+                                <label class="control-label">Overflow</label>
+                                <div class="description-text">Controls what happens when content overflows container</div>
+                                <select class="form-select" id="overflow" onchange="updateDemo()">
+                                    <option value="visible" selected>visible</option>
+                                    <option value="hidden">hidden</option>
+                                    <option value="scroll">scroll</option>
+                                    <option value="auto">auto</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <!-- Demo Area -->
+                            <h5>Live Demo</h5>
+                            <div class="demo-container" id="demo-container">
+                                <div class="live-indicator">LIVE</div>
+                                <div class="demo-element" id="demo-element">CSS Demo</div>
+                            </div>
+                            
+                            <!-- Quick Presets -->
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Quick Presets:</label>
+                                <div>
+                                    <button class="preset-btn" onclick="applyLayoutPreset('centered')">Centered</button>
+                                    <button class="preset-btn" onclick="applyLayoutPreset('fixed-header')">Fixed Header</button>
+                                    <button class="preset-btn" onclick="applyLayoutPreset('sticky-nav')">Sticky Nav</button>
+                                    <button class="preset-btn" onclick="applyLayoutPreset('floating')">Floating</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Generated CSS -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h5>Generated CSS</h5>
+                            <div class="position-relative">
+                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                                <div class="code-output" id="layout-css-output">/* CSS will be generated here */</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Typography Properties -->
+        <div id="typography-tab" class="tab-content">
+            <div class="property-card">
+                <div class="property-header">
+                    <h3 class="mb-0"><i class="bi bi-type me-2"></i>Typography Properties</h3>
+                    <p class="mb-0 opacity-75">Control text appearance, fonts, spacing, and text effects</p>
+                </div>
+                <div class="property-body">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <!-- Font Family -->
+                            <div class="control-group">
+                                <label class="control-label">Font Family</label>
+                                <div class="description-text">Sets the typeface for text</div>
+                                <select class="form-select" id="font-family" onchange="updateTypographyDemo()">
+                                    <option value="Arial, sans-serif">Arial (Sans-serif)</option>
+                                    <option value="Georgia, serif" selected>Georgia (Serif)</option>
+                                    <option value="'Courier New', monospace">Courier New (Monospace)</option>
+                                    <option value="'Times New Roman', serif">Times New Roman</option>
+                                    <option value="Helvetica, sans-serif">Helvetica</option>
+                                    <option value="Verdana, sans-serif">Verdana</option>
+                                    <option value="system-ui, sans-serif">System UI</option>
+                                </select>
+                            </div>
+
+                            <!-- Font Size -->
+                            <div class="control-group">
+                                <label class="control-label">Font Size: <span class="range-value" id="font-size-value">24px</span></label>
+                                <div class="description-text">Controls the size of text</div>
+                                <input type="range" class="form-range" id="font-size" min="8" max="72" value="24" oninput="updateRangeValue('font-size', 'px')" onchange="updateTypographyDemo()">
+                            </div>
+
+                            <!-- Font Weight -->
+                            <div class="control-group">
+                                <label class="control-label">Font Weight</label>
+                                <div class="description-text">Controls the thickness/boldness of text</div>
+                                <select class="form-select" id="font-weight" onchange="updateTypographyDemo()">
+                                    <option value="100">100 - Thin</option>
+                                    <option value="200">200 - Extra Light</option>
+                                    <option value="300">300 - Light</option>
+                                    <option value="400" selected>400 - Normal</option>
+                                    <option value="500">500 - Medium</option>
+                                    <option value="600">600 - Semi Bold</option>
+                                    <option value="700">700 - Bold</option>
+                                    <option value="800">800 - Extra Bold</option>
+                                    <option value="900">900 - Black</option>
+                                </select>
+                            </div>
+
+                            <!-- Line Height -->
+                            <div class="control-group">
+                                <label class="control-label">Line Height: <span class="range-value" id="line-height-value">1.5</span></label>
+                                <div class="description-text">Controls the space between lines of text</div>
+                                <input type="range" class="form-range" id="line-height" min="0.8" max="3" step="0.1" value="1.5" oninput="updateRangeValue('line-height')" onchange="updateTypographyDemo()">
+                            </div>
+
+                            <!-- Letter Spacing -->
+                            <div class="control-group">
+                                <label class="control-label">Letter Spacing: <span class="range-value" id="letter-spacing-value">0px</span></label>
+                                <div class="description-text">Controls space between characters</div>
+                                <input type="range" class="form-range" id="letter-spacing" min="-2" max="10" step="0.5" value="0" oninput="updateRangeValue('letter-spacing', 'px')" onchange="updateTypographyDemo()">
+                            </div>
+
+                            <!-- Word Spacing -->
+                            <div class="control-group">
+                                <label class="control-label">Word Spacing: <span class="range-value" id="word-spacing-value">0px</span></label>
+                                <div class="description-text">Controls space between words</div>
+                                <input type="range" class="form-range" id="word-spacing" min="-5" max="20" step="1" value="0" oninput="updateRangeValue('word-spacing', 'px')" onchange="updateTypographyDemo()">
+                            </div>
+
+                            <!-- Text Transform -->
+                            <div class="control-group">
+                                <label class="control-label">Text Transform</label>
+                                <div class="description-text">Controls text capitalization</div>
+                                <select class="form-select" id="text-transform" onchange="updateTypographyDemo()">
+                                    <option value="none" selected>none</option>
+                                    <option value="uppercase">uppercase</option>
+                                    <option value="lowercase">lowercase</option>
+                                    <option value="capitalize">capitalize</option>
+                                </select>
+                            </div>
+
+                            <!-- Text Decoration -->
+                            <div class="control-group">
+                                <label class="control-label">Text Decoration</label>
+                                <div class="description-text">Adds decorative lines to text</div>
+                                <select class="form-select" id="text-decoration" onchange="updateTypographyDemo()">
+                                    <option value="none" selected>none</option>
+                                    <option value="underline">underline</option>
+                                    <option value="overline">overline</option>
+                                    <option value="line-through">line-through</option>
+                                    <option value="underline overline">underline overline</option>
+                                </select>
+                            </div>
+
+                            <!-- Text Align -->
+                            <div class="control-group">
+                                <label class="control-label">Text Align</label>
+                                <div class="description-text">Controls horizontal text alignment</div>
+                                <select class="form-select" id="text-align" onchange="updateTypographyDemo()">
+                                    <option value="left">left</option>
+                                    <option value="center" selected>center</option>
+                                    <option value="right">right</option>
+                                    <option value="justify">justify</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <h5>Live Demo</h5>
+                            <div class="demo-container" id="typo-demo-container">
+                                <div class="demo-text text-demo" id="typo-demo-element">
+                                    The quick brown fox jumps over the lazy dog. This text demonstrates various typography properties including font family, size, weight, spacing, and text effects in action.
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Typography Presets:</label>
+                                <div>
+                                    <button class="preset-btn" onclick="applyTypographyPreset('heading')">Heading</button>
+                                    <button class="preset-btn" onclick="applyTypographyPreset('body')">Body Text</button>
+                                    <button class="preset-btn" onclick="applyTypographyPreset('caption')">Caption</button>
+                                    <button class="preset-btn" onclick="applyTypographyPreset('code')">Code</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h5>Generated CSS</h5>
+                            <div class="position-relative">
+                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                                <div class="code-output" id="typo-css-output">/* CSS will be generated here */</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Continue with other tabs... -->
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            updateDemo();
+            updateTypographyDemo();
+        });
+
+        // Tab switching
+        function switchPropertyTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            const targetTab = document.getElementById(tabName + '-tab');
+            if (targetTab) {
+                targetTab.classList.add('active');
+            }
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+        }
+
+        // Update range value displays
+        function updateRangeValue(id, unit = '') {
+            const element = document.getElementById(id);
+            const valueElement = document.getElementById(id + '-value');
+            if (element && valueElement) {
+                valueElement.textContent = element.value + unit;
+            }
+        }
+
+        function updatePositionValue(property) {
+            updateRangeValue(property, 'px');
+        }
+
+        // Layout Demo Functions
+        function updateDemo() {
+            const element = document.getElementById('demo-element');
+            const container = document.getElementById('demo-container');
+            
+            const display = document.getElementById('display').value;
+            const position = document.getElementById('position').value;
+            const top = document.getElementById('top').value + 'px';
+            const left = document.getElementById('left').value + 'px';
+            const zIndex = document.getElementById('z-index').value;
+            const float = document.getElementById('float').value;
+            const clear = document.getElementById('clear').value;
+            const overflow = document.getElementById('overflow').value;
+
+            // Apply styles
+            element.style.display = display;
+            element.style.position = position;
+            element.style.top = top;
+            element.style.left = left;
+            element.style.zIndex = zIndex;
+            element.style.float = float;
+            element.style.clear = clear;
+            container.style.overflow = overflow;
+            
+            generateLayoutCSS();
+        }
+
+        function generateLayoutCSS() {
+            const display = document.getElementById('display').value;
+            const position = document.getElementById('position').value;
+            const top = document.getElementById('top').value;
+            const left = document.getElementById('left').value;
+            const zIndex = document.getElementById('z-index').value;
+            const float = document.getElementById('float').value;
+            const clear = document.getElementById('clear').value;
+            const overflow = document.getElementById('overflow').value;
+
+            let css = `<span class="css-selector">.element</span> {\n`;
+            css += `  <span class="css-property">display</span>: <span class="css-value">${display}</span>;\n`;
+            css += `  <span class="css-property">position</span>: <span class="css-value">${position}</span>;\n`;
+            
+            if (position !== 'static') {
+                if (top !== '0') css += `  <span class="css-property">top</span>: <span class="css-value">${top}px</span>;\n`;
+                if (left !== '0') css += `  <span class="css-property">left</span>: <span class="css-value">${left}px</span>;\n`;
+                if (zIndex !== '1') css += `  <span class="css-property">z-index</span>: <span class="css-value">${zIndex}</span>;\n`;
+            }
+            
+            if (float !== 'none') css += `  <span class="css-property">float</span>: <span class="css-value">${float}</span>;\n`;
+            if (clear !== 'none') css += `  <span class="css-property">clear</span>: <span class="css-value">${clear}</span>;\n`;
+            if (overflow !== 'visible') css += `  <span class="css-property">overflow</span>: <span class="css-value">${overflow}</span>;\n`;
+            
+            css += `}`;
+
+            document.getElementById('layout-css-output').innerHTML = css;
+        }
+
+        // Typography Demo Functions
+        function updateTypographyDemo() {
+            const element = document.getElementById('typo-demo-element');
+            
+            const fontFamily = document.getElementById('font-family').value;
+            const fontSize = document.getElementById('font-size').value + 'px';
+            const fontWeight = document.getElementById('font-weight').value;
+            const lineHeight = document.getElementById('line-height').value;
+            const letterSpacing = document.getElementById('letter-spacing').value + 'px';
+            const wordSpacing = document.getElementById('word-spacing').value + 'px';
+            const textTransform = document.getElementById('text-transform').value;
+            const textDecoration = document.getElementById('text-decoration').value;
+            const textAlign = document.getElementById('text-align').value;
+
+            // Apply styles
+            element.style.fontFamily = fontFamily;
+            element.style.fontSize = fontSize;
+            element.style.fontWeight = fontWeight;
+            element.style.lineHeight = lineHeight;
+            element.style.letterSpacing = letterSpacing;
+            element.style.wordSpacing = wordSpacing;
+            element.style.textTransform = textTransform;
+            element.style.textDecoration = textDecoration;
+            element.style.textAlign = textAlign;
+
+            generateTypographyCSS();
+        }
+
+        function generateTypographyCSS() {
+            const fontFamily = document.getElementById('font-family').value;
+            const fontSize = document.getElementById('font-size').value;
+            const fontWeight = document.getElementById('font-weight').value;
+            const lineHeight = document.getElementById('line-height').value;
+            const letterSpacing = document.getElementById('letter-spacing').value;
+            const wordSpacing = document.getElementById('word-spacing').value;
+            const textTransform = document.getElementById('text-transform').value;
+            const textDecoration = document.getElementById('text-decoration').value;
+            const textAlign = document.getElementById('text-align').value;
+
+            let css = `<span class="css-selector">.text-element</span> {\n`;
+            css += `  <span class="css-property">font-family</span>: <span class="css-value">${fontFamily}</span>;\n`;
+            css += `  <span class="css-property">font-size</span>: <span class="css-value">${fontSize}px</span>;\n`;
+            css += `  <span class="css-property">font-weight</span>: <span class="css-value">${fontWeight}</span>;\n`;
+            css += `  <span class="css-property">line-height</span>: <span class="css-value">${lineHeight}</span>;\n`;
+            css += `  <span class="css-property">text-align</span>: <span class="css-value">${textAlign}</span>;\n`;
+            
+            if (letterSpacing !== '0') css += `  <span class="css-property">letter-spacing</span>: <span class="css-value">${letterSpacing}px</span>;\n`;
+            if (wordSpacing !== '0') css += `  <span class="css-property">word-spacing</span>: <span class="css-value">${wordSpacing}px</span>;\n`;
+            if (textTransform !== 'none') css += `  <span class="css-property">text-transform</span>: <span class="css-value">${textTransform}</span>;\n`;
+            if (textDecoration !== 'none') css += `  <span class="css-property">text-decoration</span>: <span class="css-value">${textDecoration}</span>;\n`;
+            
+            css += `}`;
+
+            document.getElementById('typo-css-output').innerHTML = css;
+        }
+
+        // Preset functions
+        function applyLayoutPreset(preset) {
+            switch(preset) {
+                case 'centered':
+                    document.getElementById('position').value = 'absolute';
+                    document.getElementById('top').value = '50';
+                    document.getElementById('left').value = '50';
+                    updateRangeValue('top', 'px');
+                    updateRangeValue('left', 'px');
+                    document.getElementById('demo-element').style.transform = 'translate(-50%, -50%)';
+                    break;
+                case 'fixed-header':
+                    document.getElementById('position').value = 'fixed';
+                    document.getElementById('top').value = '0';
+                    document.getElementById('left').value = '0';
+                    updateRangeValue('top', 'px');
+                    updateRangeValue('left', 'px');
+                    break;
+                case 'sticky-nav':
+                    document.getElementById('position').value = 'sticky';
+                    document.getElementById('top').value = '0';
+                    updateRangeValue('top', 'px');
+                    break;
+                case 'floating':
+                    document.getElementById('position').value = 'relative';
+                    document.getElementById('float').value = 'right';
+                    break;
+            }
+            updateDemo();
+        }
+
+        function applyTypographyPreset(preset) {
+            switch(preset) {
+                case 'heading':
+                    document.getElementById('font-size').value = '36';
+                    document.getElementById('font-weight').value = '700';
+                    document.getElementById('line-height').value = '1.2';
+                    document.getElementById('font-family').value = 'Arial, sans-serif';
+                    break;
+                case 'body':
+                    document.getElementById('font-size').value = '16';
+                    document.getElementById('font-weight').value = '400';
+                    document.getElementById('line-height').value = '1.6';
+                    document.getElementById('font-family').value = 'Georgia, serif';
+                    break;
+                case 'caption':
+                    document.getElementById('font-size').value = '12';
+                    document.getElementById('font-weight').value = '400';
+                    document.getElementById('line-height').value = '1.4';
+                    document.getElementById('text-transform').value = 'uppercase';
+                    document.getElementById('letter-spacing').value = '1';
+                    break;
+                case 'code':
+                    document.getElementById('font-family').value = "'Courier New', monospace";
+                    document.getElementById('font-size').value = '14';
+                    document.getElementById('font-weight').value = '400';
+                    document.getElementById('line-height').value = '1.5';
+                    break;
+            }
+            updateRangeValue('font-size', 'px');
+            updateRangeValue('letter-spacing', 'px');
+            updateTypographyDemo();
+        }
+
+        // Copy functionality
+        function copyCode(button) {
+            const codeBlock = button.nextElementSibling.textContent;
+            
+            navigator.clipboard.writeText(codeBlock).then(() => {
+                const originalText = button.innerHTML;
+                button.classList.add('copied');
+                button.innerHTML = '<i class="bi bi-check me-1"></i>Copied!';
+                
+                setTimeout(() => {
+                    button.classList.remove('copied');
+                    button.innerHTML = originalText;
+                }, 2000);
+            }).catch(() => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = codeBlock;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                button.innerHTML = '<i class="bi bi-check me-1"></i>Copied!';
+                setTimeout(() => {
+                    button.innerHTML = 'Copy';
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>

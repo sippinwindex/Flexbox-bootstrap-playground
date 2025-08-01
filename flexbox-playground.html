@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flexbox Interactive Playground</title>
+    <title>Flexbox Master Playground - Complete Edition</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
@@ -12,16 +12,26 @@
         :root {
             --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             --success-gradient: linear-gradient(135deg, #28a745, #20c997);
+            --warning-gradient: linear-gradient(135deg, #ffc107, #ff8c00);
+            --info-gradient: linear-gradient(135deg, #17a2b8, #20c997);
             --bg-light: #f8f9fa;
             --border-color: #dee2e6;
             --text-muted: #6c757d;
             --shadow-sm: 0 2px 8px rgba(0,0,0,0.1);
             --shadow-md: 0 4px 15px rgba(0,0,0,0.15);
+            --shadow-lg: 0 8px 25px rgba(0,0,0,0.2);
         }
 
         body {
             background: var(--bg-light);
             font-family: system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+        }
+
+        .hero-section {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 2rem 0;
         }
 
         .playground-container {
@@ -29,14 +39,40 @@
             border-radius: 12px;
             box-shadow: var(--shadow-md);
             overflow: hidden;
+            margin-bottom: 1.5rem;
         }
+
+        .playground-header {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 1rem 1.5rem;
+            position: relative;
+        }
+
+        .playground-header.success { background: var(--success-gradient); }
+        .playground-header.warning { background: var(--warning-gradient); }
+        .playground-header.info { background: var(--info-gradient); }
 
         .controls-panel {
             background: #f8f9fa;
             border-right: 1px solid var(--border-color);
-            max-height: 90vh;
+            max-height: 85vh;
             overflow-y: auto;
-            padding: 20px;
+            scrollbar-width: thin;
+            scrollbar-color: #667eea #f1f1f1;
+        }
+
+        .controls-panel::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .controls-panel::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .controls-panel::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 3px;
         }
 
         .control-group {
@@ -45,6 +81,12 @@
             box-shadow: var(--shadow-sm);
             margin-bottom: 1rem;
             overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .control-group:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
         }
 
         .control-group h6 {
@@ -53,6 +95,54 @@
             margin: 0;
             padding: 0.75rem 1rem;
             font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .control-body {
+            padding: 1rem;
+        }
+
+        .property-tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 0.25rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+        }
+
+        .tab-btn {
+            flex: 1;
+            min-width: 100px;
+            padding: 0.75rem;
+            border: none;
+            background: transparent;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+
+        .tab-btn.active {
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            color: #667eea;
+        }
+
+        .tab-btn:hover:not(.active) {
+            background: rgba(255,255,255,0.7);
+            color: #495057;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
         }
 
         .flex-container {
@@ -64,6 +154,7 @@
             display: flex;
             position: relative;
             transition: all 0.3s ease;
+            overflow: hidden;
         }
 
         .flex-container::before {
@@ -78,6 +169,12 @@
             font-size: 0.8rem;
             font-weight: 600;
             text-transform: uppercase;
+            z-index: 10;
+        }
+
+        .flex-container.has-content {
+            border-style: solid;
+            border-color: #28a745;
         }
 
         .flex-item {
@@ -93,11 +190,20 @@
             align-items: center;
             justify-content: center;
             transition: all 0.3s ease;
+            position: relative;
+            cursor: pointer;
+            user-select: none;
         }
 
         .flex-item:hover {
             transform: translateY(-3px);
-            box-shadow: var(--shadow-md);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .flex-item.selected {
+            outline: 3px solid #ffc107;
+            outline-offset: 2px;
+            transform: scale(1.05);
         }
 
         .flex-item:nth-child(1) { background: linear-gradient(135deg, #ff6b6b, #ee5a52); }
@@ -105,7 +211,29 @@
         .flex-item:nth-child(3) { background: linear-gradient(135deg, #45b7d1, #96c93d); }
         .flex-item:nth-child(4) { background: linear-gradient(135deg, #f9ca24, #f0932b); }
         .flex-item:nth-child(5) { background: linear-gradient(135deg, #6c5ce7, #a29bfe); }
-        .flex-item:nth-child(n+6) { background: linear-gradient(135deg, #fd79a8, #fdcb6e); }
+        .flex-item:nth-child(6) { background: linear-gradient(135deg, #fd79a8, #fdcb6e); }
+        .flex-item:nth-child(7) { background: linear-gradient(135deg, #00b894, #00cec9); }
+        .flex-item:nth-child(8) { background: linear-gradient(135deg, #e84393, #fd79a8); }
+
+        .item-controls {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            background: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-md);
+        }
+
+        .flex-item:hover .item-controls {
+            opacity: 1;
+        }
 
         .code-output {
             background: #1a1a1a;
@@ -134,6 +262,7 @@
             cursor: pointer;
             opacity: 0.8;
             transition: all 0.2s;
+            z-index: 10;
         }
 
         .copy-btn:hover {
@@ -149,71 +278,9 @@
             font-weight: 600;
             color: #667eea;
             font-size: 0.9rem;
-        }
-
-        .btn-action {
-            border-radius: 25px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-
-        .btn-action:hover {
-            transform: translateY(-2px);
-        }
-
-        .demo-section {
-            background: linear-gradient(135deg, rgba(248, 249, 250, 0.8), rgba(233, 236, 239, 0.8));
-            border-radius: 12px;
-            padding: 20px;
-            margin-top: 20px;
-            border: 1px solid var(--border-color);
-        }
-
-        .demo-container {
-            background: white;
-            border: 2px dashed #28a745;
-            border-radius: 8px;
-            padding: 20px;
-            min-height: 200px;
-            display: flex;
-            position: relative;
-        }
-
-        .demo-container::before {
-            content: 'Demo Container';
-            position: absolute;
-            top: -12px;
-            left: 20px;
-            background: #28a745;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .demo-item {
-            background: white;
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            padding: 15px;
-            margin: 5px;
+            min-width: 3rem;
+            display: inline-block;
             text-align: center;
-            transition: all 0.3s ease;
-            cursor: move;
-            user-select: none;
-        }
-
-        .demo-item:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-md);
-            border-color: #667eea;
-        }
-
-        .demo-item.dragging {
-            opacity: 0.5;
-            transform: rotate(5deg);
         }
 
         .live-indicator {
@@ -234,23 +301,274 @@
             50% { opacity: 0.7; }
         }
 
-        .css-property { color: #4CAF50; font-weight: 500; }
-        .css-value { color: #FFA726; }
-        .css-selector { color: #42A5F5; font-weight: 500; }
+        /* CSS Syntax Highlighting */
+        .css-property { color: #79b6f2; font-weight: 500; }
+        .css-value { color: #90ee90; }
+        .css-selector { color: #ffd700; font-weight: 500; }
+        .css-comment { color: #9ca3af; font-style: italic; }
+
+        .preset-btn {
+            padding: 0.375rem 0.75rem;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0.25rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .preset-btn:hover,
+        .preset-btn.active {
+            background: #667eea;
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        .real-world-demo {
+            background: white;
+            border: 2px dashed #28a745;
+            border-radius: 8px;
+            padding: 20px;
+            min-height: 200px;
+            display: flex;
+            position: relative;
+            margin: 1rem 0;
+        }
+
+        .real-world-demo::before {
+            content: 'Real-World Example';
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background: #28a745;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .example-card {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 0.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            flex: 1;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .example-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .axis-indicator {
+            position: absolute;
+            font-size: 0.8rem;
+            color: #6c757d;
+            font-weight: 500;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .main-axis-indicator {
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(220, 53, 69, 0.9);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+        }
+
+        .cross-axis-indicator {
+            top: 10px;
+            right: 50px;
+            background: rgba(23, 162, 184, 0.9);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+        }
+
+        .visual-guide {
+            position: absolute;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .main-axis-line {
+            border-top: 2px dashed #dc3545;
+            width: 80%;
+            top: 50%;
+            left: 10%;
+            opacity: 0.7;
+        }
+
+        .cross-axis-line {
+            border-left: 2px dashed #17a2b8;
+            height: 80%;
+            left: 50%;
+            top: 10%;
+            opacity: 0.7;
+        }
+
+        .description-text {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+            line-height: 1.4;
+        }
+
+        .learning-tip {
+            background: linear-gradient(135deg, #e7f3ff, #cce7ff);
+            border-left: 4px solid #0066cc;
+            padding: 0.75rem;
+            margin: 1rem 0;
+            border-radius: 0 6px 6px 0;
+            font-size: 0.9rem;
+            position: relative;
+        }
+
+        .learning-tip::before {
+            content: '💡';
+            position: absolute;
+            left: -2px;
+            top: -2px;
+            font-size: 1.2rem;
+        }
+
+        .challenge-card {
+            background: linear-gradient(135deg, #fff3cd, #ffeeba);
+            border: 1px solid #ffc107;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 0.5rem 0;
+        }
+
+        .challenge-status {
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .challenge-status.completed { background: #d4edda; color: #155724; }
+        .challenge-status.active { background: #fff3cd; color: #856404; }
+        .challenge-status.locked { background: #f8d7da; color: #721c24; }
+
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1050;
+        }
+
+        .toast-custom {
+            background: white;
+            border-radius: 8px;
+            box-shadow: var(--shadow-lg);
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            display: none;
+            min-width: 300px;
+        }
+
+        .toast-custom.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .example-selector {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .example-btn {
+            background: white;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            padding: 0.75rem;
+            margin: 0.25rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-size: 0.85rem;
+        }
+
+        .example-btn:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+            transform: translateY(-2px);
+        }
+
+        .example-btn.active {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
 
         @media (max-width: 768px) {
-            .playground-layout {
+            .property-tabs {
                 flex-direction: column;
+            }
+            .tab-btn {
+                flex: none;
+                margin: 0.125rem 0;
             }
             .controls-panel {
                 max-height: none;
-                border-right: none;
-                border-bottom: 1px solid var(--border-color);
+                margin-bottom: 1rem;
             }
         }
     </style>
 </head>
 <body>
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="display-6 fw-bold mb-3">
+                        <i class="bi bi-grid-3x3 me-3"></i>Flexbox Master Playground
+                    </h1>
+                    <p class="lead mb-0">Master CSS Flexbox with interactive controls, real-time demos, visual guides, and hands-on challenges. Learn through experimentation!</p>
+                </div>
+                <div class="col-lg-4 text-center">
+                    <div class="d-flex justify-content-center align-items-center" style="height: 120px;">
+                        <div class="d-flex flex-column align-items-center">
+                            <div class="d-flex gap-2 mb-2">
+                                <div style="width: 20px; height: 20px; background: #ff6b6b; border-radius: 4px;"></div>
+                                <div style="width: 20px; height: 20px; background: #4ecdc4; border-radius: 4px;"></div>
+                                <div style="width: 20px; height: 20px; background: #45b7d1; border-radius: 4px;"></div>
+                            </div>
+                            <small class="opacity-75">Interactive Flexbox</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
@@ -258,8 +576,11 @@
                 <i class="bi bi-arrow-left me-2"></i>Flexbox Playground
             </a>
             <div class="navbar-nav ms-auto">
-                <a class="nav-link" href="flexbox-guide.html">
-                    <i class="bi bi-book me-1"></i>Documentation
+                <a class="nav-link" href="css-playground.html">
+                    <i class="bi bi-palette me-1"></i>CSS Properties
+                </a>
+                <a class="nav-link" href="bootstrap-playground.html">
+                    <i class="bi bi-bootstrap me-1"></i>Bootstrap
                 </a>
                 <a class="nav-link" href="index.html">
                     <i class="bi bi-house me-1"></i>Home
@@ -269,39 +590,73 @@
     </nav>
 
     <div class="container-fluid p-3">
-        <div class="row playground-layout">
+        <!-- Property Categories -->
+        <div class="property-tabs">
+            <button class="tab-btn active" onclick="switchTab('container')">
+                <i class="bi bi-box me-1"></i>Container Props
+            </button>
+            <button class="tab-btn" onclick="switchTab('items')">
+                <i class="bi bi-square me-1"></i>Item Props
+            </button>
+            <button class="tab-btn" onclick="switchTab('examples')">
+                <i class="bi bi-grid me-1"></i>Real Examples
+            </button>
+            <button class="tab-btn" onclick="switchTab('challenges')">
+                <i class="bi bi-trophy me-1"></i>Challenges
+            </button>
+            <button class="tab-btn" onclick="switchTab('cheatsheet')">
+                <i class="bi bi-book me-1"></i>Cheat Sheet
+            </button>
+        </div>
+
+        <div class="row">
             <!-- Controls Panel -->
             <div class="col-lg-3">
-                <div class="controls-panel">
-                    <h5 class="text-center mb-4">
-                        <i class="bi bi-sliders me-2"></i>Flexbox Controls
-                    </h5>
+                <div class="controls-panel p-3">
+                    <!-- Container Properties Tab -->
+                    <div id="container-tab" class="tab-content active">
+                        <h5 class="text-center mb-3">
+                            <i class="bi bi-sliders me-2"></i>Flex Container Properties
+                        </h5>
 
-                    <!-- Container Properties -->
-                    <div class="control-group">
-                        <h6><i class="bi bi-box me-2"></i>Container Properties</h6>
-                        <div class="p-3">
-                            <div class="mb-3">
-                                <label class="form-label">Display:</label>
+                        <!-- Display -->
+                        <div class="control-group">
+                            <h6><i class="bi bi-eye me-2"></i>Display</h6>
+                            <div class="control-body">
+                                <div class="description-text">Enables flexbox layout for the container</div>
                                 <select class="form-select form-select-sm" id="display" onchange="updateContainer()">
                                     <option value="block">Block</option>
                                     <option value="flex" selected>Flex</option>
                                     <option value="inline-flex">Inline Flex</option>
                                 </select>
+                                <div class="learning-tip mt-2">
+                                    <strong>Key:</strong> <code>display: flex</code> is what makes flexbox work!
+                                </div>
                             </div>
+                        </div>
 
-                            <div class="mb-3">
-                                <label class="form-label">Flex Direction:</label>
+                        <!-- Flex Direction -->
+                        <div class="control-group">
+                            <h6><i class="bi bi-arrow-right me-2"></i>Flex Direction</h6>
+                            <div class="control-body">
+                                <div class="description-text">Sets the main axis direction for flex items</div>
                                 <select class="form-select form-select-sm" id="flex-direction" onchange="updateContainer()">
-                                    <option value="row" selected>Row</option>
-                                    <option value="row-reverse">Row Reverse</option>
-                                    <option value="column">Column</option>
-                                    <option value="column-reverse">Column Reverse</option>
+                                    <option value="row" selected>Row →</option>
+                                    <option value="row-reverse">Row Reverse ←</option>
+                                    <option value="column">Column ↓</option>
+                                    <option value="column-reverse">Column Reverse ↑</option>
                                 </select>
+                                <div class="learning-tip mt-2">
+                                    <strong>Remember:</strong> This defines your main axis. Items flow along this direction.
+                                </div>
                             </div>
+                        </div>
 
-                            <div class="mb-3">
-                                <label class="form-label">Justify Content:</label>
+                        <!-- Justify Content -->
+                        <div class="control-group">
+                            <h6><i class="bi bi-distribute-horizontal me-2"></i>Justify Content</h6>
+                            <div class="control-body">
+                                <div class="description-text">Controls alignment along the main axis</div>
                                 <select class="form-select form-select-sm" id="justify-content" onchange="updateContainer()">
                                     <option value="flex-start" selected>Flex Start</option>
                                     <option value="center">Center</option>
@@ -310,10 +665,17 @@
                                     <option value="space-around">Space Around</option>
                                     <option value="space-evenly">Space Evenly</option>
                                 </select>
+                                <div class="learning-tip mt-2">
+                                    <strong>Popular:</strong> <code>center</code> and <code>space-between</code> are most commonly used.
+                                </div>
                             </div>
+                        </div>
 
-                            <div class="mb-3">
-                                <label class="form-label">Align Items:</label>
+                        <!-- Align Items -->
+                        <div class="control-group">
+                            <h6><i class="bi bi-distribute-vertical me-2"></i>Align Items</h6>
+                            <div class="control-body">
+                                <div class="description-text">Controls alignment along the cross axis</div>
                                 <select class="form-select form-select-sm" id="align-items" onchange="updateContainer()">
                                     <option value="stretch" selected>Stretch</option>
                                     <option value="flex-start">Flex Start</option>
@@ -321,95 +683,512 @@
                                     <option value="flex-end">Flex End</option>
                                     <option value="baseline">Baseline</option>
                                 </select>
+                                <div class="learning-tip mt-2">
+                                    <strong>Tip:</strong> Use <code>center</code> to vertically center items easily!
+                                </div>
                             </div>
+                        </div>
 
-                            <div class="mb-3">
-                                <label class="form-label">Flex Wrap:</label>
+                        <!-- Flex Wrap -->
+                        <div class="control-group">
+                            <h6><i class="bi bi-arrow-down-up me-2"></i>Flex Wrap</h6>
+                            <div class="control-body">
+                                <div class="description-text">Controls whether items wrap to new lines</div>
                                 <select class="form-select form-select-sm" id="flex-wrap" onchange="updateContainer()">
                                     <option value="nowrap" selected>No Wrap</option>
                                     <option value="wrap">Wrap</option>
                                     <option value="wrap-reverse">Wrap Reverse</option>
                                 </select>
+                                <div class="learning-tip mt-2">
+                                    <strong>Responsive:</strong> Use <code>wrap</code> for responsive layouts!
+                                </div>
                             </div>
+                        </div>
 
-                            <div class="mb-3">
-                                <label class="form-label">Gap: <span class="range-value" id="gap-value">10px</span></label>
-                                <input type="range" class="form-range" id="gap" min="0" max="50" value="10" oninput="updateGap()" onchange="updateContainer()">
+                        <!-- Align Content -->
+                        <div class="control-group">
+                            <h6><i class="bi bi-arrows-vertical me-2"></i>Align Content</h6>
+                            <div class="control-body">
+                                <div class="description-text">Aligns wrapped lines (only works with wrap)</div>
+                                <select class="form-select form-select-sm" id="align-content" onchange="updateContainer()">
+                                    <option value="stretch" selected>Stretch</option>
+                                    <option value="flex-start">Flex Start</option>
+                                    <option value="center">Center</option>
+                                    <option value="flex-end">Flex End</option>
+                                    <option value="space-between">Space Between</option>
+                                    <option value="space-around">Space Around</option>
+                                    <option value="space-evenly">Space Evenly</option>
+                                </select>
+                                <div class="learning-tip mt-2">
+                                    <strong>Note:</strong> Only visible when <code>flex-wrap: wrap</code> is set.
+                                </div>
                             </div>
+                        </div>
 
-                            <div class="mb-3">
-                                <label class="form-label">Height: <span class="range-value" id="height-value">400px</span></label>
-                                <input type="range" class="form-range" id="container-height" min="200" max="800" value="400" oninput="updateHeight()" onchange="updateContainer()">
+                        <!-- Gap -->
+                        <div class="control-group">
+                            <h6><i class="bi bi-plus-square me-2"></i>Gap</h6>
+                            <div class="control-body">
+                                <div class="description-text">Modern CSS property for spacing between items</div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <input type="range" class="form-range flex-grow-1" id="gap" min="0" max="50" value="10" oninput="updateGap()" onchange="updateContainer()">
+                                    <span class="range-value" id="gap-value">10px</span>
+                                </div>
+                                <div class="learning-tip mt-2">
+                                    <strong>Modern:</strong> Much cleaner than using margins!
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Container Height -->
+                        <div class="control-group">
+                            <h6><i class="bi bi-aspect-ratio me-2"></i>Container Height</h6>
+                            <div class="control-body">
+                                <div class="description-text">Adjust container height to see alignment effects</div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <input type="range" class="form-range flex-grow-1" id="container-height" min="200" max="600" value="400" oninput="updateHeight()" onchange="updateContainer()">
+                                    <span class="range-value" id="height-value">400px</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quick Container Presets -->
+                        <div class="control-group">
+                            <h6><i class="bi bi-lightning me-2"></i>Quick Container Presets</h6>
+                            <div class="control-body">
+                                <div class="description-text">Common flexbox patterns for quick setup</div>
+                                <button class="preset-btn w-100 mb-2" onclick="applyContainerPreset('center-all')">
+                                    <i class="bi bi-bullseye me-1"></i>Perfect Center
+                                </button>
+                                <button class="preset-btn w-100 mb-2" onclick="applyContainerPreset('space-between')">
+                                    <i class="bi bi-distribute-horizontal me-1"></i>Space Between
+                                </button>
+                                <button class="preset-btn w-100 mb-2" onclick="applyContainerPreset('column-center')">
+                                    <i class="bi bi-distribute-vertical me-1"></i>Column Center
+                                </button>
+                                <button class="preset-btn w-100 mb-2" onclick="applyContainerPreset('wrap-grid')">
+                                    <i class="bi bi-grid me-1"></i>Responsive Grid
+                                </button>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Item Controls -->
-                    <div class="control-group">
-                        <h6><i class="bi bi-square me-2"></i>Item Controls</h6>
-                        <div class="p-3">
-                            <div class="mb-3">
-                                <label class="form-label">Select Item:</label>
-                                <select class="form-select form-select-sm" id="selected-item" onchange="updateItemControls()">
+                    <!-- Item Properties Tab -->
+                    <div id="items-tab" class="tab-content">
+                        <h5 class="text-center mb-3">
+                            <i class="bi bi-square me-2"></i>Flex Item Properties
+                        </h5>
+
+                        <!-- Item Selection -->
+                        <div class="control-group">
+                            <h6><i class="bi bi-cursor me-2"></i>Select Item</h6>
+                            <div class="control-body">
+                                <div class="description-text">Click an item above or select here to modify its properties</div>
+                                <select class="form-select form-select-sm" id="selected-item" onchange="selectItemFromDropdown()">
                                     <option value="1">Item 1</option>
                                     <option value="2">Item 2</option>
                                     <option value="3">Item 3</option>
                                 </select>
+                                <div class="text-center mt-2">
+                                    <small class="text-muted">Selected item: <span class="fw-bold text-primary" id="selected-indicator">Item 1</span></small>
+                                </div>
                             </div>
+                        </div>
 
-                            <div class="mb-3">
-                                <label class="form-label">Flex Grow: <span class="range-value" id="grow-value">0</span></label>
-                                <input type="range" class="form-range" id="flex-grow" min="0" max="5" value="0" oninput="updateGrow()" onchange="updateSelectedItem()">
+                        <!-- Flex Grow -->
+                        <div class="control-group">
+                            <h6><i class="bi bi-arrows-expand me-2"></i>Flex Grow</h6>
+                            <div class="control-body">
+                                <div class="description-text">How much the item should grow relative to other items</div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <input type="range" class="form-range flex-grow-1" id="flex-grow" min="0" max="5" value="0" oninput="updateGrow()" onchange="updateSelectedItem()">
+                                    <span class="range-value" id="grow-value">0</span>
+                                </div>
+                                <div class="learning-tip mt-2">
+                                    <strong>Growth:</strong> Higher values = more space taken. Try setting to 1 for equal distribution!
+                                </div>
                             </div>
+                        </div>
 
-                            <div class="mb-3">
-                                <label class="form-label">Flex Shrink: <span class="range-value" id="shrink-value">1</span></label>
-                                <input type="range" class="form-range" id="flex-shrink" min="0" max="5" value="1" oninput="updateShrink()" onchange="updateSelectedItem()">
+                        <!-- Flex Shrink -->
+                        <div class="control-group">
+                            <h6><i class="bi bi-arrows-collapse me-2"></i>Flex Shrink</h6>
+                            <div class="control-body">
+                                <div class="description-text">How much the item should shrink when space is limited</div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <input type="range" class="form-range flex-grow-1" id="flex-shrink" min="0" max="5" value="1" oninput="updateShrink()" onchange="updateSelectedItem()">
+                                    <span class="range-value" id="shrink-value">1</span>
+                                </div>
+                                <div class="learning-tip mt-2">
+                                    <strong>Shrinking:</strong> Set to 0 to prevent shrinking. Default is 1.
+                                </div>
                             </div>
+                        </div>
 
-                            <div class="mb-3">
-                                <label class="form-label">Flex Basis:</label>
+                        <!-- Flex Basis -->
+                        <div class="control-group">
+                            <h6><i class="bi bi-rulers me-2"></i>Flex Basis</h6>
+                            <div class="control-body">
+                                <div class="description-text">Initial main size before free space is distributed</div>
                                 <select class="form-select form-select-sm" id="flex-basis" onchange="updateSelectedItem()">
                                     <option value="auto" selected>Auto</option>
                                     <option value="0">0</option>
                                     <option value="50px">50px</option>
                                     <option value="100px">100px</option>
+                                    <option value="150px">150px</option>
                                     <option value="200px">200px</option>
+                                    <option value="25%">25%</option>
                                     <option value="50%">50%</option>
+                                    <option value="content">Content</option>
                                 </select>
+                                <div class="learning-tip mt-2">
+                                    <strong>Basis:</strong> <code>0</code> for equal distribution, <code>auto</code> for content-based sizing.
+                                </div>
                             </div>
+                        </div>
 
-                            <div class="mb-3">
-                                <label class="form-label">Align Self:</label>
+                        <!-- Align Self -->
+                        <div class="control-group">
+                            <h6><i class="bi bi-arrow-up-down me-2"></i>Align Self</h6>
+                            <div class="control-body">
+                                <div class="description-text">Override container's align-items for this specific item</div>
                                 <select class="form-select form-select-sm" id="align-self" onchange="updateSelectedItem()">
-                                    <option value="auto" selected>Auto</option>
+                                    <option value="auto" selected>Auto (inherit)</option>
                                     <option value="flex-start">Flex Start</option>
                                     <option value="center">Center</option>
                                     <option value="flex-end">Flex End</option>
                                     <option value="stretch">Stretch</option>
                                     <option value="baseline">Baseline</option>
                                 </select>
+                                <div class="learning-tip mt-2">
+                                    <strong>Override:</strong> Great for making one item behave differently!
+                                </div>
                             </div>
+                        </div>
 
-                            <div class="mb-3">
-                                <label class="form-label">Order: <span class="range-value" id="order-value">0</span></label>
-                                <input type="range" class="form-range" id="order" min="-5" max="5" value="0" oninput="updateOrder()" onchange="updateSelectedItem()">
+                        <!-- Order -->
+                        <div class="control-group">
+                            <h6><i class="bi bi-sort-numeric-down me-2"></i>Order</h6>
+                            <div class="control-body">
+                                <div class="description-text">Change visual order without changing HTML structure</div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <input type="range" class="form-range flex-grow-1" id="order" min="-3" max="3" value="0" oninput="updateOrder()" onchange="updateSelectedItem()">
+                                    <span class="range-value" id="order-value">0</span>
+                                </div>
+                                <div class="learning-tip mt-2">
+                                    <strong>Ordering:</strong> Negative values move left/up, positive values move right/down.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Item Presets -->
+                        <div class="control-group">
+                            <h6><i class="bi bi-lightning me-2"></i>Item Presets</h6>
+                            <div class="control-body">
+                                <div class="description-text">Common flex item configurations</div>
+                                <button class="preset-btn w-100 mb-2" onclick="applyItemPreset('equal-flex')">
+                                    <i class="bi bi-arrows-expand me-1"></i>Equal Flex (1 1 0)
+                                </button>
+                                <button class="preset-btn w-100 mb-2" onclick="applyItemPreset('no-shrink')">
+                                    <i class="bi bi-lock me-1"></i>No Shrink
+                                </button>
+                                <button class="preset-btn w-100 mb-2" onclick="applyItemPreset('center-self')">
+                                    <i class="bi bi-bullseye me-1"></i>Center Self
+                                </button>
+                                <button class="preset-btn w-100 mb-2" onclick="applyItemPreset('move-last')">
+                                    <i class="bi bi-arrow-right me-1"></i>Move to End
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Item Actions -->
+                        <div class="control-group">
+                            <h6><i class="bi bi-plus-minus me-2"></i>Item Management</h6>
+                            <div class="control-body">
+                                <button class="btn btn-success btn-sm w-100 mb-2" onclick="addItem()">
+                                    <i class="bi bi-plus me-1"></i>Add New Item
+                                </button>
+                                <button class="btn btn-danger btn-sm w-100 mb-2" onclick="removeItem()">
+                                    <i class="bi bi-dash me-1"></i>Remove Selected Item
+                                </button>
+                                <button class="btn btn-warning btn-sm w-100" onclick="resetItems()">
+                                    <i class="bi bi-arrow-clockwise me-1"></i>Reset All Items
+                                </button>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Actions -->
+                    <!-- Real-World Examples Tab -->
+                    <div id="examples-tab" class="tab-content">
+                        <h5 class="text-center mb-3">
+                            <i class="bi bi-grid me-2"></i>Real-World Examples
+                        </h5>
+
+                        <div class="control-group">
+                            <h6><i class="bi bi-layout-text-window me-2"></i>Common UI Patterns</h6>
+                            <div class="control-body">
+                                <div class="description-text">Click to see how flexbox solves real design problems</div>
+                                
+                                <div class="example-btn" onclick="loadExample('navbar')">
+                                    <i class="bi bi-menu-button-wide d-block mb-1 fs-4"></i>
+                                    <strong>Navigation Bar</strong>
+                                    <small class="d-block text-muted">Logo left, menu right</small>
+                                </div>
+                                
+                                <div class="example-btn" onclick="loadExample('card-layout')">
+                                    <i class="bi bi-card-list d-block mb-1 fs-4"></i>
+                                    <strong>Card Grid</strong>
+                                    <small class="d-block text-muted">Responsive card layout</small>
+                                </div>
+                                
+                                <div class="example-btn" onclick="loadExample('sidebar')">
+                                    <i class="bi bi-layout-sidebar d-block mb-1 fs-4"></i>
+                                    <strong>Sidebar Layout</strong>
+                                    <small class="d-block text-muted">Fixed sidebar + flexible content</small>
+                                </div>
+                                
+                                <div class="example-btn" onclick="loadExample('footer')">
+                                    <i class="bi bi-window-sidebar d-block mb-1 fs-4"></i>
+                                    <strong>Sticky Footer</strong>
+                                    <small class="d-block text-muted">Footer at bottom always</small>
+                                </div>
+                                
+                                <div class="example-btn" onclick="loadExample('form')">
+                                    <i class="bi bi-ui-checks d-block mb-1 fs-4"></i>
+                                    <strong>Form Layout</strong>
+                                    <small class="d-block text-muted">Aligned form elements</small>
+                                </div>
+                                
+                                <div class="example-btn" onclick="loadExample('media')">
+                                    <i class="bi bi-image d-block mb-1 fs-4"></i>
+                                    <strong>Media Object</strong>
+                                    <small class="d-block text-muted">Image + content pattern</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <h6><i class="bi bi-info-circle me-2"></i>Example Details</h6>
+                            <div class="control-body">
+                                <div id="example-description">
+                                    <div class="text-center text-muted">
+                                        <i class="bi bi-lightbulb fs-1 mb-2"></i>
+                                        <p>Choose an example above to see real-world flexbox implementations with detailed explanations.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Challenges Tab -->
+                    <div id="challenges-tab" class="tab-content">
+                        <h5 class="text-center mb-3">
+                            <i class="bi bi-trophy me-2"></i>Flexbox Challenges
+                        </h5>
+
+                        <div class="control-group">
+                            <h6><i class="bi bi-target me-2"></i>Current Challenge</h6>
+                            <div class="control-body">
+                                <div class="challenge-card" id="current-challenge">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <h6 class="mb-1">Challenge 1: Perfect Centering</h6>
+                                        <span class="challenge-status active">Active</span>
+                                    </div>
+                                    <p class="mb-3 small" id="challenge-description">
+                                        Create a layout where all three items are perfectly centered both horizontally and vertically in the container.
+                                    </p>
+                                    <div class="d-grid gap-2">
+                                        <button class="btn btn-warning btn-sm" onclick="startChallenge(1)">
+                                            <i class="bi bi-play me-1"></i>Start Challenge
+                                        </button>
+                                        <button class="btn btn-info btn-sm" onclick="checkSolution()">
+                                            <i class="bi bi-check-circle me-1"></i>Check My Solution
+                                        </button>
+                                        <button class="btn btn-secondary btn-sm" onclick="showHint()">
+                                            <i class="bi bi-lightbulb me-1"></i>Get Hint
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <h6><i class="bi bi-list-ol me-2"></i>All Challenges</h6>
+                            <div class="control-body">
+                                <div class="small">
+                                    <div class="d-flex justify-content-between align-items-center mb-2 p-2 bg-light rounded">
+                                        <div>
+                                            <strong>1. Perfect Centering</strong>
+                                            <div class="text-muted small">Center all items in the container</div>
+                                        </div>
+                                        <span class="challenge-status active">Active</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center mb-2 p-2 bg-light rounded">
+                                        <div>
+                                            <strong>2. Navigation Layout</strong>
+                                            <div class="text-muted small">Logo left, menu items right</div>
+                                        </div>
+                                        <span class="challenge-status locked">Locked</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center mb-2 p-2 bg-light rounded">
+                                        <div>
+                                            <strong>3. Card Grid</strong>
+                                            <div class="text-muted small">Responsive equal-height cards</div>
+                                        </div>
+                                        <span class="challenge-status locked">Locked</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center mb-2 p-2 bg-light rounded">
+                                        <div>
+                                            <strong>4. Holy Grail Layout</strong>
+                                            <div class="text-muted small">Header, footer, sidebar, content</div>
+                                        </div>
+                                        <span class="challenge-status locked">Locked</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center p-2 bg-light rounded">
+                                        <div>
+                                            <strong>5. Complex Form</strong>
+                                            <div class="text-muted small">Multi-column responsive form</div>
+                                        </div>
+                                        <span class="challenge-status locked">Locked</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <h6><i class="bi bi-award me-2"></i>Progress</h6>
+                            <div class="control-body">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span>Challenges Completed</span>
+                                    <span class="fw-bold">0 / 5</span>
+                                </div>
+                                <div class="progress mb-2" style="height: 8px;">
+                                    <div class="progress-bar bg-success" role="progressbar" style="width: 0%" id="challenge-progress"></div>
+                                </div>
+                                <div class="text-center">
+                                    <small class="text-muted">Complete challenges to unlock new ones!</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cheat Sheet Tab -->
+                    <div id="cheatsheet-tab" class="tab-content">
+                        <h5 class="text-center mb-3">
+                            <i class="bi bi-book me-2"></i>Flexbox Cheat Sheet
+                        </h5>
+
+                        <div class="control-group">
+                            <h6><i class="bi bi-box me-2"></i>Container Properties</h6>
+                            <div class="control-body">
+                                <div class="small">
+                                    <div class="mb-2">
+                                        <code class="text-primary">display: flex</code>
+                                        <div class="text-muted">Enables flexbox layout</div>
+                                    </div>
+                                    <div class="mb-2">
+                                        <code class="text-primary">flex-direction</code>
+                                        <div class="text-muted">row | row-reverse | column | column-reverse</div>
+                                    </div>
+                                    <div class="mb-2">
+                                        <code class="text-primary">justify-content</code>
+                                        <div class="text-muted">flex-start | center | flex-end | space-between | space-around | space-evenly</div>
+                                    </div>
+                                    <div class="mb-2">
+                                        <code class="text-primary">align-items</code>
+                                        <div class="text-muted">stretch | flex-start | center | flex-end | baseline</div>
+                                    </div>
+                                    <div class="mb-2">
+                                        <code class="text-primary">flex-wrap</code>
+                                        <div class="text-muted">nowrap | wrap | wrap-reverse</div>
+                                    </div>
+                                    <div class="mb-2">
+                                        <code class="text-primary">gap</code>
+                                        <div class="text-muted">Sets space between items</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <h6><i class="bi bi-square me-2"></i>Item Properties</h6>
+                            <div class="control-body">
+                                <div class="small">
+                                    <div class="mb-2">
+                                        <code class="text-success">flex-grow</code>
+                                        <div class="text-muted">How much item should grow (0 = no grow)</div>
+                                    </div>
+                                    <div class="mb-2">
+                                        <code class="text-success">flex-shrink</code>
+                                        <div class="text-muted">How much item should shrink (0 = no shrink)</div>
+                                    </div>
+                                    <div class="mb-2">
+                                        <code class="text-success">flex-basis</code>
+                                        <div class="text-muted">Initial size before growing/shrinking</div>
+                                    </div>
+                                    <div class="mb-2">
+                                        <code class="text-success">align-self</code>
+                                        <div class="text-muted">Override container's align-items</div>
+                                    </div>
+                                    <div class="mb-2">
+                                        <code class="text-success">order</code>
+                                        <div class="text-muted">Change visual order (default: 0)</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <h6><i class="bi bi-lightbulb me-2"></i>Common Patterns</h6>
+                            <div class="control-body">
+                                <div class="small">
+                                    <div class="mb-3">
+                                        <strong>Perfect Centering:</strong>
+                                        <code class="d-block bg-dark text-light p-2 rounded mt-1">
+                                            justify-content: center;<br>
+                                            align-items: center;
+                                        </code>
+                                    </div>
+                                    <div class="mb-3">
+                                        <strong>Equal Width Items:</strong>
+                                        <code class="d-block bg-dark text-light p-2 rounded mt-1">
+                                            flex: 1; /* grow: 1, shrink: 1, basis: 0 */
+                                        </code>
+                                    </div>
+                                    <div class="mb-3">
+                                        <strong>Navbar Layout:</strong>
+                                        <code class="d-block bg-dark text-light p-2 rounded mt-1">
+                                            justify-content: space-between;<br>
+                                            align-items: center;
+                                        </code>
+                                    </div>
+                                    <div class="mb-3">
+                                        <strong>Responsive Grid:</strong>
+                                        <code class="d-block bg-dark text-light p-2 rounded mt-1">
+                                            flex-wrap: wrap;<br>
+                                            gap: 1rem;
+                                        </code>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Global Actions -->
                     <div class="control-group">
-                        <h6><i class="bi bi-lightning me-2"></i>Actions</h6>
-                        <div class="p-3">
-                            <button class="btn btn-success btn-action w-100 mb-2" onclick="addItem()">
-                                <i class="bi bi-plus me-2"></i>Add Item
+                        <h6><i class="bi bi-tools me-2"></i>Playground Actions</h6>
+                        <div class="control-body">
+                            <button class="btn btn-success w-100 mb-2" onclick="generateCode()">
+                                <i class="bi bi-code me-2"></i>Generate CSS Code
                             </button>
-                            <button class="btn btn-danger btn-action w-100 mb-2" onclick="removeItem()">
-                                <i class="bi bi-dash me-2"></i>Remove Item
+                            <button class="btn btn-warning w-100 mb-2" onclick="showAxisGuides()">
+                                <i class="bi bi-rulers me-2"></i>Toggle Axis Guides
                             </button>
-                            <button class="btn btn-warning btn-action w-100" onclick="resetAll()">
-                                <i class="bi bi-arrow-clockwise me-2"></i>Reset All
+                            <button class="btn btn-info w-100 mb-2" onclick="exportCode()">
+                                <i class="bi bi-download me-2"></i>Export Code
+                            </button>
+                            <button class="btn btn-danger w-100" onclick="resetAll()">
+                                <i class="bi bi-arrow-clockwise me-2"></i>Reset Everything
                             </button>
                         </div>
                     </div>
@@ -419,83 +1198,142 @@
             <!-- Main Playground -->
             <div class="col-lg-6">
                 <div class="playground-container">
-                    <div class="p-3 bg-primary text-white position-relative">
+                    <div class="playground-header">
                         <h5 class="mb-0">
-                            <i class="bi bi-eye me-2"></i>Live Preview
+                            <i class="bi bi-eye me-2"></i>Live Flexbox Demo
                         </h5>
-                        <small>Flexbox container with real-time updates</small>
+                        <small>Interactive flexbox container with real-time updates</small>
                         <div class="live-indicator">LIVE</div>
                     </div>
                     
                     <div class="p-3">
                         <div class="flex-container" id="flex-container">
-                            <div class="flex-item" data-item="1">Item 1</div>
-                            <div class="flex-item" data-item="2">Item 2</div>
-                            <div class="flex-item" data-item="3">Item 3</div>
+                            <!-- Visual guides for axis -->
+                            <div class="visual-guide main-axis-line" id="main-axis-line" style="display: none;"></div>
+                            <div class="visual-guide cross-axis-line" id="cross-axis-line" style="display: none;"></div>
+                            <div class="axis-indicator main-axis-indicator" id="main-axis-indicator" style="display: none;">Main Axis</div>
+                            <div class="axis-indicator cross-axis-indicator" id="cross-axis-indicator" style="display: none;">Cross Axis</div>
+                            
+                            <!-- Flex items -->
+                            <div class="flex-item" data-item="1" onclick="selectItem(1)">
+                                <div class="item-controls">
+                                    <i class="bi bi-gear text-primary"></i>
+                                </div>
+                                Item 1
+                            </div>
+                            <div class="flex-item" data-item="2" onclick="selectItem(2)">
+                                <div class="item-controls">
+                                    <i class="bi bi-gear text-primary"></i>
+                                </div>
+                                Item 2
+                            </div>
+                            <div class="flex-item" data-item="3" onclick="selectItem(3)">
+                                <div class="item-controls">
+                                    <i class="bi bi-gear text-primary"></i>
+                                </div>
+                                Item 3
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Demo Section -->
-                <div class="demo-section">
-                    <h5><i class="bi bi-grid-3x3 me-2"></i>Real Content Demo</h5>
-                    <p class="text-muted mb-3">See how flexbox works with actual content:</p>
-                    <div class="demo-container" id="demo-container">
-                        <div class="demo-item" draggable="true">
-                            <h6>📝 Text Card</h6>
-                            <p class="mb-0 small">Sample content</p>
-                        </div>
-                        <div class="demo-item" draggable="true">
-                            <h6>🚀 Icon Card</h6>
-                            <p class="mb-0 small">With icon</p>
-                        </div>
-                        <div class="demo-item" draggable="true">
-                            <button class="btn btn-sm btn-primary">Button</button>
-                            <p class="mb-0 small mt-1">Interactive</p>
-                        </div>
+                <!-- Real World Demo Section -->
+                <div class="playground-container">
+                    <div class="playground-header success">
+                        <h5 class="mb-0">
+                            <i class="bi bi-grid-3x3 me-2"></i>Real-World Example
+                        </h5>
+                        <small>See flexbox in action with realistic content</small>
                     </div>
-                    <div class="mt-3">
-                        <button class="btn btn-info btn-sm" onclick="applyToDemo()">
-                            <i class="bi bi-arrow-right me-1"></i>Apply Settings to Demo
-                        </button>
-                        <button class="btn btn-secondary btn-sm ms-2" onclick="resetDemo()">
-                            <i class="bi bi-arrow-clockwise me-1"></i>Reset Demo
-                        </button>
+                    <div class="p-3">
+                        <div class="real-world-demo" id="real-world-demo">
+                            <div class="example-card">
+                                <h6><i class="bi bi-file-text me-1"></i>Article</h6>
+                                <p class="mb-0 small">Blog post preview with title and excerpt text content area.</p>
+                            </div>
+                            <div class="example-card">
+                                <h6><i class="bi bi-image me-1"></i>Media</h6>
+                                <p class="mb-0 small">Featured image or video content display area.</p>
+                            </div>
+                            <div class="example-card">
+                                <h6><i class="bi bi-hand-index me-1"></i>Actions</h6>
+                                <p class="mb-0 small">Interactive buttons and navigation links section.</p>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2 mt-3">
+                            <button class="btn btn-success btn-sm" onclick="applyToRealWorld()">
+                                <i class="bi bi-arrow-right me-1"></i>Apply Current Settings
+                            </button>
+                            <button class="btn btn-outline-secondary btn-sm" onclick="resetRealWorld()">
+                                <i class="bi bi-arrow-clockwise me-1"></i>Reset Example
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- CSS Output -->
+            <!-- Code & Documentation -->
             <div class="col-lg-3">
+                <!-- Live CSS Output -->
                 <div class="playground-container">
-                    <div class="p-3 bg-success text-white position-relative">
+                    <div class="playground-header info">
                         <h5 class="mb-0">
-                            <i class="bi bi-code-slash me-2"></i>Live CSS
+                            <i class="bi bi-code-slash me-2"></i>Generated CSS
                         </h5>
-                        <small>Copy-ready CSS code</small>
+                        <small>Copy-ready flexbox code</small>
                         <div class="live-indicator">LIVE</div>
                     </div>
                     <div class="position-relative">
                         <button class="copy-btn" onclick="copyCSS()" id="copy-css-btn">
                             <i class="bi bi-clipboard me-1"></i>Copy
                         </button>
-                        <div class="code-output" id="css-output">/* CSS will appear here */</div>
+                        <div class="code-output" id="css-output">/* CSS will be generated here */</div>
                     </div>
                 </div>
 
-                <!-- HTML Output -->
-                <div class="playground-container mt-3">
-                    <div class="p-3 bg-info text-white position-relative">
+                <!-- HTML Structure -->
+                <div class="playground-container">
+                    <div class="playground-header warning">
                         <h5 class="mb-0">
                             <i class="bi bi-file-code me-2"></i>HTML Structure
                         </h5>
-                        <small>Complete HTML code</small>
+                        <small>Complete markup</small>
                     </div>
                     <div class="position-relative">
                         <button class="copy-btn" onclick="copyHTML()" id="copy-html-btn">
                             <i class="bi bi-clipboard me-1"></i>Copy
                         </button>
-                        <div class="code-output" id="html-output"><!-- HTML will appear here --></div>
+                        <div class="code-output" id="html-output"><!-- HTML will be generated here --></div>
+                    </div>
+                </div>
+
+                <!-- Quick Reference -->
+                <div class="playground-container">
+                    <div class="playground-header" style="background: linear-gradient(135deg, #6f42c1, #e83e8c);">
+                        <h6 class="mb-0">
+                            <i class="bi bi-bookmark me-2"></i>Quick Reference
+                        </h6>
+                    </div>
+                    <div class="p-3">
+                        <div class="small" id="flexbox-reference">
+                            <div class="mb-3">
+                                <strong class="text-primary">Container Properties:</strong><br>
+                                <code>display: flex</code> - Enable flexbox<br>
+                                <code>flex-direction</code> - Main axis direction<br>
+                                <code>justify-content</code> - Main axis alignment<br>
+                                <code>align-items</code> - Cross axis alignment<br>
+                                <code>flex-wrap</code> - Wrapping behavior<br>
+                                <code>gap</code> - Spacing between items
+                            </div>
+                            <div>
+                                <strong class="text-success">Item Properties:</strong><br>
+                                <code>flex-grow</code> - Growth factor<br>
+                                <code>flex-shrink</code> - Shrink factor<br>
+                                <code>flex-basis</code> - Initial size<br>
+                                <code>align-self</code> - Individual alignment<br>
+                                <code>order</code> - Visual order
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -506,20 +1344,172 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
+        // Global state
         let itemCount = 3;
         let currentSelectedItem = 1;
+        let currentChallenge = 1;
+        let guidesVisible = false;
+        let completedChallenges = 0;
         let itemProperties = {
             1: { flexGrow: 0, flexShrink: 1, flexBasis: 'auto', alignSelf: 'auto', order: 0 },
             2: { flexGrow: 0, flexShrink: 1, flexBasis: 'auto', alignSelf: 'auto', order: 0 },
             3: { flexGrow: 0, flexShrink: 1, flexBasis: 'auto', alignSelf: 'auto', order: 0 }
         };
 
+        // Challenge definitions
+        const challenges = {
+            1: {
+                title: "Perfect Centering",
+                description: "Create a layout where all three items are perfectly centered both horizontally and vertically in the container.",
+                solution: { 
+                    justifyContent: 'center', 
+                    alignItems: 'center'
+                },
+                hint: "Use justify-content: center for horizontal centering and align-items: center for vertical centering."
+            },
+            2: {
+                title: "Navigation Layout",
+                description: "Create a navigation bar layout with the first item (logo) on the left and the remaining items grouped on the right.",
+                solution: {
+                    justifyContent: 'space-between',
+                    alignItems: 'center'
+                },
+                hint: "Use justify-content: space-between to push items to opposite ends."
+            },
+            3: {
+                title: "Equal Height Cards",
+                description: "Make all items have equal width and allow them to wrap to new lines when needed.",
+                solution: {
+                    flexWrap: 'wrap',
+                    alignItems: 'stretch'
+                },
+                hint: "Use flex-wrap: wrap and set flex-grow: 1 on all items for equal distribution."
+            },
+            4: {
+                title: "Holy Grail Layout",
+                description: "Create a layout with header, footer, and flexible content area using column direction.",
+                solution: {
+                    flexDirection: 'column',
+                    justifyContent: 'space-between'
+                },
+                hint: "Use flex-direction: column and space-between to separate header and footer."
+            },
+            5: {
+                title: "Responsive Form",
+                description: "Create a form layout that adapts to different screen sizes using flex properties.",
+                solution: {
+                    flexWrap: 'wrap',
+                    gap: '1rem',
+                    alignItems: 'flex-start'
+                },
+                hint: "Combine flex-wrap with gap for clean spacing and responsive behavior."
+            }
+        };
+
+        // Real-world examples
+        const examples = {
+            'navbar': {
+                title: 'Navigation Bar',
+                description: 'A typical website navigation with logo on the left and menu items on the right. This pattern uses space-between to push elements to opposite ends.',
+                settings: {
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    flexDirection: 'row'
+                },
+                items: [
+                    { content: 'Logo', note: 'Brand/Logo' },
+                    { content: 'Menu', note: 'Navigation Items' }
+                ]
+            },
+            'card-layout': {
+                title: 'Card Grid Layout',
+                description: 'Responsive card layout where cards wrap to new lines and maintain equal heights. Perfect for product grids or blog post listings.',
+                settings: {
+                    flexWrap: 'wrap',
+                    justifyContent: 'space-around',
+                    alignItems: 'stretch',
+                    gap: '1rem'
+                },
+                items: [
+                    { content: 'Card 1', note: 'Product/Article' },
+                    { content: 'Card 2', note: 'Product/Article' },
+                    { content: 'Card 3', note: 'Product/Article' }
+                ]
+            },
+            'sidebar': {
+                title: 'Sidebar Layout',
+                description: 'A layout with a fixed-width sidebar and flexible main content area. Common in admin dashboards and documentation sites.',
+                settings: {
+                    flexDirection: 'row',
+                    alignItems: 'stretch'
+                },
+                items: [
+                    { content: 'Sidebar', note: 'Navigation/Menu' },
+                    { content: 'Main Content', note: 'Page Content' }
+                ]
+            },
+            'footer': {
+                title: 'Sticky Footer',
+                description: 'A layout where the footer always stays at the bottom of the viewport, even with minimal content.',
+                settings: {
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    alignItems: 'stretch'
+                },
+                items: [
+                    { content: 'Header', note: 'Site Header' },
+                    { content: 'Content', note: 'Main Content' },
+                    { content: 'Footer', note: 'Site Footer' }
+                ]
+            },
+            'form': {
+                title: 'Form Layout',
+                description: 'A flexible form layout that adapts to different screen sizes while keeping proper alignment.',
+                settings: {
+                    flexDirection: 'column',
+                    alignItems: 'stretch',
+                    gap: '1rem'
+                },
+                items: [
+                    { content: 'Input 1', note: 'Form Field' },
+                    { content: 'Input 2', note: 'Form Field' },
+                    { content: 'Submit', note: 'Action Button' }
+                ]
+            },
+            'media': {
+                title: 'Media Object',
+                description: 'The classic media object pattern - image on one side, content on the other. Used in comments, testimonials, and social media posts.',
+                settings: {
+                    flexDirection: 'row',
+                    alignItems: 'flex-start',
+                    gap: '1rem'
+                },
+                items: [
+                    { content: 'Image', note: 'Media/Avatar' },
+                    { content: 'Content', note: 'Text Content' }
+                ]
+            }
+        };
+
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
             updateContainer();
             updateAllCode();
-            setupDragAndDrop();
+            selectItem(1);
         });
+
+        // Tab switching
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            document.getElementById(tabName + '-tab').classList.add('active');
+            event.target.classList.add('active');
+        }
 
         // Update range value displays
         function updateGap() {
@@ -550,6 +1540,7 @@
             const justifyContent = document.getElementById('justify-content').value;
             const alignItems = document.getElementById('align-items').value;
             const flexWrap = document.getElementById('flex-wrap').value;
+            const alignContent = document.getElementById('align-content').value;
             const gap = document.getElementById('gap').value + 'px';
             const height = document.getElementById('container-height').value + 'px';
 
@@ -558,22 +1549,69 @@
             container.style.justifyContent = justifyContent;
             container.style.alignItems = alignItems;
             container.style.flexWrap = flexWrap;
+            container.style.alignContent = alignContent;
             container.style.gap = gap;
             container.style.minHeight = height;
+
+            // Update container state
+            if (display === 'flex') {
+                container.classList.add('has-content');
+            } else {
+                container.classList.remove('has-content');
+            }
 
             updateAllCode();
         }
 
+        // Select item
+        function selectItem(itemNumber) {
+            currentSelectedItem = itemNumber;
+            
+            // Update UI selection
+            document.querySelectorAll('.flex-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            const selectedItem = document.querySelector(`[data-item="${itemNumber}"]`);
+            if (selectedItem) {
+                selectedItem.classList.add('selected');
+            }
+            
+            // Update dropdown
+            document.getElementById('selected-item').value = itemNumber;
+            document.getElementById('selected-indicator').textContent = `Item ${itemNumber}`;
+            
+            // Update controls with item properties
+            const props = itemProperties[itemNumber];
+            if (props) {
+                document.getElementById('flex-grow').value = props.flexGrow;
+                document.getElementById('flex-shrink').value = props.flexShrink;
+                document.getElementById('flex-basis').value = props.flexBasis;
+                document.getElementById('align-self').value = props.alignSelf;
+                document.getElementById('order').value = props.order;
+                
+                updateGrow();
+                updateShrink();
+                updateOrder();
+            }
+            
+            // Switch to items tab
+            switchTab('items');
+        }
+
+        function selectItemFromDropdown() {
+            const selectedValue = parseInt(document.getElementById('selected-item').value);
+            selectItem(selectedValue);
+        }
+
         // Update selected item
         function updateSelectedItem() {
-            const selectedItem = parseInt(document.getElementById('selected-item').value);
             const flexGrow = document.getElementById('flex-grow').value;
             const flexShrink = document.getElementById('flex-shrink').value;
             const flexBasis = document.getElementById('flex-basis').value;
             const alignSelf = document.getElementById('align-self').value;
             const order = document.getElementById('order').value;
 
-            const item = document.querySelector(`[data-item="${selectedItem}"]`);
+            const item = document.querySelector(`[data-item="${currentSelectedItem}"]`);
             if (item) {
                 item.style.flexGrow = flexGrow;
                 item.style.flexShrink = flexShrink;
@@ -582,7 +1620,7 @@
                 item.style.order = order;
 
                 // Update stored properties
-                itemProperties[selectedItem] = {
+                itemProperties[currentSelectedItem] = {
                     flexGrow: parseInt(flexGrow),
                     flexShrink: parseInt(flexShrink),
                     flexBasis: flexBasis,
@@ -594,40 +1632,35 @@
             updateAllCode();
         }
 
-        // Update item controls when selection changes
-        function updateItemControls() {
-            const selectedItem = parseInt(document.getElementById('selected-item').value);
-            currentSelectedItem = selectedItem;
-            
-            if (itemProperties[selectedItem]) {
-                const props = itemProperties[selectedItem];
-                document.getElementById('flex-grow').value = props.flexGrow;
-                document.getElementById('flex-shrink').value = props.flexShrink;
-                document.getElementById('flex-basis').value = props.flexBasis;
-                document.getElementById('align-self').value = props.alignSelf;
-                document.getElementById('order').value = props.order;
-                
-                updateGrow();
-                updateShrink();
-                updateOrder();
-            }
-        }
-
-        // Add new item
+        // Add/Remove items
         function addItem() {
             if (itemCount >= 8) {
-                alert('Maximum 8 items allowed');
+                showToast('Maximum 8 items allowed', 'warning');
                 return;
             }
 
             itemCount++;
             const container = document.getElementById('flex-container');
+            
+            // Find insertion point (before visual guides)
+            const guides = container.querySelectorAll('.visual-guide, .axis-indicator');
             const newItem = document.createElement('div');
             newItem.className = 'flex-item';
             newItem.setAttribute('data-item', itemCount);
-            newItem.textContent = `Item ${itemCount}`;
+            newItem.onclick = () => selectItem(itemCount);
+            newItem.innerHTML = `
+                <div class="item-controls">
+                    <i class="bi bi-gear text-primary"></i>
+                </div>
+                Item ${itemCount}
+            `;
             
-            container.appendChild(newItem);
+            // Insert before guides or at end
+            if (guides.length > 0) {
+                container.insertBefore(newItem, guides[0]);
+            } else {
+                container.appendChild(newItem);
+            }
 
             // Add to dropdown
             const select = document.getElementById('selected-item');
@@ -642,13 +1675,12 @@
             };
 
             updateAllCode();
-            showToast('Item added successfully!');
+            showToast(`Item ${itemCount} added!`, 'success');
         }
 
-        // Remove item
         function removeItem() {
             if (itemCount <= 1) {
-                alert('Must have at least 1 item');
+                showToast('Must have at least 1 item', 'warning');
                 return;
             }
 
@@ -662,119 +1694,310 @@
             itemCount--;
 
             if (currentSelectedItem > itemCount) {
-                currentSelectedItem = itemCount;
-                document.getElementById('selected-item').value = currentSelectedItem;
-                updateItemControls();
+                selectItem(itemCount);
             }
 
             updateAllCode();
-            showToast('Item removed successfully!');
+            showToast('Item removed!', 'success');
         }
 
-        // Reset all settings
+        function resetItems() {
+            // Remove all items except first 3
+            for (let i = itemCount; i > 3; i--) {
+                const itemToRemove = document.querySelector(`[data-item="${i}"]`);
+                const optionToRemove = document.querySelector(`#selected-item option[value="${i}"]`);
+                if (itemToRemove) itemToRemove.remove();
+                if (optionToRemove) optionToRemove.remove();
+                delete itemProperties[i];
+            }
+            
+            itemCount = 3;
+            
+            // Reset properties for remaining items
+            for (let i = 1; i <= 3; i++) {
+                const item = document.querySelector(`[data-item="${i}"]`);
+                if (item) {
+                    item.style.cssText = '';
+                    item.classList.remove('selected');
+                }
+                itemProperties[i] = {
+                    flexGrow: 0, flexShrink: 1, flexBasis: 'auto', alignSelf: 'auto', order: 0
+                };
+            }
+            
+            selectItem(1);
+            showToast('Items reset to default!', 'success');
+        }
+
+        // Preset functions
+        function applyContainerPreset(preset) {
+            switch(preset) {
+                case 'center-all':
+                    document.getElementById('justify-content').value = 'center';
+                    document.getElementById('align-items').value = 'center';
+                    break;
+                case 'space-between':
+                    document.getElementById('justify-content').value = 'space-between';
+                    document.getElementById('align-items').value = 'center';
+                    break;
+                case 'column-center':
+                    document.getElementById('flex-direction').value = 'column';
+                    document.getElementById('justify-content').value = 'center';
+                    document.getElementById('align-items').value = 'center';
+                    break;
+                case 'wrap-grid':
+                    document.getElementById('flex-wrap').value = 'wrap';
+                    document.getElementById('justify-content').value = 'space-around';
+                    document.getElementById('align-items').value = 'stretch';
+                    document.getElementById('gap').value = '20';
+                    updateGap();
+                    break;
+            }
+            updateContainer();
+            showToast('Container preset applied!', 'success');
+        }
+
+        function applyItemPreset(preset) {
+            switch(preset) {
+                case 'equal-flex':
+                    document.getElementById('flex-grow').value = '1';
+                    document.getElementById('flex-shrink').value = '1';
+                    document.getElementById('flex-basis').value = '0';
+                    break;
+                case 'no-shrink':
+                    document.getElementById('flex-shrink').value = '0';
+                    break;
+                case 'center-self':
+                    document.getElementById('align-self').value = 'center';
+                    break;
+                case 'move-last':
+                    document.getElementById('order').value = '1';
+                    break;
+            }
+            updateGrow();
+            updateShrink();
+            updateOrder();
+            updateSelectedItem();
+            showToast('Item preset applied!', 'success');
+        }
+
+        // Real-world examples
+        function loadExample(exampleType) {
+            const example = examples[exampleType];
+            if (!example) return;
+
+            // Apply container settings
+            Object.entries(example.settings).forEach(([prop, value]) => {
+                const elementId = prop.replace(/([A-Z])/g, '-$1').toLowerCase();
+                const element = document.getElementById(elementId);
+                if (element) {
+                    element.value = value;
+                    if (elementId === 'gap') {
+                        updateGap();
+                    }
+                }
+            });
+
+            // Update container
+            updateContainer();
+            
+            // Update example description
+            const descElement = document.getElementById('example-description');
+            descElement.innerHTML = `
+                <div class="mb-3">
+                    <h6 class="text-primary">${example.title}</h6>
+                    <p class="mb-0">${example.description}</p>
+                </div>
+                <div class="small">
+                    <strong>Key Properties:</strong><br>
+                    ${Object.entries(example.settings).map(([key, value]) => 
+                        `<code>${key.replace(/([A-Z])/g, '-$1').toLowerCase()}: ${value}</code>`
+                    ).join('<br>')}
+                </div>
+            `;
+
+            // Mark active example
+            document.querySelectorAll('.example-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.closest('.example-btn').classList.add('active');
+            
+            showToast(`${example.title} example loaded!`, 'success');
+        }
+
+        // Challenge system
+        function startChallenge(challengeNumber) {
+            currentChallenge = challengeNumber;
+            const challenge = challenges[challengeNumber];
+            
+            if (challenge) {
+                // Reset to default state first
+                resetAll();
+                
+                // Update challenge display
+                document.getElementById('challenge-description').textContent = challenge.description;
+                showToast(`Challenge ${challengeNumber}: ${challenge.title} started!`, 'info');
+            }
+        }
+
+        function checkSolution() {
+            const challenge = challenges[currentChallenge];
+            if (!challenge) return;
+
+            const solution = challenge.solution;
+            let correct = true;
+            let feedback = [];
+
+            // Check container properties
+            Object.entries(solution).forEach(([prop, value]) => {
+                const elementId = prop.replace(/([A-Z])/g, '-$1').toLowerCase();
+                const element = document.getElementById(elementId);
+                if (element && element.value !== value) {
+                    correct = false;
+                    feedback.push(`${prop} should be ${value}, but is ${element.value}`);
+                }
+            });
+
+            if (correct) {
+                completedChallenges = Math.max(completedChallenges, currentChallenge);
+                updateChallengeProgress();
+                showToast('🎉 Challenge completed! Excellent work!', 'success');
+                
+                // Unlock next challenge
+                if (currentChallenge < 5) {
+                    showToast(`Challenge ${currentChallenge + 1} unlocked!`, 'info');
+                }
+            } else {
+                showToast('Not quite right. Check the hint or try again!', 'warning');
+            }
+        }
+
+        function showHint() {
+            const challenge = challenges[currentChallenge];
+            if (challenge && challenge.hint) {
+                showToast(`💡 Hint: ${challenge.hint}`, 'info');
+            }
+        }
+
+        function updateChallengeProgress() {
+            const progressBar = document.getElementById('challenge-progress');
+            const percentage = (completedChallenges / 5) * 100;
+            progressBar.style.width = percentage + '%';
+        }
+
+        // Utility functions
+        function showAxisGuides() {
+            guidesVisible = !guidesVisible;
+            const guides = ['main-axis-line', 'cross-axis-line', 'main-axis-indicator', 'cross-axis-indicator'];
+            
+            guides.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.style.display = guidesVisible ? 'block' : 'none';
+                }
+            });
+
+            showToast(guidesVisible ? 'Axis guides shown' : 'Axis guides hidden', 'info');
+        }
+
+        function applyToRealWorld() {
+            const mainContainer = document.getElementById('flex-container');
+            const realWorldDemo = document.getElementById('real-world-demo');
+            
+            // Copy all flex styles
+            const computedStyle = window.getComputedStyle(mainContainer);
+            realWorldDemo.style.display = mainContainer.style.display;
+            realWorldDemo.style.flexDirection = mainContainer.style.flexDirection;
+            realWorldDemo.style.justifyContent = mainContainer.style.justifyContent;
+            realWorldDemo.style.alignItems = mainContainer.style.alignItems;
+            realWorldDemo.style.flexWrap = mainContainer.style.flexWrap;
+            realWorldDemo.style.alignContent = mainContainer.style.alignContent;
+            realWorldDemo.style.gap = mainContainer.style.gap;
+            
+            showToast('Settings applied to real-world example!', 'success');
+        }
+
+        function resetRealWorld() {
+            const realWorldDemo = document.getElementById('real-world-demo');
+            realWorldDemo.style.cssText = '';
+            realWorldDemo.classList.add('real-world-demo');
+            showToast('Real-world example reset!', 'success');
+        }
+
         function resetAll() {
-            // Reset container
+            // Reset container properties
             document.getElementById('display').value = 'flex';
             document.getElementById('flex-direction').value = 'row';
             document.getElementById('justify-content').value = 'flex-start';
             document.getElementById('align-items').value = 'stretch';
             document.getElementById('flex-wrap').value = 'nowrap';
+            document.getElementById('align-content').value = 'stretch';
             document.getElementById('gap').value = '10';
             document.getElementById('container-height').value = '400';
             
-            // Reset items
+            // Reset item properties
             document.getElementById('flex-grow').value = '0';
             document.getElementById('flex-shrink').value = '1';
             document.getElementById('flex-basis').value = 'auto';
             document.getElementById('align-self').value = 'auto';
             document.getElementById('order').value = '0';
             
-            // Reset container HTML
-            const container = document.getElementById('flex-container');
-            container.innerHTML = `
-                <div class="flex-item" data-item="1">Item 1</div>
-                <div class="flex-item" data-item="2">Item 2</div>
-                <div class="flex-item" data-item="3">Item 3</div>
-            `;
+            // Reset items
+            resetItems();
             
-            // Reset dropdown
-            const select = document.getElementById('selected-item');
-            select.innerHTML = `
-                <option value="1">Item 1</option>
-                <option value="2">Item 2</option>
-                <option value="3">Item 3</option>
-            `;
-            
-            // Reset state
-            itemCount = 3;
-            currentSelectedItem = 1;
-            itemProperties = {
-                1: { flexGrow: 0, flexShrink: 1, flexBasis: 'auto', alignSelf: 'auto', order: 0 },
-                2: { flexGrow: 0, flexShrink: 1, flexBasis: 'auto', alignSelf: 'auto', order: 0 },
-                3: { flexGrow: 0, flexShrink: 1, flexBasis: 'auto', alignSelf: 'auto', order: 0 }
-            };
-            
+            // Update range displays
             updateGap();
             updateHeight();
             updateGrow();
             updateShrink();
             updateOrder();
+            
+            // Update container
             updateContainer();
-            showToast('All settings reset!');
-        }
-
-        // Apply settings to demo container
-        function applyToDemo() {
-            const mainContainer = document.getElementById('flex-container');
-            const demoContainer = document.getElementById('demo-container');
             
-            const computedStyle = window.getComputedStyle(mainContainer);
-            demoContainer.style.display = mainContainer.style.display;
-            demoContainer.style.flexDirection = mainContainer.style.flexDirection;
-            demoContainer.style.justifyContent = mainContainer.style.justifyContent;
-            demoContainer.style.alignItems = mainContainer.style.alignItems;
-            demoContainer.style.flexWrap = mainContainer.style.flexWrap;
-            demoContainer.style.gap = mainContainer.style.gap;
+            // Hide guides
+            if (guidesVisible) {
+                showAxisGuides();
+            }
             
-            showToast('Settings applied to demo!', 'info');
+            showToast('Everything reset to defaults!', 'success');
         }
 
-        // Reset demo container
-        function resetDemo() {
-            const demoContainer = document.getElementById('demo-container');
-            demoContainer.style.cssText = '';
-            demoContainer.classList.add('demo-container');
-            showToast('Demo reset!');
+        // Code generation
+        function generateCode() {
+            updateAllCode();
+            showToast('Code generated and updated!', 'success');
         }
 
-        // Update all code outputs
         function updateAllCode() {
             updateCSSOutput();
             updateHTMLOutput();
         }
 
-        // Update CSS output with syntax highlighting
         function updateCSSOutput() {
             const container = document.getElementById('flex-container');
-            let css = `<span class="css-selector">.flex-container</span> {\n`;
+            let css = `<span class="css-comment">/* Flex Container Styles */</span>\n<span class="css-selector">.flex-container</span> {\n`;
             
+            // Container properties
             if (container.style.display) css += `  <span class="css-property">display</span>: <span class="css-value">${container.style.display}</span>;\n`;
-            if (container.style.flexDirection) css += `  <span class="css-property">flex-direction</span>: <span class="css-value">${container.style.flexDirection}</span>;\n`;
-            if (container.style.justifyContent) css += `  <span class="css-property">justify-content</span>: <span class="css-value">${container.style.justifyContent}</span>;\n`;
-            if (container.style.alignItems) css += `  <span class="css-property">align-items</span>: <span class="css-value">${container.style.alignItems}</span>;\n`;
-            if (container.style.flexWrap) css += `  <span class="css-property">flex-wrap</span>: <span class="css-value">${container.style.flexWrap}</span>;\n`;
-            if (container.style.gap) css += `  <span class="css-property">gap</span>: <span class="css-value">${container.style.gap}</span>;\n`;
+            if (container.style.flexDirection && container.style.flexDirection !== 'row') css += `  <span class="css-property">flex-direction</span>: <span class="css-value">${container.style.flexDirection}</span>;\n`;
+            if (container.style.justifyContent && container.style.justifyContent !== 'flex-start') css += `  <span class="css-property">justify-content</span>: <span class="css-value">${container.style.justifyContent}</span>;\n`;
+            if (container.style.alignItems && container.style.alignItems !== 'stretch') css += `  <span class="css-property">align-items</span>: <span class="css-value">${container.style.alignItems}</span>;\n`;
+            if (container.style.flexWrap && container.style.flexWrap !== 'nowrap') css += `  <span class="css-property">flex-wrap</span>: <span class="css-value">${container.style.flexWrap}</span>;\n`;
+            if (container.style.alignContent && container.style.alignContent !== 'stretch' && container.style.flexWrap === 'wrap') css += `  <span class="css-property">align-content</span>: <span class="css-value">${container.style.alignContent}</span>;\n`;
+            if (container.style.gap && container.style.gap !== '0px') css += `  <span class="css-property">gap</span>: <span class="css-value">${container.style.gap}</span>;\n`;
             if (container.style.minHeight) css += `  <span class="css-property">min-height</span>: <span class="css-value">${container.style.minHeight}</span>;\n`;
             
-            css += `  <span class="css-property">padding</span>: <span class="css-value">20px</span>;\n`;
-            css += `  <span class="css-property">border</span>: <span class="css-value">3px dashed #667eea</span>;\n`;
-            css += `  <span class="css-property">border-radius</span>: <span class="css-value">12px</span>;\n`;
             css += `}\n\n`;
 
-            // Add item-specific CSS
+            // Item-specific CSS
+            let hasItemStyles = false;
             for (let i = 1; i <= itemCount; i++) {
                 const props = itemProperties[i];
                 if (props && (props.flexGrow > 0 || props.flexShrink != 1 || props.flexBasis !== 'auto' || props.alignSelf !== 'auto' || props.order != 0)) {
+                    if (!hasItemStyles) {
+                        css += `<span class="css-comment">/* Flex Item Styles */</span>\n`;
+                        hasItemStyles = true;
+                    }
+                    
                     css += `<span class="css-selector">.flex-item:nth-child(${i})</span> {\n`;
                     if (props.flexGrow > 0) css += `  <span class="css-property">flex-grow</span>: <span class="css-value">${props.flexGrow}</span>;\n`;
                     if (props.flexShrink != 1) css += `  <span class="css-property">flex-shrink</span>: <span class="css-value">${props.flexShrink}</span>;\n`;
@@ -785,162 +2008,140 @@
                 }
             }
 
-            document.getElementById('css-output').innerHTML = css || '/* Make changes to see CSS here */';
+            document.getElementById('css-output').innerHTML = css || '<span class="css-comment">/* No custom CSS needed - using defaults */</span>';
         }
 
-        // Update HTML output
         function updateHTMLOutput() {
-            const container = document.getElementById('flex-container');
-            const items = container.querySelectorAll('.flex-item');
+            let html = `<span class="css-comment">&lt;!-- HTML Structure --&gt;</span>\n&lt;<span class="css-selector">div</span> <span class="css-property">class</span>=<span class="css-value">"flex-container"</span>&gt;\n`;
             
-            let html = `&lt;div class="flex-container"&gt;\n`;
-            items.forEach(item => {
-                html += `  &lt;div class="flex-item"&gt;${item.textContent}&lt;/div&gt;\n`;
-            });
-            html += `&lt;/div&gt;`;
-
-            document.getElementById('html-output').textContent = html;
+            for (let i = 1; i <= itemCount; i++) {
+                html += `  &lt;<span class="css-selector">div</span> <span class="css-property">class</span>=<span class="css-value">"flex-item"</span>&gt;Item ${i}&lt;/<span class="css-selector">div</span>&gt;\n`;
+            }
+            
+            html += `&lt;/<span class="css-selector">div</span>&gt;`;
+            
+            document.getElementById('html-output').innerHTML = html;
         }
 
-        // Copy CSS to clipboard
+        // Copy functionality
         function copyCSS() {
-            const cssContent = document.getElementById('css-output').textContent;
-            copyToClipboard(cssContent, 'copy-css-btn', 'CSS copied!');
+            copyToClipboard('css-output', 'copy-css-btn');
         }
 
-        // Copy HTML to clipboard
         function copyHTML() {
-            const htmlContent = document.getElementById('html-output').textContent;
-            copyToClipboard(htmlContent, 'copy-html-btn', 'HTML copied!');
+            copyToClipboard('html-output', 'copy-html-btn');
         }
 
-        // Copy to clipboard utility
-        function copyToClipboard(text, buttonId, message) {
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(text).then(() => {
-                    showCopySuccess(buttonId, message);
-                }).catch(() => {
-                    fallbackCopyToClipboard(text, buttonId, message);
-                });
-            } else {
-                fallbackCopyToClipboard(text, buttonId, message);
-            }
-        }
-
-        // Fallback copy method
-        function fallbackCopyToClipboard(text, buttonId, message) {
-            const textArea = document.createElement('textarea');
-            textArea.value = text;
-            textArea.style.position = 'fixed';
-            textArea.style.top = '0';
-            textArea.style.left = '0';
-            textArea.style.opacity = '0';
-            
-            document.body.appendChild(textArea);
-            textArea.focus();
-            textArea.select();
-            
-            try {
-                const successful = document.execCommand('copy');
-                if (successful) {
-                    showCopySuccess(buttonId, message);
-                }
-            } catch (err) {
-                showToast('Copy failed - please select and copy manually', 'warning');
-            }
-            
-            document.body.removeChild(textArea);
-        }
-
-        // Show copy success feedback
-        function showCopySuccess(buttonId, message) {
+        function copyToClipboard(outputId, buttonId) {
+            const output = document.getElementById(outputId);
             const button = document.getElementById(buttonId);
-            const originalHTML = button.innerHTML;
+            const textContent = output.textContent || output.innerText;
             
-            button.classList.add('copied');
-            button.innerHTML = '<i class="bi bi-check me-1"></i>Copied!';
+            navigator.clipboard.writeText(textContent).then(() => {
+                const originalContent = button.innerHTML;
+                button.classList.add('copied');
+                button.innerHTML = '<i class="bi bi-check me-1"></i>Copied!';
+                
+                setTimeout(() => {
+                    button.classList.remove('copied');
+                    button.innerHTML = originalContent;
+                }, 2000);
+            }).catch(() => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = textContent;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                button.innerHTML = '<i class="bi bi-check me-1"></i>Copied!';
+                setTimeout(() => {
+                    button.innerHTML = '<i class="bi bi-clipboard me-1"></i>Copy';
+                }, 2000);
+            });
+        }
+
+        function exportCode() {
+            const cssContent = document.getElementById('css-output').textContent;
+            const htmlContent = document.getElementById('html-output').textContent;
             
-            setTimeout(() => {
-                button.classList.remove('copied');
-                button.innerHTML = originalHTML;
-            }, 2000);
+            const fullCode = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Flexbox Layout</title>
+    <style>
+        /* Basic styling */
+        .flex-container {
+            border: 2px solid #ccc;
+            padding: 20px;
+            margin: 20px;
+        }
+        
+        .flex-item {
+            background: #f0f0f0;
+            padding: 20px;
+            margin: 5px;
+            text-align: center;
+            border-radius: 4px;
+        }
+        
+        ${cssContent}
+    </style>
+</head>
+<body>
+    <h1>My Flexbox Layout</h1>
+    ${htmlContent}
+</body>
+</html>`;
+
+            const blob = new Blob([fullCode], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'flexbox-layout.html';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
             
-            showToast(message, 'success');
+            showToast('Code exported as HTML file!', 'success');
         }
 
         // Toast notification system
-        function showToast(message, type = 'success') {
-            let toastContainer = document.getElementById('toast-container');
-            if (!toastContainer) {
-                toastContainer = document.createElement('div');
-                toastContainer.id = 'toast-container';
-                toastContainer.style.cssText = `
-                    position: fixed;
-                    top: 20px;
-                    right: 20px;
-                    z-index: 10000;
-                `;
-                document.body.appendChild(toastContainer);
-            }
-
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
-            const colors = {
-                success: '#28a745',
-                info: '#17a2b8',
-                warning: '#ffc107',
-                error: '#dc3545'
+            toast.className = 'toast-custom';
+            
+            const iconMap = {
+                success: 'check-circle-fill text-success',
+                warning: 'exclamation-triangle-fill text-warning',
+                error: 'x-circle-fill text-danger',
+                info: 'info-circle-fill text-info'
             };
-
-            toast.style.cssText = `
-                background: ${colors[type] || colors.success};
-                color: white;
-                padding: 12px 20px;
-                border-radius: 8px;
-                margin-bottom: 10px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-                transform: translateX(100%);
-                transition: transform 0.3s ease;
-                font-weight: 500;
-                max-width: 250px;
+            
+            toast.innerHTML = `
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-${iconMap[type]} me-2 fs-5"></i>
+                    <div class="flex-grow-1">${message}</div>
+                    <button type="button" class="btn-close btn-close-sm ms-2" onclick="this.parentElement.parentElement.remove()"></button>
+                </div>
             `;
-
-            toast.textContent = message;
-            toastContainer.appendChild(toast);
-
-            setTimeout(() => toast.style.transform = 'translateX(0)', 100);
+            
+            container.appendChild(toast);
+            
+            // Show toast
+            setTimeout(() => toast.classList.add('show'), 100);
+            
+            // Auto remove
             setTimeout(() => {
-                toast.style.transform = 'translateX(100%)';
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
-        }
-
-        // Simple drag and drop for demo items
-        function setupDragAndDrop() {
-            const demoItems = document.querySelectorAll('.demo-item');
-            const demoContainer = document.getElementById('demo-container');
-
-            demoItems.forEach(item => {
-                item.addEventListener('dragstart', (e) => {
-                    e.dataTransfer.setData('text/plain', '');
-                    item.classList.add('dragging');
-                });
-
-                item.addEventListener('dragend', () => {
-                    item.classList.remove('dragging');
-                });
-            });
-
-            demoContainer.addEventListener('dragover', (e) => {
-                e.preventDefault();
-            });
-
-            demoContainer.addEventListener('drop', (e) => {
-                e.preventDefault();
-                const dragging = document.querySelector('.dragging');
-                if (dragging) {
-                    showToast('Item reordered!', 'info');
+                if (toast.parentElement) {
+                    toast.remove();
                 }
-            });
+            }, 5000);
         }
     </script>
 </body>

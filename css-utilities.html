@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flexbox Interactive Playground</title>
+    <title>CSS Properties Explorer - Learn CSS Interactively</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
@@ -11,7 +11,10 @@
     <style>
         :root {
             --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --success-gradient: linear-gradient(135deg, #28a745, #20c997);
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --info-color: #17a2b8;
             --bg-light: #f8f9fa;
             --border-color: #dee2e6;
             --text-muted: #6c757d;
@@ -20,92 +23,72 @@
         }
 
         body {
-            background: var(--bg-light);
             font-family: system-ui, -apple-system, sans-serif;
+            background: var(--bg-light);
+            line-height: 1.6;
         }
 
-        .playground-container {
+        .hero-section {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 2rem 0;
+        }
+
+        .property-card {
             background: white;
             border-radius: 12px;
             box-shadow: var(--shadow-md);
             overflow: hidden;
+            margin-bottom: 1.5rem;
+            transition: transform 0.3s ease;
         }
 
-        .controls-panel {
-            background: #f8f9fa;
-            border-right: 1px solid var(--border-color);
-            max-height: 90vh;
-            overflow-y: auto;
-            padding: 20px;
+        .property-card:hover {
+            transform: translateY(-2px);
         }
 
-        .control-group {
-            background: white;
-            border-radius: 8px;
-            box-shadow: var(--shadow-sm);
-            margin-bottom: 1rem;
-            overflow: hidden;
-        }
-
-        .control-group h6 {
+        .property-header {
             background: var(--primary-gradient);
             color: white;
-            margin: 0;
-            padding: 0.75rem 1rem;
-            font-weight: 600;
+            padding: 1rem 1.5rem;
+            border-bottom: none;
         }
 
-        .flex-container {
-            background: white;
+        .property-body {
+            padding: 1.5rem;
+        }
+
+        .demo-container {
+            background: #f8f9fa;
             border: 3px dashed #667eea;
             border-radius: 12px;
-            padding: 20px;
-            min-height: 400px;
-            display: flex;
-            position: relative;
-            transition: all 0.3s ease;
-        }
-
-        .flex-container::before {
-            content: 'Flex Container';
-            position: absolute;
-            top: -12px;
-            left: 20px;
-            background: #667eea;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .flex-item {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            padding: 20px;
-            margin: 5px;
-            border-radius: 8px;
-            font-weight: 600;
-            text-align: center;
-            min-width: 80px;
+            padding: 2rem;
+            min-height: 300px;
             display: flex;
             align-items: center;
             justify-content: center;
+            margin: 1rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .demo-element {
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            text-align: center;
             transition: all 0.3s ease;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
 
-        .flex-item:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-md);
+        .demo-text {
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: #333;
         }
-
-        .flex-item:nth-child(1) { background: linear-gradient(135deg, #ff6b6b, #ee5a52); }
-        .flex-item:nth-child(2) { background: linear-gradient(135deg, #4ecdc4, #26d0ce); }
-        .flex-item:nth-child(3) { background: linear-gradient(135deg, #45b7d1, #96c93d); }
-        .flex-item:nth-child(4) { background: linear-gradient(135deg, #f9ca24, #f0932b); }
-        .flex-item:nth-child(5) { background: linear-gradient(135deg, #6c5ce7, #a29bfe); }
-        .flex-item:nth-child(n+6) { background: linear-gradient(135deg, #fd79a8, #fdcb6e); }
 
         .code-output {
             background: #1a1a1a;
@@ -115,17 +98,17 @@
             font-family: 'Consolas', 'Monaco', monospace;
             font-size: 13px;
             line-height: 1.5;
-            max-height: 400px;
+            max-height: 300px;
             overflow-y: auto;
-            white-space: pre;
             position: relative;
+            margin: 1rem 0;
         }
 
         .copy-btn {
             position: absolute;
             top: 10px;
             right: 10px;
-            background: #28a745;
+            background: var(--success-color);
             color: white;
             border: none;
             border-radius: 4px;
@@ -134,6 +117,7 @@
             cursor: pointer;
             opacity: 0.8;
             transition: all 0.2s;
+            z-index: 10;
         }
 
         .copy-btn:hover {
@@ -142,360 +126,862 @@
         }
 
         .copy-btn.copied {
-            background: #17a2b8;
+            background: var(--info-color);
+        }
+
+        .css-property { color: #79b6f2; }
+        .css-value { color: #90ee90; }
+        .css-selector { color: #ffd700; }
+        .css-comment { color: #9ca3af; font-style: italic; }
+
+        .control-group {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid #667eea;
+        }
+
+        .control-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+            display: block;
         }
 
         .range-value {
             font-weight: 600;
             color: #667eea;
+            min-width: 4rem;
+            text-align: center;
             font-size: 0.9rem;
         }
 
-        .btn-action {
-            border-radius: 25px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-
-        .btn-action:hover {
-            transform: translateY(-2px);
-        }
-
-        .demo-section {
-            background: linear-gradient(135deg, rgba(248, 249, 250, 0.8), rgba(233, 236, 239, 0.8));
-            border-radius: 12px;
-            padding: 20px;
-            margin-top: 20px;
-            border: 1px solid var(--border-color);
-        }
-
-        .demo-container {
-            background: white;
-            border: 2px dashed #28a745;
-            border-radius: 8px;
-            padding: 20px;
-            min-height: 200px;
+        .property-tabs {
             display: flex;
-            position: relative;
-        }
-
-        .demo-container::before {
-            content: 'Demo Container';
-            position: absolute;
-            top: -12px;
-            left: 20px;
-            background: #28a745;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .demo-item {
-            background: white;
-            border: 2px solid var(--border-color);
+            background: #f8f9fa;
             border-radius: 8px;
-            padding: 15px;
-            margin: 5px;
-            text-align: center;
+            padding: 0.25rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            flex: 1;
+            min-width: 120px;
+            padding: 0.5rem 0.75rem;
+            border: none;
+            background: transparent;
+            border-radius: 6px;
+            cursor: pointer;
             transition: all 0.3s ease;
-            cursor: move;
-            user-select: none;
+            font-weight: 500;
+            font-size: 0.85rem;
+            margin: 0.125rem;
         }
 
-        .demo-item:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-md);
-            border-color: #667eea;
+        .tab-btn.active {
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            color: #667eea;
         }
 
-        .demo-item.dragging {
-            opacity: 0.5;
-            transform: rotate(5deg);
+        .tab-content {
+            display: none;
         }
 
-        .live-indicator {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: #28a745;
+        .tab-content.active {
+            display: block;
+        }
+
+        .info-badge {
+            background: #e7f3ff;
+            color: #0066cc;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .preset-btn {
+            padding: 0.375rem 0.75rem;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0.25rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .preset-btn:hover,
+        .preset-btn.active {
+            background: #667eea;
             color: white;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 0.7rem;
-            font-weight: bold;
-            animation: pulse 2s infinite;
         }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
+        .description-text {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+            line-height: 1.5;
         }
-
-        .css-property { color: #4CAF50; font-weight: 500; }
-        .css-value { color: #FFA726; }
-        .css-selector { color: #42A5F5; font-weight: 500; }
 
         @media (max-width: 768px) {
-            .playground-layout {
+            .property-tabs {
                 flex-direction: column;
             }
-            .controls-panel {
-                max-height: none;
-                border-right: none;
-                border-bottom: 1px solid var(--border-color);
+            .tab-btn {
+                flex: none;
+                margin: 0.125rem 0;
             }
         }
     </style>
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
         <div class="container">
-            <a class="navbar-brand" href="index.html">
-                <i class="bi bi-arrow-left me-2"></i>Flexbox Playground
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-code-square me-2"></i>CSS Properties Explorer
             </a>
-            <div class="navbar-nav ms-auto">
-                <a class="nav-link" href="flexbox-guide.html">
-                    <i class="bi bi-book me-1"></i>Documentation
-                </a>
-                <a class="nav-link" href="index.html">
-                    <i class="bi bi-house me-1"></i>Home
-                </a>
-            </div>
         </div>
     </nav>
 
-    <div class="container-fluid p-3">
-        <div class="row playground-layout">
-            <!-- Controls Panel -->
-            <div class="col-lg-3">
-                <div class="controls-panel">
-                    <h5 class="text-center mb-4">
-                        <i class="bi bi-sliders me-2"></i>Flexbox Controls
-                    </h5>
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="display-6 fw-bold mb-3">CSS Properties Explorer</h1>
+                    <p class="lead mb-0">Learn CSS properties interactively with live demos and instant feedback. Experiment with values and see results in real-time.</p>
+                </div>
+                <div class="col-lg-4 text-center">
+                    <i class="bi bi-palette2 display-1 opacity-75"></i>
+                </div>
+            </div>
+        </div>
+    </section>
 
-                    <!-- Container Properties -->
-                    <div class="control-group">
-                        <h6><i class="bi bi-box me-2"></i>Container Properties</h6>
-                        <div class="p-3">
-                            <div class="mb-3">
-                                <label class="form-label">Display:</label>
-                                <select class="form-select form-select-sm" id="display" onchange="updateContainer()">
-                                    <option value="block">Block</option>
-                                    <option value="flex" selected>Flex</option>
-                                    <option value="inline-flex">Inline Flex</option>
+    <div class="container mt-4">
+        <!-- Property Categories -->
+        <div class="property-tabs">
+            <button class="tab-btn active" onclick="switchPropertyTab('layout')">
+                <i class="bi bi-grid me-1"></i>Layout
+            </button>
+            <button class="tab-btn" onclick="switchPropertyTab('typography')">
+                <i class="bi bi-type me-1"></i>Typography
+            </button>
+            <button class="tab-btn" onclick="switchPropertyTab('colors')">
+                <i class="bi bi-palette me-1"></i>Colors
+            </button>
+            <button class="tab-btn" onclick="switchPropertyTab('spacing')">
+                <i class="bi bi-arrows-move me-1"></i>Spacing
+            </button>
+            <button class="tab-btn" onclick="switchPropertyTab('borders')">
+                <i class="bi bi-square me-1"></i>Borders
+            </button>
+            <button class="tab-btn" onclick="switchPropertyTab('effects')">
+                <i class="bi bi-stars me-1"></i>Effects
+            </button>
+            <button class="tab-btn" onclick="switchPropertyTab('transform')">
+                <i class="bi bi-arrow-repeat me-1"></i>Transform
+            </button>
+        </div>
+
+        <!-- Layout Properties -->
+        <div id="layout-tab" class="tab-content active">
+            <div class="property-card">
+                <div class="property-header">
+                    <h3 class="mb-0"><i class="bi bi-grid me-2"></i>Layout Properties</h3>
+                    <p class="mb-0 opacity-75">Control positioning, display, and flexbox properties</p>
+                </div>
+                <div class="property-body">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <!-- Display -->
+                            <div class="control-group">
+                                <label class="control-label">Display</label>
+                                <div class="description-text">Controls how an element is displayed</div>
+                                <select class="form-select" id="display" onchange="updateDemo()">
+                                    <option value="block">block</option>
+                                    <option value="inline">inline</option>
+                                    <option value="inline-block">inline-block</option>
+                                    <option value="flex" selected>flex</option>
+                                    <option value="inline-flex">inline-flex</option>
+                                    <option value="grid">grid</option>
+                                    <option value="none">none</option>
                                 </select>
                             </div>
 
-                            <div class="mb-3">
-                                <label class="form-label">Flex Direction:</label>
-                                <select class="form-select form-select-sm" id="flex-direction" onchange="updateContainer()">
-                                    <option value="row" selected>Row</option>
-                                    <option value="row-reverse">Row Reverse</option>
-                                    <option value="column">Column</option>
-                                    <option value="column-reverse">Column Reverse</option>
+                            <!-- Position -->
+                            <div class="control-group">
+                                <label class="control-label">Position</label>
+                                <div class="description-text">Defines positioning method for an element</div>
+                                <select class="form-select" id="position" onchange="updateDemo()">
+                                    <option value="static">static</option>
+                                    <option value="relative" selected>relative</option>
+                                    <option value="absolute">absolute</option>
+                                    <option value="fixed">fixed</option>
+                                    <option value="sticky">sticky</option>
                                 </select>
                             </div>
 
-                            <div class="mb-3">
-                                <label class="form-label">Justify Content:</label>
-                                <select class="form-select form-select-sm" id="justify-content" onchange="updateContainer()">
-                                    <option value="flex-start" selected>Flex Start</option>
-                                    <option value="center">Center</option>
-                                    <option value="flex-end">Flex End</option>
-                                    <option value="space-between">Space Between</option>
-                                    <option value="space-around">Space Around</option>
-                                    <option value="space-evenly">Space Evenly</option>
+                            <!-- Flex Direction (when display is flex) -->
+                            <div class="control-group" id="flex-controls">
+                                <label class="control-label">Flex Direction</label>
+                                <div class="description-text">Sets direction of flex items</div>
+                                <select class="form-select" id="flexDirection" onchange="updateDemo()">
+                                    <option value="row" selected>row</option>
+                                    <option value="row-reverse">row-reverse</option>
+                                    <option value="column">column</option>
+                                    <option value="column-reverse">column-reverse</option>
                                 </select>
                             </div>
 
-                            <div class="mb-3">
-                                <label class="form-label">Align Items:</label>
-                                <select class="form-select form-select-sm" id="align-items" onchange="updateContainer()">
-                                    <option value="stretch" selected>Stretch</option>
-                                    <option value="flex-start">Flex Start</option>
-                                    <option value="center">Center</option>
-                                    <option value="flex-end">Flex End</option>
-                                    <option value="baseline">Baseline</option>
+                            <!-- Justify Content -->
+                            <div class="control-group">
+                                <label class="control-label">Justify Content</label>
+                                <div class="description-text">Aligns items along main axis</div>
+                                <select class="form-select" id="justifyContent" onchange="updateDemo()">
+                                    <option value="flex-start">flex-start</option>
+                                    <option value="center" selected>center</option>
+                                    <option value="flex-end">flex-end</option>
+                                    <option value="space-between">space-between</option>
+                                    <option value="space-around">space-around</option>
+                                    <option value="space-evenly">space-evenly</option>
                                 </select>
                             </div>
 
-                            <div class="mb-3">
-                                <label class="form-label">Flex Wrap:</label>
-                                <select class="form-select form-select-sm" id="flex-wrap" onchange="updateContainer()">
-                                    <option value="nowrap" selected>No Wrap</option>
-                                    <option value="wrap">Wrap</option>
-                                    <option value="wrap-reverse">Wrap Reverse</option>
+                            <!-- Align Items -->
+                            <div class="control-group">
+                                <label class="control-label">Align Items</label>
+                                <div class="description-text">Aligns items along cross axis</div>
+                                <select class="form-select" id="alignItems" onchange="updateDemo()">
+                                    <option value="stretch">stretch</option>
+                                    <option value="flex-start">flex-start</option>
+                                    <option value="center" selected>center</option>
+                                    <option value="flex-end">flex-end</option>
+                                    <option value="baseline">baseline</option>
                                 </select>
                             </div>
+                        </div>
 
-                            <div class="mb-3">
-                                <label class="form-label">Gap: <span class="range-value" id="gap-value">10px</span></label>
-                                <input type="range" class="form-range" id="gap" min="0" max="50" value="10" oninput="updateGap()" onchange="updateContainer()">
+                        <div class="col-lg-6">
+                            <!-- Demo Area -->
+                            <h5>Live Demo</h5>
+                            <div class="demo-container" id="demo-container">
+                                <div class="demo-element" id="demo-element">Demo Element</div>
                             </div>
-
+                            
+                            <!-- Quick Presets -->
                             <div class="mb-3">
-                                <label class="form-label">Height: <span class="range-value" id="height-value">400px</span></label>
-                                <input type="range" class="form-range" id="container-height" min="200" max="800" value="400" oninput="updateHeight()" onchange="updateContainer()">
+                                <label class="form-label fw-bold">Quick Presets:</label>
+                                <div>
+                                    <button class="preset-btn" onclick="applyPreset('centered')">Centered</button>
+                                    <button class="preset-btn" onclick="applyPreset('flexColumn')">Flex Column</button>
+                                    <button class="preset-btn" onclick="applyPreset('spaceBetween')">Space Between</button>
+                                    <button class="preset-btn" onclick="applyPreset('grid')">Grid Layout</button>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Item Controls -->
-                    <div class="control-group">
-                        <h6><i class="bi bi-square me-2"></i>Item Controls</h6>
-                        <div class="p-3">
-                            <div class="mb-3">
-                                <label class="form-label">Select Item:</label>
-                                <select class="form-select form-select-sm" id="selected-item" onchange="updateItemControls()">
-                                    <option value="1">Item 1</option>
-                                    <option value="2">Item 2</option>
-                                    <option value="3">Item 3</option>
-                                </select>
+                    <!-- Generated CSS -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h5>Generated CSS</h5>
+                            <div class="position-relative">
+                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                                <div class="code-output" id="css-output">/* CSS will be generated here */</div>
                             </div>
-
-                            <div class="mb-3">
-                                <label class="form-label">Flex Grow: <span class="range-value" id="grow-value">0</span></label>
-                                <input type="range" class="form-range" id="flex-grow" min="0" max="5" value="0" oninput="updateGrow()" onchange="updateSelectedItem()">
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label">Flex Shrink: <span class="range-value" id="shrink-value">1</span></label>
-                                <input type="range" class="form-range" id="flex-shrink" min="0" max="5" value="1" oninput="updateShrink()" onchange="updateSelectedItem()">
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label">Flex Basis:</label>
-                                <select class="form-select form-select-sm" id="flex-basis" onchange="updateSelectedItem()">
-                                    <option value="auto" selected>Auto</option>
-                                    <option value="0">0</option>
-                                    <option value="50px">50px</option>
-                                    <option value="100px">100px</option>
-                                    <option value="200px">200px</option>
-                                    <option value="50%">50%</option>
-                                </select>
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label">Align Self:</label>
-                                <select class="form-select form-select-sm" id="align-self" onchange="updateSelectedItem()">
-                                    <option value="auto" selected>Auto</option>
-                                    <option value="flex-start">Flex Start</option>
-                                    <option value="center">Center</option>
-                                    <option value="flex-end">Flex End</option>
-                                    <option value="stretch">Stretch</option>
-                                    <option value="baseline">Baseline</option>
-                                </select>
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label">Order: <span class="range-value" id="order-value">0</span></label>
-                                <input type="range" class="form-range" id="order" min="-5" max="5" value="0" oninput="updateOrder()" onchange="updateSelectedItem()">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Actions -->
-                    <div class="control-group">
-                        <h6><i class="bi bi-lightning me-2"></i>Actions</h6>
-                        <div class="p-3">
-                            <button class="btn btn-success btn-action w-100 mb-2" onclick="addItem()">
-                                <i class="bi bi-plus me-2"></i>Add Item
-                            </button>
-                            <button class="btn btn-danger btn-action w-100 mb-2" onclick="removeItem()">
-                                <i class="bi bi-dash me-2"></i>Remove Item
-                            </button>
-                            <button class="btn btn-warning btn-action w-100" onclick="resetAll()">
-                                <i class="bi bi-arrow-clockwise me-2"></i>Reset All
-                            </button>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Main Playground -->
-            <div class="col-lg-6">
-                <div class="playground-container">
-                    <div class="p-3 bg-primary text-white position-relative">
-                        <h5 class="mb-0">
-                            <i class="bi bi-eye me-2"></i>Live Preview
-                        </h5>
-                        <small>Flexbox container with real-time updates</small>
-                        <div class="live-indicator">LIVE</div>
-                    </div>
-                    
-                    <div class="p-3">
-                        <div class="flex-container" id="flex-container">
-                            <div class="flex-item" data-item="1">Item 1</div>
-                            <div class="flex-item" data-item="2">Item 2</div>
-                            <div class="flex-item" data-item="3">Item 3</div>
-                        </div>
-                    </div>
+        <!-- Typography Properties -->
+        <div id="typography-tab" class="tab-content">
+            <div class="property-card">
+                <div class="property-header">
+                    <h3 class="mb-0"><i class="bi bi-type me-2"></i>Typography Properties</h3>
+                    <p class="mb-0 opacity-75">Control text styling, fonts, and typography</p>
                 </div>
+                <div class="property-body">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <!-- Font Size -->
+                            <div class="control-group">
+                                <label class="control-label">Font Size</label>
+                                <div class="description-text">Controls the size of text</div>
+                                <div class="d-flex align-items-center gap-3">
+                                    <input type="range" class="form-range" id="fontSize" min="12" max="72" value="24" oninput="updateTypography()">
+                                    <span class="range-value" id="fontSizeValue">24px</span>
+                                </div>
+                            </div>
 
-                <!-- Demo Section -->
-                <div class="demo-section">
-                    <h5><i class="bi bi-grid-3x3 me-2"></i>Real Content Demo</h5>
-                    <p class="text-muted mb-3">See how flexbox works with actual content:</p>
-                    <div class="demo-container" id="demo-container">
-                        <div class="demo-item" draggable="true">
-                            <h6>📝 Text Card</h6>
-                            <p class="mb-0 small">Sample content</p>
+                            <!-- Font Weight -->
+                            <div class="control-group">
+                                <label class="control-label">Font Weight</label>
+                                <div class="description-text">Controls the thickness of text</div>
+                                <select class="form-select" id="fontWeight" onchange="updateTypography()">
+                                    <option value="100">100 - Thin</option>
+                                    <option value="200">200 - Extra Light</option>
+                                    <option value="300">300 - Light</option>
+                                    <option value="400" selected>400 - Normal</option>
+                                    <option value="500">500 - Medium</option>
+                                    <option value="600">600 - Semi Bold</option>
+                                    <option value="700">700 - Bold</option>
+                                    <option value="800">800 - Extra Bold</option>
+                                    <option value="900">900 - Black</option>
+                                </select>
+                            </div>
+
+                            <!-- Line Height -->
+                            <div class="control-group">
+                                <label class="control-label">Line Height</label>
+                                <div class="description-text">Controls the space between lines</div>
+                                <div class="d-flex align-items-center gap-3">
+                                    <input type="range" class="form-range" id="lineHeight" min="0.8" max="3" step="0.1" value="1.5" oninput="updateTypography()">
+                                    <span class="range-value" id="lineHeightValue">1.5</span>
+                                </div>
+                            </div>
+
+                            <!-- Text Align -->
+                            <div class="control-group">
+                                <label class="control-label">Text Align</label>
+                                <div class="description-text">Controls text alignment</div>
+                                <select class="form-select" id="textAlign" onchange="updateTypography()">
+                                    <option value="left">left</option>
+                                    <option value="center" selected>center</option>
+                                    <option value="right">right</option>
+                                    <option value="justify">justify</option>
+                                </select>
+                            </div>
+
+                            <!-- Text Transform -->
+                            <div class="control-group">
+                                <label class="control-label">Text Transform</label>
+                                <div class="description-text">Controls text capitalization</div>
+                                <select class="form-select" id="textTransform" onchange="updateTypography()">
+                                    <option value="none" selected>none</option>
+                                    <option value="uppercase">uppercase</option>
+                                    <option value="lowercase">lowercase</option>
+                                    <option value="capitalize">capitalize</option>
+                                </select>
+                            </div>
+
+                            <!-- Letter Spacing -->
+                            <div class="control-group">
+                                <label class="control-label">Letter Spacing</label>
+                                <div class="description-text">Controls space between characters</div>
+                                <div class="d-flex align-items-center gap-3">
+                                    <input type="range" class="form-range" id="letterSpacing" min="-2" max="10" step="0.5" value="0" oninput="updateTypography()">
+                                    <span class="range-value" id="letterSpacingValue">0px</span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="demo-item" draggable="true">
-                            <h6>🚀 Icon Card</h6>
-                            <p class="mb-0 small">With icon</p>
-                        </div>
-                        <div class="demo-item" draggable="true">
-                            <button class="btn btn-sm btn-primary">Button</button>
-                            <p class="mb-0 small mt-1">Interactive</p>
+
+                        <div class="col-lg-6">
+                            <h5>Live Demo</h5>
+                            <div class="demo-container" id="typo-demo-container">
+                                <div class="demo-text" id="typo-demo-element">
+                                    The quick brown fox jumps over the lazy dog. This text demonstrates various typography properties in action.
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Typography Presets:</label>
+                                <div>
+                                    <button class="preset-btn" onclick="applyTypographyPreset('heading')">Heading</button>
+                                    <button class="preset-btn" onclick="applyTypographyPreset('body')">Body Text</button>
+                                    <button class="preset-btn" onclick="applyTypographyPreset('caption')">Caption</button>
+                                    <button class="preset-btn" onclick="applyTypographyPreset('display')">Display</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="mt-3">
-                        <button class="btn btn-info btn-sm" onclick="applyToDemo()">
-                            <i class="bi bi-arrow-right me-1"></i>Apply Settings to Demo
-                        </button>
-                        <button class="btn btn-secondary btn-sm ms-2" onclick="resetDemo()">
-                            <i class="bi bi-arrow-clockwise me-1"></i>Reset Demo
-                        </button>
+
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h5>Generated CSS</h5>
+                            <div class="position-relative">
+                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                                <div class="code-output" id="typo-css-output">/* CSS will be generated here */</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- CSS Output -->
-            <div class="col-lg-3">
-                <div class="playground-container">
-                    <div class="p-3 bg-success text-white position-relative">
-                        <h5 class="mb-0">
-                            <i class="bi bi-code-slash me-2"></i>Live CSS
-                        </h5>
-                        <small>Copy-ready CSS code</small>
-                        <div class="live-indicator">LIVE</div>
+        <!-- Colors Properties -->
+        <div id="colors-tab" class="tab-content">
+            <div class="property-card">
+                <div class="property-header">
+                    <h3 class="mb-0"><i class="bi bi-palette me-2"></i>Color Properties</h3>
+                    <p class="mb-0 opacity-75">Control colors, backgrounds, and opacity</p>
+                </div>
+                <div class="property-body">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <!-- Background Color -->
+                            <div class="control-group">
+                                <label class="control-label">Background Color</label>
+                                <div class="description-text">Sets the background color of an element</div>
+                                <div class="d-flex align-items-center gap-3">
+                                    <input type="color" class="form-control form-control-color" id="backgroundColor" value="#667eea" onchange="updateColors()">
+                                    <input type="text" class="form-control" id="backgroundColorHex" value="#667eea" onchange="updateColorsFromHex()">
+                                </div>
+                            </div>
+
+                            <!-- Text Color -->
+                            <div class="control-group">
+                                <label class="control-label">Text Color</label>
+                                <div class="description-text">Sets the color of text</div>
+                                <div class="d-flex align-items-center gap-3">
+                                    <input type="color" class="form-control form-control-color" id="textColor" value="#ffffff" onchange="updateColors()">
+                                    <input type="text" class="form-control" id="textColorHex" value="#ffffff" onchange="updateColorsFromHex()">
+                                </div>
+                            </div>
+
+                            <!-- Opacity -->
+                            <div class="control-group">
+                                <label class="control-label">Opacity</label>
+                                <div class="description-text">Controls transparency of an element</div>
+                                <div class="d-flex align-items-center gap-3">
+                                    <input type="range" class="form-range" id="opacity" min="0" max="1" step="0.1" value="1" oninput="updateColors()">
+                                    <span class="range-value" id="opacityValue">1</span>
+                                </div>
+                            </div>
+
+                            <!-- Background Size -->
+                            <div class="control-group">
+                                <label class="control-label">Background Type</label>
+                                <div class="description-text">Choose between solid color or gradient</div>
+                                <select class="form-select" id="backgroundType" onchange="updateColors()">
+                                    <option value="solid" selected>Solid Color</option>
+                                    <option value="gradient">Linear Gradient</option>
+                                    <option value="radial">Radial Gradient</option>
+                                </select>
+                            </div>
+
+                            <!-- Gradient Controls -->
+                            <div class="control-group" id="gradient-controls" style="display: none;">
+                                <label class="control-label">Gradient End Color</label>
+                                <div class="description-text">Second color for gradient</div>
+                                <div class="d-flex align-items-center gap-3">
+                                    <input type="color" class="form-control form-control-color" id="gradientColor" value="#764ba2" onchange="updateColors()">
+                                    <input type="text" class="form-control" id="gradientColorHex" value="#764ba2" onchange="updateColorsFromHex()">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <h5>Live Demo</h5>
+                            <div class="demo-container" id="color-demo-container">
+                                <div class="demo-element" id="color-demo-element">Colorful Element</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Color Presets:</label>
+                                <div>
+                                    <button class="preset-btn" onclick="applyColorPreset('primary')">Primary</button>
+                                    <button class="preset-btn" onclick="applyColorPreset('success')">Success</button>
+                                    <button class="preset-btn" onclick="applyColorPreset('warning')">Warning</button>
+                                    <button class="preset-btn" onclick="applyColorPreset('danger')">Danger</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="position-relative">
-                        <button class="copy-btn" onclick="copyCSS()" id="copy-css-btn">
-                            <i class="bi bi-clipboard me-1"></i>Copy
-                        </button>
-                        <div class="code-output" id="css-output">/* CSS will appear here */</div>
+
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h5>Generated CSS</h5>
+                            <div class="position-relative">
+                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                                <div class="code-output" id="color-css-output">/* CSS will be generated here */</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
+            </div>
+        </div>
 
-                <!-- HTML Output -->
-                <div class="playground-container mt-3">
-                    <div class="p-3 bg-info text-white position-relative">
-                        <h5 class="mb-0">
-                            <i class="bi bi-file-code me-2"></i>HTML Structure
-                        </h5>
-                        <small>Complete HTML code</small>
+        <!-- Spacing Properties -->
+        <div id="spacing-tab" class="tab-content">
+            <div class="property-card">
+                <div class="property-header">
+                    <h3 class="mb-0"><i class="bi bi-arrows-move me-2"></i>Spacing Properties</h3>
+                    <p class="mb-0 opacity-75">Control margins, padding, and spacing</p>
+                </div>
+                <div class="property-body">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <!-- Margin -->
+                            <div class="control-group">
+                                <label class="control-label">Margin</label>
+                                <div class="description-text">External spacing around element</div>
+                                <div class="d-flex align-items-center gap-3">
+                                    <input type="range" class="form-range" id="margin" min="0" max="50" value="20" oninput="updateSpacing()">
+                                    <span class="range-value" id="marginValue">20px</span>
+                                </div>
+                            </div>
+
+                            <!-- Padding -->
+                            <div class="control-group">
+                                <label class="control-label">Padding</label>
+                                <div class="description-text">Internal spacing inside element</div>
+                                <div class="d-flex align-items-center gap-3">
+                                    <input type="range" class="form-range" id="padding" min="0" max="50" value="20" oninput="updateSpacing()">
+                                    <span class="range-value" id="paddingValue">20px</span>
+                                </div>
+                            </div>
+
+                            <!-- Width -->
+                            <div class="control-group">
+                                <label class="control-label">Width</label>
+                                <div class="description-text">Sets the width of element</div>
+                                <div class="d-flex align-items-center gap-3">
+                                    <input type="range" class="form-range" id="width" min="100" max="400" value="200" oninput="updateSpacing()">
+                                    <span class="range-value" id="widthValue">200px</span>
+                                </div>
+                            </div>
+
+                            <!-- Height -->
+                            <div class="control-group">
+                                <label class="control-label">Height</label>
+                                <div class="description-text">Sets the height of element</div>
+                                <div class="d-flex align-items-center gap-3">
+                                    <input type="range" class="form-range" id="height" min="50" max="200" value="100" oninput="updateSpacing()">
+                                    <span class="range-value" id="heightValue">100px</span>
+                                </div>
+                            </div>
+
+                            <!-- Gap (for flex/grid) -->
+                            <div class="control-group">
+                                <label class="control-label">Gap</label>
+                                <div class="description-text">Space between child elements</div>
+                                <div class="d-flex align-items-center gap-3">
+                                    <input type="range" class="form-range" id="gap" min="0" max="30" value="10" oninput="updateSpacing()">
+                                    <span class="range-value" id="gapValue">10px</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <h5>Live Demo</h5>
+                            <div class="demo-container" id="spacing-demo-container">
+                                <div class="demo-element" id="spacing-demo-element">
+                                    <div>Element with spacing</div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Spacing Presets:</label>
+                                <div>
+                                    <button class="preset-btn" onclick="applySpacingPreset('tight')">Tight</button>
+                                    <button class="preset-btn" onclick="applySpacingPreset('normal')">Normal</button>
+                                    <button class="preset-btn" onclick="applySpacingPreset('loose')">Loose</button>
+                                    <button class="preset-btn" onclick="applySpacingPreset('xl')">Extra Large</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="position-relative">
-                        <button class="copy-btn" onclick="copyHTML()" id="copy-html-btn">
-                            <i class="bi bi-clipboard me-1"></i>Copy
-                        </button>
-                        <div class="code-output" id="html-output"><!-- HTML will appear here --></div>
+
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h5>Generated CSS</h5>
+                            <div class="position-relative">
+                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                                <div class="code-output" id="spacing-css-output">/* CSS will be generated here */</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Borders Properties -->
+        <div id="borders-tab" class="tab-content">
+            <div class="property-card">
+                <div class="property-header">
+                    <h3 class="mb-0"><i class="bi bi-square me-2"></i>Border Properties</h3>
+                    <p class="mb-0 opacity-75">Control borders, outlines, and border radius</p>
+                </div>
+                <div class="property-body">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <!-- Border Width -->
+                            <div class="control-group">
+                                <label class="control-label">Border Width</label>
+                                <div class="description-text">Thickness of the border</div>
+                                <div class="d-flex align-items-center gap-3">
+                                    <input type="range" class="form-range" id="borderWidth" min="0" max="20" value="2" oninput="updateBorders()">
+                                    <span class="range-value" id="borderWidthValue">2px</span>
+                                </div>
+                            </div>
+
+                            <!-- Border Style -->
+                            <div class="control-group">
+                                <label class="control-label">Border Style</label>
+                                <div class="description-text">Style of the border line</div>
+                                <select class="form-select" id="borderStyle" onchange="updateBorders()">
+                                    <option value="solid" selected>solid</option>
+                                    <option value="dashed">dashed</option>
+                                    <option value="dotted">dotted</option>
+                                    <option value="double">double</option>
+                                    <option value="groove">groove</option>
+                                    <option value="ridge">ridge</option>
+                                    <option value="inset">inset</option>
+                                    <option value="outset">outset</option>
+                                </select>
+                            </div>
+
+                            <!-- Border Color -->
+                            <div class="control-group">
+                                <label class="control-label">Border Color</label>
+                                <div class="description-text">Color of the border</div>
+                                <div class="d-flex align-items-center gap-3">
+                                    <input type="color" class="form-control form-control-color" id="borderColor" value="#667eea" onchange="updateBorders()">
+                                    <input type="text" class="form-control" id="borderColorHex" value="#667eea" onchange="updateBordersFromHex()">
+                                </div>
+                            </div>
+
+                            <!-- Border Radius -->
+                            <div class="control-group">
+                                <label class="control-label">Border Radius</label>
+                                <div class="description-text">Rounds the corners of borders</div>
+                                <div class="d-flex align-items-center gap-3">
+                                    <input type="range" class="form-range" id="borderRadius" min="0" max="50" value="8" oninput="updateBorders()">
+                                    <span class="range-value" id="borderRadiusValue">8px</span>
+                                </div>
+                            </div>
+
+                            <!-- Outline -->
+                            <div class="control-group">
+                                <label class="control-label">Outline Width</label>
+                                <div class="description-text">Outline outside the border</div>
+                                <div class="d-flex align-items-center gap-3">
+                                    <input type="range" class="form-range" id="outlineWidth" min="0" max="10" value="0" oninput="updateBorders()">
+                                    <span class="range-value" id="outlineWidthValue">0px</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <h5>Live Demo</h5>
+                            <div class="demo-container" id="border-demo-container">
+                                <div class="demo-element" id="border-demo-element">Bordered Element</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Border Presets:</label>
+                                <div>
+                                    <button class="preset-btn" onclick="applyBorderPreset('card')">Card</button>
+                                    <button class="preset-btn" onclick="applyBorderPreset('button')">Button</button>
+                                    <button class="preset-btn" onclick="applyBorderPreset('input')">Input</button>
+                                    <button class="preset-btn" onclick="applyBorderPreset('badge')">Badge</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h5>Generated CSS</h5>
+                            <div class="position-relative">
+                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                                <div class="code-output" id="border-css-output">/* CSS will be generated here */</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Effects Properties -->
+        <div id="effects-tab" class="tab-content">
+            <div class="property-card">
+                <div class="property-header">
+                    <h3 class="mb-0"><i class="bi bi-stars me-2"></i>Visual Effects</h3>
+                    <p class="mb-0 opacity-75">Control shadows, filters, and visual effects</p>
+                </div>
+                <div class="property-body">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <!-- Box Shadow -->
+                            <div class="control-group">
+                                <label class="control-label">Box Shadow Blur</label>
+                                <div class="description-text">Blur radius of the shadow</div>
+                                <div class="d-flex align-items-center gap-3">
+                                    <input type="range" class="form-range" id="shadowBlur" min="0" max="30" value="10" oninput="updateEffects()">
+                                    <span class="range-value" id="shadowBlurValue">10px</span>
+                                </div>
+                            </div>
+
+                            <!-- Shadow Offset X -->
+                            <div class="control-group">
+                                <label class="control-label">Shadow Offset X</label>
+                                <div class="description-text">Horizontal offset of shadow</div>
+                                <div class="d-flex align-items-center gap-3">
+                                    <input type="range" class="form-range" id="shadowX" min="-20" max="20" value="2" oninput="updateEffects()">
+                                    <span class="range-value" id="shadowXValue">2px</span>
+                                </div>
+                            </div>
+
+                            <!-- Shadow Offset Y -->
+                            <div class="control-group">
+                                <label class="control-label">Shadow Offset Y</label>
+                                <div class="description-text">Vertical offset of shadow</div>
+                                <div class="d-flex align-items-center gap-3">
+                                    <input type="range" class="form-range" id="shadowY" min="-20" max="20" value="4" oninput="updateEffects()">
+                                    <span class="range-value" id="shadowYValue">4px</span>
+                                </div>
+                            </div>
+
+                            <!-- Blur Filter -->
+                            <div class="control-group">
+                                <label class="control-label">Blur Filter</label>
+                                <div class="description-text">Blurs the entire element</div>
+                                <div class="d-flex align-items-center gap-3">
+                                    <input type="range" class="form-range" id="blur" min="0" max="10" value="0" step="0.5" oninput="updateEffects()">
+                                    <span class="range-value" id="blurValue">0px</span>
+                                </div>
+                            </div>
+
+                            <!-- Brightness -->
+                            <div class="control-group">
+                                <label class="control-label">Brightness</label>
+                                <div class="description-text">Adjusts element brightness</div>
+                                <div class="d-flex align-items-center gap-3">
+                                    <input type="range" class="form-range" id="brightness" min="0" max="2" step="0.1" value="1" oninput="updateEffects()">
+                                    <span class="range-value" id="brightnessValue">1</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <h5>Live Demo</h5>
+                            <div class="demo-container" id="effects-demo-container">
+                                <div class="demo-element" id="effects-demo-element">Effects Element</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Effect Presets:</label>
+                                <div>
+                                    <button class="preset-btn" onclick="applyEffectPreset('card')">Card Shadow</button>
+                                    <button class="preset-btn" onclick="applyEffectPreset('float')">Floating</button>
+                                    <button class="preset-btn" onclick="applyEffectPreset('glow')">Glow</button>
+                                    <button class="preset-btn" onclick="applyEffectPreset('none')">No Effects</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h5>Generated CSS</h5>
+                            <div class="position-relative">
+                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                                <div class="code-output" id="effects-css-output">/* CSS will be generated here */</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transform Properties -->
+        <div id="transform-tab" class="tab-content">
+            <div class="property-card">
+                <div class="property-header">
+                    <h3 class="mb-0"><i class="bi bi-arrow-repeat me-2"></i>Transform Properties</h3>
+                    <p class="mb-0 opacity-75">Control rotation, scaling, and 2D transforms</p>
+                </div>
+                <div class="property-body">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <!-- Rotate -->
+                            <div class="control-group">
+                                <label class="control-label">Rotate</label>
+                                <div class="description-text">Rotates the element</div>
+                                <div class="d-flex align-items-center gap-3">
+                                    <input type="range" class="form-range" id="rotate" min="-180" max="180" value="0" oninput="updateTransform()">
+                                    <span class="range-value" id="rotateValue">0°</span>
+                                </div>
+                            </div>
+
+                            <!-- Scale -->
+                            <div class="control-group">
+                                <label class="control-label">Scale</label>
+                                <div class="description-text">Scales the element size</div>
+                                <div class="d-flex align-items-center gap-3">
+                                    <input type="range" class="form-range" id="scale" min="0.5" max="2" step="0.1" value="1" oninput="updateTransform()">
+                                    <span class="range-value" id="scaleValue">1</span>
+                                </div>
+                            </div>
+
+                            <!-- Translate X -->
+                            <div class="control-group">
+                                <label class="control-label">Translate X</label>
+                                <div class="description-text">Moves element horizontally</div>
+                                <div class="d-flex align-items-center gap-3">
+                                    <input type="range" class="form-range" id="translateX" min="-100" max="100" value="0" oninput="updateTransform()">
+                                    <span class="range-value" id="translateXValue">0px</span>
+                                </div>
+                            </div>
+
+                            <!-- Translate Y -->
+                            <div class="control-group">
+                                <label class="control-label">Translate Y</label>
+                                <div class="description-text">Moves element vertically</div>
+                                <div class="d-flex align-items-center gap-3">
+                                    <input type="range" class="form-range" id="translateY" min="-100" max="100" value="0" oninput="updateTransform()">
+                                    <span class="range-value" id="translateYValue">0px</span>
+                                </div>
+                            </div>
+
+                            <!-- Skew X -->
+                            <div class="control-group">
+                                <label class="control-label">Skew X</label>
+                                <div class="description-text">Skews element along X-axis</div>
+                                <div class="d-flex align-items-center gap-3">
+                                    <input type="range" class="form-range" id="skewX" min="-30" max="30" value="0" oninput="updateTransform()">
+                                    <span class="range-value" id="skewXValue">0°</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <h5>Live Demo</h5>
+                            <div class="demo-container" id="transform-demo-container">
+                                <div class="demo-element" id="transform-demo-element">Transform Me!</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Transform Presets:</label>
+                                <div>
+                                    <button class="preset-btn" onclick="applyTransformPreset('spin')">Spin</button>
+                                    <button class="preset-btn" onclick="applyTransformPreset('scale')">Scale Up</button>
+                                    <button class="preset-btn" onclick="applyTransformPreset('skew')">Skew</button>
+                                    <button class="preset-btn" onclick="applyTransformPreset('reset')">Reset</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h5>Generated CSS</h5>
+                            <div class="position-relative">
+                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                                <div class="code-output" id="transform-css-output">/* CSS will be generated here */</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -504,442 +990,653 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
+    
     <script>
-        let itemCount = 3;
-        let currentSelectedItem = 1;
-        let itemProperties = {
-            1: { flexGrow: 0, flexShrink: 1, flexBasis: 'auto', alignSelf: 'auto', order: 0 },
-            2: { flexGrow: 0, flexShrink: 1, flexBasis: 'auto', alignSelf: 'auto', order: 0 },
-            3: { flexGrow: 0, flexShrink: 1, flexBasis: 'auto', alignSelf: 'auto', order: 0 }
-        };
-
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
-            updateContainer();
-            updateAllCode();
-            setupDragAndDrop();
+            updateDemo();
+            updateTypography();
+            updateColors();
+            updateSpacing();
+            updateBorders();
+            updateEffects();
+            updateTransform();
         });
 
-        // Update range value displays
-        function updateGap() {
-            document.getElementById('gap-value').textContent = document.getElementById('gap').value + 'px';
+        // Tab switching
+        function switchPropertyTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabName + '-tab').classList.add('active');
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
         }
 
-        function updateHeight() {
-            document.getElementById('height-value').textContent = document.getElementById('container-height').value + 'px';
-        }
-
-        function updateGrow() {
-            document.getElementById('grow-value').textContent = document.getElementById('flex-grow').value;
-        }
-
-        function updateShrink() {
-            document.getElementById('shrink-value').textContent = document.getElementById('flex-shrink').value;
-        }
-
-        function updateOrder() {
-            document.getElementById('order-value').textContent = document.getElementById('order').value;
-        }
-
-        // Update flex container
-        function updateContainer() {
-            const container = document.getElementById('flex-container');
+        // Layout Demo Functions
+        function updateDemo() {
+            const container = document.getElementById('demo-container');
+            const element = document.getElementById('demo-element');
+            
             const display = document.getElementById('display').value;
-            const flexDirection = document.getElementById('flex-direction').value;
-            const justifyContent = document.getElementById('justify-content').value;
-            const alignItems = document.getElementById('align-items').value;
-            const flexWrap = document.getElementById('flex-wrap').value;
-            const gap = document.getElementById('gap').value + 'px';
-            const height = document.getElementById('container-height').value + 'px';
+            const position = document.getElementById('position').value;
+            const flexDirection = document.getElementById('flexDirection').value;
+            const justifyContent = document.getElementById('justifyContent').value;
+            const alignItems = document.getElementById('alignItems').value;
 
             container.style.display = display;
-            container.style.flexDirection = flexDirection;
-            container.style.justifyContent = justifyContent;
-            container.style.alignItems = alignItems;
-            container.style.flexWrap = flexWrap;
-            container.style.gap = gap;
-            container.style.minHeight = height;
-
-            updateAllCode();
-        }
-
-        // Update selected item
-        function updateSelectedItem() {
-            const selectedItem = parseInt(document.getElementById('selected-item').value);
-            const flexGrow = document.getElementById('flex-grow').value;
-            const flexShrink = document.getElementById('flex-shrink').value;
-            const flexBasis = document.getElementById('flex-basis').value;
-            const alignSelf = document.getElementById('align-self').value;
-            const order = document.getElementById('order').value;
-
-            const item = document.querySelector(`[data-item="${selectedItem}"]`);
-            if (item) {
-                item.style.flexGrow = flexGrow;
-                item.style.flexShrink = flexShrink;
-                item.style.flexBasis = flexBasis;
-                item.style.alignSelf = alignSelf;
-                item.style.order = order;
-
-                // Update stored properties
-                itemProperties[selectedItem] = {
-                    flexGrow: parseInt(flexGrow),
-                    flexShrink: parseInt(flexShrink),
-                    flexBasis: flexBasis,
-                    alignSelf: alignSelf,
-                    order: parseInt(order)
-                };
-            }
-
-            updateAllCode();
-        }
-
-        // Update item controls when selection changes
-        function updateItemControls() {
-            const selectedItem = parseInt(document.getElementById('selected-item').value);
-            currentSelectedItem = selectedItem;
+            container.style.position = 'relative';
             
-            if (itemProperties[selectedItem]) {
-                const props = itemProperties[selectedItem];
-                document.getElementById('flex-grow').value = props.flexGrow;
-                document.getElementById('flex-shrink').value = props.flexShrink;
-                document.getElementById('flex-basis').value = props.flexBasis;
-                document.getElementById('align-self').value = props.alignSelf;
-                document.getElementById('order').value = props.order;
-                
-                updateGrow();
-                updateShrink();
-                updateOrder();
-            }
-        }
-
-        // Add new item
-        function addItem() {
-            if (itemCount >= 8) {
-                alert('Maximum 8 items allowed');
-                return;
-            }
-
-            itemCount++;
-            const container = document.getElementById('flex-container');
-            const newItem = document.createElement('div');
-            newItem.className = 'flex-item';
-            newItem.setAttribute('data-item', itemCount);
-            newItem.textContent = `Item ${itemCount}`;
-            
-            container.appendChild(newItem);
-
-            // Add to dropdown
-            const select = document.getElementById('selected-item');
-            const option = document.createElement('option');
-            option.value = itemCount;
-            option.textContent = `Item ${itemCount}`;
-            select.appendChild(option);
-
-            // Initialize properties
-            itemProperties[itemCount] = {
-                flexGrow: 0, flexShrink: 1, flexBasis: 'auto', alignSelf: 'auto', order: 0
-            };
-
-            updateAllCode();
-            showToast('Item added successfully!');
-        }
-
-        // Remove item
-        function removeItem() {
-            if (itemCount <= 1) {
-                alert('Must have at least 1 item');
-                return;
-            }
-
-            const itemToRemove = document.querySelector(`[data-item="${itemCount}"]`);
-            const optionToRemove = document.querySelector(`#selected-item option[value="${itemCount}"]`);
-            
-            if (itemToRemove) itemToRemove.remove();
-            if (optionToRemove) optionToRemove.remove();
-            
-            delete itemProperties[itemCount];
-            itemCount--;
-
-            if (currentSelectedItem > itemCount) {
-                currentSelectedItem = itemCount;
-                document.getElementById('selected-item').value = currentSelectedItem;
-                updateItemControls();
-            }
-
-            updateAllCode();
-            showToast('Item removed successfully!');
-        }
-
-        // Reset all settings
-        function resetAll() {
-            // Reset container
-            document.getElementById('display').value = 'flex';
-            document.getElementById('flex-direction').value = 'row';
-            document.getElementById('justify-content').value = 'flex-start';
-            document.getElementById('align-items').value = 'stretch';
-            document.getElementById('flex-wrap').value = 'nowrap';
-            document.getElementById('gap').value = '10';
-            document.getElementById('container-height').value = '400';
-            
-            // Reset items
-            document.getElementById('flex-grow').value = '0';
-            document.getElementById('flex-shrink').value = '1';
-            document.getElementById('flex-basis').value = 'auto';
-            document.getElementById('align-self').value = 'auto';
-            document.getElementById('order').value = '0';
-            
-            // Reset container HTML
-            const container = document.getElementById('flex-container');
-            container.innerHTML = `
-                <div class="flex-item" data-item="1">Item 1</div>
-                <div class="flex-item" data-item="2">Item 2</div>
-                <div class="flex-item" data-item="3">Item 3</div>
-            `;
-            
-            // Reset dropdown
-            const select = document.getElementById('selected-item');
-            select.innerHTML = `
-                <option value="1">Item 1</option>
-                <option value="2">Item 2</option>
-                <option value="3">Item 3</option>
-            `;
-            
-            // Reset state
-            itemCount = 3;
-            currentSelectedItem = 1;
-            itemProperties = {
-                1: { flexGrow: 0, flexShrink: 1, flexBasis: 'auto', alignSelf: 'auto', order: 0 },
-                2: { flexGrow: 0, flexShrink: 1, flexBasis: 'auto', alignSelf: 'auto', order: 0 },
-                3: { flexGrow: 0, flexShrink: 1, flexBasis: 'auto', alignSelf: 'auto', order: 0 }
-            };
-            
-            updateGap();
-            updateHeight();
-            updateGrow();
-            updateShrink();
-            updateOrder();
-            updateContainer();
-            showToast('All settings reset!');
-        }
-
-        // Apply settings to demo container
-        function applyToDemo() {
-            const mainContainer = document.getElementById('flex-container');
-            const demoContainer = document.getElementById('demo-container');
-            
-            const computedStyle = window.getComputedStyle(mainContainer);
-            demoContainer.style.display = mainContainer.style.display;
-            demoContainer.style.flexDirection = mainContainer.style.flexDirection;
-            demoContainer.style.justifyContent = mainContainer.style.justifyContent;
-            demoContainer.style.alignItems = mainContainer.style.alignItems;
-            demoContainer.style.flexWrap = mainContainer.style.flexWrap;
-            demoContainer.style.gap = mainContainer.style.gap;
-            
-            showToast('Settings applied to demo!', 'info');
-        }
-
-        // Reset demo container
-        function resetDemo() {
-            const demoContainer = document.getElementById('demo-container');
-            demoContainer.style.cssText = '';
-            demoContainer.classList.add('demo-container');
-            showToast('Demo reset!');
-        }
-
-        // Update all code outputs
-        function updateAllCode() {
-            updateCSSOutput();
-            updateHTMLOutput();
-        }
-
-        // Update CSS output with syntax highlighting
-        function updateCSSOutput() {
-            const container = document.getElementById('flex-container');
-            let css = `<span class="css-selector">.flex-container</span> {\n`;
-            
-            if (container.style.display) css += `  <span class="css-property">display</span>: <span class="css-value">${container.style.display}</span>;\n`;
-            if (container.style.flexDirection) css += `  <span class="css-property">flex-direction</span>: <span class="css-value">${container.style.flexDirection}</span>;\n`;
-            if (container.style.justifyContent) css += `  <span class="css-property">justify-content</span>: <span class="css-value">${container.style.justifyContent}</span>;\n`;
-            if (container.style.alignItems) css += `  <span class="css-property">align-items</span>: <span class="css-value">${container.style.alignItems}</span>;\n`;
-            if (container.style.flexWrap) css += `  <span class="css-property">flex-wrap</span>: <span class="css-value">${container.style.flexWrap}</span>;\n`;
-            if (container.style.gap) css += `  <span class="css-property">gap</span>: <span class="css-value">${container.style.gap}</span>;\n`;
-            if (container.style.minHeight) css += `  <span class="css-property">min-height</span>: <span class="css-value">${container.style.minHeight}</span>;\n`;
-            
-            css += `  <span class="css-property">padding</span>: <span class="css-value">20px</span>;\n`;
-            css += `  <span class="css-property">border</span>: <span class="css-value">3px dashed #667eea</span>;\n`;
-            css += `  <span class="css-property">border-radius</span>: <span class="css-value">12px</span>;\n`;
-            css += `}\n\n`;
-
-            // Add item-specific CSS
-            for (let i = 1; i <= itemCount; i++) {
-                const props = itemProperties[i];
-                if (props && (props.flexGrow > 0 || props.flexShrink != 1 || props.flexBasis !== 'auto' || props.alignSelf !== 'auto' || props.order != 0)) {
-                    css += `<span class="css-selector">.flex-item:nth-child(${i})</span> {\n`;
-                    if (props.flexGrow > 0) css += `  <span class="css-property">flex-grow</span>: <span class="css-value">${props.flexGrow}</span>;\n`;
-                    if (props.flexShrink != 1) css += `  <span class="css-property">flex-shrink</span>: <span class="css-value">${props.flexShrink}</span>;\n`;
-                    if (props.flexBasis !== 'auto') css += `  <span class="css-property">flex-basis</span>: <span class="css-value">${props.flexBasis}</span>;\n`;
-                    if (props.alignSelf !== 'auto') css += `  <span class="css-property">align-self</span>: <span class="css-value">${props.alignSelf}</span>;\n`;
-                    if (props.order != 0) css += `  <span class="css-property">order</span>: <span class="css-value">${props.order}</span>;\n`;
-                    css += `}\n\n`;
-                }
-            }
-
-            document.getElementById('css-output').innerHTML = css || '/* Make changes to see CSS here */';
-        }
-
-        // Update HTML output
-        function updateHTMLOutput() {
-            const container = document.getElementById('flex-container');
-            const items = container.querySelectorAll('.flex-item');
-            
-            let html = `&lt;div class="flex-container"&gt;\n`;
-            items.forEach(item => {
-                html += `  &lt;div class="flex-item"&gt;${item.textContent}&lt;/div&gt;\n`;
-            });
-            html += `&lt;/div&gt;`;
-
-            document.getElementById('html-output').textContent = html;
-        }
-
-        // Copy CSS to clipboard
-        function copyCSS() {
-            const cssContent = document.getElementById('css-output').textContent;
-            copyToClipboard(cssContent, 'copy-css-btn', 'CSS copied!');
-        }
-
-        // Copy HTML to clipboard
-        function copyHTML() {
-            const htmlContent = document.getElementById('html-output').textContent;
-            copyToClipboard(htmlContent, 'copy-html-btn', 'HTML copied!');
-        }
-
-        // Copy to clipboard utility
-        function copyToClipboard(text, buttonId, message) {
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(text).then(() => {
-                    showCopySuccess(buttonId, message);
-                }).catch(() => {
-                    fallbackCopyToClipboard(text, buttonId, message);
-                });
+            if (display === 'flex' || display === 'inline-flex') {
+                container.style.flexDirection = flexDirection;
+                container.style.justifyContent = justifyContent;
+                container.style.alignItems = alignItems;
+                document.getElementById('flex-controls').style.display = 'block';
             } else {
-                fallbackCopyToClipboard(text, buttonId, message);
+                document.getElementById('flex-controls').style.display = 'none';
             }
+
+            element.style.position = position;
+            
+            generateLayoutCSS();
         }
 
-        // Fallback copy method
-        function fallbackCopyToClipboard(text, buttonId, message) {
-            const textArea = document.createElement('textarea');
-            textArea.value = text;
-            textArea.style.position = 'fixed';
-            textArea.style.top = '0';
-            textArea.style.left = '0';
-            textArea.style.opacity = '0';
+        function generateLayoutCSS() {
+            const display = document.getElementById('display').value;
+            const position = document.getElementById('position').value;
+            const flexDirection = document.getElementById('flexDirection').value;
+            const justifyContent = document.getElementById('justifyContent').value;
+            const alignItems = document.getElementById('alignItems').value;
+
+            let css = `<span class="css-selector">.element</span> {\n`;
+            css += `  <span class="css-property">display</span>: <span class="css-value">${display}</span>;\n`;
+            css += `  <span class="css-property">position</span>: <span class="css-value">${position}</span>;\n`;
             
-            document.body.appendChild(textArea);
-            textArea.focus();
-            textArea.select();
+            if (display === 'flex' || display === 'inline-flex') {
+                css += `  <span class="css-property">flex-direction</span>: <span class="css-value">${flexDirection}</span>;\n`;
+                css += `  <span class="css-property">justify-content</span>: <span class="css-value">${justifyContent}</span>;\n`;
+                css += `  <span class="css-property">align-items</span>: <span class="css-value">${alignItems}</span>;\n`;
+            }
             
-            try {
-                const successful = document.execCommand('copy');
-                if (successful) {
-                    showCopySuccess(buttonId, message);
+            css += `}`;
+
+            document.getElementById('css-output').innerHTML = css;
+        }
+
+        function applyPreset(preset) {
+            switch(preset) {
+                case 'centered':
+                    document.getElementById('display').value = 'flex';
+                    document.getElementById('justifyContent').value = 'center';
+                    document.getElementById('alignItems').value = 'center';
+                    break;
+                case 'flexColumn':
+                    document.getElementById('display').value = 'flex';
+                    document.getElementById('flexDirection').value = 'column';
+                    document.getElementById('justifyContent').value = 'center';
+                    break;
+                case 'spaceBetween':
+                    document.getElementById('display').value = 'flex';
+                    document.getElementById('justifyContent').value = 'space-between';
+                    document.getElementById('alignItems').value = 'center';
+                    break;
+                case 'grid':
+                    document.getElementById('display').value = 'grid';
+                    break;
+            }
+            updateDemo();
+        }
+
+        // Typography Functions
+        function updateTypography() {
+            const element = document.getElementById('typo-demo-element');
+            
+            const fontSize = document.getElementById('fontSize').value;
+            const fontWeight = document.getElementById('fontWeight').value;
+            const lineHeight = document.getElementById('lineHeight').value;
+            const textAlign = document.getElementById('textAlign').value;
+            const textTransform = document.getElementById('textTransform').value;
+            const letterSpacing = document.getElementById('letterSpacing').value;
+
+            // Update display values
+            document.getElementById('fontSizeValue').textContent = fontSize + 'px';
+            document.getElementById('lineHeightValue').textContent = lineHeight;
+            document.getElementById('letterSpacingValue').textContent = letterSpacing + 'px';
+
+            // Apply styles
+            element.style.fontSize = fontSize + 'px';
+            element.style.fontWeight = fontWeight;
+            element.style.lineHeight = lineHeight;
+            element.style.textAlign = textAlign;
+            element.style.textTransform = textTransform;
+            element.style.letterSpacing = letterSpacing + 'px';
+
+            generateTypographyCSS();
+        }
+
+        function generateTypographyCSS() {
+            const fontSize = document.getElementById('fontSize').value;
+            const fontWeight = document.getElementById('fontWeight').value;
+            const lineHeight = document.getElementById('lineHeight').value;
+            const textAlign = document.getElementById('textAlign').value;
+            const textTransform = document.getElementById('textTransform').value;
+            const letterSpacing = document.getElementById('letterSpacing').value;
+
+            let css = `<span class="css-selector">.text-element</span> {\n`;
+            css += `  <span class="css-property">font-size</span>: <span class="css-value">${fontSize}px</span>;\n`;
+            css += `  <span class="css-property">font-weight</span>: <span class="css-value">${fontWeight}</span>;\n`;
+            css += `  <span class="css-property">line-height</span>: <span class="css-value">${lineHeight}</span>;\n`;
+            css += `  <span class="css-property">text-align</span>: <span class="css-value">${textAlign}</span>;\n`;
+            if (textTransform !== 'none') {
+                css += `  <span class="css-property">text-transform</span>: <span class="css-value">${textTransform}</span>;\n`;
+            }
+            if (letterSpacing !== '0') {
+                css += `  <span class="css-property">letter-spacing</span>: <span class="css-value">${letterSpacing}px</span>;\n`;
+            }
+            css += `}`;
+
+            document.getElementById('typo-css-output').innerHTML = css;
+        }
+
+        function applyTypographyPreset(preset) {
+            switch(preset) {
+                case 'heading':
+                    document.getElementById('fontSize').value = '32';
+                    document.getElementById('fontWeight').value = '700';
+                    document.getElementById('lineHeight').value = '1.2';
+                    break;
+                case 'body':
+                    document.getElementById('fontSize').value = '16';
+                    document.getElementById('fontWeight').value = '400';
+                    document.getElementById('lineHeight').value = '1.6';
+                    break;
+                case 'caption':
+                    document.getElementById('fontSize').value = '12';
+                    document.getElementById('fontWeight').value = '400';
+                    document.getElementById('lineHeight').value = '1.4';
+                    break;
+                case 'display':
+                    document.getElementById('fontSize').value = '48';
+                    document.getElementById('fontWeight').value = '900';
+                    document.getElementById('lineHeight').value = '1.1';
+                    break;
+            }
+            updateTypography();
+        }
+
+        // Color Functions
+        function updateColors() {
+            const element = document.getElementById('color-demo-element');
+            
+            const backgroundColor = document.getElementById('backgroundColor').value;
+            const textColor = document.getElementById('textColor').value;
+            const opacity = document.getElementById('opacity').value;
+            const backgroundType = document.getElementById('backgroundType').value;
+
+            // Update display values
+            document.getElementById('backgroundColorHex').value = backgroundColor;
+            document.getElementById('textColorHex').value = textColor;
+            document.getElementById('opacityValue').textContent = opacity;
+
+            // Show/hide gradient controls
+            const gradientControls = document.getElementById('gradient-controls');
+            if (backgroundType === 'gradient' || backgroundType === 'radial') {
+                gradientControls.style.display = 'block';
+                const gradientColor = document.getElementById('gradientColor').value;
+                document.getElementById('gradientColorHex').value = gradientColor;
+                
+                if (backgroundType === 'gradient') {
+                    element.style.background = `linear-gradient(135deg, ${backgroundColor}, ${gradientColor})`;
+                } else {
+                    element.style.background = `radial-gradient(circle, ${backgroundColor}, ${gradientColor})`;
                 }
-            } catch (err) {
-                showToast('Copy failed - please select and copy manually', 'warning');
-            }
-            
-            document.body.removeChild(textArea);
-        }
-
-        // Show copy success feedback
-        function showCopySuccess(buttonId, message) {
-            const button = document.getElementById(buttonId);
-            const originalHTML = button.innerHTML;
-            
-            button.classList.add('copied');
-            button.innerHTML = '<i class="bi bi-check me-1"></i>Copied!';
-            
-            setTimeout(() => {
-                button.classList.remove('copied');
-                button.innerHTML = originalHTML;
-            }, 2000);
-            
-            showToast(message, 'success');
-        }
-
-        // Toast notification system
-        function showToast(message, type = 'success') {
-            let toastContainer = document.getElementById('toast-container');
-            if (!toastContainer) {
-                toastContainer = document.createElement('div');
-                toastContainer.id = 'toast-container';
-                toastContainer.style.cssText = `
-                    position: fixed;
-                    top: 20px;
-                    right: 20px;
-                    z-index: 10000;
-                `;
-                document.body.appendChild(toastContainer);
+            } else {
+                gradientControls.style.display = 'none';
+                element.style.background = backgroundColor;
             }
 
-            const toast = document.createElement('div');
-            const colors = {
-                success: '#28a745',
-                info: '#17a2b8',
-                warning: '#ffc107',
-                error: '#dc3545'
-            };
+            element.style.color = textColor;
+            element.style.opacity = opacity;
 
-            toast.style.cssText = `
-                background: ${colors[type] || colors.success};
-                color: white;
-                padding: 12px 20px;
-                border-radius: 8px;
-                margin-bottom: 10px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-                transform: translateX(100%);
-                transition: transform 0.3s ease;
-                font-weight: 500;
-                max-width: 250px;
-            `;
-
-            toast.textContent = message;
-            toastContainer.appendChild(toast);
-
-            setTimeout(() => toast.style.transform = 'translateX(0)', 100);
-            setTimeout(() => {
-                toast.style.transform = 'translateX(100%)';
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
+            generateColorCSS();
         }
 
-        // Simple drag and drop for demo items
-        function setupDragAndDrop() {
-            const demoItems = document.querySelectorAll('.demo-item');
-            const demoContainer = document.getElementById('demo-container');
+        function updateColorsFromHex() {
+            document.getElementById('backgroundColor').value = document.getElementById('backgroundColorHex').value;
+            document.getElementById('textColor').value = document.getElementById('textColorHex').value;
+            if (document.getElementById('gradientColorHex')) {
+                document.getElementById('gradientColor').value = document.getElementById('gradientColorHex').value;
+            }
+            updateColors();
+        }
 
-            demoItems.forEach(item => {
-                item.addEventListener('dragstart', (e) => {
-                    e.dataTransfer.setData('text/plain', '');
-                    item.classList.add('dragging');
-                });
+        function generateColorCSS() {
+            const backgroundColor = document.getElementById('backgroundColor').value;
+            const textColor = document.getElementById('textColor').value;
+            const opacity = document.getElementById('opacity').value;
+            const backgroundType = document.getElementById('backgroundType').value;
 
-                item.addEventListener('dragend', () => {
-                    item.classList.remove('dragging');
-                });
-            });
-
-            demoContainer.addEventListener('dragover', (e) => {
-                e.preventDefault();
-            });
-
-            demoContainer.addEventListener('drop', (e) => {
-                e.preventDefault();
-                const dragging = document.querySelector('.dragging');
-                if (dragging) {
-                    showToast('Item reordered!', 'info');
+            let css = `<span class="css-selector">.colored-element</span> {\n`;
+            
+            if (backgroundType === 'gradient' || backgroundType === 'radial') {
+                const gradientColor = document.getElementById('gradientColor').value;
+                if (backgroundType === 'gradient') {
+                    css += `  <span class="css-property">background</span>: <span class="css-value">linear-gradient(135deg, ${backgroundColor}, ${gradientColor})</span>;\n`;
+                } else {
+                    css += `  <span class="css-property">background</span>: <span class="css-value">radial-gradient(circle, ${backgroundColor}, ${gradientColor})</span>;\n`;
                 }
+            } else {
+                css += `  <span class="css-property">background-color</span>: <span class="css-value">${backgroundColor}</span>;\n`;
+            }
+            
+            css += `  <span class="css-property">color</span>: <span class="css-value">${textColor}</span>;\n`;
+            if (opacity !== '1') {
+                css += `  <span class="css-property">opacity</span>: <span class="css-value">${opacity}</span>;\n`;
+            }
+            css += `}`;
+
+            document.getElementById('color-css-output').innerHTML = css;
+        }
+
+        function applyColorPreset(preset) {
+            switch(preset) {
+                case 'primary':
+                    document.getElementById('backgroundColor').value = '#667eea';
+                    document.getElementById('textColor').value = '#ffffff';
+                    break;
+                case 'success':
+                    document.getElementById('backgroundColor').value = '#28a745';
+                    document.getElementById('textColor').value = '#ffffff';
+                    break;
+                case 'warning':
+                    document.getElementById('backgroundColor').value = '#ffc107';
+                    document.getElementById('textColor').value = '#212529';
+                    break;
+                case 'danger':
+                    document.getElementById('backgroundColor').value = '#dc3545';
+                    document.getElementById('textColor').value = '#ffffff';
+                    break;
+            }
+            updateColors();
+        }
+
+        // Spacing Functions
+        function updateSpacing() {
+            const element = document.getElementById('spacing-demo-element');
+            const container = document.getElementById('spacing-demo-container');
+            
+            const margin = document.getElementById('margin').value;
+            const padding = document.getElementById('padding').value;
+            const width = document.getElementById('width').value;
+            const height = document.getElementById('height').value;
+            const gap = document.getElementById('gap').value;
+
+            // Update display values
+            document.getElementById('marginValue').textContent = margin + 'px';
+            document.getElementById('paddingValue').textContent = padding + 'px';
+            document.getElementById('widthValue').textContent = width + 'px';
+            document.getElementById('heightValue').textContent = height + 'px';
+            document.getElementById('gapValue').textContent = gap + 'px';
+
+            // Apply styles
+            element.style.margin = margin + 'px';
+            element.style.padding = padding + 'px';
+            element.style.width = width + 'px';
+            element.style.height = height + 'px';
+            container.style.gap = gap + 'px';
+
+            generateSpacingCSS();
+        }
+
+        function generateSpacingCSS() {
+            const margin = document.getElementById('margin').value;
+            const padding = document.getElementById('padding').value;
+            const width = document.getElementById('width').value;
+            const height = document.getElementById('height').value;
+            const gap = document.getElementById('gap').value;
+
+            let css = `<span class="css-selector">.spaced-element</span> {\n`;
+            css += `  <span class="css-property">margin</span>: <span class="css-value">${margin}px</span>;\n`;
+            css += `  <span class="css-property">padding</span>: <span class="css-value">${padding}px</span>;\n`;
+            css += `  <span class="css-property">width</span>: <span class="css-value">${width}px</span>;\n`;
+            css += `  <span class="css-property">height</span>: <span class="css-value">${height}px</span>;\n`;
+            css += `}\n\n`;
+            css += `<span class="css-selector">.container</span> {\n`;
+            css += `  <span class="css-property">gap</span>: <span class="css-value">${gap}px</span>;\n`;
+            css += `}`;
+
+            document.getElementById('spacing-css-output').innerHTML = css;
+        }
+
+        function applySpacingPreset(preset) {
+            switch(preset) {
+                case 'tight':
+                    document.getElementById('margin').value = '5';
+                    document.getElementById('padding').value = '10';
+                    document.getElementById('gap').value = '5';
+                    break;
+                case 'normal':
+                    document.getElementById('margin').value = '15';
+                    document.getElementById('padding').value = '20';
+                    document.getElementById('gap').value = '10';
+                    break;
+                case 'loose':
+                    document.getElementById('margin').value = '30';
+                    document.getElementById('padding').value = '30';
+                    document.getElementById('gap').value = '20';
+                    break;
+                case 'xl':
+                    document.getElementById('margin').value = '40';
+                    document.getElementById('padding').value = '40';
+                    document.getElementById('gap').value = '30';
+                    break;
+            }
+            updateSpacing();
+        }
+
+        // Border Functions
+        function updateBorders() {
+            const element = document.getElementById('border-demo-element');
+            
+            const borderWidth = document.getElementById('borderWidth').value;
+            const borderStyle = document.getElementById('borderStyle').value;
+            const borderColor = document.getElementById('borderColor').value;
+            const borderRadius = document.getElementById('borderRadius').value;
+            const outlineWidth = document.getElementById('outlineWidth').value;
+
+            // Update display values
+            document.getElementById('borderWidthValue').textContent = borderWidth + 'px';
+            document.getElementById('borderColorHex').value = borderColor;
+            document.getElementById('borderRadiusValue').textContent = borderRadius + 'px';
+            document.getElementById('outlineWidthValue').textContent = outlineWidth + 'px';
+
+            // Apply styles
+            element.style.border = `${borderWidth}px ${borderStyle} ${borderColor}`;
+            element.style.borderRadius = borderRadius + 'px';
+            if (outlineWidth > 0) {
+                element.style.outline = `${outlineWidth}px solid ${borderColor}`;
+            } else {
+                element.style.outline = 'none';
+            }
+
+            generateBorderCSS();
+        }
+
+        function updateBordersFromHex() {
+            document.getElementById('borderColor').value = document.getElementById('borderColorHex').value;
+            updateBorders();
+        }
+
+        function generateBorderCSS() {
+            const borderWidth = document.getElementById('borderWidth').value;
+            const borderStyle = document.getElementById('borderStyle').value;
+            const borderColor = document.getElementById('borderColor').value;
+            const borderRadius = document.getElementById('borderRadius').value;
+            const outlineWidth = document.getElementById('outlineWidth').value;
+
+            let css = `<span class="css-selector">.bordered-element</span> {\n`;
+            if (borderWidth > 0) {
+                css += `  <span class="css-property">border</span>: <span class="css-value">${borderWidth}px ${borderStyle} ${borderColor}</span>;\n`;
+            }
+            if (borderRadius > 0) {
+                css += `  <span class="css-property">border-radius</span>: <span class="css-value">${borderRadius}px</span>;\n`;
+            }
+            if (outlineWidth > 0) {
+                css += `  <span class="css-property">outline</span>: <span class="css-value">${outlineWidth}px solid ${borderColor}</span>;\n`;
+            }
+            css += `}`;
+
+            document.getElementById('border-css-output').innerHTML = css;
+        }
+
+        function applyBorderPreset(preset) {
+            switch(preset) {
+                case 'card':
+                    document.getElementById('borderWidth').value = '1';
+                    document.getElementById('borderStyle').value = 'solid';
+                    document.getElementById('borderColor').value = '#dee2e6';
+                    document.getElementById('borderRadius').value = '8';
+                    document.getElementById('outlineWidth').value = '0';
+                    break;
+                case 'button':
+                    document.getElementById('borderWidth').value = '2';
+                    document.getElementById('borderStyle').value = 'solid';
+                    document.getElementById('borderColor').value = '#667eea';
+                    document.getElementById('borderRadius').value = '6';
+                    document.getElementById('outlineWidth').value = '0';
+                    break;
+                case 'input':
+                    document.getElementById('borderWidth').value = '1';
+                    document.getElementById('borderStyle').value = 'solid';
+                    document.getElementById('borderColor').value = '#ced4da';
+                    document.getElementById('borderRadius').value = '4';
+                    document.getElementById('outlineWidth').value = '2';
+                    break;
+                case 'badge':
+                    document.getElementById('borderWidth').value = '0';
+                    document.getElementById('borderStyle').value = 'solid';
+                    document.getElementById('borderRadius').value = '20';
+                    document.getElementById('outlineWidth').value = '0';
+                    break;
+            }
+            updateBorders();
+        }
+
+        // Effects Functions
+        function updateEffects() {
+            const element = document.getElementById('effects-demo-element');
+            
+            const shadowBlur = document.getElementById('shadowBlur').value;
+            const shadowX = document.getElementById('shadowX').value;
+            const shadowY = document.getElementById('shadowY').value;
+            const blur = document.getElementById('blur').value;
+            const brightness = document.getElementById('brightness').value;
+
+            // Update display values
+            document.getElementById('shadowBlurValue').textContent = shadowBlur + 'px';
+            document.getElementById('shadowXValue').textContent = shadowX + 'px';
+            document.getElementById('shadowYValue').textContent = shadowY + 'px';
+            document.getElementById('blurValue').textContent = blur + 'px';
+            document.getElementById('brightnessValue').textContent = brightness;
+
+            // Apply styles
+            if (shadowBlur > 0 || shadowX != 0 || shadowY != 0) {
+                element.style.boxShadow = `${shadowX}px ${shadowY}px ${shadowBlur}px rgba(0, 0, 0, 0.3)`;
+            } else {
+                element.style.boxShadow = 'none';
+            }
+
+            let filters = [];
+            if (blur > 0) filters.push(`blur(${blur}px)`);
+            if (brightness != 1) filters.push(`brightness(${brightness})`);
+            
+            element.style.filter = filters.length > 0 ? filters.join(' ') : 'none';
+
+            generateEffectsCSS();
+        }
+
+        function generateEffectsCSS() {
+            const shadowBlur = document.getElementById('shadowBlur').value;
+            const shadowX = document.getElementById('shadowX').value;
+            const shadowY = document.getElementById('shadowY').value;
+            const blur = document.getElementById('blur').value;
+            const brightness = document.getElementById('brightness').value;
+
+            let css = `<span class="css-selector">.effects-element</span> {\n`;
+            
+            if (shadowBlur > 0 || shadowX != 0 || shadowY != 0) {
+                css += `  <span class="css-property">box-shadow</span>: <span class="css-value">${shadowX}px ${shadowY}px ${shadowBlur}px rgba(0, 0, 0, 0.3)</span>;\n`;
+            }
+            
+            let filters = [];
+            if (blur > 0) filters.push(`blur(${blur}px)`);
+            if (brightness != 1) filters.push(`brightness(${brightness})`);
+            
+            if (filters.length > 0) {
+                css += `  <span class="css-property">filter</span>: <span class="css-value">${filters.join(' ')}</span>;\n`;
+            }
+            
+            css += `}`;
+
+            document.getElementById('effects-css-output').innerHTML = css;
+        }
+
+        function applyEffectPreset(preset) {
+            switch(preset) {
+                case 'card':
+                    document.getElementById('shadowBlur').value = '6';
+                    document.getElementById('shadowX').value = '0';
+                    document.getElementById('shadowY').value = '2';
+                    document.getElementById('blur').value = '0';
+                    document.getElementById('brightness').value = '1';
+                    break;
+                case 'float':
+                    document.getElementById('shadowBlur').value = '20';
+                    document.getElementById('shadowX').value = '0';
+                    document.getElementById('shadowY').value = '10';
+                    document.getElementById('blur').value = '0';
+                    document.getElementById('brightness').value = '1';
+                    break;
+                case 'glow':
+                    document.getElementById('shadowBlur').value = '15';
+                    document.getElementById('shadowX').value = '0';
+                    document.getElementById('shadowY').value = '0';
+                    document.getElementById('blur').value = '0';
+                    document.getElementById('brightness').value = '1.2';
+                    break;
+                case 'none':
+                    document.getElementById('shadowBlur').value = '0';
+                    document.getElementById('shadowX').value = '0';
+                    document.getElementById('shadowY').value = '0';
+                    document.getElementById('blur').value = '0';
+                    document.getElementById('brightness').value = '1';
+                    break;
+            }
+            updateEffects();
+        }
+
+        // Transform Functions
+        function updateTransform() {
+            const element = document.getElementById('transform-demo-element');
+            
+            const rotate = document.getElementById('rotate').value;
+            const scale = document.getElementById('scale').value;
+            const translateX = document.getElementById('translateX').value;
+            const translateY = document.getElementById('translateY').value;
+            const skewX = document.getElementById('skewX').value;
+
+            // Update display values
+            document.getElementById('rotateValue').textContent = rotate + '°';
+            document.getElementById('scaleValue').textContent = scale;
+            document.getElementById('translateXValue').textContent = translateX + 'px';
+            document.getElementById('translateYValue').textContent = translateY + 'px';
+            document.getElementById('skewXValue').textContent = skewX + '°';
+
+            // Apply transform
+            let transforms = [];
+            if (rotate != 0) transforms.push(`rotate(${rotate}deg)`);
+            if (scale != 1) transforms.push(`scale(${scale})`);
+            if (translateX != 0 || translateY != 0) transforms.push(`translate(${translateX}px, ${translateY}px)`);
+            if (skewX != 0) transforms.push(`skewX(${skewX}deg)`);
+
+            element.style.transform = transforms.length > 0 ? transforms.join(' ') : 'none';
+
+            generateTransformCSS();
+        }
+
+        function generateTransformCSS() {
+            const rotate = document.getElementById('rotate').value;
+            const scale = document.getElementById('scale').value;
+            const translateX = document.getElementById('translateX').value;
+            const translateY = document.getElementById('translateY').value;
+            const skewX = document.getElementById('skewX').value;
+
+            let css = `<span class="css-selector">.transform-element</span> {\n`;
+            
+            let transforms = [];
+            if (rotate != 0) transforms.push(`rotate(${rotate}deg)`);
+            if (scale != 1) transforms.push(`scale(${scale})`);
+            if (translateX != 0 || translateY != 0) transforms.push(`translate(${translateX}px, ${translateY}px)`);
+            if (skewX != 0) transforms.push(`skewX(${skewX}deg)`);
+
+            if (transforms.length > 0) {
+                css += `  <span class="css-property">transform</span>: <span class="css-value">${transforms.join(' ')}</span>;\n`;
+            }
+            
+            css += `}`;
+
+            document.getElementById('transform-css-output').innerHTML = css;
+        }
+
+        function applyTransformPreset(preset) {
+            switch(preset) {
+                case 'spin':
+                    document.getElementById('rotate').value = '45';
+                    document.getElementById('scale').value = '1';
+                    document.getElementById('translateX').value = '0';
+                    document.getElementById('translateY').value = '0';
+                    document.getElementById('skewX').value = '0';
+                    break;
+                case 'scale':
+                    document.getElementById('rotate').value = '0';
+                    document.getElementById('scale').value = '1.5';
+                    document.getElementById('translateX').value = '0';
+                    document.getElementById('translateY').value = '0';
+                    document.getElementById('skewX').value = '0';
+                    break;
+                case 'skew':
+                    document.getElementById('rotate').value = '0';
+                    document.getElementById('scale').value = '1';
+                    document.getElementById('translateX').value = '0';
+                    document.getElementById('translateY').value = '0';
+                    document.getElementById('skewX').value = '15';
+                    break;
+                case 'reset':
+                    document.getElementById('rotate').value = '0';
+                    document.getElementById('scale').value = '1';
+                    document.getElementById('translateX').value = '0';
+                    document.getElementById('translateY').value = '0';
+                    document.getElementById('skewX').value = '0';
+                    break;
+            }
+            updateTransform();
+        }
+
+        // Copy functionality
+        function copyCode(button) {
+            const codeBlock = button.nextElementSibling.textContent;
+            
+            navigator.clipboard.writeText(codeBlock).then(() => {
+                const originalText = button.innerHTML;
+                button.classList.add('copied');
+                button.innerHTML = '<i class="bi bi-check me-1"></i>Copied!';
+                
+                setTimeout(() => {
+                    button.classList.remove('copied');
+                    button.innerHTML = originalText;
+                }, 2000);
+            }).catch(() => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = codeBlock;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                button.innerHTML = '<i class="bi bi-check me-1"></i>Copied!';
+                setTimeout(() => {
+                    button.innerHTML = 'Copy';
+                }, 2000);
             });
         }
     </script>
