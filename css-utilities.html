@@ -57,12 +57,68 @@
             --text-muted: #6c757d;
             --shadow-sm: 0 2px 8px rgba(0,0,0,0.1);
             --shadow-md: 0 4px 15px rgba(0,0,0,0.15);
+            --theme-border-color: #dee2e6;
+            --theme-bg: #ffffff;
+            --theme-text: #212529;
+        }
+
+        /* Dark mode variables */
+        .dark-mode {
+            --bg-light: #1a1a1a;
+            --border-color: #444;
+            --text-muted: #aaa;
+            --theme-border-color: #555;
+            --theme-bg: #2d2d2d;
+            --theme-text: #e9ecef;
+        }
+
+        .dark-mode body {
+            background-color: var(--bg-light);
+            color: var(--theme-text);
+        }
+
+        .dark-mode .navbar-dark {
+            background-color: #000 !important;
+        }
+
+        .dark-mode .property-card {
+            background: var(--theme-bg);
+            color: var(--theme-text);
+        }
+
+        .dark-mode .demo-container {
+            background: #2d2d2d;
+            border-color: #667eea;
+        }
+
+        .dark-mode .element-controls,
+        .dark-mode .control-group {
+            background: #2d2d2d;
+            border-color: #555;
+        }
+
+        .dark-mode .form-control,
+        .dark-mode .form-select {
+            background-color: #2d2d2d;
+            border-color: #555;
+            color: var(--theme-text);
+        }
+
+        .dark-mode .code-output {
+            background: #1a1a1a;
+            color: #e6e6e6;
+        }
+
+        .dark-mode .toast-notification {
+            background: var(--theme-bg);
+            color: var(--theme-text);
         }
 
         body {
             font-family: system-ui, -apple-system, sans-serif;
             background: var(--bg-light);
             line-height: 1.6;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         .hero-section {
@@ -368,6 +424,110 @@
             to { transform: translateX(0); opacity: 1; }
         }
 
+        /* NEW: Circular Theme Toggle Styles */
+        .theme-toggle-wrapper {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            z-index: 1000;
+            cursor: move;
+            user-select: none;
+        }
+
+        .theme-toggle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid var(--theme-border-color);
+            background: var(--theme-bg);
+            color: var(--theme-text);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            position: relative;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        }
+
+        .theme-toggle:focus {
+            outline: 2px solid #667eea;
+            outline-offset: 2px;
+        }
+
+        .theme-toggle i {
+            transition: opacity 0.3s ease;
+        }
+
+        /* Dark mode theme toggle adjustments */
+        .dark-mode .theme-toggle {
+            border-color: #555;
+            background: #2d2d2d;
+            color: #e9ecef;
+        }
+
+        .dark-mode .theme-toggle:hover {
+            background: #3d3d3d;
+        }
+
+        .theme-selector {
+            position: absolute;
+            top: 60px;
+            right: 0;
+            background: var(--theme-bg);
+            border: 1px solid var(--theme-border-color);
+            border-radius: 12px;
+            padding: 0.5rem;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            min-width: 200px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 1001;
+        }
+
+        .theme-selector.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .theme-option {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            gap: 0.75rem;
+        }
+
+        .theme-option:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .theme-option.active {
+            background: rgba(102, 126, 234, 0.15);
+            color: #667eea;
+        }
+
+        .theme-option i {
+            font-size: 1.1rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .theme-option div {
+            flex: 1;
+        }
+
         @media (max-width: 768px) {
             .property-tabs {
                 flex-direction: column;
@@ -375,6 +535,17 @@
             .tab-btn {
                 flex: none;
                 margin: 0.125rem 0;
+            }
+            
+            .theme-toggle-wrapper {
+                right: 15px;
+                top: 80px;
+            }
+            
+            .theme-toggle {
+                width: 45px;
+                height: 45px;
+                font-size: 1.1rem;
             }
         }
     </style>
@@ -1232,6 +1403,31 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NEW: Circular Theme Toggle -->
+    <div class="theme-toggle-wrapper" id="themeToggleWrapper">
+        <button class="theme-toggle" id="themeToggle" title="Toggle Theme" aria-label="Toggle between light and dark themes">
+            <i class="bi bi-sun-fill sun-icon" id="sunIcon"></i>
+            <i class="bi bi-moon-fill moon-icon" id="moonIcon" style="display: none;"></i>
+        </button>
+        
+        <div class="theme-selector" id="themeSelector">
+            <div class="theme-option active" data-theme="light" data-syntax="default">
+                <i class="bi bi-sun-fill"></i>
+                <div>
+                    <div>Light Theme</div>
+                    <small style="opacity: 0.7;">Clean & bright</small>
+                </div>
+            </div>
+            <div class="theme-option" data-theme="dark" data-syntax="dark">
+                <i class="bi bi-moon-fill"></i>
+                <div>
+                    <div>Dark Theme</div>
+                    <small style="opacity: 0.7;">Easy on eyes</small>
                 </div>
             </div>
         </div>
@@ -2109,124 +2305,366 @@
             showToast('💡 Tip: Use number keys 1-7 to switch tabs quickly!', 'info');
         }, 5000);
     </script>
-    <!-- ADD THIS: Dark Mode JavaScript -->
-<script>
-// Dark mode functionality
-(function() {
-    'use strict';
-    
-    const THEME_KEY = 'theme';
-    const DARK_MODE_CLASS = 'dark-mode';
-    const THEMES = {
-        LIGHT: 'light',
-        DARK: 'dark'
-    };
-    
-    // Cache DOM elements
-    let themeToggle = null;
-    let sunIcon = null;
-    let moonIcon = null;
-    
-    function updateIcons(isDarkMode) {
-        if (sunIcon && moonIcon) {
-            sunIcon.style.display = isDarkMode ? 'inline-block' : 'none';
-            moonIcon.style.display = isDarkMode ? 'none' : 'inline-block';
-        }
-    }
-    
-    function getCurrentTheme() {
-        const savedTheme = localStorage.getItem(THEME_KEY);
+
+    <!-- NEW: Complete Dark Mode System -->
+    <script>
+    (function() {
+        'use strict';
         
-        if (savedTheme === THEMES.DARK || savedTheme === THEMES.LIGHT) {
-            return savedTheme;
-        }
+        const THEME_KEY = 'theme';
+        const SYNTAX_THEME_KEY = 'syntaxTheme';
+        const TOGGLE_POSITION_KEY = 'themeTogglePosition';
+        const DARK_MODE_CLASS = 'dark-mode';
         
-        return window.matchMedia('(prefers-color-scheme: dark)').matches 
-            ? THEMES.DARK 
-            : THEMES.LIGHT;
-    }
-    
-    function applyTheme(theme) {
-        const isDarkMode = theme === THEMES.DARK;
+        const THEMES = {
+            LIGHT: 'light',
+            DARK: 'dark'
+        };
         
-        if (isDarkMode) {
-            document.body.classList.add(DARK_MODE_CLASS);
-        } else {
-            document.body.classList.remove(DARK_MODE_CLASS);
+        const SYNTAX_THEMES = {
+            DEFAULT: 'default',
+            DRACULA: 'dracula',
+            MONOKAI: 'monokai',
+            MATERIAL: 'material'
+        };
+        
+        // Cache DOM elements
+        let themeToggle = null;
+        let themeSelector = null;
+        let themeToggleWrapper = null;
+        let sunIcon = null;
+        let moonIcon = null;
+        let isDragging = false;
+        let dragOffset = { x: 0, y: 0 };
+        
+        /**
+         * Updates the visibility of sun and moon icons based on current theme
+         */
+        function updateIcons(isDarkMode) {
+            if (sunIcon && moonIcon) {
+                sunIcon.style.display = isDarkMode ? 'none' : 'inline-block';
+                moonIcon.style.display = isDarkMode ? 'inline-block' : 'none';
+            }
         }
         
-        localStorage.setItem(THEME_KEY, theme);
-        updateIcons(isDarkMode);
-        
-        // Show toast if showToast function exists
-        if (typeof showToast === 'function') {
-            showToast(`Switched to ${theme} mode`, 'info');
-        }
-    }
-    
-    function toggleTheme() {
-        const currentTheme = getCurrentTheme();
-        const newTheme = currentTheme === THEMES.DARK ? THEMES.LIGHT : THEMES.DARK;
-        applyTheme(newTheme);
-    }
-    
-    function initializeTheme() {
-        const currentTheme = getCurrentTheme();
-        applyTheme(currentTheme);
-        
-        themeToggle = document.getElementById('theme-toggle');
-        sunIcon = document.getElementById('theme-toggle-sun');
-        moonIcon = document.getElementById('theme-toggle-moon');
-        
-        if (themeToggle) {
-            themeToggle.addEventListener('click', toggleTheme);
+        /**
+         * Gets the current theme from localStorage or system preference
+         */
+        function getCurrentTheme() {
+            const savedTheme = localStorage.getItem(THEME_KEY);
             
-            themeToggle.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter' || e.key === ' ') {
+            if (savedTheme === THEMES.DARK || savedTheme === THEMES.LIGHT) {
+                return savedTheme;
+            }
+            
+            // Check system preference if no saved theme
+            return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches 
+                ? THEMES.DARK 
+                : THEMES.LIGHT;
+        }
+        
+        /**
+         * Gets the current syntax theme from localStorage
+         */
+        function getCurrentSyntaxTheme() {
+            return localStorage.getItem(SYNTAX_THEME_KEY) || SYNTAX_THEMES.DEFAULT;
+        }
+        
+        /**
+         * Applies the given theme to the document
+         */
+        function applyTheme(theme) {
+            const isDarkMode = theme === THEMES.DARK;
+            
+            if (isDarkMode) {
+                document.body.classList.add(DARK_MODE_CLASS);
+                document.documentElement.classList.add(DARK_MODE_CLASS);
+            } else {
+                document.body.classList.remove(DARK_MODE_CLASS);
+                document.documentElement.classList.remove(DARK_MODE_CLASS);
+            }
+            
+            // Store the preference
+            localStorage.setItem(THEME_KEY, theme);
+            
+            // Update icons
+            updateIcons(isDarkMode);
+            
+            // Update active theme option
+            updateActiveThemeOption();
+            
+            // Dispatch custom event for other scripts to listen to
+            window.dispatchEvent(new CustomEvent('themeChanged', {
+                detail: { theme, isDarkMode }
+            }));
+        }
+        
+        /**
+         * Applies syntax theme to CodeMirror instances
+         */
+        function applySyntaxTheme(syntaxTheme) {
+            localStorage.setItem(SYNTAX_THEME_KEY, syntaxTheme);
+            
+            // Dispatch event for CodeMirror instances to update
+            window.dispatchEvent(new CustomEvent('syntaxThemeChanged', {
+                detail: { syntaxTheme }
+            }));
+        }
+        
+        /**
+         * Updates active theme option in selector
+         */
+        function updateActiveThemeOption() {
+            if (!themeSelector) return;
+            
+            const currentTheme = getCurrentTheme();
+            const themeOptions = themeSelector.querySelectorAll('.theme-option');
+            
+            themeOptions.forEach(option => {
+                option.classList.remove('active');
+                if (option.dataset.theme === currentTheme) {
+                    option.classList.add('active');
+                }
+            });
+        }
+        
+        /**
+         * Shows toast notification if available
+         */
+        function showToastMessage(message, type = 'info') {
+            if (typeof showToast === 'function') {
+                showToast(message, type);
+            }
+        }
+        
+        /**
+         * Makes the theme toggle draggable
+         */
+        function makeDraggable() {
+            if (!themeToggleWrapper) return;
+            
+            let currentX, currentY, initialX, initialY;
+            
+            function dragStart(e) {
+                if (e.target.closest('.theme-selector')) return;
+                
+                const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+                const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+                
+                if (!clientX || !clientY) return;
+                
+                initialX = clientX - dragOffset.x;
+                initialY = clientY - dragOffset.y;
+                
+                if (e.target === themeToggleWrapper || e.target.closest('.theme-toggle')) {
+                    isDragging = true;
+                    themeToggleWrapper.style.cursor = 'grabbing';
                     e.preventDefault();
-                    toggleTheme();
+                }
+            }
+            
+            function drag(e) {
+                if (!isDragging) return;
+                
+                e.preventDefault();
+                
+                const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+                const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+                
+                if (!clientX || !clientY) return;
+                
+                currentX = clientX - initialX;
+                currentY = clientY - initialY;
+                
+                dragOffset.x = currentX;
+                dragOffset.y = currentY;
+                
+                // Constrain to viewport
+                const rect = themeToggleWrapper.getBoundingClientRect();
+                const maxX = window.innerWidth - rect.width;
+                const maxY = window.innerHeight - rect.height;
+                
+                dragOffset.x = Math.max(0, Math.min(maxX, currentX));
+                dragOffset.y = Math.max(0, Math.min(maxY, currentY));
+                
+                themeToggleWrapper.style.transform = `translate(${dragOffset.x}px, ${dragOffset.y}px)`;
+            }
+            
+            function dragEnd() {
+                if (!isDragging) return;
+                
+                isDragging = false;
+                themeToggleWrapper.style.cursor = 'move';
+                
+                // Save position
+                localStorage.setItem(TOGGLE_POSITION_KEY, JSON.stringify(dragOffset));
+            }
+            
+            // Mouse events
+            themeToggleWrapper.addEventListener('mousedown', dragStart);
+            document.addEventListener('mousemove', drag);
+            document.addEventListener('mouseup', dragEnd);
+            
+            // Touch events for mobile
+            themeToggleWrapper.addEventListener('touchstart', dragStart, { passive: false });
+            document.addEventListener('touchmove', drag, { passive: false });
+            document.addEventListener('touchend', dragEnd);
+            
+            // Load saved position
+            loadSavedPosition();
+        }
+        
+        /**
+         * Loads saved toggle position
+         */
+        function loadSavedPosition() {
+            if (!themeToggleWrapper) return;
+            
+            const savedPosition = localStorage.getItem(TOGGLE_POSITION_KEY);
+            if (savedPosition) {
+                try {
+                    dragOffset = JSON.parse(savedPosition);
+                    themeToggleWrapper.style.transform = `translate(${dragOffset.x}px, ${dragOffset.y}px)`;
+                } catch (e) {
+                    console.warn('Failed to load saved theme toggle position:', e);
+                }
+            }
+        }
+        
+        /**
+         * Toggles between light and dark themes
+         */
+        function toggleTheme() {
+            const currentTheme = getCurrentTheme();
+            const newTheme = currentTheme === THEMES.DARK ? THEMES.LIGHT : THEMES.DARK;
+            applyTheme(newTheme);
+            showToastMessage(`Switched to ${newTheme} mode`, 'info');
+        }
+        
+        /**
+         * Sets up theme selector functionality
+         */
+        function setupThemeSelector() {
+            if (!themeToggle || !themeSelector) return;
+            
+            // Toggle theme selector
+            themeToggle.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (!isDragging) {
+                    themeSelector.classList.toggle('show');
                 }
             });
             
-            const isDarkMode = document.body.classList.contains(DARK_MODE_CLASS);
-            updateIcons(isDarkMode);
+            // Close theme selector when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!themeSelector.contains(e.target) && !themeToggle.contains(e.target)) {
+                    themeSelector.classList.remove('show');
+                }
+            });
+            
+            // Theme option selection
+            const themeOptions = themeSelector.querySelectorAll('.theme-option');
+            themeOptions.forEach(option => {
+                option.addEventListener('click', () => {
+                    const theme = option.dataset.theme;
+                    const syntax = option.dataset.syntax || 'default';
+                    
+                    applyTheme(theme);
+                    applySyntaxTheme(syntax);
+                    updateActiveThemeOption();
+                    
+                    themeSelector.classList.remove('show');
+                    
+                    const themeName = option.textContent.trim().split('\n')[0];
+                    showToastMessage(`Applied ${themeName} theme`, 'success');
+                });
+            });
+            
+            updateActiveThemeOption();
         }
         
-        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-        mediaQuery.addEventListener('change', function(e) {
-            const savedTheme = localStorage.getItem(THEME_KEY);
-            if (!savedTheme) {
-                applyTheme(e.matches ? THEMES.DARK : THEMES.LIGHT);
+        /**
+         * Initializes the theme system
+         */
+        function initializeTheme() {
+            // Cache DOM elements
+            themeToggle = document.getElementById('themeToggle');
+            themeSelector = document.getElementById('themeSelector');
+            themeToggleWrapper = document.getElementById('themeToggleWrapper');
+            sunIcon = document.getElementById('sunIcon');
+            moonIcon = document.getElementById('moonIcon');
+            
+            // Apply the initial theme
+            const currentTheme = getCurrentTheme();
+            applyTheme(currentTheme);
+            
+            // Set up event listeners
+            if (themeToggle) {
+                // Add keyboard support
+                themeToggle.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        if (themeSelector && themeSelector.classList.contains('show')) {
+                            themeSelector.classList.remove('show');
+                        } else {
+                            toggleTheme();
+                        }
+                    }
+                });
+            }
+            
+            // Setup theme selector
+            setupThemeSelector();
+            
+            // Make draggable
+            makeDraggable();
+            
+            // Listen for system theme changes
+            const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+            if (mediaQuery.addEventListener) {
+                mediaQuery.addEventListener('change', function(e) {
+                    // Only apply system preference if user hasn't manually set a theme
+                    const savedTheme = localStorage.getItem(THEME_KEY);
+                    if (!savedTheme) {
+                        applyTheme(e.matches ? THEMES.DARK : THEMES.LIGHT);
+                    }
+                });
+            }
+        }
+        
+        /**
+         * Public API for other scripts
+         */
+        window.ThemeManager = {
+            getCurrentTheme: getCurrentTheme,
+            getCurrentSyntaxTheme: getCurrentSyntaxTheme,
+            applyTheme: applyTheme,
+            applySyntaxTheme: applySyntaxTheme,
+            toggleTheme: toggleTheme,
+            updateActiveThemeOption: updateActiveThemeOption,
+            isDarkMode: function() {
+                return document.body.classList.contains(DARK_MODE_CLASS);
+            },
+            THEMES: THEMES,
+            SYNTAX_THEMES: SYNTAX_THEMES
+        };
+        
+        // Keyboard shortcut for theme toggle (Ctrl/Cmd + D)
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
+                e.preventDefault();
+                toggleTheme();
             }
         });
-    }
-    
-    window.ThemeManager = {
-        getCurrentTheme: getCurrentTheme,
-        applyTheme: applyTheme,
-        toggleTheme: toggleTheme,
-        isDarkMode: function() {
-            return document.body.classList.contains(DARK_MODE_CLASS);
+        
+        // Initialize when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeTheme);
+        } else {
+            initializeTheme();
         }
-    };
-    
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initializeTheme);
-    } else {
-        initializeTheme();
-    }
-    // ADD THIS: Keyboard shortcut for theme toggle
-document.addEventListener('keydown', function(e) {
-    // Ctrl/Cmd + D to toggle dark mode
-    if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
-        e.preventDefault();
-        if (window.ThemeManager) {
-            window.ThemeManager.toggleTheme();
-        }
-    }
-});
-    
-})();
-</script>
+        
+    })();
+    </script>
 </body>
 </html>

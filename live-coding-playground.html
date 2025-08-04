@@ -8,764 +8,776 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
-<!-- CRITICAL: No-flash script for dark mode -->
-<script>
-(function() {
-    'use strict';
     
-    const THEME_KEY = 'theme';
-    const DARK_MODE_CLASS = 'dark-mode';
-    
-    try {
-        const savedTheme = localStorage.getItem(THEME_KEY);
+    <!-- CodeMirror for syntax highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/monokai.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material.min.css">
+
+    <!-- CRITICAL: No-flash script for dark mode -->
+    <script>
+    (function() {
+        'use strict';
         
-        if (savedTheme === 'dark') {
-            document.documentElement.classList.add(DARK_MODE_CLASS);
-            if (document.body) {
-                document.body.classList.add(DARK_MODE_CLASS);
-            }
-        } else if (savedTheme === 'light') {
-            document.documentElement.classList.remove(DARK_MODE_CLASS);
-            if (document.body) {
-                document.body.classList.remove(DARK_MODE_CLASS);
-            }
-        } else {
-            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        const THEME_KEY = 'theme';
+        const DARK_MODE_CLASS = 'dark-mode';
+        
+        try {
+            const savedTheme = localStorage.getItem(THEME_KEY);
+            
+            if (savedTheme === 'dark') {
                 document.documentElement.classList.add(DARK_MODE_CLASS);
                 if (document.body) {
                     document.body.classList.add(DARK_MODE_CLASS);
                 }
-            }
-        }
-    } catch (e) {
-        console.warn('Theme persistence not available:', e);
-    }
-})();
-</script>    
-<style>
-:root {
-    /* Theme variables that change with dark mode */
-    --theme-bg-primary: #ffffff;
-    --theme-bg-secondary: #f8f9fa;
-    --theme-bg-tertiary: #e9ecef;
-    --theme-text-primary: #495057;
-    --theme-text-secondary: #6c757d;
-    --theme-text-muted: #a0aec0;
-    --theme-border-color: #dee2e6;
-    --theme-border-focus: #667eea;
-    --theme-shadow-sm: 0 2px 8px rgba(0,0,0,0.1);
-    --theme-shadow-md: 0 4px 15px rgba(0,0,0,0.15);
-    --theme-shadow-lg: 0 8px 25px rgba(0,0,0,0.2);
-
-    /* Editor-specific variables (stay dark for authenticity) */
-    --dark-bg: #1e1e1e;
-    --dark-panel: #252526;
-    --dark-border: #3e3e42;
-    --editor-bg: #1e1e1e;
-    --editor-text: #d4d4d4;
-    --terminal-bg: #0c0c0c;
-    
-    /* Original gradients */
-    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    --success-gradient: linear-gradient(135deg, #28a745, #20c997);
-    --danger-gradient: linear-gradient(135deg, #ff6b6b, #ee5a52);
-    --info-gradient: linear-gradient(135deg, #17a2b8, #20c997);
-}
-
-/* Dark mode overrides */
-body.dark-mode {
-    --theme-bg-primary: #1a202c;
-    --theme-bg-secondary: #2d3748;
-    --theme-bg-tertiary: #4a5568;
-    --theme-text-primary: #e2e8f0;
-    --theme-text-secondary: #a0aec0;
-    --theme-text-muted: #718096;
-    --theme-border-color: #4a5568;
-    --theme-border-focus: #63b3ed;
-    --theme-shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
-    --theme-shadow-md: 0 4px 15px rgba(0,0,0,0.4);
-    --theme-shadow-lg: 0 8px 25px rgba(0,0,0,0.3);
-}
-
-/* Smooth transitions for theme switching */
-*,
-*::before,
-*::after {
-    transition: 
-        background-color 0.3s ease,
-        color 0.3s ease,
-        border-color 0.3s ease,
-        box-shadow 0.3s ease;
-}
-
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
-body {
-    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-    background: var(--theme-bg-secondary);
-    color: var(--theme-text-primary);
-    overflow: hidden;
-    line-height: 1.6;
-}
-
-.platform-container {
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-}
-
-.skip-link {
-    position: absolute;
-    top: -40px;
-    left: 6px;
-    background: #000;
-    color: white;
-    padding: 8px;
-    border-radius: 4px;
-    text-decoration: none;
-    font-weight: 600;
-    z-index: 10000;
-    transition: top 0.15s ease-out;
-}
-
-.skip-link:focus {
-    top: 6px;
-}
-
-.sr-only {
-    position: absolute !important;
-    width: 1px !important;
-    height: 1px !important;
-    padding: 0 !important;
-    margin: -1px !important;
-    overflow: hidden !important;
-    clip: rect(0, 0, 0, 0) !important;
-    white-space: nowrap !important;
-    border: 0 !important;
-}
-
-.top-nav {
-    background: var(--theme-bg-primary);
-    border-bottom: 1px solid var(--theme-border-color);
-    padding: 8px 16px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-shrink: 0;
-    z-index: 1000;
-}
-
-.nav-brand {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: var(--theme-text-primary);
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 0.9rem;
-}
-
-.nav-controls {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.nav-btn {
-    background: transparent;
-    border: 1px solid var(--theme-border-color);
-    color: var(--theme-text-primary);
-    padding: 6px 12px;
-    border-radius: 4px;
-    font-size: 0.8rem;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.nav-btn:hover {
-    background: var(--theme-bg-tertiary);
-    border-color: var(--theme-border-focus);
-}
-
-.main-split {
-    flex: 1;
-    display: flex;
-    height: calc(100vh - 50px);
-}
-
-.editor-section {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    background: var(--dark-panel);
-    border-right: 1px solid var(--dark-border);
-    min-width: 300px;
-}
-
-.preview-section {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    background: var(--theme-bg-primary);
-    border-left: 1px solid var(--theme-border-color);
-    min-width: 300px;
-}
-
-.editor-toolbar {
-    background: var(--dark-bg);
-    border-bottom: 1px solid var(--dark-border);
-    padding: 6px 12px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-shrink: 0;
-}
-
-.toolbar-group {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.toolbar-btn {
-    background: transparent;
-    border: 1px solid var(--dark-border);
-    color: #8a8a8a;
-    padding: 4px 8px;
-    border-radius: 3px;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-size: 0.75rem;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.toolbar-btn:hover {
-    background: #404040;
-    color: #fff;
-    border-color: #555;
-}
-
-.toolbar-btn.success {
-    background: var(--success-gradient);
-    color: #fff;
-    border-color: transparent;
-}
-
-.toolbar-btn.danger {
-    background: var(--danger-gradient);
-    color: #fff;
-    border-color: transparent;
-}
-
-.editor-tabs {
-    background: var(--dark-bg);
-    border-bottom: 1px solid var(--dark-border);
-    display: flex;
-    align-items: center;
-    padding: 0;
-    flex-shrink: 0;
-}
-
-.tab-btn {
-    background: transparent;
-    border: none;
-    padding: 10px 16px;
-    color: #8a8a8a;
-    cursor: pointer;
-    transition: all 0.2s;
-    border-bottom: 2px solid transparent;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.85rem;
-    border-right: 1px solid var(--dark-border);
-}
-
-.tab-btn.active {
-    color: #fff;
-    background: var(--dark-panel);
-    border-bottom-color: #007acc;
-}
-
-.tab-btn:hover:not(.active) {
-    background: #404040;
-    color: #fff;
-}
-
-.editor-container {
-    flex: 1;
-    display: flex;
-    position: relative;
-    overflow: hidden;
-}
-
-.editor-panel {
-    flex: 1;
-    display: none;
-    flex-direction: column;
-}
-
-.editor-panel.active {
-    display: flex;
-}
-
-.code-editor {
-    flex: 1;
-    border: none;
-    resize: none;
-    padding: 16px;
-    font-family: 'Cascadia Code', 'Fira Code', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-    font-size: 14px;
-    line-height: 1.6;
-    background: var(--editor-bg);
-    color: var(--editor-text);
-    outline: none;
-    tab-size: 2;
-    white-space: pre;
-    overflow-wrap: break-word;
-}
-
-.code-editor::placeholder {
-    color: #6a6a6a;
-}
-
-.terminal-section {
-    height: 200px;
-    background: var(--terminal-bg);
-    border-top: 1px solid var(--dark-border);
-    display: flex;
-    flex-direction: column;
-    flex-shrink: 0;
-}
-
-.terminal-header {
-    background: var(--dark-panel);
-    padding: 8px 16px;
-    border-bottom: 1px solid var(--dark-border);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: #8a8a8a;
-    font-size: 0.8rem;
-}
-
-.terminal-content {
-    flex: 1;
-    padding: 12px;
-    font-family: 'Cascadia Code', monospace;
-    font-size: 12px;
-    color: #e6e6e6;
-    overflow-y: auto;
-    white-space: pre-wrap;
-}
-
-.terminal-line {
-    margin: 2px 0;
-    padding: 1px 0;
-}
-
-.terminal-error { color: #ff6b6b; }
-.terminal-warn { color: #feca57; }
-.terminal-info { color: #48cae4; }
-.terminal-success { color: #4ecdc4; }
-
-.preview-header {
-    background: var(--theme-bg-primary);
-    padding: 8px 16px;
-    border-bottom: 1px solid var(--theme-border-color);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: var(--theme-text-primary);
-    font-size: 0.85rem;
-}
-
-.preview-frame {
-    flex: 1;
-    border: none;
-    background: #fff;
-    width: 100%;
-}
-
-.live-indicator {
-    background: rgba(76, 175, 80, 0.2);
-    color: #4caf50;
-    padding: 2px 8px;
-    border-radius: 10px;
-    font-size: 0.7rem;
-    border: 1px solid #4caf50;
-    animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.7; }
-}
-
-.responsive-controls {
-    display: flex;
-    gap: 4px;
-}
-
-.responsive-btn {
-    background: transparent;
-    border: 1px solid var(--theme-border-color);
-    color: var(--theme-text-secondary);
-    padding: 4px 8px;
-    border-radius: 3px;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-size: 0.7rem;
-}
-
-.responsive-btn.active,
-.responsive-btn:hover {
-    background: var(--theme-bg-tertiary);
-    color: var(--theme-text-primary);
-    border-color: var(--theme-border-focus);
-}
-
-.quick-guide-float {
-    position: fixed;
-    top: 60px;
-    right: 20px;
-    z-index: 9999;
-    background: var(--theme-bg-primary);
-    border: 1px solid var(--theme-border-color);
-    border-radius: 8px;
-    box-shadow: var(--theme-shadow-lg);
-    width: 320px;
-    max-height: 80vh;
-    display: none;
-    flex-direction: column;
-}
-
-.quick-guide-float.show {
-    display: flex;
-}
-
-.guide-header {
-    background: var(--info-gradient);
-    color: #fff;
-    padding: 10px 16px;
-    border-radius: 8px 8px 0 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-weight: 600;
-    font-size: 0.9rem;
-}
-
-.guide-close {
-    background: transparent;
-    border: none;
-    color: #fff;
-    cursor: pointer;
-    padding: 2px;
-    border-radius: 2px;
-}
-
-.guide-tabs {
-    background: var(--theme-bg-secondary);
-    display: flex;
-    border-bottom: 1px solid var(--theme-border-color);
-}
-
-.guide-tab {
-    flex: 1;
-    background: transparent;
-    border: none;
-    color: var(--theme-text-secondary);
-    padding: 8px 12px;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-size: 0.8rem;
-    border-bottom: 2px solid transparent;
-}
-
-.guide-tab.active {
-    color: var(--theme-text-primary);
-    border-bottom-color: #17a2b8;
-    background: var(--theme-bg-primary);
-}
-
-.guide-content {
-    flex: 1;
-    overflow-y: auto;
-    padding: 0;
-}
-
-.guide-panel {
-    display: none;
-    padding: 16px;
-}
-
-.guide-panel.active {
-    display: block;
-}
-
-.guide-section {
-    margin-bottom: 20px;
-}
-
-.guide-title {
-    color: var(--theme-text-primary);
-    font-size: 0.9rem;
-    font-weight: 600;
-    margin-bottom: 8px;
-    padding-bottom: 4px;
-    border-bottom: 1px solid var(--theme-border-color);
-}
-
-.guide-item {
-    background: var(--theme-bg-secondary);
-    border: 1px solid var(--theme-border-color);
-    border-radius: 4px;
-    padding: 8px 10px;
-    margin-bottom: 6px;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-family: 'Cascadia Code', monospace;
-    font-size: 0.75rem;
-    color: var(--theme-text-primary);
-}
-
-.guide-item:hover {
-    background: var(--theme-bg-tertiary);
-    border-color: var(--theme-border-focus);
-    transform: translateX(2px);
-}
-
-.guide-item code {
-    color: #4fc3f7;
-    background: none;
-}
-
-.guide-description {
-    color: var(--theme-text-secondary);
-    font-size: 0.7rem;
-    margin-top: 3px;
-    font-family: 'Segoe UI', sans-serif;
-}
-
-.status-bar {
-    background: #007acc;
-    color: #fff;
-    padding: 2px 16px;
-    font-size: 0.7rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-shrink: 0;
-}
-
-.toast-container {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 10000;
-    pointer-events: none;
-}
-
-.toast {
-    background: var(--theme-bg-primary);
-    border: 1px solid var(--theme-border-color);
-    border-radius: 8px;
-    padding: 12px;
-    margin-bottom: 8px;
-    box-shadow: var(--theme-shadow-md);
-    transform: translateX(120%);
-    opacity: 0;
-    transition: transform 0.3s ease, opacity 0.3s ease;
-    max-width: 300px;
-    color: var(--theme-text-primary);
-    pointer-events: auto;
-}
-
-.toast.show {
-    transform: translateX(0);
-    opacity: 1;
-}
-
-.toast.success {
-    border-left: 4px solid #28a745;
-}
-
-.toast.error {
-    border-left: 4px solid #dc3545;
-}
-
-.toast.warn {
-    border-left: 4px solid #feca57;
-}
-
-.toast.info {
-    border-left: 4px solid #17a2b8;
-}
-
-/* Theme toggle button styles */
-#theme-toggle {
-    background: transparent;
-    border: 2px solid var(--theme-border-color);
-    color: var(--theme-text-primary);
-    padding: 0.5rem;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 44px;
-    min-height: 44px;
-    position: relative;
-    overflow: hidden;
-}
-
-#theme-toggle::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(99, 179, 237, 0.2), transparent);
-    transition: left 0.5s ease;
-}
-
-#theme-toggle:hover::before {
-    left: 100%;
-}
-
-#theme-toggle:hover {
-    background-color: var(--theme-bg-secondary);
-    border-color: var(--theme-border-focus);
-    transform: scale(1.05);
-}
-
-#theme-toggle:focus-visible {
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(99, 179, 237, 0.3);
-}
-
-#theme-toggle i {
-    font-size: 1.2rem;
-    transition: transform 0.3s ease;
-    position: relative;
-    z-index: 1;
-}
-
-#theme-toggle:hover i {
-    transform: rotate(15deg) scale(1.1);
-}
-
-#theme-toggle-moon {
-    color: #ffd700;
-}
-
-#theme-toggle-sun {
-    color: #ff8c00;
-}
-
-@media (max-width: 768px) {
-    .main-split {
-        flex-direction: column;
-    }
-    
-    .editor-section,
-    .preview-section {
-        flex: 1;
-        min-width: auto;
-        min-height: 300px;
-    }
-    
-    .quick-guide-float {
-        right: 10px;
-        left: 10px;
-        width: auto;
-        top: 60px;
-    }
-    
-    .nav-controls {
-        flex-wrap: wrap;
-        gap: 6px;
-    }
-    
-    #theme-toggle {
-        min-width: 40px;
-        min-height: 40px;
-        padding: 0.375rem;
-    }
-    
-    #theme-toggle i {
-        font-size: 1rem;
-    }
-}
-</style>
-
-<head></head>
-<body>
-    <!-- Add a dark mode toggle button for testing -->
-    <button onclick="toggleDarkMode()" style="position: fixed; top: 10px; right: 10px; z-index: 9999; padding: 10px; border: none; border-radius: 5px; background: var(--theme-bg-primary); color: var(--theme-text-primary); cursor: pointer; border: 1px solid var(--theme-border-color);">
-        🌙 Toggle Dark Mode
-    </button>
-
-    <script>
-        // Dark mode script
-        (function() {
-            'use strict';
-            
-            const THEME_KEY = 'theme';
-            const DARK_MODE_CLASS = 'dark-mode';
-            
-            try {
-                const savedTheme = localStorage.getItem(THEME_KEY);
-                
-                if (savedTheme === 'dark') {
+            } else if (savedTheme === 'light') {
+                document.documentElement.classList.remove(DARK_MODE_CLASS);
+                if (document.body) {
+                    document.body.classList.remove(DARK_MODE_CLASS);
+                }
+            } else {
+                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
                     document.documentElement.classList.add(DARK_MODE_CLASS);
                     if (document.body) {
                         document.body.classList.add(DARK_MODE_CLASS);
                     }
-                } else if (savedTheme === 'light') {
-                    document.documentElement.classList.remove(DARK_MODE_CLASS);
-                    if (document.body) {
-                        document.body.classList.remove(DARK_MODE_CLASS);
-                    }
-                } else {
-                    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                        document.documentElement.classList.add(DARK_MODE_CLASS);
-                        if (document.body) {
-                            document.body.classList.add(DARK_MODE_CLASS);
-                        }
-                    }
                 }
-            } catch (e) {
-                console.warn('Theme persistence not available:', e);
             }
-        })();
+        } catch (e) {
+            console.warn('Theme persistence not available:', e);
+        }
+    })();
+    </script>
 
-        function toggleDarkMode() {
-            const body = document.body;
-            const isDark = body.classList.contains('dark-mode');
+    <style>
+        :root {
+            /* Theme variables that change with dark mode */
+            --theme-bg-primary: #ffffff;
+            --theme-bg-secondary: #f8f9fa;
+            --theme-bg-tertiary: #e9ecef;
+            --theme-text-primary: #495057;
+            --theme-text-secondary: #6c757d;
+            --theme-text-muted: #a0aec0;
+            --theme-border-color: #dee2e6;
+            --theme-border-focus: #667eea;
+            --theme-shadow-sm: 0 2px 8px rgba(0,0,0,0.1);
+            --theme-shadow-md: 0 4px 15px rgba(0,0,0,0.15);
+            --theme-shadow-lg: 0 8px 25px rgba(0,0,0,0.2);
+
+            /* Editor-specific variables (stay dark for authenticity) */
+            --dark-bg: #1e1e1e;
+            --dark-panel: #252526;
+            --dark-border: #3e3e42;
+            --editor-bg: #1e1e1e;
+            --editor-text: #d4d4d4;
+            --terminal-bg: #0c0c0c;
             
-            if (isDark) {
-                body.classList.remove('dark-mode');
-                localStorage.setItem('theme', 'light');
-            } else {
-                body.classList.add('dark-mode');
-                localStorage.setItem('theme', 'dark');
+            /* Original gradients */
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success-gradient: linear-gradient(135deg, #28a745, #20c997);
+            --danger-gradient: linear-gradient(135deg, #ff6b6b, #ee5a52);
+            --info-gradient: linear-gradient(135deg, #17a2b8, #20c997);
+        }
+
+        /* Dark mode overrides */
+        body.dark-mode {
+            --theme-bg-primary: #1a202c;
+            --theme-bg-secondary: #2d3748;
+            --theme-bg-tertiary: #4a5568;
+            --theme-text-primary: #e2e8f0;
+            --theme-text-secondary: #a0aec0;
+            --theme-text-muted: #718096;
+            --theme-border-color: #4a5568;
+            --theme-border-focus: #63b3ed;
+            --theme-shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+            --theme-shadow-md: 0 4px 15px rgba(0,0,0,0.4);
+            --theme-shadow-lg: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        /* Smooth transitions for theme switching */
+        *,
+        *::before,
+        *::after {
+            transition: 
+                background-color 0.3s ease,
+                color 0.3s ease,
+                border-color 0.3s ease,
+                box-shadow 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background: var(--theme-bg-secondary);
+            color: var(--theme-text-primary);
+            overflow: hidden;
+            line-height: 1.6;
+        }
+
+        .platform-container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 6px;
+            background: #000;
+            color: white;
+            padding: 8px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 600;
+            z-index: 10000;
+            transition: top 0.15s ease-out;
+        }
+
+        .skip-link:focus {
+            top: 6px;
+        }
+
+        .sr-only {
+            position: absolute !important;
+            width: 1px !important;
+            height: 1px !important;
+            padding: 0 !important;
+            margin: -1px !important;
+            overflow: hidden !important;
+            clip: rect(0, 0, 0, 0) !important;
+            white-space: nowrap !important;
+            border: 0 !important;
+        }
+
+        .top-nav {
+            background: var(--theme-bg-primary);
+            border-bottom: 1px solid var(--theme-border-color);
+            padding: 8px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+            z-index: 1000;
+            position: relative;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--theme-text-primary);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .nav-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: 1px solid var(--theme-border-color);
+            color: var(--theme-text-primary);
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .nav-btn:hover {
+            background: var(--theme-bg-tertiary);
+            border-color: var(--theme-border-focus);
+        }
+
+        /* Fixed Theme Toggle Button */
+        .theme-toggle-wrapper {
+            position: fixed;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            z-index: 9999;
+        }
+
+        .theme-toggle {
+            width: 50px;
+            height: 50px;
+            border: 2px solid var(--theme-border-color);
+            border-radius: 50%;
+            background: var(--theme-bg-primary);
+            color: var(--theme-text-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--theme-shadow-md);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .theme-toggle::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(99, 179, 237, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .theme-toggle:hover::before {
+            left: 100%;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: var(--theme-shadow-lg);
+            border-color: var(--theme-border-focus);
+        }
+
+        .theme-toggle:active {
+            transform: scale(0.95);
+        }
+
+        .theme-toggle i {
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        .theme-toggle:hover i {
+            transform: rotate(15deg) scale(1.1);
+        }
+
+        .theme-toggle .sun-icon {
+            color: #ff8c00;
+        }
+
+        .theme-toggle .moon-icon {
+            color: #ffd700;
+        }
+
+        /* Theme selector dropdown */
+        .theme-selector {
+            position: absolute;
+            top: 60px;
+            right: 0;
+            background: var(--theme-bg-primary);
+            border: 1px solid var(--theme-border-color);
+            border-radius: 8px;
+            box-shadow: var(--theme-shadow-lg);
+            padding: 8px;
+            min-width: 200px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+        }
+
+        .theme-selector.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .theme-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.85rem;
+        }
+
+        .theme-option:hover {
+            background: var(--theme-bg-tertiary);
+        }
+
+        .theme-option.active {
+            background: var(--theme-border-focus);
+            color: white;
+        }
+
+        /* Mobile responsive adjustments */
+        @media (max-width: 768px) {
+            .theme-toggle-wrapper {
+                right: 10px;
+            }
+            
+            .theme-toggle {
+                width: 45px;
+                height: 45px;
             }
         }
-    </script>
-</body>
+
+        .main-split {
+            flex: 1;
+            display: flex;
+            height: calc(100vh - 50px);
+        }
+
+        .editor-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--dark-panel);
+            border-right: 1px solid var(--dark-border);
+            min-width: 300px;
+        }
+
+        .preview-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--theme-bg-primary);
+            border-left: 1px solid var(--theme-border-color);
+            min-width: 300px;
+        }
+
+        .editor-toolbar {
+            background: var(--dark-bg);
+            border-bottom: 1px solid var(--dark-border);
+            padding: 6px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .toolbar-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toolbar-btn {
+            background: transparent;
+            border: 1px solid var(--dark-border);
+            color: #8a8a8a;
+            padding: 4px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .toolbar-btn:hover {
+            background: #404040;
+            color: #fff;
+            border-color: #555;
+        }
+
+        .toolbar-btn.success {
+            background: var(--success-gradient);
+            color: #fff;
+            border-color: transparent;
+        }
+
+        .toolbar-btn.danger {
+            background: var(--danger-gradient);
+            color: #fff;
+            border-color: transparent;
+        }
+
+        .editor-tabs {
+            background: var(--dark-bg);
+            border-bottom: 1px solid var(--dark-border);
+            display: flex;
+            align-items: center;
+            padding: 0;
+            flex-shrink: 0;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            padding: 10px 16px;
+            color: #8a8a8a;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-bottom: 2px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            border-right: 1px solid var(--dark-border);
+        }
+
+        .tab-btn.active {
+            color: #fff;
+            background: var(--dark-panel);
+            border-bottom-color: #007acc;
+        }
+
+        .tab-btn:hover:not(.active) {
+            background: #404040;
+            color: #fff;
+        }
+
+        .editor-container {
+            flex: 1;
+            display: flex;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .editor-panel {
+            flex: 1;
+            display: none;
+            flex-direction: column;
+        }
+
+        .editor-panel.active {
+            display: flex;
+        }
+
+        /* CodeMirror styling */
+        .CodeMirror {
+            height: 100% !important;
+            font-family: 'Cascadia Code', 'Fira Code', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace !important;
+            font-size: 14px !important;
+            line-height: 1.6 !important;
+        }
+
+        .code-editor {
+            flex: 1;
+            border: none;
+            resize: none;
+            padding: 16px;
+            font-family: 'Cascadia Code', 'Fira Code', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            background: var(--editor-bg);
+            color: var(--editor-text);
+            outline: none;
+            tab-size: 2;
+            white-space: pre;
+            overflow-wrap: break-word;
+        }
+
+        .terminal-section {
+            height: 200px;
+            background: var(--terminal-bg);
+            border-top: 1px solid var(--dark-border);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        .terminal-header {
+            background: var(--dark-panel);
+            padding: 8px 16px;
+            border-bottom: 1px solid var(--dark-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #8a8a8a;
+            font-size: 0.8rem;
+        }
+
+        .terminal-content {
+            flex: 1;
+            padding: 12px;
+            font-family: 'Cascadia Code', monospace;
+            font-size: 12px;
+            color: #e6e6e6;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+
+        .terminal-line {
+            margin: 2px 0;
+            padding: 1px 0;
+        }
+
+        .terminal-error { color: #ff6b6b; }
+        .terminal-warn { color: #feca57; }
+        .terminal-info { color: #48cae4; }
+        .terminal-success { color: #4ecdc4; }
+
+        .preview-header {
+            background: var(--theme-bg-primary);
+            padding: 8px 16px;
+            border-bottom: 1px solid var(--theme-border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--theme-text-primary);
+            font-size: 0.85rem;
+        }
+
+        .preview-frame {
+            flex: 1;
+            border: none;
+            background: #fff;
+            width: 100%;
+        }
+
+        .live-indicator {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4caf50;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            border: 1px solid #4caf50;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .responsive-controls {
+            display: flex;
+            gap: 4px;
+        }
+
+        .responsive-btn {
+            background: transparent;
+            border: 1px solid var(--theme-border-color);
+            color: var(--theme-text-secondary);
+            padding: 4px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.7rem;
+        }
+
+        .responsive-btn.active,
+        .responsive-btn:hover {
+            background: var(--theme-bg-tertiary);
+            color: var(--theme-text-primary);
+            border-color: var(--theme-border-focus);
+        }
+
+        .quick-guide-float {
+            position: fixed;
+            top: 60px;
+            right: 20px;
+            z-index: 9999;
+            background: var(--theme-bg-primary);
+            border: 1px solid var(--theme-border-color);
+            border-radius: 8px;
+            box-shadow: var(--theme-shadow-lg);
+            width: 320px;
+            max-height: 80vh;
+            display: none;
+            flex-direction: column;
+        }
+
+        .quick-guide-float.show {
+            display: flex;
+        }
+
+        .guide-header {
+            background: var(--info-gradient);
+            color: #fff;
+            padding: 10px 16px;
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .guide-close {
+            background: transparent;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            padding: 2px;
+            border-radius: 2px;
+        }
+
+        .guide-tabs {
+            background: var(--theme-bg-secondary);
+            display: flex;
+            border-bottom: 1px solid var(--theme-border-color);
+        }
+
+        .guide-tab {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--theme-text-secondary);
+            padding: 8px 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.8rem;
+            border-bottom: 2px solid transparent;
+        }
+
+        .guide-tab.active {
+            color: var(--theme-text-primary);
+            border-bottom-color: #17a2b8;
+            background: var(--theme-bg-primary);
+        }
+
+        .guide-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0;
+        }
+
+        .guide-panel {
+            display: none;
+            padding: 16px;
+        }
+
+        .guide-panel.active {
+            display: block;
+        }
+
+        .guide-section {
+            margin-bottom: 20px;
+        }
+
+        .guide-title {
+            color: var(--theme-text-primary);
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            padding-bottom: 4px;
+            border-bottom: 1px solid var(--theme-border-color);
+        }
+
+        .guide-item {
+            background: var(--theme-bg-secondary);
+            border: 1px solid var(--theme-border-color);
+            border-radius: 4px;
+            padding: 8px 10px;
+            margin-bottom: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Cascadia Code', monospace;
+            font-size: 0.75rem;
+            color: var(--theme-text-primary);
+        }
+
+        .guide-item:hover {
+            background: var(--theme-bg-tertiary);
+            border-color: var(--theme-border-focus);
+            transform: translateX(2px);
+        }
+
+        .guide-item code {
+            color: #4fc3f7;
+            background: none;
+        }
+
+        .guide-description {
+            color: var(--theme-text-secondary);
+            font-size: 0.7rem;
+            margin-top: 3px;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .status-bar {
+            background: #007acc;
+            color: #fff;
+            padding: 2px 16px;
+            font-size: 0.7rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            pointer-events: none;
+        }
+
+        .toast {
+            background: var(--theme-bg-primary);
+            border: 1px solid var(--theme-border-color);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 8px;
+            box-shadow: var(--theme-shadow-md);
+            transform: translateX(120%);
+            opacity: 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            max-width: 300px;
+            color: var(--theme-text-primary);
+            pointer-events: auto;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .toast.success {
+            border-left: 4px solid #28a745;
+        }
+
+        .toast.error {
+            border-left: 4px solid #dc3545;
+        }
+
+        .toast.warn {
+            border-left: 4px solid #feca57;
+        }
+
+        .toast.info {
+            border-left: 4px solid #17a2b8;
+        }
+
+        @media (max-width: 768px) {
+            .main-split {
+                flex-direction: column;
+            }
+            
+            .editor-section,
+            .preview-section {
+                flex: 1;
+                min-width: auto;
+                min-height: 300px;
+            }
+            
+            .quick-guide-float {
+                right: 10px;
+                left: 10px;
+                width: auto;
+                top: 60px;
+            }
+            
+            .nav-controls {
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+        }
+    </style>
+</head>
+
+<body>
     <div class="platform-container">
         <a href="#main-content" class="skip-link">Skip to main content</a>
         <div id="announcements" aria-live="polite" aria-atomic="true" class="sr-only"></div>
@@ -816,6 +828,45 @@ body {
             </div>
         </nav>
 
+        <!-- Circular Theme Toggle -->
+        <div class="theme-toggle-wrapper" id="themeToggleWrapper">
+            <button class="theme-toggle" id="themeToggle" title="Toggle Theme" aria-label="Toggle between light and dark themes">
+                <i class="bi bi-sun-fill sun-icon" id="sunIcon"></i>
+                <i class="bi bi-moon-fill moon-icon" id="moonIcon" style="display: none;"></i>
+            </button>
+            
+            <div class="theme-selector" id="themeSelector">
+                <div class="theme-option" data-theme="light" data-syntax="default">
+                    <i class="bi bi-sun-fill"></i>
+                    <div>
+                        <div>Light Theme</div>
+                        <small style="opacity: 0.7;">Default syntax</small>
+                    </div>
+                </div>
+                <div class="theme-option active" data-theme="dark" data-syntax="dracula">
+                    <i class="bi bi-moon-fill"></i>
+                    <div>
+                        <div>Dark Dracula</div>
+                        <small style="opacity: 0.7;">Dracula syntax</small>
+                    </div>
+                </div>
+                <div class="theme-option" data-theme="dark" data-syntax="monokai">
+                    <i class="bi bi-circle-fill" style="color: #272822;"></i>
+                    <div>
+                        <div>Dark Monokai</div>
+                        <small style="opacity: 0.7;">Monokai syntax</small>
+                    </div>
+                </div>
+                <div class="theme-option" data-theme="dark" data-syntax="material">
+                    <i class="bi bi-circle-fill" style="color: #263238;"></i>
+                    <div>
+                        <div>Material Dark</div>
+                        <small style="opacity: 0.7;">Material syntax</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <main class="main-split" id="main-content" role="main">
             <div class="editor-section" id="editorSection">
                 <div class="editor-toolbar">
@@ -856,30 +907,15 @@ body {
 
                 <div class="editor-container">
                     <div class="editor-panel active" id="htmlPanel">
-                        <textarea 
-                            class="code-editor" 
-                            id="htmlEditor" 
-                            placeholder="<!-- Write your HTML here -->"
-                            spellcheck="false"
-                        ></textarea>
+                        <textarea id="htmlEditor" style="display: none;"></textarea>
                     </div>
 
                     <div class="editor-panel" id="cssPanel">
-                        <textarea 
-                            class="code-editor" 
-                            id="cssEditor" 
-                            placeholder="/* Write your CSS here */"
-                            spellcheck="false"
-                        ></textarea>
+                        <textarea id="cssEditor" style="display: none;"></textarea>
                     </div>
 
                     <div class="editor-panel" id="jsPanel">
-                        <textarea 
-                            class="code-editor" 
-                            id="jsEditor" 
-                            placeholder="// Write your JavaScript here"
-                            spellcheck="false"
-                        ></textarea>
+                        <textarea id="jsEditor" style="display: none;"></textarea>
                     </div>
                 </div>
 
@@ -964,19 +1000,19 @@ body {
                 <div class="guide-section">
                     <div class="guide-title">Basic Tags</div>
                     <div class="guide-item" onclick="insertCode('<h1>Title</h1>')">
-                        <code><h1></code>
+                        <code>&lt;h1&gt;</code>
                         <div class="guide-description">Main heading</div>
                     </div>
                     <div class="guide-item" onclick="insertCode('<p>Paragraph text</p>')">
-                        <code><p></code>
+                        <code>&lt;p&gt;</code>
                         <div class="guide-description">Paragraph</div>
                     </div>
-                    <div class="guide-item" onclick="insertCode('<div class=\'container\'></div>')">
-                        <code><div></code>
+                    <div class="guide-item" onclick="insertCode('<div class=&quot;container&quot;></div>')">
+                        <code>&lt;div&gt;</code>
                         <div class="guide-description">Container element</div>
                     </div>
-                    <div class="guide-item" onclick="insertCode('<button onclick=\'myFunction()\'>Click Me</button>')">
-                        <code><button></code>
+                    <div class="guide-item" onclick="insertCode('<button onclick=&quot;myFunction()&quot;>Click Me</button>')">
+                        <code>&lt;button&gt;</code>
                         <div class="guide-description">Button element</div>
                     </div>
                 </div>
@@ -1003,11 +1039,11 @@ body {
             <div class="guide-panel" id="jsGuide">
                 <div class="guide-section">
                     <div class="guide-title">DOM Manipulation</div>
-                    <div class="guide-item" onclick="insertCode('document.getElementById(\'myId\')')">
+                    <div class="guide-item" onclick="insertCode('document.getElementById(&quot;myId&quot;)')">
                         <code>getElementById</code>
                         <div class="guide-description">Get element by ID</div>
                     </div>
-                    <div class="guide-item" onclick="insertCode('console.log(\'Debug message\');')">
+                    <div class="guide-item" onclick="insertCode('console.log(&quot;Debug message&quot;);')">
                         <code>console.log</code>
                         <div class="guide-description">Print to console</div>
                     </div>
@@ -1032,23 +1068,33 @@ body {
 
     <div class="toast-container" id="toastContainer"></div>
 
+    <!-- Include CodeMirror JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
     (function() {
         'use strict';
         
-        const state = {
+        var state = {
             currentTab: 'html',
             currentGuideTab: 'html',
             editors: {},
+            codeMirrorInstances: {},
             updateTimeout: null,
             autoSaveInterval: null,
-            isFullscreen: false
+            isFullscreen: false,
+            syntaxTheme: 'dracula',
+            isDarkMode: false
         };
 
         function init() {
-            console.log('🚀 Enhanced Live Coding Platform initializing...');
+            console.log('Enhanced Live Coding Platform initializing...');
             
             state.editors = {
                 html: document.getElementById('htmlEditor'),
@@ -1056,52 +1102,172 @@ body {
                 js: document.getElementById('jsEditor')
             };
             
+            initializeCodeMirror();
+            initializeThemeToggle();
             setupEventListeners();
             loadFromStorage();
+            
             if (!localStorage.getItem('liveCodingHtml')) {
                 loadDefaultContent();
             }
+            
             startAutoSave();
             debounceUpdate();
             
             logToTerminal('Platform initialized successfully!', 'success');
             logToTerminal('Start coding to see live changes!', 'info');
             
-            console.log('✅ Platform ready!');
+            console.log('Platform ready!');
         }
 
-        function setupEventListeners() {
-            Object.values(state.editors).forEach(editor => {
-                if (editor) {
-                    editor.addEventListener('input', () => {
-                        debounceUpdate();
-                        updateStats();
-                    });
-                    editor.addEventListener('keydown', handleEditorKeydown);
-                    editor.addEventListener('focus', updateEditorStatus);
-                    editor.addEventListener('keyup', updateStats);
-                    editor.addEventListener('click', updateStats);
+        function initializeCodeMirror() {
+            state.codeMirrorInstances.html = CodeMirror.fromTextArea(state.editors.html, {
+                mode: 'htmlmixed',
+                theme: state.syntaxTheme,
+                lineNumbers: true,
+                autoCloseTags: true,
+                autoCloseBrackets: true,
+                matchBrackets: true,
+                indentUnit: 2,
+                tabSize: 2,
+                lineWrapping: true,
+                extraKeys: {
+                    "Ctrl-Space": "autocomplete",
+                    "Tab": function(cm) {
+                        if (cm.somethingSelected()) {
+                            cm.indentSelection("add");
+                        } else {
+                            cm.replaceSelection("  ", "end");
+                        }
+                    }
                 }
             });
 
+            state.codeMirrorInstances.css = CodeMirror.fromTextArea(state.editors.css, {
+                mode: 'css',
+                theme: state.syntaxTheme,
+                lineNumbers: true,
+                autoCloseBrackets: true,
+                matchBrackets: true,
+                indentUnit: 2,
+                tabSize: 2,
+                lineWrapping: true,
+                extraKeys: {
+                    "Ctrl-Space": "autocomplete"
+                }
+            });
+
+            state.codeMirrorInstances.js = CodeMirror.fromTextArea(state.editors.js, {
+                mode: 'javascript',
+                theme: state.syntaxTheme,
+                lineNumbers: true,
+                autoCloseBrackets: true,
+                matchBrackets: true,
+                indentUnit: 2,
+                tabSize: 2,
+                lineWrapping: true,
+                extraKeys: {
+                    "Ctrl-Space": "autocomplete"
+                }
+            });
+
+            Object.keys(state.codeMirrorInstances).forEach(function(key) {
+                state.codeMirrorInstances[key].on('change', function() {
+                    debounceUpdate();
+                    updateStats();
+                });
+
+                state.codeMirrorInstances[key].on('cursorActivity', function() {
+                    updateStats();
+                });
+            });
+        }
+
+        function initializeThemeToggle() {
+            var themeToggle = document.getElementById('themeToggle');
+            var themeSelector = document.getElementById('themeSelector');
+            var themeOptions = document.querySelectorAll('.theme-option');
+
+            var savedTheme = localStorage.getItem('syntaxTheme') || 'dracula';
+            var savedMode = localStorage.getItem('themeMode') || 'dark';
+            
+            state.syntaxTheme = savedTheme;
+            state.isDarkMode = savedMode === 'dark';
+            
+            applySyntaxTheme(savedTheme);
+            applyModeTheme(savedMode);
+            updateActiveThemeOption();
+
+            themeToggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                themeSelector.classList.toggle('show');
+            });
+
+            document.addEventListener('click', function(e) {
+                if (!themeSelector.contains(e.target) && !themeToggle.contains(e.target)) {
+                    themeSelector.classList.remove('show');
+                }
+            });
+
+            themeOptions.forEach(function(option) {
+                option.addEventListener('click', function() {
+                    var theme = option.dataset.theme;
+                    var syntax = option.dataset.syntax;
+                    
+                    state.isDarkMode = theme === 'dark';
+                    state.syntaxTheme = syntax;
+                    
+                    applyModeTheme(theme);
+                    applySyntaxTheme(syntax);
+                    updateActiveThemeOption();
+                    
+                    localStorage.setItem('themeMode', theme);
+                    localStorage.setItem('syntaxTheme', syntax);
+                    
+                    themeSelector.classList.remove('show');
+                    showToast('Applied ' + option.textContent.trim() + ' theme', 'success');
+                });
+            });
+        }
+
+        function applyModeTheme(mode) {
+            var body = document.body;
+            var sunIcon = document.getElementById('sunIcon');
+            var moonIcon = document.getElementById('moonIcon');
+
+            if (mode === 'dark') {
+                body.classList.add('dark-mode');
+                sunIcon.style.display = 'none';
+                moonIcon.style.display = 'inline-block';
+            } else {
+                body.classList.remove('dark-mode');
+                sunIcon.style.display = 'inline-block';
+                moonIcon.style.display = 'none';
+            }
+        }
+
+        function applySyntaxTheme(theme) {
+            Object.values(state.codeMirrorInstances).forEach(function(instance) {
+                if (instance) {
+                    instance.setOption('theme', theme);
+                }
+            });
+        }
+
+        function updateActiveThemeOption() {
+            var themeOptions = document.querySelectorAll('.theme-option');
+            themeOptions.forEach(function(option) {
+                option.classList.remove('active');
+                if (option.dataset.syntax === state.syntaxTheme) {
+                    option.classList.add('active');
+                }
+            });
+        }
+
+        function setupEventListeners() {
             document.addEventListener('keydown', handleGlobalKeydown);
             window.addEventListener('beforeunload', saveToStorage);
             window.addEventListener('message', handleIframeMessage);
-        }
-
-        function handleEditorKeydown(e) {
-            if (e.key === 'Tab') {
-                e.preventDefault();
-                const editor = e.target;
-                const start = editor.selectionStart;
-                const end = editor.selectionEnd;
-                
-                // Indent with two spaces
-                editor.value = editor.value.substring(0, start) + '  ' + editor.value.substring(end);
-                editor.selectionStart = editor.selectionEnd = start + 2;
-                
-                debounceUpdate();
-            }
         }
 
         function handleGlobalKeydown(e) {
@@ -1128,79 +1294,26 @@ body {
         }
 
         function loadDefaultContent() {
-            state.editors.html.value = `<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="card shadow-lg border-0">
-                <div class="card-header bg-primary text-white text-center">
-                    <h2 class="mb-0">Welcome to Enhanced Live Coding!</h2>
-                </div>
-                <div class="card-body text-center p-5">
-                    <p class="lead mb-4">Start editing to see live changes in real-time!</p>
-                    <button class="btn btn-success btn-lg me-3" onclick="showDemo()">Try JavaScript</button>
-                    <button class="btn btn-outline-primary btn-lg" onclick="changeTheme()">Change Theme</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>`;
+            var htmlContent = '<div class="container mt-5">\n    <div class="row justify-content-center">\n        <div class="col-lg-8">\n            <div class="card shadow-lg border-0">\n                <div class="card-header bg-primary text-white text-center">\n                    <h2 class="mb-0">Welcome to Enhanced Live Coding!</h2>\n                </div>\n                <div class="card-body text-center p-5">\n                    <p class="lead mb-4">Start editing to see live changes in real-time!</p>\n                    <button class="btn btn-success btn-lg me-3" onclick="showDemo()">Try JavaScript</button>\n                    <button class="btn btn-outline-primary btn-lg" onclick="changeTheme()">Change Theme</button>\n                </div>\n            </div>\n        </div>\n    </div>\n</div>';
 
-            state.editors.css.value = `body {
-    font-family: system-ui, -apple-system, sans-serif;
-    transition: background-color 0.3s, color 0.3s;
-    background-color: #f8f9fa;
-}
+            var cssContent = 'body {\n    font-family: system-ui, -apple-system, sans-serif;\n    transition: background-color 0.3s, color 0.3s;\n    background-color: #f8f9fa;\n}\n\nbody.dark-theme {\n    background-color: #212529 !important;\n    color: #f8f9fa;\n}';
 
-body.dark-theme {
-    background-color: #212529 !important;
-    color: #f8f9fa;
-}
-`;
+            var jsContent = 'function showDemo() {\n    alert("JavaScript is working! You can edit this in the JS tab.");\n}\n\nfunction changeTheme() {\n    document.body.classList.toggle("dark-theme");\n}';
 
-            state.editors.js.value = `function showDemo() {
-    alert('JavaScript is working! You can edit this in the JS tab.');
-}
-
-function changeTheme() {
-    document.body.classList.toggle('dark-theme');
-}`;
+            state.codeMirrorInstances.html.setValue(htmlContent);
+            state.codeMirrorInstances.css.setValue(cssContent);
+            state.codeMirrorInstances.js.setValue(jsContent);
+            
             updatePreview();
         }
 
         function updatePreview() {
-            const iframe = document.getElementById('previewFrame');
-            const content = `
-                <!DOCTYPE html>
-                <html lang="en">
-                <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-                    <style>${state.editors.css.value}</style>
-                </head>
-                <body>
-                    ${state.editors.html.value}
-                    <script>
-                        (function() {
-                            const postError = (error) => window.parent.postMessage({ type: 'error', message: error.toString() }, '*');
-                            window.addEventListener('error', event => postError(event.error));
-                            
-                            const originalLog = console.log;
-                            console.log = function(...args) {
-                                window.parent.postMessage({ type: 'log', message: args.join(' ') }, '*');
-                                originalLog.apply(console, args);
-                            };
-
-                            try {
-                                ${state.editors.js.value}
-                            } catch (error) {
-                                postError(error);
-                            }
-                        })();
-                    <\/script>
-                </body>
-                </html>
-            `;
+            var iframe = document.getElementById('previewFrame');
+            var htmlValue = state.codeMirrorInstances.html.getValue();
+            var cssValue = state.codeMirrorInstances.css.getValue();
+            var jsValue = state.codeMirrorInstances.js.getValue();
+            
+            var content = '<!DOCTYPE html>\n<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">\n    <style>' + cssValue + '</style>\n</head>\n<body>\n    ' + htmlValue + '\n    <script>\n        (function() {\n            var postError = function(error) { window.parent.postMessage({ type: "error", message: error.toString() }, "*"); };\n            window.addEventListener("error", function(event) { postError(event.error); });\n            \n            var originalLog = console.log;\n            console.log = function() {\n                var args = Array.prototype.slice.call(arguments);\n                window.parent.postMessage({ type: "log", message: args.join(" ") }, "*");\n                originalLog.apply(console, args);\n            };\n\n            try {\n                ' + jsValue + '\n            } catch (error) {\n                postError(error);\n            }\n        })();\n    <\/script>\n</body>\n</html>';
             
             iframe.srcdoc = content;
         }
@@ -1212,62 +1325,73 @@ function changeTheme() {
         }
 
         function formatCode() {
-            alert("A real code formatter (like Prettier) is complex to implement here. This is a placeholder.");
-            logToTerminal('Format action triggered', 'info');
+            var currentInstance = state.codeMirrorInstances[state.currentTab];
+            if (currentInstance) {
+                var cursor = currentInstance.getCursor();
+                currentInstance.autoFormatRange({line: 0, ch: 0}, {line: currentInstance.lineCount()});
+                currentInstance.setCursor(cursor);
+                logToTerminal(state.currentTab.toUpperCase() + ' code formatted', 'info');
+                showToast('Code formatted!', 'success');
+            }
         }
 
         function clearCurrentEditor() {
-            const currentEditor = state.editors[state.currentTab];
-            if (currentEditor && confirm(`Are you sure you want to clear the ${state.currentTab.toUpperCase()} editor?`)) {
-                currentEditor.value = '';
+            var currentInstance = state.codeMirrorInstances[state.currentTab];
+            if (currentInstance && confirm('Are you sure you want to clear the ' + state.currentTab.toUpperCase() + ' editor?')) {
+                currentInstance.setValue('');
                 debounceUpdate();
-                logToTerminal(`${state.currentTab.toUpperCase()} editor cleared`, 'warn');
+                logToTerminal(state.currentTab.toUpperCase() + ' editor cleared', 'warn');
             }
         }
 
         function switchEditorTab(tab) {
             state.currentTab = tab;
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById(`${tab}Tab`).classList.add('active');
+            document.querySelectorAll('.tab-btn').forEach(function(btn) { btn.classList.remove('active'); });
+            document.getElementById(tab + 'Tab').classList.add('active');
             
-            document.querySelectorAll('.editor-panel').forEach(panel => panel.classList.remove('active'));
-            document.getElementById(`${tab}Panel`).classList.add('active');
+            document.querySelectorAll('.editor-panel').forEach(function(panel) { panel.classList.remove('active'); });
+            document.getElementById(tab + 'Panel').classList.add('active');
             
-            state.editors[state.currentTab].focus();
+            setTimeout(function() {
+                if (state.codeMirrorInstances[tab]) {
+                    state.codeMirrorInstances[tab].refresh();
+                    state.codeMirrorInstances[tab].focus();
+                }
+            }, 10);
+            
             updateStats();
         }
 
         window.toggleQuickGuide = function() {
             document.getElementById('quickGuide').classList.toggle('show');
-        }
+        };
 
         window.switchGuideTab = function(tab) {
             state.currentGuideTab = tab;
-            document.querySelectorAll('.guide-tab').forEach(btn => btn.classList.remove('active'));
-            document.getElementById(`${tab}GuideTab`).classList.add('active');
+            document.querySelectorAll('.guide-tab').forEach(function(btn) { btn.classList.remove('active'); });
+            document.getElementById(tab + 'GuideTab').classList.add('active');
             
-            document.querySelectorAll('.guide-panel').forEach(panel => panel.classList.remove('active'));
-            document.getElementById(`${tab}Guide`).classList.add('active');
-        }
+            document.querySelectorAll('.guide-panel').forEach(function(panel) { panel.classList.remove('active'); });
+            document.getElementById(tab + 'Guide').classList.add('active');
+        };
 
         window.insertCode = function(code) {
-            const currentEditor = state.editors[state.currentTab];
-            if (currentEditor) {
-                const start = currentEditor.selectionStart;
-                document.execCommand('insertText', false, code);
-                currentEditor.focus();
+            var currentInstance = state.codeMirrorInstances[state.currentTab];
+            if (currentInstance) {
+                var cursor = currentInstance.getCursor();
+                currentInstance.replaceRange(code, cursor);
+                currentInstance.focus();
                 debounceUpdate();
-                // toggleQuickGuide(); // Uncomment to close guide after inserting
                 logToTerminal('Code snippet inserted', 'info');
             }
-        }
+        };
 
-        function logToTerminal(message, type = 'info') {
-            const terminal = document.getElementById('terminalContent');
-            const line = document.createElement('div');
-            line.className = `terminal-line terminal-${type}`;
-            const timestamp = new Date().toLocaleTimeString();
-            line.innerHTML = `<span>[${timestamp}]</span> <span class="terminal-${type}">[${type.toUpperCase()}]</span> ${message}`;
+        function logToTerminal(message, type) {
+            var terminal = document.getElementById('terminalContent');
+            var line = document.createElement('div');
+            line.className = 'terminal-line terminal-' + type;
+            var timestamp = new Date().toLocaleTimeString();
+            line.innerHTML = '<span>[' + timestamp + ']</span> <span class="terminal-' + type + '">[' + type.toUpperCase() + ']</span> ' + message;
             terminal.appendChild(line);
             terminal.scrollTop = terminal.scrollHeight;
         }
@@ -1275,32 +1399,28 @@ function changeTheme() {
         window.clearTerminal = function() {
             document.getElementById('terminalContent').innerHTML = '';
             logToTerminal('Console cleared', 'info');
-        }
+        };
 
         function updateStats() {
-            const currentEditor = state.editors[state.currentTab];
-            if (currentEditor) {
-                const text = currentEditor.value;
-                const cursorPos = currentEditor.selectionStart;
-                const line = text.substr(0, cursorPos).split('\n').length;
-                const col = cursorPos - text.lastIndexOf('\n', cursorPos - 1);
-                document.getElementById('cursorPosition').textContent = `Line ${line}, Col ${col}`;
+            var currentInstance = state.codeMirrorInstances[state.currentTab];
+            if (currentInstance) {
+                var cursor = currentInstance.getCursor();
+                var text = currentInstance.getValue();
                 
-                const wordCount = text.trim() ? text.trim().split(/\s+/).length : 0;
-                document.getElementById('wordCount').textContent = `${wordCount} words`;
-                document.getElementById('characterCount').textContent = `${text.length} chars`;
+                document.getElementById('cursorPosition').textContent = 'Line ' + (cursor.line + 1) + ', Col ' + (cursor.ch + 1);
+                
+                var wordCount = text.trim() ? text.trim().split(/\s+/).length : 0;
+                document.getElementById('wordCount').textContent = wordCount + ' words';
+                document.getElementById('characterCount').textContent = text.length + ' chars';
+                document.getElementById('editorStatus').textContent = 'Editing ' + state.currentTab.toUpperCase();
             }
         }
 
-        function updateEditorStatus() {
-            document.getElementById('editorStatus').textContent = `Editing ${state.currentTab.toUpperCase()}`;
-        }
-
         window.setPreviewSize = function(width) {
-            const frame = document.getElementById('previewFrame');
-            document.querySelectorAll('.responsive-btn').forEach(btn => btn.classList.remove('active'));
+            var frame = document.getElementById('previewFrame');
+            document.querySelectorAll('.responsive-btn').forEach(function(btn) { btn.classList.remove('active'); });
             
-            let targetButton;
+            var targetButton;
             if (width === '100%') targetButton = document.querySelector('.responsive-btn .bi-display');
             else if (width === '768px') targetButton = document.querySelector('.responsive-btn .bi-tablet');
             else if (width === '375px') targetButton = document.querySelector('.responsive-btn .bi-phone');
@@ -1309,27 +1429,29 @@ function changeTheme() {
             
             frame.style.width = width;
             frame.style.transition = 'width 0.3s ease';
-        }
+        };
 
         window.toggleFullscreen = function() {
             if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch(err => alert(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`));
+                document.documentElement.requestFullscreen().catch(function(err) {
+                    alert('Error attempting to enable full-screen mode: ' + err.message + ' (' + err.name + ')');
+                });
                 state.isFullscreen = true;
             } else {
                 document.exitFullscreen();
                 state.isFullscreen = false;
             }
-        }
+        };
 
         window.loadTemplate = function(template) {
             if (!template) return;
             
-            if (!confirm(`This will replace the current content. Are you sure you want to load the "${template}" template?`)) {
+            if (!confirm('This will replace the current content. Are you sure you want to load the "' + template + '" template?')) {
                 document.querySelector('select.nav-btn').value = "";
                 return;
             }
 
-            const templates = {
+            var templates = {
                 basic: {
                     html: '<!DOCTYPE html>\n<html lang="en">\n<head>\n  <title>Basic Page</title>\n</head>\n<body>\n  <h1>Hello World</h1>\n  <p>This is a basic HTML page.</p>\n</body>\n</html>',
                     css: 'body {\n  font-family: Arial, sans-serif;\n  line-height: 1.6;\n  padding: 20px;\n}',
@@ -1338,7 +1460,7 @@ function changeTheme() {
                 interactive: {
                     html: '<h1>Interactive Demo</h1>\n<p>Button has been clicked <strong id="count">0</strong> times.</p>\n<button onclick="incrementCounter()">Click Me</button>',
                     css: '#count {\n  color: #007acc;\n}',
-                    js: 'let counter = 0;\nfunction incrementCounter() {\n  counter++;\n  document.getElementById("count").textContent = counter;\n}'
+                    js: 'var counter = 0;\nfunction incrementCounter() {\n  counter++;\n  document.getElementById("count").textContent = counter;\n}'
                 },
                 bootstrap: {
                     html: '<div class="container mt-4">\n  <div class="alert alert-primary">This is a Bootstrap Alert!</div>\n  <button class="btn btn-primary">Primary Button</button>\n</div>',
@@ -1347,211 +1469,305 @@ function changeTheme() {
                 }
             };
 
-            const selected = templates[template];
+            var selected = templates[template];
             if (selected) {
-                state.editors.html.value = selected.html;
-                state.editors.css.value = selected.css;
-                state.editors.js.value = selected.js;
+                state.codeMirrorInstances.html.setValue(selected.html);
+                state.codeMirrorInstances.css.setValue(selected.css);
+                state.codeMirrorInstances.js.setValue(selected.js);
                 debounceUpdate();
-                logToTerminal(`Template "${template}" loaded`, 'success');
-                showToast(`Template "${template}" loaded!`, 'info');
+                logToTerminal('Template "' + template + '" loaded', 'success');
+                showToast('Template "' + template + '" loaded!', 'info');
             }
             document.querySelector('select.nav-btn').value = "";
-        }
+        };
 
         window.downloadProject = function() {
-            alert("Downloading as a ZIP requires an external library (like JSZip), which is not included in this static HTML file.");
-        }
+            var html = state.codeMirrorInstances.html.getValue();
+            var css = state.codeMirrorInstances.css.getValue();
+            var js = state.codeMirrorInstances.js.getValue();
+            
+            var fullHTML = '<!DOCTYPE html>\n<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <title>My Project</title>\n    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">\n    <style>\n' + css + '\n    </style>\n</head>\n<body>\n' + html + '\n    <script>\n' + js + '\n    <\/script>\n</body>\n</html>';
+            
+            var blob = new Blob([fullHTML], { type: 'text/html' });
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = 'project.html';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showToast('Project downloaded!', 'success');
+        };
 
         window.resetWorkspace = function() {
             if (confirm('Are you sure you want to reset the entire workspace? This will clear all editors and local storage.')) {
-                Object.values(state.editors).forEach(editor => editor.value = '');
+                state.codeMirrorInstances.html.setValue('');
+                state.codeMirrorInstances.css.setValue('');
+                state.codeMirrorInstances.js.setValue('');
+                
                 localStorage.removeItem('liveCodingHtml');
                 localStorage.removeItem('liveCodingCss');
                 localStorage.removeItem('liveCodingJs');
+                
                 loadDefaultContent();
                 logToTerminal('Workspace has been reset to default', 'warn');
                 showToast('Workspace Reset!', 'warn');
             }
-        }
+        };
 
         function startAutoSave() {
-            state.autoSaveInterval = setInterval(() => {
+            state.autoSaveInterval = setInterval(function() {
                 saveToStorage();
-                document.getElementById('autoSaveStatus').textContent = `Auto-saved: ${new Date().toLocaleTimeString()}`;
+                document.getElementById('autoSaveStatus').textContent = 'Auto-saved: ' + new Date().toLocaleTimeString();
             }, 30000);
         }
 
         function saveToStorage() {
-            localStorage.setItem('liveCodingHtml', state.editors.html.value);
-            localStorage.setItem('liveCodingCss', state.editors.css.value);
-            localStorage.setItem('liveCodingJs', state.editors.js.value);
+            localStorage.setItem('liveCodingHtml', state.codeMirrorInstances.html.getValue());
+            localStorage.setItem('liveCodingCss', state.codeMirrorInstances.css.getValue());
+            localStorage.setItem('liveCodingJs', state.codeMirrorInstances.js.getValue());
         }
 
         function loadFromStorage() {
-            const html = localStorage.getItem('liveCodingHtml');
-            const css = localStorage.getItem('liveCodingCss');
-            const js = localStorage.getItem('liveCodingJs');
+            var html = localStorage.getItem('liveCodingHtml');
+            var css = localStorage.getItem('liveCodingCss');
+            var js = localStorage.getItem('liveCodingJs');
 
             if (html || css || js) {
-                state.editors.html.value = html || '';
-                state.editors.css.value = css || '';
-                state.editors.js.value = js || '';
+                if (html) state.codeMirrorInstances.html.setValue(html);
+                if (css) state.codeMirrorInstances.css.setValue(css);
+                if (js) state.codeMirrorInstances.js.setValue(js);
                 logToTerminal('Loaded saved project from local storage', 'info');
             }
         }
         
-        function showToast(message, type = 'info') {
-            const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
+        function showToast(message, type) {
+            var container = document.getElementById('toastContainer');
+            var toast = document.createElement('div');
+            toast.className = 'toast ' + type;
             toast.textContent = message;
             container.appendChild(toast);
             
-            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(function() { toast.classList.add('show'); }, 10);
             
-            setTimeout(() => {
+            setTimeout(function() {
                 toast.classList.remove('show');
-                toast.addEventListener('transitionend', () => toast.remove());
+                toast.addEventListener('transitionend', function() { toast.remove(); });
             }, 3000);
         }
 
         function handleIframeMessage(e) {
             if (e.source !== document.getElementById('previewFrame').contentWindow) return;
             if (e.data.type === 'error') {
-                logToTerminal(`JS Error: ${e.data.message}`, 'error');
+                logToTerminal('JS Error: ' + e.data.message, 'error');
             } else if (e.data.type === 'log') {
-                 logToTerminal(`Console: ${e.data.message}`, 'info');
+                logToTerminal('Console: ' + e.data.message, 'info');
             }
         }
 
+        // Global function exports
         window.runCode = runCode;
         window.formatCode = formatCode;
         window.clearCurrentEditor = clearCurrentEditor;
         window.switchEditorTab = switchEditorTab;
         window.resetWorkspace = resetWorkspace;
 
-        init();
+        // Initialize the platform when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
     })();
     </script>
-    <!-- ADD THIS: Dark Mode JavaScript -->
-<script>
-// Dark mode functionality
-(function() {
-    'use strict';
-    
-    const THEME_KEY = 'theme';
-    const DARK_MODE_CLASS = 'dark-mode';
-    const THEMES = {
-        LIGHT: 'light',
-        DARK: 'dark'
-    };
-    
-    // Cache DOM elements
-    let themeToggle = null;
-    let sunIcon = null;
-    let moonIcon = null;
-    
-    function updateIcons(isDarkMode) {
-        if (sunIcon && moonIcon) {
-            sunIcon.style.display = isDarkMode ? 'inline-block' : 'none';
-            moonIcon.style.display = isDarkMode ? 'none' : 'inline-block';
-        }
-    }
-    
-    function getCurrentTheme() {
-        const savedTheme = localStorage.getItem(THEME_KEY);
+
+    <!-- Theme Toggle JavaScript -->
+    <script>
+    (function() {
+        'use strict';
         
-        if (savedTheme === THEMES.DARK || savedTheme === THEMES.LIGHT) {
-            return savedTheme;
-        }
+        const THEME_KEY = 'theme';
+        const DARK_MODE_CLASS = 'dark-mode';
+        const THEMES = {
+            LIGHT: 'light',
+            DARK: 'dark'
+        };
         
-        return window.matchMedia('(prefers-color-scheme: dark)').matches 
-            ? THEMES.DARK 
-            : THEMES.LIGHT;
-    }
-    
-    function applyTheme(theme) {
-        const isDarkMode = theme === THEMES.DARK;
+        let themeToggle = null;
+        let themeSelector = null;
+        let sunIcon = null;
+        let moonIcon = null;
         
-        if (isDarkMode) {
-            document.body.classList.add(DARK_MODE_CLASS);
-        } else {
-            document.body.classList.remove(DARK_MODE_CLASS);
-        }
-        
-        localStorage.setItem(THEME_KEY, theme);
-        updateIcons(isDarkMode);
-        
-        // Show toast if showToast function exists
-        if (typeof showToast === 'function') {
-            showToast(`Switched to ${theme} mode`, 'info');
-        }
-    }
-    
-    function toggleTheme() {
-        const currentTheme = getCurrentTheme();
-        const newTheme = currentTheme === THEMES.DARK ? THEMES.LIGHT : THEMES.DARK;
-        applyTheme(newTheme);
-    }
-    
-    function initializeTheme() {
-        const currentTheme = getCurrentTheme();
-        applyTheme(currentTheme);
-        
-        themeToggle = document.getElementById('theme-toggle');
-        sunIcon = document.getElementById('theme-toggle-sun');
-        moonIcon = document.getElementById('theme-toggle-moon');
-        
-        if (themeToggle) {
-            themeToggle.addEventListener('click', toggleTheme);
+        function getCurrentTheme() {
+            const savedTheme = localStorage.getItem(THEME_KEY);
             
-            themeToggle.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    toggleTheme();
+            if (savedTheme === THEMES.DARK || savedTheme === THEMES.LIGHT) {
+                return savedTheme;
+            }
+            
+            return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches 
+                ? THEMES.DARK 
+                : THEMES.LIGHT;
+        }
+        
+        function applyTheme(theme) {
+            const isDarkMode = theme === THEMES.DARK;
+            
+            if (isDarkMode) {
+                document.body.classList.add(DARK_MODE_CLASS);
+                document.documentElement.classList.add(DARK_MODE_CLASS);
+            } else {
+                document.body.classList.remove(DARK_MODE_CLASS);
+                document.documentElement.classList.remove(DARK_MODE_CLASS);
+            }
+            
+            localStorage.setItem(THEME_KEY, theme);
+            updateIcons(isDarkMode);
+            updateActiveThemeOption();
+        }
+        
+        function updateIcons(isDarkMode) {
+            if (sunIcon && moonIcon) {
+                sunIcon.style.display = isDarkMode ? 'none' : 'inline-block';
+                moonIcon.style.display = isDarkMode ? 'inline-block' : 'none';
+            }
+        }
+        
+        function updateActiveThemeOption() {
+            const currentTheme = getCurrentTheme();
+            const themeOptions = document.querySelectorAll('.theme-option');
+            
+            themeOptions.forEach(function(option) {
+                option.classList.remove('active');
+                if (option.dataset.theme === currentTheme) {
+                    option.classList.add('active');
+                }
+            });
+        }
+        
+        function toggleTheme() {
+            const currentTheme = getCurrentTheme();
+            const newTheme = currentTheme === THEMES.DARK ? THEMES.LIGHT : THEMES.DARK;
+            applyTheme(newTheme);
+            
+            // Show toast notification if available
+            if (typeof showToast === 'function') {
+                showToast('Switched to ' + newTheme + ' mode', 'info');
+            }
+        }
+        
+        function setupThemeSelector() {
+            if (!themeToggle || !themeSelector) return;
+            
+            // Toggle theme selector on click
+            themeToggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                themeSelector.classList.toggle('show');
+            });
+            
+            // Close theme selector when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!themeSelector.contains(e.target) && !themeToggle.contains(e.target)) {
+                    themeSelector.classList.remove('show');
                 }
             });
             
-            const isDarkMode = document.body.classList.contains(DARK_MODE_CLASS);
-            updateIcons(isDarkMode);
+            // Theme option selection
+            const themeOptions = themeSelector.querySelectorAll('.theme-option');
+            themeOptions.forEach(function(option) {
+                option.addEventListener('click', function() {
+                    const theme = option.dataset.theme;
+                    applyTheme(theme);
+                    themeSelector.classList.remove('show');
+                    
+                    if (typeof showToast === 'function') {
+                        const themeName = option.querySelector('div > div').textContent;
+                        showToast('Applied ' + themeName, 'success');
+                    }
+                });
+            });
+            
+            updateActiveThemeOption();
         }
         
-        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-        mediaQuery.addEventListener('change', function(e) {
-            const savedTheme = localStorage.getItem(THEME_KEY);
-            if (!savedTheme) {
-                applyTheme(e.matches ? THEMES.DARK : THEMES.LIGHT);
+        function initializeTheme() {
+            // Cache DOM elements
+            themeToggle = document.getElementById('themeToggle');
+            themeSelector = document.getElementById('themeSelector');
+            sunIcon = document.getElementById('sunIcon');
+            moonIcon = document.getElementById('moonIcon');
+            
+            // Apply the initial theme
+            const currentTheme = getCurrentTheme();
+            applyTheme(currentTheme);
+            
+            // Set up event listeners
+            if (themeToggle) {
+                // Add keyboard support
+                themeToggle.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        if (themeSelector && themeSelector.classList.contains('show')) {
+                            themeSelector.classList.remove('show');
+                        } else {
+                            toggleTheme();
+                        }
+                    }
+                });
+                
+                // Add double-click to toggle (alternative to clicking dropdown)
+                themeToggle.addEventListener('dblclick', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    toggleTheme();
+                });
+            }
+            
+            // Setup theme selector dropdown
+            setupThemeSelector();
+            
+            // Listen for system theme changes
+            const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+            if (mediaQuery.addEventListener) {
+                mediaQuery.addEventListener('change', function(e) {
+                    // Only apply system preference if user hasn't manually set a theme
+                    const savedTheme = localStorage.getItem(THEME_KEY);
+                    if (!savedTheme) {
+                        applyTheme(e.matches ? THEMES.DARK : THEMES.LIGHT);
+                    }
+                });
+            }
+        }
+        
+        // Keyboard shortcut for theme toggle (Ctrl/Cmd + D)
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
+                e.preventDefault();
+                toggleTheme();
             }
         });
-    }
-    
-    window.ThemeManager = {
-        getCurrentTheme: getCurrentTheme,
-        applyTheme: applyTheme,
-        toggleTheme: toggleTheme,
-        isDarkMode: function() {
-            return document.body.classList.contains(DARK_MODE_CLASS);
+        
+        // Public API for other scripts
+        window.ThemeManager = {
+            getCurrentTheme: getCurrentTheme,
+            applyTheme: applyTheme,
+            toggleTheme: toggleTheme,
+            isDarkMode: function() {
+                return document.body.classList.contains(DARK_MODE_CLASS);
+            },
+            THEMES: THEMES
+        };
+        
+        // Initialize when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeTheme);
+        } else {
+            initializeTheme();
         }
-    };
-    
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initializeTheme);
-    } else {
-        initializeTheme();
-    }
-    // ADD THIS: Keyboard shortcut for theme toggle
-document.addEventListener('keydown', function(e) {
-    // Ctrl/Cmd + D to toggle dark mode
-    if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
-        e.preventDefault();
-        if (window.ThemeManager) {
-            window.ThemeManager.toggleTheme();
-        }
-    }
-});
-    
-})();
-</script>
+        
+    })();
+    </script>
 </body>
 </html>

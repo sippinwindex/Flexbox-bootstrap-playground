@@ -17,44 +17,9 @@
     <!-- Prism.js for syntax highlighting -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
     
-<!-- CRITICAL: No-flash script for dark mode -->
-<script>
-(function() {
-    'use strict';
-    
-    const THEME_KEY = 'theme';
-    const DARK_MODE_CLASS = 'dark-mode';
-    
-    try {
-        const savedTheme = localStorage.getItem(THEME_KEY);
-        
-        if (savedTheme === 'dark') {
-            document.documentElement.classList.add(DARK_MODE_CLASS);
-            if (document.body) {
-                document.body.classList.add(DARK_MODE_CLASS);
-            }
-        } else if (savedTheme === 'light') {
-            document.documentElement.classList.remove(DARK_MODE_CLASS);
-            if (document.body) {
-                document.body.classList.remove(DARK_MODE_CLASS);
-            }
-        } else {
-            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                document.documentElement.classList.add(DARK_MODE_CLASS);
-                if (document.body) {
-                    document.body.classList.add(DARK_MODE_CLASS);
-                }
-            }
-        }
-    } catch (e) {
-        console.warn('Theme persistence not available:', e);
-    }
-})();
-</script>
-
 <style>
 :root {
-    /* Theme variables that change with dark mode */
+    /* Unified theme variables that change with dark mode */
     --theme-bg-primary: #ffffff;
     --theme-bg-secondary: #f8f9fa;
     --theme-bg-tertiary: #e9ecef;
@@ -66,19 +31,29 @@
     --theme-shadow-sm: 0 2px 8px rgba(0,0,0,0.1);
     --theme-shadow-md: 0 4px 15px rgba(0,0,0,0.15);
     --theme-shadow-lg: 0 8px 25px rgba(0,0,0,0.2);
-    
-    /* Other variables */
+
+    /* Consistent gradients across all files */
     --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --success-gradient: linear-gradient(135deg, #28a745, #20c997);
+    --warning-gradient: linear-gradient(135deg, #ffc107, #ff8c00);
+    --info-gradient: linear-gradient(135deg, #17a2b8, #20c997);
+    --danger-gradient: linear-gradient(135deg, #dc3545, #fd79a8);
+    
+    /* Terminal colors - keep consistent */
     --terminal-bg: #1e1e1e;
     --terminal-text: #d4d4d4;
     --terminal-green: #4ec9b0;
     --terminal-blue: #569cd6;
     --terminal-red: #f44747;
     --terminal-success: #4caf50;
-    --success-gradient: linear-gradient(90deg, #4caf50, #45a049);
+
+    /* Animation Variables */
+    --transition-fast: 0.15s ease-out;
+    --transition-base: 0.3s ease-out;
+    --transition-slow: 0.5s ease-out;
 }
 
-/* Dark mode overrides */
+/* Dark mode overrides - standardized */
 body.dark-mode {
     --theme-bg-primary: #1a202c;
     --theme-bg-secondary: #2d3748;
@@ -98,10 +73,10 @@ body.dark-mode {
 *::before,
 *::after {
     transition: 
-        background-color 0.3s ease,
-        color 0.3s ease,
-        border-color 0.3s ease,
-        box-shadow 0.3s ease;
+        background-color var(--transition-base),
+        color var(--transition-base),
+        border-color var(--transition-base),
+        box-shadow var(--transition-base);
 }
 
 body {
@@ -126,6 +101,24 @@ body {
     top: 100px;
     max-height: calc(100vh - 120px);
     overflow-y: auto;
+    border: 1px solid var(--theme-border-color);
+}
+
+.guide-nav::-webkit-scrollbar {
+    width: 8px;
+}
+
+.guide-nav::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.guide-nav::-webkit-scrollbar-thumb {
+    background: var(--theme-border-color);
+    border-radius: 4px;
+}
+
+.guide-nav::-webkit-scrollbar-thumb:hover {
+    background: var(--theme-text-secondary);
 }
 
 .guide-nav .nav-link {
@@ -133,7 +126,7 @@ body {
     padding: 0.75rem 1rem;
     border-radius: 8px;
     margin: 3px 0;
-    transition: all 0.3s ease;
+    transition: all var(--transition-base);
     display: flex;
     align-items: center;
 }
@@ -157,7 +150,9 @@ body {
     box-shadow: var(--theme-shadow-sm);
     padding: 2.5rem;
     margin-bottom: 2rem;
-    transition: all 0.3s ease;
+    transition: all var(--transition-base);
+    border: 1px solid var(--theme-border-color);
+    color: var(--theme-text-primary);
 }
 
 .content-section:hover {
@@ -209,7 +204,7 @@ body {
     gap: 0.5rem;
     color: var(--theme-text-primary);
     font-weight: 500;
-    transition: all 0.3s ease;
+    transition: all var(--transition-base);
     border-bottom: 3px solid transparent;
 }
 
@@ -256,6 +251,7 @@ body {
     font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
     box-shadow: var(--theme-shadow-md);
     min-height: 400px;
+    border: 1px solid var(--theme-border-color);
 }
 
 .terminal-header {
@@ -494,6 +490,15 @@ body {
     border-radius: 0 8px 8px 0;
     position: relative;
     color: var(--theme-text-primary);
+    border: 1px solid var(--theme-border-color);
+}
+
+body.dark-mode .best-practice {
+    background: linear-gradient(135deg, rgba(40, 167, 69, 0.15), rgba(32, 201, 151, 0.1));
+}
+
+body:not(.dark-mode) .best-practice {
+    background: linear-gradient(135deg, #d4edda, #c3e6cb);
 }
 
 .best-practice::before {
@@ -512,6 +517,15 @@ body {
     border-radius: 0 8px 8px 0;
     position: relative;
     color: var(--theme-text-primary);
+    border: 1px solid var(--theme-border-color);
+}
+
+body.dark-mode .warning-box {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.15), rgba(255, 140, 0, 0.1));
+}
+
+body:not(.dark-mode) .warning-box {
+    background: linear-gradient(135deg, #fff3cd, #ffeaa7);
 }
 
 .warning-box::before {
@@ -560,6 +574,230 @@ body {
     to { transform: translateX(0); opacity: 1; }
 }
 
+/* Navigation theming */
+.navbar {
+    background-color: var(--theme-bg-primary) !important;
+    border-bottom: 1px solid var(--theme-border-color);
+}
+
+.navbar-dark {
+    background-color: var(--theme-bg-tertiary) !important;
+}
+
+.navbar-dark .navbar-nav .nav-link {
+    color: var(--theme-text-secondary);
+}
+
+.navbar-dark .navbar-nav .nav-link:hover,
+.navbar-dark .navbar-nav .nav-link.active {
+    color: var(--theme-text-primary);
+}
+
+/* Dropdown theming */
+.dropdown-menu {
+    background-color: var(--theme-bg-primary);
+    border-color: var(--theme-border-color);
+    box-shadow: var(--theme-shadow-md);
+}
+
+.dropdown-item {
+    color: var(--theme-text-primary);
+}
+
+.dropdown-item:hover {
+    background-color: var(--theme-bg-secondary);
+    color: var(--theme-text-primary);
+}
+
+/* Form elements theming */
+.form-select,
+.form-control,
+.form-range {
+    background-color: var(--theme-bg-primary);
+    border-color: var(--theme-border-color);
+    color: var(--theme-text-primary);
+}
+
+.form-select:focus,
+.form-control:focus {
+    background-color: var(--theme-bg-primary);
+    border-color: var(--theme-border-focus);
+    color: var(--theme-text-primary);
+    box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.25);
+}
+
+/* Alert theming */
+.alert {
+    border: 1px solid var(--theme-border-color);
+}
+
+/* NEW CIRCULAR THEME TOGGLE STYLES */
+.theme-toggle-wrapper {
+    position: fixed;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+    z-index: 1000;
+    user-select: none;
+}
+
+.theme-toggle {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: 3px solid var(--theme-border-color);
+    background: var(--theme-bg-primary);
+    color: var(--theme-text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--theme-shadow-md);
+    position: relative;
+    overflow: hidden;
+    font-size: 1.5rem;
+}
+
+.theme-toggle::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.theme-toggle:hover::before {
+    left: 100%;
+}
+
+.theme-toggle:hover {
+    transform: scale(1.1);
+    box-shadow: var(--theme-shadow-lg);
+    border-color: var(--theme-border-focus);
+}
+
+.theme-toggle:active {
+    transform: scale(0.95);
+}
+
+.theme-toggle .sun-icon {
+    color: #f59e0b;
+    transition: all 0.3s ease;
+}
+
+.theme-toggle .moon-icon {
+    color: #3b82f6;
+    transition: all 0.3s ease;
+}
+
+.theme-selector {
+    position: absolute;
+    right: 70px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--theme-bg-primary);
+    border: 2px solid var(--theme-border-color);
+    border-radius: 12px;
+    box-shadow: var(--theme-shadow-lg);
+    min-width: 200px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-50%) translateX(10px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1001;
+}
+
+.theme-selector.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(-50%) translateX(0);
+}
+
+.theme-option {
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: var(--theme-text-primary);
+    border-radius: 8px;
+    margin: 6px;
+}
+
+.theme-option:hover {
+    background: var(--theme-bg-secondary);
+    transform: translateX(4px);
+}
+
+.theme-option.active {
+    background: var(--theme-bg-secondary);
+    border-left: 3px solid var(--theme-border-focus);
+}
+
+.theme-option i {
+    font-size: 1.2rem;
+    width: 24px;
+    text-align: center;
+}
+
+.theme-option div {
+    flex: 1;
+}
+
+/* Responsive adjustments for theme toggle */
+@media (max-width: 768px) {
+    .theme-toggle-wrapper {
+        right: 15px;
+        top: auto;
+        bottom: 20px;
+        transform: none;
+    }
+    
+    .theme-toggle {
+        width: 48px;
+        height: 48px;
+        font-size: 1.3rem;
+    }
+    
+    .theme-selector {
+        right: 60px;
+        bottom: 0;
+        top: auto;
+        transform: none;
+        min-width: 180px;
+    }
+    
+    .theme-selector.show {
+        transform: translateX(0);
+    }
+}
+
+/* Enhanced scrollbars */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--theme-bg-tertiary);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, var(--theme-border-color), var(--theme-text-secondary));
+    border-radius: 4px;
+    border: 2px solid var(--theme-bg-tertiary);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, var(--theme-text-secondary), var(--theme-text-primary));
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .guide-nav {
@@ -586,101 +824,119 @@ body {
         border-right-color: var(--theme-border-focus);
     }
 }
+
+/* Print styles */
+@media print {
+    .theme-toggle-wrapper,
+    .toast-container {
+        display: none;
+    }
+    
+    .interactive-terminal {
+        border-style: solid;
+    }
+}
+
+/* Smooth scroll behavior */
+html {
+    scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+    
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
 </style>
+</head>
 
-<head></head>
 <body>
-    <!-- Toast Container -->
-    <div class="toast-container" id="toast-container"></div>
-
-    <!-- Add a dark mode toggle button for testing -->
-    <button onclick="toggleDarkMode()" style="position: fixed; top: 10px; right: 10px; z-index: 9999; padding: 10px; border: none; border-radius: 5px; background: var(--theme-bg-primary); color: var(--theme-text-primary); cursor: pointer;">
-        🌙 Toggle Dark Mode
-    </button>
-
-    <script>
-        function toggleDarkMode() {
-            const body = document.body;
-            const isDark = body.classList.contains('dark-mode');
-            
-            if (isDark) {
-                body.classList.remove('dark-mode');
-                localStorage.setItem('theme', 'light');
-            } else {
-                body.classList.add('dark-mode');
-                localStorage.setItem('theme', 'dark');
-            }
-        }
-    </script>
-</body>
-
-<!-- Navigation -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="#" onclick="showToast('Welcome to Live Coding Playground!', 'info')">
-            <i class="bi bi-code-square me-2"></i>Live Coding Playground
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
+    <!-- NEW CIRCULAR THEME TOGGLE - Fixed position on right side -->
+    <div class="theme-toggle-wrapper" id="themeToggleWrapper">
+        <button class="theme-toggle" id="themeToggle" title="Toggle Theme" aria-label="Toggle between light and dark themes">
+            <i class="bi bi-sun-fill sun-icon" id="sunIcon"></i>
+            <i class="bi bi-moon-fill moon-icon" id="moonIcon" style="display: none;"></i>
         </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <div class="navbar-nav ms-auto">
-                <a class="nav-link" href="#" onclick="loadPreset('basic-page')">
-                    <i class="bi bi-house me-1"></i>Home
-                </a>
-                <a class="nav-link" href="#" onclick="loadPreset('flexbox-demo')">
-                    <i class="bi bi-grid-3x3 me-1"></i>Flexbox
-                </a>
-                <a class="nav-link" href="#" onclick="switchTab('html')">
-                    <i class="bi bi-code me-1"></i>HTML
-                </a>
-                <a class="nav-link" href="#" onclick="switchTab('bootstrap')">
-                    <i class="bi bi-bootstrap me-1"></i>Bootstrap
-                </a>
-                <a class="nav-link active" href="#" onclick="showToast('You are here!', 'info')">
-                    <i class="bi bi-play-circle me-1"></i>Live Coding
-                </a>
-                <div class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="bi bi-grid-3x3-gap me-1"></i>Templates
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#" onclick="loadPreset('landing-page')">
-                            <i class="bi bi-layout-text-window me-2"></i>Landing Page
-                        </a></li>
-                        <li><a class="dropdown-item" href="#" onclick="loadPreset('card-layout')">
-                            <i class="bi bi-card-list me-2"></i>Card Layout
-                        </a></li>
-                        <li><a class="dropdown-item" href="#" onclick="loadPreset('form-design')">
-                            <i class="bi bi-ui-checks me-2"></i>Form Design
-                        </a></li>
-                        <li><a class="dropdown-item" href="#" onclick="loadPreset('navigation')">
-                            <i class="bi bi-menu-button-wide me-2"></i>Navigation
-                        </a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="#" onclick="loadPreset('animation-demo')">
-                            <i class="bi bi-stars me-2"></i>Animations
-                        </a></li>
-                        <li><a class="dropdown-item" href="#" onclick="loadPreset('grid-system')">
-                            <i class="bi bi-grid me-2"></i>Grid System
-                        </a></li>
-                    </ul>
+        
+        <div class="theme-selector" id="themeSelector">
+            <div class="theme-option" data-theme="light" data-syntax="default">
+                <i class="bi bi-sun-fill" style="color: #f59e0b;"></i>
+                <div>
+                    <div>Light Theme</div>
+                    <small style="opacity: 0.7;">Clean & bright</small>
                 </div>
-                 <!-- ADD THIS: Theme Toggle Button in your navbar -->
-                <li class="nav-item ms-lg-2">
-                    <button id="theme-toggle" 
-                            class="nav-link border-0 bg-transparent" 
-                            type="button"
-                            aria-label="Toggle between light and dark themes"
-                            title="Toggle theme">
-                        <i id="theme-toggle-moon" class="bi bi-moon-stars-fill" aria-hidden="true"></i>
-                        <i id="theme-toggle-sun" class="bi bi-sun-fill" style="display: none;" aria-hidden="true"></i>
-                    </button>
-                </li>
+            </div>
+            <div class="theme-option active" data-theme="dark" data-syntax="dark">
+                <i class="bi bi-moon-fill" style="color: #3b82f6;"></i>
+                <div>
+                    <div>Dark Theme</div>
+                    <small style="opacity: 0.7;">Easy on eyes</small>
+                </div>
             </div>
         </div>
     </div>
-</nav>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#" onclick="showToast('Welcome to Interactive Terminal Learning!', 'info')">
+                <i class="bi bi-terminal me-2"></i>Interactive Terminal Learning
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <div class="navbar-nav ms-auto">
+                    <a class="nav-link" href="#getting-started">
+                        <i class="bi bi-play-circle me-1"></i>Get Started
+                    </a>
+                    <a class="nav-link" href="#navigation-commands">
+                        <i class="bi bi-compass me-1"></i>Navigation
+                    </a>
+                    <a class="nav-link" href="#file-operations">
+                        <i class="bi bi-file-earmark me-1"></i>File Operations
+                    </a>
+                    <a class="nav-link" href="#text-processing">
+                        <i class="bi bi-file-text me-1"></i>Text Processing
+                    </a>
+                    <a class="nav-link" href="#practice-terminal">
+                        <i class="bi bi-terminal me-1"></i>Practice
+                    </a>
+                    <div class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-grid-3x3-gap me-1"></i>More
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" onclick="showToast('Advanced commands coming soon!', 'info')">
+                                <i class="bi bi-gear me-2"></i>Advanced Commands
+                            </a></li>
+                            <li><a class="dropdown-item" href="#" onclick="showToast('SSH guide coming soon!', 'info')">
+                                <i class="bi bi-key me-2"></i>SSH & Remote Access
+                            </a></li>
+                            <li><a class="dropdown-item" href="#" onclick="showToast('Scripting guide coming soon!', 'info')">
+                                <i class="bi bi-code-slash me-2"></i>Shell Scripting
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" onclick="showAbout()">
+                                <i class="bi bi-info-circle me-2"></i>About
+                            </a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
 
     <!-- Hero Section -->
     <section class="hero-section">
@@ -757,7 +1013,7 @@ body {
                     </nav>
                     
                     <!-- Progress Tracker -->
-                    <div class="mt-4 p-3 bg-light rounded">
+                    <div class="mt-4 p-3 rounded" style="background: var(--theme-bg-secondary); border: 1px solid var(--theme-border-color);">
                         <h6 class="small fw-bold mb-2">
                             <i class="bi bi-trophy me-1"></i>Your Progress
                         </h6>
@@ -902,413 +1158,26 @@ body {
                                     <h6>Prompt Breakdown:</h6>
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <div class="p-3 bg-light rounded mb-3">
+                                            <div class="p-3 rounded mb-3" style="background: var(--theme-bg-secondary);">
                                                 <h6><span class="badge bg-primary">student</span> Username</h6>
                                                 <p class="mb-0">The currently logged-in user</p>
                                             </div>
-                                            <div class="p-3 bg-light rounded mb-3">
+                                            <div class="p-3 rounded mb-3" style="background: var(--theme-bg-secondary);">
                                                 <h6><span class="badge bg-info">learning</span> Hostname</h6>
                                                 <p class="mb-0">The name of your computer/server</p>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
-                                            <div class="p-3 bg-light rounded mb-3">
+                                            <div class="p-3 rounded mb-3" style="background: var(--theme-bg-secondary);">
                                                 <h6><span class="badge bg-warning">~</span> Current Directory</h6>
                                                 <p class="mb-0">~ represents your home directory</p>
                                             </div>
-                                            <div class="p-3 bg-light rounded mb-3">
+                                            <div class="p-3 rounded mb-3" style="background: var(--theme-bg-secondary);">
                                                 <h6><span class="badge bg-success">$</span> Prompt Symbol</h6>
                                                 <p class="mb-0">$ = regular user, # = root user</p>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Navigation Commands -->
-                <section id="navigation-commands" class="content-section">
-                    <div class="d-flex align-items-center mb-4">
-                        <h2 class="mb-0">Navigation Commands</h2>
-                        <span class="badge bg-primary ms-3 badge-level">Beginner</span>
-                    </div>
-
-                    <p>Master the essential commands for moving around the file system.</p>
-
-                    <h4>pwd - Show Current Directory</h4>
-                    <div class="example-container">
-                        <div class="example-header">
-                            <h6 class="example-title">
-                                <i class="bi bi-geo-alt"></i>
-                                Print Working Directory
-                            </h6>
-                        </div>
-                        <div class="example-tabs">
-                            <button class="example-tab active" onclick="switchExampleTab(this, 'demo')">
-                                <i class="bi bi-display"></i>Demo
-                            </button>
-                            <button class="example-tab" onclick="switchExampleTab(this, 'practice')">
-                                <i class="bi bi-keyboard"></i>Try It
-                            </button>
-                        </div>
-                        <div class="example-content">
-                            <div class="example-pane active" data-tab="demo">
-                                <div class="interactive-terminal">
-                                    <div class="terminal-header">
-                                        <div class="terminal-dots">
-                                            <div class="terminal-dot red"></div>
-                                            <div class="terminal-dot yellow"></div>
-                                            <div class="terminal-dot green"></div>
-                                        </div>
-                                        <div class="terminal-title">Demo Terminal</div>
-                                        <div></div>
-                                    </div>
-                                    <div class="terminal-body">
-                                        <div class="terminal-line">
-                                            <span class="terminal-prompt">student@learning:~$</span>
-                                            <span class="terminal-command">pwd</span>
-                                        </div>
-                                        <div class="terminal-line">
-                                            <span class="terminal-output">/home/student</span>
-                                        </div>
-                                        <div class="terminal-line">
-                                            <span class="terminal-prompt">student@learning:~$</span>
-                                            <span class="terminal-cursor">_</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="example-pane" data-tab="practice">
-                                <div class="practice-challenge">
-                                    <h6>🎯 Challenge: Find your current location!</h6>
-                                    <p>Use the <code>pwd</code> command to see what directory you're currently in.</p>
-                                    <div class="command-hint">
-                                        <strong>Hint:</strong> pwd stands for "print working directory"
-                                    </div>
-                                </div>
-                                <div class="interactive-terminal">
-                                    <div class="terminal-header">
-                                        <div class="terminal-dots">
-                                            <div class="terminal-dot red"></div>
-                                            <div class="terminal-dot yellow"></div>
-                                            <div class="terminal-dot green"></div>
-                                        </div>
-                                        <div class="terminal-title">Practice Terminal</div>
-                                        <div class="terminal-controls">
-                                            <button class="terminal-control-btn" onclick="clearTerminal('practice-pwd')">Clear</button>
-                                            <button class="terminal-control-btn" onclick="showHint('hint-pwd')">Hint</button>
-                                        </div>
-                                    </div>
-                                    <div class="terminal-body" id="practice-pwd">
-                                        <div class="terminal-line">
-                                            <span class="terminal-comment"># Try: pwd</span>
-                                        </div>
-                                        <div class="terminal-input-line">
-                                            <span class="terminal-prompt">student@learning:~$</span>
-                                            <input type="text" class="terminal-input" 
-                                                   onkeypress="handleCommand(event, 'practice-pwd', 'nav-pwd')"
-                                                   placeholder="Type pwd and press Enter">
-                                            <span class="terminal-cursor">_</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="hint-box" id="hint-pwd">
-                                    <strong>💡 Hint:</strong> Just type <code>pwd</code> and press Enter
-                                </div>
-                                <div class="challenge-status" id="challenge-nav-pwd">
-                                    <div class="status-indicator current"></div>
-                                    <span>Challenge: Use pwd command</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <h4>ls - List Directory Contents</h4>
-                    <div class="example-container">
-                        <div class="example-header">
-                            <h6 class="example-title">
-                                <i class="bi bi-list-ul"></i>
-                                List Files and Directories
-                            </h6>
-                        </div>
-                        <div class="example-tabs">
-                            <button class="example-tab active" onclick="switchExampleTab(this, 'demo')">
-                                <i class="bi bi-display"></i>Demo
-                            </button>
-                            <button class="example-tab" onclick="switchExampleTab(this, 'practice')">
-                                <i class="bi bi-keyboard"></i>Try It
-                            </button>
-                        </div>
-                        <div class="example-content">
-                            <div class="example-pane active" data-tab="demo">
-                                <div class="interactive-terminal">
-                                    <div class="terminal-header">
-                                        <div class="terminal-dots">
-                                            <div class="terminal-dot red"></div>
-                                            <div class="terminal-dot yellow"></div>
-                                            <div class="terminal-dot green"></div>
-                                        </div>
-                                        <div class="terminal-title">Demo Terminal</div>
-                                        <div></div>
-                                    </div>
-                                    <div class="terminal-body">
-                                        <div class="terminal-line">
-                                            <span class="terminal-prompt">student@learning:~$</span>
-                                            <span class="terminal-command">ls</span>
-                                        </div>
-                                        <div class="terminal-line">
-                                            <span class="terminal-output">documents  downloads  pictures  projects</span>
-                                        </div>
-                                        <div class="terminal-line">
-                                            <span class="terminal-prompt">student@learning:~$</span>
-                                            <span class="terminal-command">ls -la</span>
-                                        </div>
-                                        <div class="terminal-line">
-                                            <span class="terminal-output">drwxr-xr-x  5 student student 4096 Jan 15 10:30 .</span>
-                                        </div>
-                                        <div class="terminal-line">
-                                            <span class="terminal-output">drwxr-xr-x  3 root    root    4096 Jan 10 09:15 ..</span>
-                                        </div>
-                                        <div class="terminal-line">
-                                            <span class="terminal-output">drwxr-xr-x  2 student student 4096 Jan 15 10:30 documents</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="example-pane" data-tab="practice">
-                                <div class="practice-challenge">
-                                    <h6>🎯 Multi-step Challenge: Explore listing options!</h6>
-                                    <p>Complete these commands in order:</p>
-                                    <ol>
-                                        <li>Type <code>ls</code> to see basic file listing</li>
-                                        <li>Type <code>ls -l</code> to see detailed listing</li>
-                                        <li>Type <code>ls -la</code> to see hidden files too</li>
-                                    </ol>
-                                </div>
-                                <div class="interactive-terminal">
-                                    <div class="terminal-header">
-                                        <div class="terminal-dots">
-                                            <div class="terminal-dot red"></div>
-                                            <div class="terminal-dot yellow"></div>
-                                            <div class="terminal-dot green"></div>
-                                        </div>
-                                        <div class="terminal-title">Practice Terminal</div>
-                                        <div class="terminal-controls">
-                                            <button class="terminal-control-btn" onclick="clearTerminal('practice-ls')">Clear</button>
-                                            <button class="terminal-control-btn" onclick="showHint('hint-ls')">Hint</button>
-                                        </div>
-                                    </div>
-                                    <div class="terminal-body" id="practice-ls">
-                                        <div class="terminal-line">
-                                            <span class="terminal-comment"># Start with: ls</span>
-                                        </div>
-                                        <div class="terminal-input-line">
-                                            <span class="terminal-prompt">student@learning:~$</span>
-                                            <input type="text" class="terminal-input" 
-                                                   onkeypress="handleCommand(event, 'practice-ls', 'nav-ls')"
-                                                   placeholder="Type ls commands...">
-                                            <span class="terminal-cursor">_</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="hint-box" id="hint-ls">
-                                    <strong>💡 Hint:</strong> 
-                                    <ul class="mb-0 mt-2">
-                                        <li><code>ls</code> - basic listing</li>
-                                        <li><code>ls -l</code> - long format with details</li>
-                                        <li><code>ls -la</code> - long format with hidden files</li>
-                                    </ul>
-                                </div>
-                                <div class="challenge-status" id="challenge-nav-ls">
-                                    <div class="status-indicator current"></div>
-                                    <span>Challenge: Use ls commands (0/3 completed)</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- File Operations -->
-                <section id="file-operations" class="content-section">
-                    <div class="d-flex align-items-center mb-4">
-                        <h2 class="mb-0">File Operations</h2>
-                        <span class="badge bg-warning ms-3 badge-level">Intermediate</span>
-                    </div>
-
-                    <h4>Creating Files and Directories</h4>
-                    <div class="example-container">
-                        <div class="example-header">
-                            <h6 class="example-title">
-                                <i class="bi bi-file-plus"></i>
-                                touch, mkdir - Create Files and Directories
-                            </h6>
-                        </div>
-                        <div class="example-tabs">
-                            <button class="example-tab active" onclick="switchExampleTab(this, 'demo')">
-                                <i class="bi bi-display"></i>Demo
-                            </button>
-                            <button class="example-tab" onclick="switchExampleTab(this, 'practice')">
-                                <i class="bi bi-keyboard"></i>Try It
-                            </button>
-                        </div>
-                        <div class="example-content">
-                            <div class="example-pane active" data-tab="demo">
-                                <div class="interactive-terminal">
-                                    <div class="terminal-header">
-                                        <div class="terminal-dots">
-                                            <div class="terminal-dot red"></div>
-                                            <div class="terminal-dot yellow"></div>
-                                            <div class="terminal-dot green"></div>
-                                        </div>
-                                        <div class="terminal-title">Demo Terminal</div>
-                                        <div></div>
-                                    </div>
-                                    <div class="terminal-body">
-                                        <div class="terminal-line">
-                                            <span class="terminal-prompt">student@learning:~$</span>
-                                            <span class="terminal-command">mkdir my-project</span>
-                                        </div>
-                                        <div class="terminal-line">
-                                            <span class="terminal-prompt">student@learning:~$</span>
-                                            <span class="terminal-command">touch README.md</span>
-                                        </div>
-                                        <div class="terminal-line">
-                                            <span class="terminal-prompt">student@learning:~$</span>
-                                            <span class="terminal-command">ls -l</span>
-                                        </div>
-                                        <div class="terminal-line">
-                                            <span class="terminal-output">drwxr-xr-x 2 student student 4096 Jan 15 10:45 my-project</span>
-                                        </div>
-                                        <div class="terminal-line">
-                                            <span class="terminal-output">-rw-r--r-- 1 student student    0 Jan 15 10:45 README.md</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="example-pane" data-tab="practice">
-                                <div class="practice-challenge">
-                                    <h6>🎯 Project Setup Challenge!</h6>
-                                    <p>Let's create a project structure:</p>
-                                    <ol>
-                                        <li>Create a directory called <code>my-website</code></li>
-                                        <li>Create a file called <code>index.html</code></li>
-                                        <li>List the files to see your work</li>
-                                    </ol>
-                                </div>
-                                <div class="interactive-terminal">
-                                    <div class="terminal-header">
-                                        <div class="terminal-dots">
-                                            <div class="terminal-dot red"></div>
-                                            <div class="terminal-dot yellow"></div>
-                                            <div class="terminal-dot green"></div>
-                                        </div>
-                                        <div class="terminal-title">Practice Terminal</div>
-                                        <div class="terminal-controls">
-                                            <button class="terminal-control-btn" onclick="clearTerminal('practice-files')">Clear</button>
-                                            <button class="terminal-control-btn" onclick="showHint('hint-files')">Hint</button>
-                                        </div>
-                                    </div>
-                                    <div class="terminal-body" id="practice-files">
-                                        <div class="terminal-line">
-                                            <span class="terminal-comment"># Start with: mkdir my-website</span>
-                                        </div>
-                                        <div class="terminal-input-line">
-                                            <span class="terminal-prompt">student@learning:~$</span>
-                                            <input type="text" class="terminal-input" 
-                                                   onkeypress="handleCommand(event, 'practice-files', 'file-create')"
-                                                   placeholder="Create your project...">
-                                            <span class="terminal-cursor">_</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="hint-box" id="hint-files">
-                                    <strong>💡 Commands you need:</strong>
-                                    <ul class="mb-0 mt-2">
-                                        <li><code>mkdir my-website</code> - create directory</li>
-                                        <li><code>touch index.html</code> - create file</li>
-                                        <li><code>ls -l</code> - list files with details</li>
-                                    </ul>
-                                </div>
-                                <div class="challenge-status" id="challenge-file-create">
-                                    <div class="status-indicator current"></div>
-                                    <span>Challenge: Create project structure (0/3 completed)</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Text Processing -->
-                <section id="text-processing" class="content-section">
-                    <div class="d-flex align-items-center mb-4">
-                        <h2 class="mb-0">Text Processing</h2>
-                        <span class="badge bg-info ms-3 badge-level">Intermediate</span>
-                    </div>
-
-                    <h4>Reading Files</h4>
-                    <div class="example-container">
-                        <div class="example-header">
-                            <h6 class="example-title">
-                                <i class="bi bi-file-text"></i>
-                                cat, echo - Working with Text
-                            </h6>
-                        </div>
-                        <div class="example-tabs">
-                            <button class="example-tab active" onclick="switchExampleTab(this, 'practice')">
-                                <i class="bi bi-keyboard"></i>Try It
-                            </button>
-                        </div>
-                        <div class="example-content">
-                            <div class="example-pane active" data-tab="practice">
-                                <div class="practice-challenge">
-                                    <h6>🎯 Text Processing Challenge!</h6>
-                                    <p>Let's work with text content:</p>
-                                    <ol>
-                                        <li>Use <code>echo "Hello World" > greeting.txt</code> to create a file with content</li>
-                                        <li>Use <code>cat greeting.txt</code> to read the file</li>
-                                        <li>Use <code>echo "Welcome to Terminal!" >> greeting.txt</code> to append more text</li>
-                                        <li>Use <code>cat greeting.txt</code> again to see both lines</li>
-                                    </ol>
-                                </div>
-                                <div class="interactive-terminal">
-                                    <div class="terminal-header">
-                                        <div class="terminal-dots">
-                                            <div class="terminal-dot red"></div>
-                                            <div class="terminal-dot yellow"></div>
-                                            <div class="terminal-dot green"></div>
-                                        </div>
-                                        <div class="terminal-title">Practice Terminal</div>
-                                        <div class="terminal-controls">
-                                            <button class="terminal-control-btn" onclick="clearTerminal('practice-text')">Clear</button>
-                                            <button class="terminal-control-btn" onclick="showHint('hint-text')">Hint</button>
-                                        </div>
-                                    </div>
-                                    <div class="terminal-body" id="practice-text">
-                                        <div class="terminal-line">
-                                            <span class="terminal-comment"># Try: echo "Hello World" > greeting.txt</span>
-                                        </div>
-                                        <div class="terminal-input-line">
-                                            <span class="terminal-prompt">student@learning:~$</span>
-                                            <input type="text" class="terminal-input" 
-                                                   onkeypress="handleCommand(event, 'practice-text', 'text-processing')"
-                                                   placeholder="Work with text files...">
-                                            <span class="terminal-cursor">_</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="hint-box" id="hint-text">
-                                    <strong>💡 Text commands:</strong>
-                                    <ul class="mb-0 mt-2">
-                                        <li><code>echo "text" > file</code> - write to file (overwrites)</li>
-                                        <li><code>echo "text" >> file</code> - append to file</li>
-                                        <li><code>cat filename</code> - display file contents</li>
-                                    </ul>
-                                </div>
-                                <div class="challenge-status" id="challenge-text-processing">
-                                    <div class="status-indicator current"></div>
-                                    <span>Challenge: Text file operations (0/4 completed)</span>
                                 </div>
                             </div>
                         </div>
@@ -1342,7 +1211,7 @@ body {
                                 <span class="terminal-comment"># Free practice! Try any commands you've learned</span>
                             </div>
                             <div class="terminal-line">
-                                <span class="terminal-comment"># Available: pwd, ls, mkdir, touch, echo, cat, cd</span>
+                                <span class="terminal-comment"># Available: pwd, ls, mkdir, touch, echo, cat, cd, help</span>
                             </div>
                             <div class="terminal-input-line">
                                 <span class="terminal-prompt">student@learning:~$</span>
@@ -1357,7 +1226,7 @@ body {
                     <div class="row mt-4">
                         <div class="col-md-6">
                             <div class="best-practice">
-                                <h6><i class="bi bi-check-circle text-success me-2"></i>Commands You've Learned</h6>
+                                <h6><i class="bi bi-check-circle text-success me-2"></i>Available Commands</h6>
                                 <ul class="mb-0">
                                     <li><code>pwd</code> - show current directory</li>
                                     <li><code>ls</code> - list files and directories</li>
@@ -1365,17 +1234,21 @@ body {
                                     <li><code>touch</code> - create files</li>
                                     <li><code>echo</code> - display text</li>
                                     <li><code>cat</code> - read file contents</li>
+                                    <li><code>cd</code> - change directory</li>
+                                    <li><code>help</code> - show help</li>
                                 </ul>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="warning-box">
-                                <h6><i class="bi bi-lightbulb text-warning me-2"></i>Try These Combinations</h6>
+                                <h6><i class="bi bi-lightbulb text-warning me-2"></i>Try These Examples</h6>
                                 <ul class="mb-0">
-                                    <li><code>mkdir test && cd test</code></li>
-                                    <li><code>echo "content" > file.txt && cat file.txt</code></li>
-                                    <li><code>ls -la | head -5</code></li>
-                                    <li><code>find . -name "*.txt"</code></li>
+                                    <li><code>mkdir test-dir</code></li>
+                                    <li><code>cd test-dir</code></li>
+                                    <li><code>touch hello.txt</code></li>
+                                    <li><code>echo "Hello!" > hello.txt</code></li>
+                                    <li><code>cat hello.txt</code></li>
+                                    <li><code>ls -la</code></li>
                                 </ul>
                             </div>
                         </div>
@@ -1390,6 +1263,205 @@ body {
             integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
     <script>
+        // ============================================
+        // NEW CIRCULAR THEME TOGGLE SYSTEM
+        // ============================================
+        (function() {
+            'use strict';
+            
+            const THEME_KEY = 'preferred-theme';
+            const DARK_MODE_CLASS = 'dark-mode';
+            
+            // Theme state
+            let isLightTheme = false;
+            let selectorVisible = false;
+            
+            // DOM elements
+            const themeToggle = document.getElementById('themeToggle');
+            const themeSelector = document.getElementById('themeSelector');
+            const sunIcon = document.getElementById('sunIcon');
+            const moonIcon = document.getElementById('moonIcon');
+            const themeOptions = document.querySelectorAll('.theme-option');
+            
+            // Initialize theme on page load
+            function initializeTheme() {
+                try {
+                    const savedTheme = localStorage.getItem(THEME_KEY);
+                    
+                    if (savedTheme === 'light') {
+                        setLightTheme();
+                    } else if (savedTheme === 'dark') {
+                        setDarkTheme();
+                    } else {
+                        // Default to system preference
+                        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                            setDarkTheme();
+                        } else {
+                            setLightTheme();
+                        }
+                    }
+                } catch (e) {
+                    console.warn('Theme persistence not available:', e);
+                    setDarkTheme(); // Fallback to dark theme
+                }
+                
+                updateActiveOption();
+            }
+            
+            // Set light theme
+            function setLightTheme() {
+                document.documentElement.classList.remove(DARK_MODE_CLASS);
+                document.body.classList.remove(DARK_MODE_CLASS);
+                
+                sunIcon.style.display = 'block';
+                moonIcon.style.display = 'none';
+                
+                isLightTheme = true;
+                
+                try {
+                    localStorage.setItem(THEME_KEY, 'light');
+                } catch (e) {
+                    console.warn('Could not save theme preference:', e);
+                }
+            }
+            
+            // Set dark theme
+            function setDarkTheme() {
+                document.documentElement.classList.add(DARK_MODE_CLASS);
+                document.body.classList.add(DARK_MODE_CLASS);
+                
+                sunIcon.style.display = 'none';
+                moonIcon.style.display = 'block';
+                
+                isLightTheme = false;
+                
+                try {
+                    localStorage.setItem(THEME_KEY, 'dark');
+                } catch (e) {
+                    console.warn('Could not save theme preference:', e);
+                }
+            }
+            
+            // Toggle between themes
+            function toggleTheme() {
+                if (isLightTheme) {
+                    setDarkTheme();
+                } else {
+                    setLightTheme();
+                }
+                updateActiveOption();
+            }
+            
+            // Update active option styling
+            function updateActiveOption() {
+                themeOptions.forEach(option => {
+                    const theme = option.dataset.theme;
+                    if ((theme === 'light' && isLightTheme) || 
+                        (theme === 'dark' && !isLightTheme)) {
+                        option.classList.add('active');
+                    } else {
+                        option.classList.remove('active');
+                    }
+                });
+            }
+            
+            // Show theme selector
+            function showSelector() {
+                selectorVisible = true;
+                themeSelector.classList.add('show');
+            }
+            
+            // Hide theme selector
+            function hideSelector() {
+                selectorVisible = false;
+                themeSelector.classList.remove('show');
+            }
+            
+            // Event Listeners
+            themeToggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (selectorVisible) {
+                    hideSelector();
+                } else {
+                    showSelector();
+                }
+            });
+            
+            // Theme option clicks
+            themeOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    const selectedTheme = this.dataset.theme;
+                    
+                    if (selectedTheme === 'light') {
+                        setLightTheme();
+                    } else {
+                        setDarkTheme();
+                    }
+                    
+                    updateActiveOption();
+                    hideSelector();
+                });
+            });
+            
+            // Quick toggle on double-click
+            themeToggle.addEventListener('dblclick', function(e) {
+                e.stopPropagation();
+                toggleTheme();
+                hideSelector();
+            });
+            
+            // Click outside to close selector
+            document.addEventListener('click', function(e) {
+                if (selectorVisible && 
+                    !themeToggle.contains(e.target) && 
+                    !themeSelector.contains(e.target)) {
+                    hideSelector();
+                }
+            });
+            
+            // Keyboard support
+            themeToggle.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    if (selectorVisible) {
+                        hideSelector();
+                    } else {
+                        showSelector();
+                    }
+                } else if (e.key === 'Escape') {
+                    hideSelector();
+                }
+            });
+            
+            // Listen for system theme changes
+            if (window.matchMedia) {
+                const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+                mediaQuery.addEventListener('change', function() {
+                    const savedTheme = localStorage.getItem(THEME_KEY);
+                    // Only auto-switch if no explicit preference is saved
+                    if (!savedTheme) {
+                        if (mediaQuery.matches) {
+                            setDarkTheme();
+                        } else {
+                            setLightTheme();
+                        }
+                        updateActiveOption();
+                    }
+                });
+            }
+            
+            // Initialize on DOM load
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initializeTheme);
+            } else {
+                initializeTheme();
+            }
+        })();
+
+        // ============================================
+        // TERMINAL FUNCTIONALITY
+        // ============================================
+
         // Virtual File System
         let virtualFS = {
             '/home/student': {
@@ -1404,13 +1476,8 @@ body {
         };
 
         let currentPath = '/home/student';
-        let commandHistory = {};
         let challengeProgress = {
-            'getting-started-1': false,
-            'nav-pwd': false,
-            'nav-ls': 0, // This will track 0-3 for the multi-step challenge
-            'file-create': 0, // 0-3 for the multi-step challenge
-            'text-processing': 0 // 0-4 for the text processing challenge
+            'getting-started-1': false
         };
 
         // Command handlers
@@ -1536,34 +1603,8 @@ body {
                 return { output: 'Directory not found', type: 'error', success: false };
             }
             
-            const hasLongFlag = parts.includes('-l') || parts.includes('-la');
-            const hasAllFlag = parts.includes('-a') || parts.includes('-la');
-            
             let files = Object.keys(currentDir.contents);
-            
-            if (hasAllFlag) {
-                files = ['.', '..', ...files];
-            }
-            
-            if (hasLongFlag) {
-                let output = '';
-                if (hasAllFlag) {
-                    output += 'drwxr-xr-x  5 student student 4096 Jan 15 10:30 .\n';
-                    output += 'drwxr-xr-x  3 root    root    4096 Jan 10 09:15 ..\n';
-                }
-                
-                files.filter(f => f !== '.' && f !== '..').forEach(file => {
-                    const item = currentDir.contents[file];
-                    const type = item.type === 'directory' ? 'd' : '-';
-                    const permissions = item.type === 'directory' ? 'rwxr-xr-x' : 'rw-r--r--';
-                    const size = item.type === 'directory' ? '4096' : (item.content ? item.content.length : '0');
-                    output += `${type}${permissions} 1 student student ${size.padStart(4)} Jan 15 10:45 ${file}\n`;
-                });
-                
-                return { output: output.trim(), success: true };
-            } else {
-                return { output: files.filter(f => f !== '.' && f !== '..').join('  '), success: true };
-            }
+            return { output: files.join('  '), success: true };
         }
 
         function handleMkdirCommand(parts) {
@@ -1738,75 +1779,6 @@ body {
                         showToast('Great job! You used the echo command successfully!', 'success');
                     }
                     break;
-                    
-                case 'nav-pwd':
-                    if (command === 'pwd') {
-                        challengeProgress[challengeId] = true;
-                        updateChallengeStatus(challengeId, 'completed', 'Challenge completed! ✅');
-                        showToast('Excellent! You found your current directory!', 'success');
-                    }
-                    break;
-                    
-                case 'nav-ls':
-                    let lsCommands = ['ls', 'ls -l', 'ls -la'];
-                    if (lsCommands.includes(command)) {
-                        challengeProgress[challengeId]++;
-                        const completed = challengeProgress[challengeId];
-                        updateChallengeStatus(challengeId, completed === 3 ? 'completed' : 'current', 
-                            `Challenge: Use ls commands (${completed}/3 completed)`);
-                        
-                        if (completed === 3) {
-                            showToast('Amazing! You mastered all ls variations!', 'success');
-                            document.getElementById('nav-status').classList.add('completed');
-                            updateOverallProgress();
-                        }
-                    }
-                    break;
-                    
-                case 'file-create':
-                    let fileCommands = ['mkdir my-website', 'touch index.html', 'ls -l'];
-                    if (fileCommands.includes(command)) {
-                        challengeProgress[challengeId]++;
-                        const completed = challengeProgress[challengeId];
-                        updateChallengeStatus(challengeId, completed === 3 ? 'completed' : 'current',
-                            `Challenge: Create project structure (${completed}/3 completed)`);
-                        
-                        if (completed === 3) {
-                            showToast('Fantastic! You created a complete project structure!', 'success');
-                            document.getElementById('file-status').classList.add('completed');
-                            updateOverallProgress();
-                        }
-                    }
-                    break;
-                    
-                case 'text-processing':
-                    let textCommands = [
-                        'echo "Hello World" > greeting.txt',
-                        'cat greeting.txt',
-                        'echo "Welcome to Terminal!" >> greeting.txt'
-                    ];
-                    
-                    let matched = false;
-                    textCommands.forEach((cmd, index) => {
-                        if (command.includes(cmd.split(' ')[0]) && 
-                            (command.includes('greeting.txt') || command === 'cat greeting.txt')) {
-                            matched = true;
-                        }
-                    });
-                    
-                    if (matched) {
-                        challengeProgress[challengeId]++;
-                        const completed = challengeProgress[challengeId];
-                        updateChallengeStatus(challengeId, completed === 4 ? 'completed' : 'current',
-                            `Challenge: Text file operations (${completed}/4 completed)`);
-                        
-                        if (completed === 4) {
-                            showToast('Outstanding! You mastered text file operations!', 'success');
-                            document.getElementById('text-status').classList.add('completed');
-                            updateOverallProgress();
-                        }
-                    }
-                    break;
             }
         }
 
@@ -1817,18 +1789,6 @@ body {
                 indicator.className = `status-indicator ${status}`;
                 statusElement.querySelector('span').textContent = text;
             }
-        }
-
-        function updateOverallProgress() {
-            const completedSections = [
-                document.getElementById('nav-status').classList.contains('completed'),
-                document.getElementById('file-status').classList.contains('completed'),
-                document.getElementById('text-status').classList.contains('completed')
-            ].filter(Boolean).length;
-            
-            const percentage = Math.round((completedSections / 3) * 100);
-            document.getElementById('overall-progress').style.width = `${percentage}%`;
-            document.getElementById('progress-text').textContent = `${percentage}% Complete`;
         }
 
         // UI Helper Functions
@@ -1908,6 +1868,10 @@ body {
             showToast('Available commands: pwd, ls, mkdir, touch, echo, cat, cd, clear, help', 'info');
         }
 
+        function showAbout() {
+            showToast('Interactive Terminal Learning Guide - Learn by doing!', 'info');
+        }
+
         function showToast(message, type = 'info') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
@@ -1977,124 +1941,5 @@ body {
             });
         }
     </script>
-    <!-- ADD THIS: Dark Mode JavaScript -->
-<script>
-// Dark mode functionality
-(function() {
-    'use strict';
-    
-    const THEME_KEY = 'theme';
-    const DARK_MODE_CLASS = 'dark-mode';
-    const THEMES = {
-        LIGHT: 'light',
-        DARK: 'dark'
-    };
-    
-    // Cache DOM elements
-    let themeToggle = null;
-    let sunIcon = null;
-    let moonIcon = null;
-    
-    function updateIcons(isDarkMode) {
-        if (sunIcon && moonIcon) {
-            sunIcon.style.display = isDarkMode ? 'inline-block' : 'none';
-            moonIcon.style.display = isDarkMode ? 'none' : 'inline-block';
-        }
-    }
-    
-    function getCurrentTheme() {
-        const savedTheme = localStorage.getItem(THEME_KEY);
-        
-        if (savedTheme === THEMES.DARK || savedTheme === THEMES.LIGHT) {
-            return savedTheme;
-        }
-        
-        return window.matchMedia('(prefers-color-scheme: dark)').matches 
-            ? THEMES.DARK 
-            : THEMES.LIGHT;
-    }
-    
-    function applyTheme(theme) {
-        const isDarkMode = theme === THEMES.DARK;
-        
-        if (isDarkMode) {
-            document.body.classList.add(DARK_MODE_CLASS);
-        } else {
-            document.body.classList.remove(DARK_MODE_CLASS);
-        }
-        
-        localStorage.setItem(THEME_KEY, theme);
-        updateIcons(isDarkMode);
-        
-        // Show toast if showToast function exists
-        if (typeof showToast === 'function') {
-            showToast(`Switched to ${theme} mode`, 'info');
-        }
-    }
-    
-    function toggleTheme() {
-        const currentTheme = getCurrentTheme();
-        const newTheme = currentTheme === THEMES.DARK ? THEMES.LIGHT : THEMES.DARK;
-        applyTheme(newTheme);
-    }
-    
-    function initializeTheme() {
-        const currentTheme = getCurrentTheme();
-        applyTheme(currentTheme);
-        
-        themeToggle = document.getElementById('theme-toggle');
-        sunIcon = document.getElementById('theme-toggle-sun');
-        moonIcon = document.getElementById('theme-toggle-moon');
-        
-        if (themeToggle) {
-            themeToggle.addEventListener('click', toggleTheme);
-            
-            themeToggle.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    toggleTheme();
-                }
-            });
-            
-            const isDarkMode = document.body.classList.contains(DARK_MODE_CLASS);
-            updateIcons(isDarkMode);
-        }
-        
-        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-        mediaQuery.addEventListener('change', function(e) {
-            const savedTheme = localStorage.getItem(THEME_KEY);
-            if (!savedTheme) {
-                applyTheme(e.matches ? THEMES.DARK : THEMES.LIGHT);
-            }
-        });
-    }
-    
-    window.ThemeManager = {
-        getCurrentTheme: getCurrentTheme,
-        applyTheme: applyTheme,
-        toggleTheme: toggleTheme,
-        isDarkMode: function() {
-            return document.body.classList.contains(DARK_MODE_CLASS);
-        }
-    };
-    
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initializeTheme);
-    } else {
-        initializeTheme();
-    }
-    // ADD THIS: Keyboard shortcut for theme toggle
-document.addEventListener('keydown', function(e) {
-    // Ctrl/Cmd + D to toggle dark mode
-    if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
-        e.preventDefault();
-        if (window.ThemeManager) {
-            window.ThemeManager.toggleTheme();
-        }
-    }
-});
-    
-})();
-</script>
 </body>
 </html>

@@ -8,52 +8,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Interactive CSS properties playground for learning all CSS properties">
     <meta name="keywords" content="CSS, properties, playground, learning, interactive, web development">
-<!-- CRITICAL: No-flash script for dark mode -->
-<script>
-(function() {
-    'use strict';
-    
-    const THEME_KEY = 'theme';
-    const DARK_MODE_CLASS = 'dark-mode';
-    
-    try {
-        const savedTheme = localStorage.getItem(THEME_KEY);
-        
-        if (savedTheme === 'dark') {
-            document.documentElement.classList.add(DARK_MODE_CLASS);
-            if (document.body) {
-                document.body.classList.add(DARK_MODE_CLASS);
-            }
-        } else if (savedTheme === 'light') {
-            document.documentElement.classList.remove(DARK_MODE_CLASS);
-            if (document.body) {
-                document.body.classList.remove(DARK_MODE_CLASS);
-            }
-        } else {
-            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                document.documentElement.classList.add(DARK_MODE_CLASS);
-                if (document.body) {
-                    document.body.classList.add(DARK_MODE_CLASS);
-                }
-            }
-        }
-    } catch (e) {
-        console.warn('Theme persistence not available:', e);
-    }
-})();
-</script>
-    <title>CSS Properties Master Playground - Complete Edition</title>
 
     <!-- CRITICAL: No-flash script for dark mode -->
     <script>
     (function() {
         'use strict';
         
-        const THEME_KEY = 'theme';
+        const THEME_KEY = 'css-playground-theme';
         const DARK_MODE_CLASS = 'dark-mode';
         
         try {
-            const savedTheme = localStorage.getItem(THEME_KEY);
+            const savedTheme = sessionStorage.getItem(THEME_KEY) || localStorage.getItem(THEME_KEY);
             
             if (savedTheme === 'dark') {
                 document.documentElement.classList.add(DARK_MODE_CLASS);
@@ -78,6 +43,8 @@
         }
     })();
     </script>
+    
+    <title>CSS Properties Master Playground - Complete Edition</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" 
@@ -261,6 +228,18 @@
             border-radius: 8px;
             box-shadow: var(--theme-shadow-sm);
             border: 1px solid var(--theme-border-color);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .demo-text:hover {
+            transform: scale(1.02);
+            box-shadow: var(--theme-shadow-md);
+        }
+
+        .demo-text.selected {
+            outline: 3px solid #ffc107;
+            outline-offset: 2px;
         }
 
         .code-output {
@@ -590,69 +569,6 @@
             transform: translateY(-1px);
         }
 
-        /* Theme toggle button styles */
-        #theme-toggle {
-            background: transparent;
-            border: 2px solid var(--theme-border-color);
-            color: var(--theme-text-primary);
-            padding: 0.5rem;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 44px;
-            min-height: 44px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        #theme-toggle::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(99, 179, 237, 0.2), transparent);
-            transition: left 0.5s ease;
-        }
-
-        #theme-toggle:hover::before {
-            left: 100%;
-        }
-
-        #theme-toggle:hover {
-            background-color: var(--theme-bg-secondary);
-            border-color: var(--theme-border-focus);
-            transform: scale(1.05);
-        }
-
-        #theme-toggle:focus-visible {
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(99, 179, 237, 0.3);
-        }
-
-        #theme-toggle i {
-            font-size: 1.2rem;
-            transition: transform 0.3s ease;
-            position: relative;
-            z-index: 1;
-        }
-
-        #theme-toggle:hover i {
-            transform: rotate(15deg) scale(1.1);
-        }
-
-        #theme-toggle-moon {
-            color: #ffd700;
-        }
-
-        #theme-toggle-sun {
-            color: #ff8c00;
-        }
-
         /* Form controls dark mode support */
         .form-select,
         .form-control,
@@ -711,7 +627,200 @@
             color: var(--theme-text-primary);
         }
 
+        /* =============================================
+           MODERN CIRCULAR THEME TOGGLE SYSTEM
+           ============================================= */
+
+        /* Theme Toggle Wrapper - Moveable Container */
+        .theme-toggle-wrapper {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1100;
+            user-select: none;
+            pointer-events: auto;
+        }
+
+        /* Main Toggle Button */
+        .theme-toggle {
+            width: 56px;
+            height: 56px;
+            background: var(--theme-bg-primary);
+            border: 2px solid var(--theme-border-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--theme-shadow-md);
+            backdrop-filter: blur(10px);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: var(--theme-shadow-lg);
+            border-color: var(--theme-border-focus);
+        }
+
+        .theme-toggle:active {
+            transform: scale(0.95);
+        }
+
+        .theme-toggle:focus {
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Icon styling */
+        .theme-toggle i {
+            font-size: 1.5rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            z-index: 2;
+        }
+
+        .sun-icon {
+            color: #f59e0b;
+            transform: rotate(0deg);
+        }
+
+        .moon-icon {
+            color: #60a5fa;
+            transform: rotate(-90deg);
+        }
+
+        /* Theme icon transitions */
+        .theme-toggle.switching .sun-icon {
+            transform: rotate(180deg) scale(0);
+        }
+
+        .theme-toggle.switching .moon-icon {
+            transform: rotate(0deg) scale(1);
+        }
+
+        /* Hover glow effect */
+        .theme-toggle::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 50%;
+            background: linear-gradient(45deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .theme-toggle:hover::before {
+            opacity: 1;
+            animation: rotate 2s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Theme Selector Dropdown */
+        .theme-selector {
+            position: absolute;
+            top: 70px;
+            right: 0;
+            min-width: 200px;
+            background: var(--theme-bg-primary);
+            border: 1px solid var(--theme-border-color);
+            border-radius: 12px;
+            box-shadow: var(--theme-shadow-lg);
+            backdrop-filter: blur(20px);
+            opacity: 0;
+            transform: translateY(-10px) scale(0.95);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .theme-selector.show {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+        }
+
+        /* Theme Options */
+        .theme-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-bottom: 1px solid var(--theme-border-color);
+            position: relative;
+        }
+
+        .theme-option:last-child {
+            border-bottom: none;
+        }
+
+        .theme-option:hover {
+            background: var(--theme-bg-secondary);
+            transform: translateX(4px);
+        }
+
+        .theme-option.active {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+        }
+
+        .theme-option.active::after {
+            content: '✓';
+            position: absolute;
+            right: 16px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .theme-option i {
+            font-size: 1.2rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .theme-option div {
+            flex: 1;
+        }
+
+        .theme-option small {
+            display: block;
+            margin-top: 2px;
+            font-size: 0.75rem;
+            opacity: 0.7;
+        }
+
+        /* Mobile Responsive */
         @media (max-width: 768px) {
+            .theme-toggle-wrapper {
+                top: 15px;
+                right: 15px;
+            }
+            
+            .theme-toggle {
+                width: 48px;
+                height: 48px;
+            }
+            
+            .theme-toggle i {
+                font-size: 1.3rem;
+            }
+            
+            .theme-selector {
+                min-width: 180px;
+                top: 60px;
+            }
+            
             .property-tabs {
                 flex-direction: column;
             }
@@ -723,16 +832,35 @@
                 min-height: 200px;
                 padding: 1rem;
             }
-            
-            #theme-toggle {
-                min-width: 40px;
-                min-height: 40px;
-                padding: 0.375rem;
+        }
+
+        /* Accessibility improvements */
+        @media (prefers-reduced-motion: reduce) {
+            .theme-toggle,
+            .theme-toggle i,
+            .theme-selector,
+            .theme-option {
+                transition: none !important;
+                animation: none !important;
             }
-            
-            #theme-toggle i {
-                font-size: 1rem;
+        }
+
+        /* High contrast mode support */
+        @media (prefers-contrast: high) {
+            .theme-toggle {
+                border-width: 3px;
             }
+        }
+
+        /* Focus visible for better keyboard navigation */
+        .theme-toggle:focus-visible {
+            outline: 3px solid #667eea;
+            outline-offset: 2px;
+        }
+
+        .theme-option:focus-visible {
+            outline: 2px solid #667eea;
+            outline-offset: -2px;
         }
     </style>
 </head>
@@ -792,17 +920,6 @@
                             </a></li>
                         </ul>
                     </div>
-                    <!-- Theme Toggle Button -->
-                    <li class="nav-item">
-                        <button id="theme-toggle" 
-                                class="nav-link border-0 bg-transparent" 
-                                type="button"
-                                aria-label="Toggle between light and dark themes"
-                                title="Toggle theme">
-                            <i id="theme-toggle-moon" class="bi bi-moon-stars-fill" aria-hidden="true"></i>
-                            <i id="theme-toggle-sun" class="bi bi-sun-fill" style="display: none;" aria-hidden="true"></i>
-                        </button>
-                    </li>
                 </div>
             </div>
         </div>
@@ -2030,12 +2147,408 @@
                 </div>
             </div>
         </div>
+        
+    </div>
+
+    <!-- Modern Circular Theme Toggle -->
+    <div class="theme-toggle-wrapper" id="themeToggleWrapper">
+        <button class="theme-toggle" id="themeToggle" title="Toggle Theme" aria-label="Toggle between light and dark themes">
+            <i class="bi bi-sun-fill sun-icon" id="sunIcon"></i>
+            <i class="bi bi-moon-fill moon-icon" id="moonIcon" style="display: none;"></i>
+        </button>
+        
+        <div class="theme-selector" id="themeSelector">
+            <div class="theme-option" data-theme="light" data-syntax="default">
+                <i class="bi bi-sun-fill"></i>
+                <div>
+                    <div>Light Theme</div>
+                    <small style="opacity: 0.7;">Clean & bright</small>
+                </div>
+            </div>
+            <div class="theme-option" data-theme="dark" data-syntax="dark">
+                <i class="bi bi-moon-fill"></i>
+                <div>
+                    <div>Dark Theme</div>
+                    <small style="opacity: 0.7;">Easy on eyes</small>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" 
             integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" 
             crossorigin="anonymous"></script>
+    
+    <!-- Modern Circular Theme Toggle JavaScript -->
+    <script>
+        // Modern Circular Theme Toggle System
+        (function() {
+            'use strict';
+            
+            // Configuration
+            const CONFIG = {
+                THEME_KEY: 'css-playground-theme',
+                DARK_MODE_CLASS: 'dark-mode',
+                THEMES: {
+                    LIGHT: 'light',
+                    DARK: 'dark'
+                },
+                SELECTORS: {
+                    toggle: '#themeToggle',
+                    selector: '#themeSelector',
+                    wrapper: '#themeToggleWrapper',
+                    sunIcon: '#sunIcon',
+                    moonIcon: '#moonIcon',
+                    themeOptions: '.theme-option'
+                },
+                CLASSES: {
+                    show: 'show',
+                    active: 'active',
+                    switching: 'switching'
+                }
+            };
+            
+            // State management
+            let elements = {};
+            let currentTheme = null;
+            let isTransitioning = false;
+
+            // Utility functions
+            const utils = {
+                saveTheme(theme) {
+                    try {
+                        sessionStorage.setItem(CONFIG.THEME_KEY, theme);
+                        localStorage.setItem(CONFIG.THEME_KEY, theme);
+                    } catch (e) {
+                        console.warn('Theme persistence not available:', e);
+                    }
+                },
+
+                getSavedTheme() {
+                    try {
+                        return sessionStorage.getItem(CONFIG.THEME_KEY) || 
+                               localStorage.getItem(CONFIG.THEME_KEY);
+                    } catch (e) {
+                        return null;
+                    }
+                },
+
+                getSystemTheme() {
+                    return window.matchMedia?.('(prefers-color-scheme: dark)').matches 
+                        ? CONFIG.THEMES.DARK 
+                        : CONFIG.THEMES.LIGHT;
+                },
+
+                getCurrentTheme() {
+                    return utils.getSavedTheme() || utils.getSystemTheme();
+                },
+
+                showToast(message, type = 'info') {
+                    if (typeof window.showToast === 'function') {
+                        window.showToast(message, type);
+                    }
+                }
+            };
+
+            // DOM manipulation
+            const dom = {
+                cacheElements() {
+                    Object.keys(CONFIG.SELECTORS).forEach(key => {
+                        elements[key] = document.querySelector(CONFIG.SELECTORS[key]);
+                    });
+                    elements.themeOptionsArray = document.querySelectorAll(CONFIG.SELECTORS.themeOptions);
+                },
+
+                updateIcons(theme) {
+                    if (!elements.sunIcon || !elements.moonIcon) return;
+                    
+                    const isDark = theme === CONFIG.THEMES.DARK;
+                    elements.sunIcon.style.display = isDark ? 'none' : 'inline-block';
+                    elements.moonIcon.style.display = isDark ? 'inline-block' : 'none';
+                },
+
+                updateThemeOptions(theme) {
+                    elements.themeOptionsArray?.forEach(option => {
+                        const optionTheme = option.dataset.theme;
+                        option.classList.toggle(CONFIG.CLASSES.active, optionTheme === theme);
+                    });
+                },
+
+                toggleSelector(show) {
+                    if (!elements.selector) return;
+                    elements.selector.classList.toggle(CONFIG.CLASSES.show, show);
+                }
+            };
+
+            // Theme application
+            const themeManager = {
+                applyTheme(theme, skipTransition = false) {
+                    if (isTransitioning && !skipTransition) return;
+                    
+                    const isDark = theme === CONFIG.THEMES.DARK;
+                    const wasChanged = currentTheme !== theme;
+                    
+                    // Update DOM
+                    document.body.classList.toggle(CONFIG.DARK_MODE_CLASS, isDark);
+                    document.documentElement.classList.toggle(CONFIG.DARK_MODE_CLASS, isDark);
+                    
+                    // Update UI elements
+                    dom.updateIcons(theme);
+                    dom.updateThemeOptions(theme);
+                    
+                    // Save theme
+                    utils.saveTheme(theme);
+                    currentTheme = theme;
+                    
+                    // Show feedback
+                    if (wasChanged && !skipTransition) {
+                        themeManager.showSwitchAnimation();
+                        utils.showToast(`Switched to ${theme} theme`, 'info');
+                    }
+                },
+
+                showSwitchAnimation() {
+                    if (!elements.toggle) return;
+                    
+                    isTransitioning = true;
+                    elements.toggle.classList.add(CONFIG.CLASSES.switching);
+                    
+                    setTimeout(() => {
+                        elements.toggle?.classList.remove(CONFIG.CLASSES.switching);
+                        isTransitioning = false;
+                    }, 400);
+                },
+
+                toggleTheme() {
+                    const newTheme = currentTheme === CONFIG.THEMES.DARK 
+                        ? CONFIG.THEMES.LIGHT 
+                        : CONFIG.THEMES.DARK;
+                    themeManager.applyTheme(newTheme);
+                }
+            };
+
+            // Event handlers
+            const events = {
+                setupToggleButton() {
+                    if (!elements.toggle) return;
+                    
+                    elements.toggle.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        themeManager.toggleTheme();
+                        dom.toggleSelector(false); // Close selector if open
+                    });
+
+                    // Long press for selector (desktop) or right-click
+                    let longPressTimer;
+                    
+                    elements.toggle.addEventListener('mousedown', () => {
+                        longPressTimer = setTimeout(() => {
+                            dom.toggleSelector(true);
+                        }, 500);
+                    });
+
+                    elements.toggle.addEventListener('mouseup', () => {
+                        clearTimeout(longPressTimer);
+                    });
+
+                    elements.toggle.addEventListener('contextmenu', (e) => {
+                        e.preventDefault();
+                        dom.toggleSelector(!elements.selector?.classList.contains(CONFIG.CLASSES.show));
+                    });
+
+                    // Keyboard support
+                    elements.toggle.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            themeManager.toggleTheme();
+                        } else if (e.key === 'ArrowDown' || e.key === 'F10') {
+                            e.preventDefault();
+                            dom.toggleSelector(true);
+                        }
+                    });
+                },
+
+                setupThemeOptions() {
+                    elements.themeOptionsArray?.forEach(option => {
+                        option.addEventListener('click', () => {
+                            const theme = option.dataset.theme;
+                            if (theme && theme !== currentTheme) {
+                                themeManager.applyTheme(theme);
+                            }
+                            dom.toggleSelector(false);
+                        });
+
+                        // Keyboard support
+                        option.addEventListener('keydown', (e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                option.click();
+                            }
+                        });
+                    });
+                },
+
+                setupGlobalEvents() {
+                    // Close selector when clicking outside
+                    document.addEventListener('click', (e) => {
+                        if (!elements.wrapper?.contains(e.target)) {
+                            dom.toggleSelector(false);
+                        }
+                    });
+
+                    // Escape key closes selector
+                    document.addEventListener('keydown', (e) => {
+                        if (e.key === 'Escape') {
+                            dom.toggleSelector(false);
+                        }
+                        
+                        // Ctrl/Cmd + D to toggle theme
+                        if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
+                            e.preventDefault();
+                            themeManager.toggleTheme();
+                        }
+                    });
+
+                    // System theme change detection
+                    if (window.matchMedia) {
+                        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+                        const handleSystemThemeChange = (e) => {
+                            const savedTheme = utils.getSavedTheme();
+                            if (!savedTheme) {
+                                const newTheme = e.matches ? CONFIG.THEMES.DARK : CONFIG.THEMES.LIGHT;
+                                themeManager.applyTheme(newTheme, true);
+                            }
+                        };
+
+                        if (mediaQuery.addEventListener) {
+                            mediaQuery.addEventListener('change', handleSystemThemeChange);
+                        } else {
+                            // Fallback for older browsers
+                            mediaQuery.addListener(handleSystemThemeChange);
+                        }
+                    }
+                }
+            };
+
+            // Initialization
+            function initialize() {
+                // Cache DOM elements
+                dom.cacheElements();
+                
+                // Apply initial theme
+                const initialTheme = utils.getCurrentTheme();
+                themeManager.applyTheme(initialTheme, true);
+                
+                // Setup event listeners
+                events.setupToggleButton();
+                events.setupThemeOptions();
+                events.setupGlobalEvents();
+                
+                // Make toggle draggable (optional enhancement)
+                if (elements.wrapper && window.innerWidth > 768) {
+                    makeDraggable(elements.wrapper);
+                }
+                
+                console.log('🎨 Modern Circular Theme Toggle initialized');
+            }
+
+            // Optional: Make toggle draggable
+            function makeDraggable(element) {
+                let isDragging = false;
+                let startX, startY, initialX, initialY;
+
+                const handleStart = (e) => {
+                    if (e.target.closest('.theme-selector')) return;
+                    
+                    isDragging = true;
+                    const rect = element.getBoundingClientRect();
+                    
+                    const clientX = e.type === 'mousedown' ? e.clientX : e.touches[0].clientX;
+                    const clientY = e.type === 'mousedown' ? e.clientY : e.touches[0].clientY;
+                    
+                    startX = clientX - rect.left;
+                    startY = clientY - rect.top;
+                    initialX = rect.left;
+                    initialY = rect.top;
+                    
+                    element.style.transition = 'none';
+                    document.body.style.userSelect = 'none';
+                };
+
+                const handleMove = (e) => {
+                    if (!isDragging) return;
+                    e.preventDefault();
+                    
+                    const clientX = e.type === 'mousemove' ? e.clientX : e.touches[0].clientX;
+                    const clientY = e.type === 'mousemove' ? e.clientY : e.touches[0].clientY;
+                    
+                    const newX = clientX - startX;
+                    const newY = clientY - startY;
+                    
+                    // Constrain to viewport
+                    const maxX = window.innerWidth - element.offsetWidth;
+                    const maxY = window.innerHeight - element.offsetHeight;
+                    
+                    const constrainedX = Math.max(0, Math.min(newX, maxX));
+                    const constrainedY = Math.max(0, Math.min(newY, maxY));
+                    
+                    element.style.left = constrainedX + 'px';
+                    element.style.top = constrainedY + 'px';
+                    element.style.right = 'auto';
+                };
+
+                const handleEnd = () => {
+                    if (!isDragging) return;
+                    
+                    isDragging = false;
+                    element.style.transition = '';
+                    document.body.style.userSelect = '';
+                    
+                    // Snap to edges if desired
+                    const rect = element.getBoundingClientRect();
+                    const centerX = rect.left + rect.width / 2;
+                    const isLeftSide = centerX < window.innerWidth / 2;
+                    
+                    // Optional: Animate to edge
+                    setTimeout(() => {
+                        if (isLeftSide) {
+                            element.style.left = '20px';
+                        } else {
+                            element.style.left = 'auto';
+                            element.style.right = '20px';
+                        }
+                    }, 100);
+                };
+
+                // Mouse events
+                element.addEventListener('mousedown', handleStart);
+                document.addEventListener('mousemove', handleMove);
+                document.addEventListener('mouseup', handleEnd);
+
+                // Touch events
+                element.addEventListener('touchstart', handleStart, { passive: false });
+                document.addEventListener('touchmove', handleMove, { passive: false });
+                document.addEventListener('touchend', handleEnd);
+            }
+
+            // Public API
+            window.ThemeManager = {
+                getCurrentTheme: () => currentTheme,
+                setTheme: themeManager.applyTheme,
+                toggleTheme: themeManager.toggleTheme,
+                isDarkMode: () => currentTheme === CONFIG.THEMES.DARK
+            };
+
+            // Initialize when DOM is ready
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initialize);
+            } else {
+                initialize();
+            }
+
+        })();
+    </script>
     
     <script>
         // Global state management
@@ -2063,6 +2576,7 @@
 
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
+            // Initialize all tabs
             updateDemo('layout');
             updateDemo('typography');
             updateDemo('colors');
@@ -2071,6 +2585,11 @@
             updateDemo('effects');
             updateDemo('animations');
             updateDemo('advanced');
+            
+            // Show welcome message
+            setTimeout(() => {
+                showToast('Welcome to CSS Properties Playground with Modern Theme Toggle! Use Ctrl+D to toggle themes.', 'info');
+            }, 1500);
         });
 
         // Tab switching
@@ -2226,22 +2745,6 @@
             const position = document.getElementById('layout-position').value;
             const top = document.getElementById('layout-top').value + 'px';
             const left = document.getElementById('layout-left').value + 'px';
-            const zIndex = document.getElementById('layout-z-index').value;
-            const float = document.getElementById('layout-float').value;
-            const overflow = document.getElementById('layout-overflow').value;
-
-            Object.assign(selectedElement.style, {
-                display, position, top, left, zIndex, float, overflow
-            });
-
-            generateLayoutCSS();
-        }
-
-        function generateLayoutCSS() {
-            const display = document.getElementById('layout-display').value;
-            const position = document.getElementById('layout-position').value;
-            const top = document.getElementById('layout-top').value;
-            const left = document.getElementById('layout-left').value;
             const zIndex = document.getElementById('layout-z-index').value;
             const float = document.getElementById('layout-float').value;
             const overflow = document.getElementById('layout-overflow').value;
@@ -3036,11 +3539,6 @@
 
             // Initialize max width special case
             updateMaxWidthValue();
-
-            // Show welcome message
-            setTimeout(() => {
-                showToast('Welcome to CSS Properties Playground! Use keyboard shortcuts: 1-8 to switch tabs, A to add elements, Delete to clear.', 'info');
-            }, 1000);
         });
 
         // Performance monitoring
@@ -3111,235 +3609,25 @@
         function switchTab(tab) {
             showToast(`Switching to ${tab} tab...`, 'info');
         }
+
+        // Make the global showToast function available
+        window.showToast = showToast;
     </script>
-    
-    <!-- Dark Mode JavaScript -->
-    <script>
-    // Dark mode functionality
-    (function() {
-        'use strict';
-        
-        const THEME_KEY = 'theme';
-        const DARK_MODE_CLASS = 'dark-mode';
-        const THEMES = {
-            LIGHT: 'light',
-            DARK: 'dark'
-        };
-        
-        // Cache DOM elements
-        let themeToggle = null;
-        let sunIcon = null;
-        let moonIcon = null;
-        
-        function updateIcons(isDarkMode) {
-            if (sunIcon && moonIcon) {
-                sunIcon.style.display = isDarkMode ? 'inline-block' : 'none';
-                moonIcon.style.display = isDarkMode ? 'none' : 'inline-block';
-            }
-        }
-        
-        function getCurrentTheme() {
-            const savedTheme = localStorage.getItem(THEME_KEY);
-            
-            if (savedTheme === THEMES.DARK || savedTheme === THEMES.LIGHT) {
-                return savedTheme;
-            }
-            
-            return window.matchMedia('(prefers-color-scheme: dark)').matches 
-                ? THEMES.DARK 
-                : THEMES.LIGHT;
-        }
-        
-        function applyTheme(theme) {
-            const isDarkMode = theme === THEMES.DARK;
-            
-            if (isDarkMode) {
-                document.body.classList.add(DARK_MODE_CLASS);
-            } else {
-                document.body.classList.remove(DARK_MODE_CLASS);
-            }
-            
-            localStorage.setItem(THEME_KEY, theme);
-            updateIcons(isDarkMode);
-            
-            // Show toast if showToast function exists
-            if (typeof showToast === 'function') {
-                showToast(`Switched to ${theme} mode`, 'info');
-            }
-        }
-        
-        function toggleTheme() {
-            const currentTheme = getCurrentTheme();
-            const newTheme = currentTheme === THEMES.DARK ? THEMES.LIGHT : THEMES.DARK;
-            applyTheme(newTheme);
-        }
-        
-        function initializeTheme() {
-            const currentTheme = getCurrentTheme();
-            applyTheme(currentTheme);
-            
-            themeToggle = document.getElementById('theme-toggle');
-            sunIcon = document.getElementById('theme-toggle-sun');
-            moonIcon = document.getElementById('theme-toggle-moon');
-            
-            if (themeToggle) {
-                themeToggle.addEventListener('click', toggleTheme);
-                
-                themeToggle.addEventListener('keydown', function(e) {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        toggleTheme();
-                    }
-                });
-                
-                const isDarkMode = document.body.classList.contains(DARK_MODE_CLASS);
-                updateIcons(isDarkMode);
-            }
-            
-            const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-            mediaQuery.addEventListener('change', function(e) {
-                const savedTheme = localStorage.getItem(THEME_KEY);
-                if (!savedTheme) {
-                    applyTheme(e.matches ? THEMES.DARK : THEMES.LIGHT);
-                }
-            });
-        }
-        
-        window.ThemeManager = {
-            getCurrentTheme: getCurrentTheme,
-            applyTheme: applyTheme,
-            toggleTheme: toggleTheme,
-            isDarkMode: function() {
-                return document.body.classList.contains(DARK_MODE_CLASS);
-            }
-        };
-        
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initializeTheme);
-        } else {
-            initializeTheme();
-        }
-        
-    })();
-    </script>
-    <!-- ADD THIS: Dark Mode JavaScript -->
-<script>
-// Dark mode functionality
-(function() {
-    'use strict';
-    
-    const THEME_KEY = 'theme';
-    const DARK_MODE_CLASS = 'dark-mode';
-    const THEMES = {
-        LIGHT: 'light',
-        DARK: 'dark'
-    };
-    
-    // Cache DOM elements
-    let themeToggle = null;
-    let sunIcon = null;
-    let moonIcon = null;
-    
-    function updateIcons(isDarkMode) {
-        if (sunIcon && moonIcon) {
-            sunIcon.style.display = isDarkMode ? 'inline-block' : 'none';
-            moonIcon.style.display = isDarkMode ? 'none' : 'inline-block';
-        }
-    }
-    
-    function getCurrentTheme() {
-        const savedTheme = localStorage.getItem(THEME_KEY);
-        
-        if (savedTheme === THEMES.DARK || savedTheme === THEMES.LIGHT) {
-            return savedTheme;
-        }
-        
-        return window.matchMedia('(prefers-color-scheme: dark)').matches 
-            ? THEMES.DARK 
-            : THEMES.LIGHT;
-    }
-    
-    function applyTheme(theme) {
-        const isDarkMode = theme === THEMES.DARK;
-        
-        if (isDarkMode) {
-            document.body.classList.add(DARK_MODE_CLASS);
-        } else {
-            document.body.classList.remove(DARK_MODE_CLASS);
-        }
-        
-        localStorage.setItem(THEME_KEY, theme);
-        updateIcons(isDarkMode);
-        
-        // Show toast if showToast function exists
-        if (typeof showToast === 'function') {
-            showToast(`Switched to ${theme} mode`, 'info');
-        }
-    }
-    
-    function toggleTheme() {
-        const currentTheme = getCurrentTheme();
-        const newTheme = currentTheme === THEMES.DARK ? THEMES.LIGHT : THEMES.DARK;
-        applyTheme(newTheme);
-    }
-    
-    function initializeTheme() {
-        const currentTheme = getCurrentTheme();
-        applyTheme(currentTheme);
-        
-        themeToggle = document.getElementById('theme-toggle');
-        sunIcon = document.getElementById('theme-toggle-sun');
-        moonIcon = document.getElementById('theme-toggle-moon');
-        
-        if (themeToggle) {
-            themeToggle.addEventListener('click', toggleTheme);
-            
-            themeToggle.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    toggleTheme();
-                }
-            });
-            
-            const isDarkMode = document.body.classList.contains(DARK_MODE_CLASS);
-            updateIcons(isDarkMode);
-        }
-        
-        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-        mediaQuery.addEventListener('change', function(e) {
-            const savedTheme = localStorage.getItem(THEME_KEY);
-            if (!savedTheme) {
-                applyTheme(e.matches ? THEMES.DARK : THEMES.LIGHT);
-            }
-        });
-    }
-    
-    window.ThemeManager = {
-        getCurrentTheme: getCurrentTheme,
-        applyTheme: applyTheme,
-        toggleTheme: toggleTheme,
-        isDarkMode: function() {
-            return document.body.classList.contains(DARK_MODE_CLASS);
-        }
-    };
-    
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initializeTheme);
-    } else {
-        initializeTheme();
-    }
-    // ADD THIS: Keyboard shortcut for theme toggle
-document.addEventListener('keydown', function(e) {
-    // Ctrl/Cmd + D to toggle dark mode
-    if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
-        e.preventDefault();
-        if (window.ThemeManager) {
-            window.ThemeManager.toggleTheme();
-        }
-    }
-});
-    
-})();
-</script>
 </body>
-</html>
+</html>value;
+            const overflow = document.getElementById('layout-overflow').value;
+
+            Object.assign(selectedElement.style, {
+                display, position, top, left, zIndex, float, overflow
+            });
+
+            generateLayoutCSS();
+        }
+
+        function generateLayoutCSS() {
+            const display = document.getElementById('layout-display').value;
+            const position = document.getElementById('layout-position').value;
+            const top = document.getElementById('layout-top').value;
+            const left = document.getElementById('layout-left').value;
+            const zIndex = document.getElementById('layout-z-index').value;
+            const float = document.getElementById('layout-float').

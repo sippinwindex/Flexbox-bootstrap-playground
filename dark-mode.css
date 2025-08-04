@@ -383,7 +383,7 @@ body.dark-mode .icon-card:hover {
 }
 
 /* Theme toggle button styles */
-#theme-toggle {
+#themeToggle {
   background: transparent;
   border: 2px solid var(--theme-border-color);
   color: var(--theme-text-primary);
@@ -400,7 +400,7 @@ body.dark-mode .icon-card:hover {
   overflow: hidden;
 }
 
-#theme-toggle::before {
+#themeToggle::before {
   content: '';
   position: absolute;
   top: 0;
@@ -411,50 +411,50 @@ body.dark-mode .icon-card:hover {
   transition: left 0.5s ease;
 }
 
-#theme-toggle:hover::before {
+#themeToggle:hover::before {
   left: 100%;
 }
 
-#theme-toggle:hover {
+#themeToggle:hover {
   background-color: var(--theme-bg-secondary);
   border-color: var(--theme-border-focus);
   transform: scale(1.05);
 }
 
-#theme-toggle:focus-visible {
+#themeToggle:focus-visible {
   outline: none;
   box-shadow: 0 0 0 3px rgba(99, 179, 237, 0.3);
 }
 
-#theme-toggle i {
+#themeToggle i {
   font-size: 1.2rem;
   transition: transform var(--transition-base);
   position: relative;
   z-index: 1;
 }
 
-#theme-toggle:hover i {
+#themeToggle:hover i {
   transform: rotate(15deg) scale(1.1);
 }
 
 /* Specific icon colors */
-#theme-toggle-moon {
+#themeToggle-moon {
   color: #ffd700;
 }
 
-#theme-toggle-sun {
+#themeToggle-sun {
   color: #ff8c00;
 }
 
 /* Responsive adjustments for theme toggle */
 @media (max-width: 768px) {
-  #theme-toggle {
+  #themeToggle {
     min-width: 40px;
     min-height: 40px;
     padding: 0.375rem;
   }
   
-  #theme-toggle i {
+  #themeToggle i {
     font-size: 1rem;
   }
 }
