@@ -1,0 +1,526 @@
+/* dark-mode.css - Enhanced theming system integrated with existing design */
+
+/* Extend your existing design system with dark mode variables */
+:root {
+  /* Keep your existing variables and add dark mode variants */
+  
+  /* Dark Mode Background Colors */
+  --dark-bg-primary: #1a202c;
+  --dark-bg-secondary: #2d3748;
+  --dark-bg-tertiary: #4a5568;
+  
+  /* Dark Mode Text Colors */
+  --dark-text-primary: #e2e8f0;
+  --dark-text-secondary: #a0aec0;
+  --dark-text-muted: #718096;
+  
+  /* Dark Mode Gradients */
+  --dark-primary-gradient: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+  --dark-success-gradient: linear-gradient(135deg, #38a169, #2f855a);
+  --dark-danger-gradient: linear-gradient(135deg, #e53e3e, #c53030);
+  --dark-warning-gradient: linear-gradient(135deg, #d69e2e, #b7791f);
+  
+  /* Dark Mode Borders and Shadows */
+  --dark-border-color: #4a5568;
+  --dark-border-focus: #63b3ed;
+  --dark-shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+  --dark-shadow-md: 0 4px 15px rgba(0,0,0,0.4);
+  --dark-shadow-lg: 0 20px 40px rgba(0,0,0,0.3);
+  
+  /* Dynamic color properties that change with theme */
+  --theme-bg-primary: var(--bg-primary);
+  --theme-bg-secondary: var(--bg-secondary);
+  --theme-bg-tertiary: var(--bg-tertiary);
+  --theme-text-primary: var(--text-primary);
+  --theme-text-secondary: var(--text-secondary);
+  --theme-text-muted: var(--text-muted);
+  --theme-border-color: var(--border-color);
+  --theme-border-focus: var(--border-focus);
+  --theme-shadow-sm: var(--shadow-sm);
+  --theme-shadow-md: var(--shadow-md);
+  --theme-shadow-lg: var(--shadow-lg);
+  --theme-primary-gradient: var(--primary-gradient);
+  --theme-success-gradient: var(--success-gradient);
+  --theme-danger-gradient: var(--danger-gradient);
+  --theme-warning-gradient: var(--warning-gradient);
+}
+
+/* Dark mode overrides - switch to dark variants */
+body.dark-mode {
+  --theme-bg-primary: var(--dark-bg-primary);
+  --theme-bg-secondary: var(--dark-bg-secondary);
+  --theme-bg-tertiary: var(--dark-bg-tertiary);
+  --theme-text-primary: var(--dark-text-primary);
+  --theme-text-secondary: var(--dark-text-secondary);
+  --theme-text-muted: var(--dark-text-muted);
+  --theme-border-color: var(--dark-border-color);
+  --theme-border-focus: var(--dark-border-focus);
+  --theme-shadow-sm: var(--dark-shadow-sm);
+  --theme-shadow-md: var(--dark-shadow-md);
+  --theme-shadow-lg: var(--dark-shadow-lg);
+  --theme-primary-gradient: var(--dark-primary-gradient);
+  --theme-success-gradient: var(--dark-success-gradient);
+  --theme-danger-gradient: var(--dark-danger-gradient);
+  --theme-warning-gradient: var(--dark-warning-gradient);
+}
+
+/* Update your existing elements to use theme variables */
+/* Main body override for dark mode */
+body.dark-mode {
+  background: var(--theme-primary-gradient);
+  color: var(--theme-text-primary);
+}
+
+/* Container adjustments for dark mode */
+body.dark-mode .container {
+  background: rgba(26, 32, 44, 0.95);
+  border-color: var(--theme-border-color);
+}
+
+/* Header adjustments */
+body.dark-mode .header {
+  background: var(--theme-primary-gradient);
+}
+
+/* Controls panel dark mode */
+body.dark-mode .controls {
+  background: var(--theme-bg-secondary);
+  border-color: var(--theme-border-color);
+}
+
+/* Control groups dark mode */
+body.dark-mode .control-group {
+  background: var(--theme-bg-primary);
+  border-color: var(--theme-border-color);
+  box-shadow: var(--theme-shadow-sm);
+}
+
+body.dark-mode .control-group:hover {
+  box-shadow: var(--theme-shadow-md);
+}
+
+body.dark-mode .control-group h3 {
+  color: var(--theme-text-primary);
+}
+
+/* Form controls dark mode */
+body.dark-mode .control-item label {
+  color: var(--theme-text-primary);
+}
+
+body.dark-mode .control-item:focus-within label {
+  color: var(--theme-border-focus);
+}
+
+body.dark-mode .control-item select {
+  background: var(--theme-bg-primary);
+  color: var(--theme-text-primary);
+  border-color: var(--theme-border-color);
+}
+
+body.dark-mode .control-item select:hover {
+  border-color: var(--theme-border-focus);
+  background-color: var(--theme-bg-secondary);
+}
+
+body.dark-mode .control-item select:focus {
+  border-color: var(--theme-border-focus);
+  background-color: var(--theme-bg-primary);
+  box-shadow: 0 0 0 3px rgba(99, 179, 237, 0.3);
+}
+
+/* Range inputs dark mode */
+body.dark-mode .control-item input[type="range"] {
+  background: var(--theme-bg-tertiary);
+}
+
+body.dark-mode .control-item input[type="range"]::-webkit-slider-thumb {
+  background: var(--theme-primary-gradient);
+}
+
+body.dark-mode .control-item input[type="range"]::-moz-range-thumb {
+  background: var(--theme-primary-gradient);
+}
+
+body.dark-mode .range-value {
+  color: var(--theme-border-focus);
+}
+
+/* Preview area dark mode */
+body.dark-mode .preview-area {
+  background: var(--theme-bg-primary);
+}
+
+/* Flex container dark mode */
+body.dark-mode .flex-container {
+  border-color: var(--theme-border-focus);
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 10px,
+    rgba(99, 179, 237, 0.1) 10px,
+    rgba(99, 179, 237, 0.1) 20px
+  );
+}
+
+body.dark-mode .flex-container::before {
+  background: var(--theme-border-focus);
+}
+
+/* Demo section dark mode */
+body.dark-mode .content-demo-section {
+  background: linear-gradient(135deg, rgba(45, 55, 72, 0.8), rgba(26, 32, 44, 0.8));
+  border-color: var(--theme-border-color);
+}
+
+body.dark-mode .content-demo-section h3 {
+  color: var(--theme-text-primary);
+}
+
+body.dark-mode .content-demo-section > p {
+  color: var(--theme-text-secondary);
+}
+
+/* Demo flex container dark mode */
+body.dark-mode .demo-flex-container {
+  background: var(--theme-bg-primary);
+  border-color: var(--theme-border-focus);
+}
+
+body.dark-mode .demo-flex-container.drag-over {
+  background: linear-gradient(135deg, rgba(56, 161, 105, 0.2), rgba(47, 133, 90, 0.2));
+  border-color: var(--theme-border-focus);
+}
+
+body.dark-mode .demo-flex-container::before {
+  background: var(--theme-border-focus);
+}
+
+/* Demo cards dark mode */
+body.dark-mode .demo-card {
+  background: var(--theme-bg-primary);
+  border-color: var(--theme-border-color);
+  color: var(--theme-text-primary);
+}
+
+body.dark-mode .demo-card:hover {
+  border-color: var(--theme-border-focus);
+  box-shadow: var(--theme-shadow-md);
+}
+
+body.dark-mode .demo-card h4 {
+  color: var(--theme-text-primary);
+}
+
+body.dark-mode .demo-card p {
+  color: var(--theme-text-secondary);
+}
+
+/* Demo images dark mode */
+body.dark-mode .demo-image {
+  background: var(--theme-bg-primary);
+  border-color: var(--theme-border-color);
+}
+
+body.dark-mode .demo-image:hover {
+  border-color: var(--theme-border-focus);
+  box-shadow: var(--theme-shadow-md);
+}
+
+body.dark-mode .demo-image p {
+  color: var(--theme-text-secondary);
+}
+
+/* Image drop zone dark mode */
+body.dark-mode .image-drop-zone {
+  border-color: var(--theme-text-secondary);
+  background: linear-gradient(135deg, rgba(45, 55, 72, 0.5), rgba(26, 32, 44, 0.5));
+}
+
+body.dark-mode .image-drop-zone:hover,
+body.dark-mode .image-drop-zone.drag-over {
+  border-color: var(--theme-border-focus);
+  background: linear-gradient(135deg, rgba(99, 179, 237, 0.2), rgba(66, 153, 225, 0.2));
+}
+
+body.dark-mode .image-drop-zone.drag-over {
+  background: linear-gradient(135deg, rgba(99, 179, 237, 0.3), rgba(66, 153, 225, 0.3));
+}
+
+body.dark-mode .image-drop-zone p {
+  color: var(--theme-text-primary);
+}
+
+body.dark-mode .image-drop-zone small {
+  color: var(--theme-text-secondary);
+}
+
+/* HTML generator section - keep the dark theme as is since it's already dark */
+body.dark-mode .html-generator-section {
+  /* This section is already dark, so minimal changes needed */
+  border-color: var(--theme-border-color);
+}
+
+/* CSS output dark mode */
+body.dark-mode .css-output {
+  background: linear-gradient(135deg, var(--theme-bg-secondary), var(--theme-bg-primary));
+  border-color: var(--theme-border-color);
+}
+
+/* Loading states dark mode */
+body.dark-mode .loading-placeholder {
+  background: linear-gradient(
+    90deg,
+    rgba(74, 85, 104, 0.8) 25%,
+    rgba(160, 174, 192, 0.3) 50%,
+    rgba(74, 85, 104, 0.8) 75%
+  );
+}
+
+/* Error states dark mode */
+body.dark-mode .error-image {
+  background: linear-gradient(135deg, rgba(229, 62, 62, 0.2), rgba(197, 48, 48, 0.1));
+  border-color: #e53e3e;
+  color: #fc8181;
+}
+
+/* Scrollbar dark mode */
+body.dark-mode ::-webkit-scrollbar-track {
+  background: var(--theme-bg-tertiary);
+}
+
+body.dark-mode ::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, var(--theme-border-color), var(--theme-text-secondary));
+  border-color: var(--theme-bg-tertiary);
+}
+
+body.dark-mode ::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, var(--theme-text-secondary), var(--theme-text-primary));
+}
+
+/* Help content dark mode */
+body.dark-mode .help-content {
+  background: var(--theme-bg-secondary);
+  color: var(--theme-text-primary);
+  border-color: var(--theme-border-color);
+}
+
+body.dark-mode .help-content h2 {
+  color: var(--theme-text-primary);
+}
+
+body.dark-mode .help-content li::before {
+  color: var(--theme-border-focus);
+}
+
+body.dark-mode .help-content strong {
+  color: var(--theme-text-primary);
+}
+
+/* Footer dark mode */
+body.dark-mode .footer {
+  background: var(--theme-bg-secondary);
+  border-color: var(--theme-border-color);
+  color: var(--theme-text-secondary);
+}
+
+body.dark-mode .footer a {
+  color: var(--theme-border-focus);
+}
+
+body.dark-mode .footer a:hover {
+  color: var(--theme-text-primary);
+}
+
+/* Toast notifications dark mode */
+body.dark-mode .toast {
+  background: var(--theme-bg-primary);
+  border-color: var(--theme-border-color);
+  color: var(--theme-text-primary);
+}
+
+/* Error boundary dark mode */
+body.dark-mode .error-boundary {
+  background: var(--theme-bg-primary);
+  color: var(--theme-text-primary);
+}
+
+body.dark-mode .error-boundary p {
+  color: var(--theme-text-secondary);
+}
+
+/* Demo instructions dark mode */
+body.dark-mode .demo-instructions {
+  color: var(--theme-text-secondary);
+  background: rgba(99, 179, 237, 0.2);
+  border-color: var(--theme-border-focus);
+}
+
+/* Keyboard shortcuts dark mode */
+body.dark-mode .keyboard-shortcuts {
+  border-color: var(--theme-border-color);
+}
+
+body.dark-mode .shortcuts-toggle {
+  color: var(--theme-text-secondary);
+}
+
+body.dark-mode kbd {
+  background: var(--theme-bg-tertiary);
+  border-color: var(--theme-border-color);
+  color: var(--theme-text-primary);
+}
+
+/* Icon card adjustments for dark mode */
+body.dark-mode .icon-card {
+  background: linear-gradient(135deg, rgba(214, 158, 46, 0.3), rgba(183, 121, 31, 0.2));
+  border-color: #d69e2e;
+  color: var(--theme-text-primary);
+}
+
+body.dark-mode .icon-card:hover {
+  background: linear-gradient(135deg, rgba(214, 158, 46, 0.4), rgba(183, 121, 31, 0.3));
+}
+
+/* Theme toggle button styles */
+#theme-toggle {
+  background: transparent;
+  border: 2px solid var(--theme-border-color);
+  color: var(--theme-text-primary);
+  padding: 0.5rem;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  position: relative;
+  overflow: hidden;
+}
+
+#theme-toggle::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(99, 179, 237, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+#theme-toggle:hover::before {
+  left: 100%;
+}
+
+#theme-toggle:hover {
+  background-color: var(--theme-bg-secondary);
+  border-color: var(--theme-border-focus);
+  transform: scale(1.05);
+}
+
+#theme-toggle:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(99, 179, 237, 0.3);
+}
+
+#theme-toggle i {
+  font-size: 1.2rem;
+  transition: transform var(--transition-base);
+  position: relative;
+  z-index: 1;
+}
+
+#theme-toggle:hover i {
+  transform: rotate(15deg) scale(1.1);
+}
+
+/* Specific icon colors */
+#theme-toggle-moon {
+  color: #ffd700;
+}
+
+#theme-toggle-sun {
+  color: #ff8c00;
+}
+
+/* Responsive adjustments for theme toggle */
+@media (max-width: 768px) {
+  #theme-toggle {
+    min-width: 40px;
+    min-height: 40px;
+    padding: 0.375rem;
+  }
+  
+  #theme-toggle i {
+    font-size: 1rem;
+  }
+}
+
+/* Enhanced transitions for theme switching */
+* {
+  transition: 
+    background-color var(--transition-base),
+    color var(--transition-base),
+    border-color var(--transition-base),
+    box-shadow var(--transition-base);
+}
+
+/* Preserve existing animations and interactions */
+body.dark-mode .flex-item:hover,
+body.dark-mode .demo-card:hover,
+body.dark-mode .demo-image:hover {
+  /* Keep the existing hover transforms, just update shadows */
+  box-shadow: var(--theme-shadow-md);
+}
+
+/* Ensure gradient backgrounds work in dark mode */
+body.dark-mode .flex-item:nth-child(1) { 
+  background: linear-gradient(135deg, #e53e3e, #c53030);
+}
+
+body.dark-mode .flex-item:nth-child(2) { 
+  background: linear-gradient(135deg, #38a169, #2f855a);
+}
+
+body.dark-mode .flex-item:nth-child(3) { 
+  background: linear-gradient(135deg, #3182ce, #2c5aa0);
+}
+
+body.dark-mode .flex-item:nth-child(4) { 
+  background: linear-gradient(135deg, #d69e2e, #b7791f);
+}
+
+body.dark-mode .flex-item:nth-child(5) { 
+  background: linear-gradient(135deg, #805ad5, #6b46c1);
+}
+
+body.dark-mode .flex-item:nth-child(n+6) { 
+  background: linear-gradient(135deg, #d53f8c, #b83280);
+}
+
+/* Make sure focus styles work in dark mode */
+body.dark-mode :focus-visible {
+  outline-color: var(--theme-border-focus);
+}
+
+/* Form focus styles for dark mode */
+body.dark-mode select:focus,
+body.dark-mode input[type="range"]:focus {
+  outline-color: var(--theme-border-focus);
+}
+
+/* Smooth theme transition */
+html {
+  transition: color-scheme var(--transition-base);
+}
+
+body.dark-mode {
+  color-scheme: dark;
+}
+
+body:not(.dark-mode) {
+  color-scheme: light;
+}

@@ -15,373 +15,608 @@
           integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+<!-- CRITICAL: No-flash script for dark mode -->
+<script>
+(function() {
+    'use strict';
     
-    <style>
-        :root {
-            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --success-gradient: linear-gradient(135deg, #28a745, #20c997);
-            --warning-gradient: linear-gradient(135deg, #ffc107, #ff8c00);
-            --info-gradient: linear-gradient(135deg, #17a2b8, #20c997);
-            --danger-gradient: linear-gradient(135deg, #dc3545, #fd79a8);
-            --terminal-gradient: linear-gradient(135deg, #2d3748, #1a202c);
-            --shadow-sm: 0 2px 8px rgba(0,0,0,0.1);
-            --shadow-md: 0 4px 15px rgba(0,0,0,0.15);
-            --shadow-lg: 0 8px 25px rgba(0,0,0,0.2);
-        }
-
-        /* Reset any conflicting styles */
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: system-ui, -apple-system, sans-serif;
-            line-height: 1.6;
-            scroll-behavior: smooth;
-            margin: 0;
-            padding: 0;
-            background: #f8f9fa; /* Fallback background */
-            color: #212529;
-        }
-
-        .hero-section {
-            background: var(--primary-gradient);
-            color: white;
-            padding: 4rem 0;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
-            opacity: 0.3;
-        }
-
-        .hero-section .container {
-            position: relative;
-            z-index: 1;
-        }
-
-        .feature-card {
-            transition: all 0.3s ease;
-            height: 100%;
-            border: none;
-            box-shadow: var(--shadow-sm);
-            border-radius: 12px;
-            overflow: hidden;
-            background: white; /* Ensure white background */
-        }
-
-        .feature-card:hover {
-            transform: translateY(-8px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .feature-card .card-body {
-            position: relative;
-            z-index: 1;
-            background: white; /* Ensure white background */
-        }
-
-        .navbar-brand {
-            font-weight: 600;
-            font-size: 1.25rem;
-        }
-
-        .dropdown-menu {
-            box-shadow: var(--shadow-md);
-            border: none;
-            border-radius: 8px;
-            padding: 0.5rem 0;
-        }
-
-        .dropdown-item {
-            padding: 0.75rem 1.5rem;
-            transition: all 0.2s ease;
-        }
-
-        .dropdown-item:hover {
-            background: rgba(0,0,0,0.05);
-            transform: translateX(5px);
-        }
-
-        .btn-feature {
-            border-radius: 25px;
-            padding: 10px 24px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn-feature:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .btn-feature::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.5s;
-        }
-
-        .btn-feature:hover::before {
-            left: 100%;
-        }
-
-        .icon-wrapper {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .icon-wrapper::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: inherit;
-            opacity: 0.1;
-            border-radius: 50%;
-        }
-
-        .step-number {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            margin-right: 1rem;
-            flex-shrink: 0;
-        }
-
-        .learning-path-item {
-            background: rgba(0,0,0,0.02);
-            border-radius: 12px;
-            padding: 1.5rem;
-            transition: all 0.3s ease;
-            height: 100%;
-        }
-
-        .learning-path-item:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .social-links a {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            transition: all 0.3s ease;
-        }
-
-        .social-links a:hover {
-            background: rgba(255,255,255,0.1);
-            transform: translateY(-2px);
-        }
-
-        .code-block {
-            background: #1e1e1e;
-            border-radius: 8px;
-            padding: 1.5rem;
-            font-family: 'Courier New', monospace;
-            position: relative;
-            color: #e2e8f0;
-        }
-
-        .code-block::before {
-            content: 'Terminal';
-            position: absolute;
-            top: 0.5rem;
-            left: 1rem;
-            font-size: 0.8rem;
-            color: #888;
-        }
-
-        /* Progress indicator */
-        .progress-indicator {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 0%;
-            height: 3px;
-            background: var(--primary-gradient);
-            z-index: 9999;
-            transition: width 0.3s ease;
-        }
-
-        /* Toast notifications */
-        .toast-container {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1050;
-        }
-
-        .toast-custom {
-            background: white;
-            border-radius: 8px;
-            box-shadow: var(--shadow-lg);
-            padding: 1rem;
-            margin-bottom: 0.5rem;
-            display: none;
-            min-width: 300px;
-        }
-
-        .toast-custom.show {
-            display: block;
-            animation: slideIn 0.3s ease;
-        }
-
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-
-        /* Back to top button */
-        .back-to-top {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: var(--primary-gradient);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            z-index: 1000;
-        }
-
-        .back-to-top:hover {
-            transform: scale(1.1);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .back-to-top.show {
-            display: flex;
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .hero-section {
-                padding: 2rem 0;
+    const THEME_KEY = 'theme';
+    const DARK_MODE_CLASS = 'dark-mode';
+    
+    try {
+        const savedTheme = localStorage.getItem(THEME_KEY);
+        
+        if (savedTheme === 'dark') {
+            document.documentElement.classList.add(DARK_MODE_CLASS);
+            if (document.body) {
+                document.body.classList.add(DARK_MODE_CLASS);
             }
-            
-            .feature-card {
-                margin-bottom: 1rem;
+        } else if (savedTheme === 'light') {
+            document.documentElement.classList.remove(DARK_MODE_CLASS);
+            if (document.body) {
+                document.body.classList.remove(DARK_MODE_CLASS);
+            }
+        } else {
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.documentElement.classList.add(DARK_MODE_CLASS);
+                if (document.body) {
+                    document.body.classList.add(DARK_MODE_CLASS);
+                }
             }
         }
+    } catch (e) {
+        console.warn('Theme persistence not available:', e);
+    }
+})();
+</script>    
+<style>
+:root {
+    /* Theme variables that change with dark mode */
+    --theme-bg-primary: #ffffff;
+    --theme-bg-secondary: #f8f9fa;
+    --theme-bg-tertiary: #e9ecef;
+    --theme-text-primary: #495057;
+    --theme-text-secondary: #6c757d;
+    --theme-text-muted: #a0aec0;
+    --theme-border-color: #dee2e6;
+    --theme-border-focus: #667eea;
+    --theme-shadow-sm: 0 2px 8px rgba(0,0,0,0.1);
+    --theme-shadow-md: 0 4px 15px rgba(0,0,0,0.15);
+    --theme-shadow-lg: 0 8px 25px rgba(0,0,0,0.2);
 
-        /* Animated backgrounds for cards */
-        .feature-card.html-card {
-            background: linear-gradient(135deg, rgba(13, 110, 253, 0.05), rgba(13, 110, 253, 0.1));
-        }
+    /* Original gradients and constants */
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --success-gradient: linear-gradient(135deg, #28a745, #20c997);
+    --warning-gradient: linear-gradient(135deg, #ffc107, #ff8c00);
+    --info-gradient: linear-gradient(135deg, #17a2b8, #20c997);
+    --danger-gradient: linear-gradient(135deg, #dc3545, #fd79a8);
+    --terminal-gradient: linear-gradient(135deg, #2d3748, #1a202c);
+}
 
-        .feature-card.css-card {
-            background: linear-gradient(135deg, rgba(108, 117, 125, 0.05), rgba(108, 117, 125, 0.1));
-        }
+/* Dark mode overrides */
+body.dark-mode {
+    --theme-bg-primary: #1a202c;
+    --theme-bg-secondary: #2d3748;
+    --theme-bg-tertiary: #4a5568;
+    --theme-text-primary: #e2e8f0;
+    --theme-text-secondary: #a0aec0;
+    --theme-text-muted: #718096;
+    --theme-border-color: #4a5568;
+    --theme-border-focus: #63b3ed;
+    --theme-shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+    --theme-shadow-md: 0 4px 15px rgba(0,0,0,0.4);
+    --theme-shadow-lg: 0 8px 25px rgba(0,0,0,0.3);
+}
 
-        .feature-card.flexbox-card {
-            background: linear-gradient(135deg, rgba(25, 135, 84, 0.05), rgba(25, 135, 84, 0.1));
-        }
+/* Smooth transitions for theme switching */
+*,
+*::before,
+*::after {
+    transition: 
+        background-color 0.3s ease,
+        color 0.3s ease,
+        border-color 0.3s ease,
+        box-shadow 0.3s ease;
+}
 
-        .feature-card.bootstrap-card {
-            background: linear-gradient(135deg, rgba(13, 202, 240, 0.05), rgba(13, 202, 240, 0.1));
-        }
+/* Reset any conflicting styles */
+* {
+    box-sizing: border-box;
+}
 
-        .feature-card.terminal-card {
-            background: linear-gradient(135deg, rgba(45, 55, 72, 0.05), rgba(26, 32, 44, 0.1));
-        }
+body {
+    font-family: system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
+    scroll-behavior: smooth;
+    margin: 0;
+    padding: 0;
+    background: var(--theme-bg-secondary);
+    color: var(--theme-text-primary);
+}
 
-        .feature-card.tutorial-card {
-            background: linear-gradient(135deg, rgba(255, 193, 7, 0.05), rgba(255, 193, 7, 0.1));
-        }
+.hero-section {
+    background: var(--primary-gradient);
+    color: white;
+    padding: 4rem 0;
+    position: relative;
+    overflow: hidden;
+}
 
-        .feature-card.utility-card {
-            background: linear-gradient(135deg, rgba(220, 53, 69, 0.05), rgba(220, 53, 69, 0.1));
-        }
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+    opacity: 0.3;
+}
 
-        .feature-card.component-card {
-            background: linear-gradient(135deg, rgba(33, 37, 41, 0.05), rgba(33, 37, 41, 0.1));
-        }
+.hero-section .container {
+    position: relative;
+    z-index: 1;
+}
 
-        .feature-card.coding-card {
-            background: linear-gradient(135deg, rgba(108, 117, 125, 0.05), rgba(73, 80, 87, 0.1));
-        }
+.feature-card {
+    transition: all 0.3s ease;
+    height: 100%;
+    border: 1px solid var(--theme-border-color);
+    box-shadow: var(--theme-shadow-sm);
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--theme-bg-primary);
+    color: var(--theme-text-primary);
+}
 
-        .section-divider {
-            margin: 3rem 0;
-            text-align: center;
-        }
+.feature-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--theme-shadow-lg);
+}
 
-        .section-divider h3 {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #495057;
-            margin-bottom: 1rem;
-            position: relative;
-            display: inline-block;
-            padding: 0 2rem;
-            background: white;
-        }
+.feature-card .card-body {
+    position: relative;
+    z-index: 1;
+    background: var(--theme-bg-primary);
+    color: var(--theme-text-primary);
+}
 
-        .section-divider::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, #dee2e6, transparent);
-            z-index: -1;
-        }
+.navbar-brand {
+    font-weight: 600;
+    font-size: 1.25rem;
+    color: var(--theme-text-primary);
+}
 
-        /* Fix for bg-light sections */
-        .bg-light {
-            background-color: #f8f9fa !important;
-        }
+.dropdown-menu {
+    box-shadow: var(--theme-shadow-md);
+    border: 1px solid var(--theme-border-color);
+    border-radius: 8px;
+    padding: 0.5rem 0;
+    background: var(--theme-bg-primary);
+}
 
-        /* Ensure white backgrounds where needed */
-        .card {
-            background-color: white;
-        }
+.dropdown-item {
+    padding: 0.75rem 1.5rem;
+    transition: all 0.2s ease;
+    color: var(--theme-text-primary);
+}
 
-        /* Remove any dark mode that might be applied */
-        .navbar-dark {
-            background-color: #212529 !important;
-        }
-    </style>
-</head>
+.dropdown-item:hover {
+    background: var(--theme-bg-tertiary);
+    transform: translateX(5px);
+    color: var(--theme-text-primary);
+}
+
+.btn-feature {
+    border-radius: 25px;
+    padding: 10px 24px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-feature:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--theme-shadow-md);
+}
+
+.btn-feature::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+}
+
+.btn-feature:hover::before {
+    left: 100%;
+}
+
+.icon-wrapper {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.icon-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: inherit;
+    opacity: 0.1;
+    border-radius: 50%;
+}
+
+.step-number {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    margin-right: 1rem;
+    flex-shrink: 0;
+}
+
+.learning-path-item {
+    background: var(--theme-bg-secondary);
+    border: 1px solid var(--theme-border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    height: 100%;
+    color: var(--theme-text-primary);
+}
+
+.learning-path-item:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--theme-shadow-sm);
+    background: var(--theme-bg-primary);
+}
+
+.social-links a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.social-links a:hover {
+    background: rgba(255,255,255,0.1);
+    transform: translateY(-2px);
+}
+
+.code-block {
+    background: #1e1e1e;
+    border-radius: 8px;
+    padding: 1.5rem;
+    font-family: 'Courier New', monospace;
+    position: relative;
+    color: #e2e8f0;
+    border: 1px solid var(--theme-border-color);
+}
+
+.code-block::before {
+    content: 'Terminal';
+    position: absolute;
+    top: 0.5rem;
+    left: 1rem;
+    font-size: 0.8rem;
+    color: #888;
+}
+
+/* Progress indicator */
+.progress-indicator {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 3px;
+    background: var(--primary-gradient);
+    z-index: 9999;
+    transition: width 0.3s ease;
+}
+
+/* Toast notifications */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1050;
+}
+
+.toast-custom {
+    background: var(--theme-bg-primary);
+    border: 1px solid var(--theme-border-color);
+    border-radius: 8px;
+    box-shadow: var(--theme-shadow-lg);
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+    display: none;
+    min-width: 300px;
+    color: var(--theme-text-primary);
+}
+
+.toast-custom.show {
+    display: block;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+/* Back to top button */
+.back-to-top {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--primary-gradient);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.back-to-top:hover {
+    transform: scale(1.1);
+    box-shadow: var(--theme-shadow-lg);
+}
+
+.back-to-top.show {
+    display: flex;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 2rem 0;
+    }
+    
+    .feature-card {
+        margin-bottom: 1rem;
+    }
+}
+
+/* Animated backgrounds for cards - updated for theme support */
+body:not(.dark-mode) .feature-card.html-card {
+    background: linear-gradient(135deg, rgba(13, 110, 253, 0.05), rgba(13, 110, 253, 0.1));
+}
+
+body:not(.dark-mode) .feature-card.css-card {
+    background: linear-gradient(135deg, rgba(108, 117, 125, 0.05), rgba(108, 117, 125, 0.1));
+}
+
+body:not(.dark-mode) .feature-card.flexbox-card {
+    background: linear-gradient(135deg, rgba(25, 135, 84, 0.05), rgba(25, 135, 84, 0.1));
+}
+
+body:not(.dark-mode) .feature-card.bootstrap-card {
+    background: linear-gradient(135deg, rgba(13, 202, 240, 0.05), rgba(13, 202, 240, 0.1));
+}
+
+body:not(.dark-mode) .feature-card.terminal-card {
+    background: linear-gradient(135deg, rgba(45, 55, 72, 0.05), rgba(26, 32, 44, 0.1));
+}
+
+body:not(.dark-mode) .feature-card.tutorial-card {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.05), rgba(255, 193, 7, 0.1));
+}
+
+body:not(.dark-mode) .feature-card.utility-card {
+    background: linear-gradient(135deg, rgba(220, 53, 69, 0.05), rgba(220, 53, 69, 0.1));
+}
+
+body:not(.dark-mode) .feature-card.component-card {
+    background: linear-gradient(135deg, rgba(33, 37, 41, 0.05), rgba(33, 37, 41, 0.1));
+}
+
+body:not(.dark-mode) .feature-card.coding-card {
+    background: linear-gradient(135deg, rgba(108, 117, 125, 0.05), rgba(73, 80, 87, 0.1));
+}
+
+/* Dark mode card backgrounds */
+body.dark-mode .feature-card.html-card {
+    background: linear-gradient(135deg, rgba(99, 179, 237, 0.1), rgba(99, 179, 237, 0.15));
+}
+
+body.dark-mode .feature-card.css-card {
+    background: linear-gradient(135deg, rgba(160, 174, 192, 0.1), rgba(160, 174, 192, 0.15));
+}
+
+body.dark-mode .feature-card.flexbox-card {
+    background: linear-gradient(135deg, rgba(72, 187, 120, 0.1), rgba(72, 187, 120, 0.15));
+}
+
+body.dark-mode .feature-card.bootstrap-card {
+    background: linear-gradient(135deg, rgba(56, 178, 172, 0.1), rgba(56, 178, 172, 0.15));
+}
+
+body.dark-mode .feature-card.terminal-card {
+    background: linear-gradient(135deg, rgba(74, 85, 104, 0.1), rgba(45, 55, 72, 0.15));
+}
+
+body.dark-mode .feature-card.tutorial-card {
+    background: linear-gradient(135deg, rgba(236, 201, 75, 0.1), rgba(236, 201, 75, 0.15));
+}
+
+body.dark-mode .feature-card.utility-card {
+    background: linear-gradient(135deg, rgba(245, 101, 101, 0.1), rgba(245, 101, 101, 0.15));
+}
+
+body.dark-mode .feature-card.component-card {
+    background: linear-gradient(135deg, rgba(113, 128, 150, 0.1), rgba(113, 128, 150, 0.15));
+}
+
+body.dark-mode .feature-card.coding-card {
+    background: linear-gradient(135deg, rgba(160, 174, 192, 0.1), rgba(113, 128, 150, 0.15));
+}
+
+.section-divider {
+    margin: 3rem 0;
+    text-align: center;
+}
+
+.section-divider h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--theme-text-primary);
+    margin-bottom: 1rem;
+    position: relative;
+    display: inline-block;
+    padding: 0 2rem;
+    background: var(--theme-bg-secondary);
+}
+
+.section-divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--theme-border-color), transparent);
+    z-index: -1;
+}
+
+/* Theme-aware background sections */
+.bg-light {
+    background-color: var(--theme-bg-secondary) !important;
+}
+
+/* Ensure proper card backgrounds */
+.card {
+    background-color: var(--theme-bg-primary);
+    color: var(--theme-text-primary);
+    border: 1px solid var(--theme-border-color);
+}
+
+/* Navigation theming */
+.navbar {
+    background-color: var(--theme-bg-primary) !important;
+    border-bottom: 1px solid var(--theme-border-color);
+}
+
+.navbar-light .navbar-nav .nav-link {
+    color: var(--theme-text-primary);
+}
+
+.navbar-light .navbar-nav .nav-link:hover {
+    color: var(--theme-text-secondary);
+}
+
+.navbar-dark {
+    background-color: var(--theme-bg-tertiary) !important;
+}
+
+/* Buttons and interactive elements */
+.btn-outline-primary {
+    color: var(--theme-text-primary);
+    border-color: var(--theme-border-color);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--theme-bg-tertiary);
+    border-color: var(--theme-border-focus);
+    color: var(--theme-text-primary);
+}
+
+/* Footer theming */
+.footer {
+    background-color: var(--theme-bg-primary);
+    color: var(--theme-text-primary);
+    border-top: 1px solid var(--theme-border-color);
+}
+
+/* Text color utilities */
+.text-muted {
+    color: var(--theme-text-secondary) !important;
+}
+
+/* Links */
+a {
+    color: var(--theme-border-focus);
+}
+
+a:hover {
+    color: var(--theme-text-primary);
+}
+
+/* Form elements */
+.form-control {
+    background-color: var(--theme-bg-primary);
+    border-color: var(--theme-border-color);
+    color: var(--theme-text-primary);
+}
+
+.form-control:focus {
+    background-color: var(--theme-bg-primary);
+    border-color: var(--theme-border-focus);
+    color: var(--theme-text-primary);
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+</style>
+
+<head></head>
 <body>
+    <!-- Add a dark mode toggle button for testing -->
+    <button onclick="toggleDarkMode()" style="position: fixed; top: 10px; right: 10px; z-index: 9999; padding: 10px; border: none; border-radius: 5px; background: var(--theme-bg-primary); color: var(--theme-text-primary); cursor: pointer; border: 1px solid var(--theme-border-color);">
+        🌙 Toggle Dark Mode
+    </button>
+
+    <script>
+        // Dark mode script
+        (function() {
+            'use strict';
+            
+            const THEME_KEY = 'theme';
+            const DARK_MODE_CLASS = 'dark-mode';
+            
+            try {
+                const savedTheme = localStorage.getItem(THEME_KEY);
+                
+                if (savedTheme === 'dark') {
+                    document.documentElement.classList.add(DARK_MODE_CLASS);
+                    if (document.body) {
+                        document.body.classList.add(DARK_MODE_CLASS);
+                    }
+                } else if (savedTheme === 'light') {
+                    document.documentElement.classList.remove(DARK_MODE_CLASS);
+                    if (document.body) {
+                        document.body.classList.remove(DARK_MODE_CLASS);
+                    }
+                } else {
+                    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                        document.documentElement.classList.add(DARK_MODE_CLASS);
+                        if (document.body) {
+                            document.body.classList.add(DARK_MODE_CLASS);
+                        }
+                    }
+                }
+            } catch (e) {
+                console.warn('Theme persistence not available:', e);
+            }
+        })();
+
+        function toggleDarkMode() {
+            const body = document.body;
+            const isDark = body.classList.contains('dark-mode');
+            
+            if (isDark) {
+                body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.classList.add('dark-mode');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+    </script>
+</body>
     <!-- Progress Indicator -->
     <div class="progress-indicator" id="progress-indicator"></div>
 
@@ -1111,5 +1346,124 @@
             performance.mark('homepage-loaded');
         }
     </script>
+    <!-- ADD THIS: Dark Mode JavaScript -->
+<script>
+// Dark mode functionality
+(function() {
+    'use strict';
+    
+    const THEME_KEY = 'theme';
+    const DARK_MODE_CLASS = 'dark-mode';
+    const THEMES = {
+        LIGHT: 'light',
+        DARK: 'dark'
+    };
+    
+    // Cache DOM elements
+    let themeToggle = null;
+    let sunIcon = null;
+    let moonIcon = null;
+    
+    function updateIcons(isDarkMode) {
+        if (sunIcon && moonIcon) {
+            sunIcon.style.display = isDarkMode ? 'inline-block' : 'none';
+            moonIcon.style.display = isDarkMode ? 'none' : 'inline-block';
+        }
+    }
+    
+    function getCurrentTheme() {
+        const savedTheme = localStorage.getItem(THEME_KEY);
+        
+        if (savedTheme === THEMES.DARK || savedTheme === THEMES.LIGHT) {
+            return savedTheme;
+        }
+        
+        return window.matchMedia('(prefers-color-scheme: dark)').matches 
+            ? THEMES.DARK 
+            : THEMES.LIGHT;
+    }
+    
+    function applyTheme(theme) {
+        const isDarkMode = theme === THEMES.DARK;
+        
+        if (isDarkMode) {
+            document.body.classList.add(DARK_MODE_CLASS);
+        } else {
+            document.body.classList.remove(DARK_MODE_CLASS);
+        }
+        
+        localStorage.setItem(THEME_KEY, theme);
+        updateIcons(isDarkMode);
+        
+        // Show toast if showToast function exists
+        if (typeof showToast === 'function') {
+            showToast(`Switched to ${theme} mode`, 'info');
+        }
+    }
+    
+    function toggleTheme() {
+        const currentTheme = getCurrentTheme();
+        const newTheme = currentTheme === THEMES.DARK ? THEMES.LIGHT : THEMES.DARK;
+        applyTheme(newTheme);
+    }
+    
+    function initializeTheme() {
+        const currentTheme = getCurrentTheme();
+        applyTheme(currentTheme);
+        
+        themeToggle = document.getElementById('theme-toggle');
+        sunIcon = document.getElementById('theme-toggle-sun');
+        moonIcon = document.getElementById('theme-toggle-moon');
+        
+        if (themeToggle) {
+            themeToggle.addEventListener('click', toggleTheme);
+            
+            themeToggle.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    toggleTheme();
+                }
+            });
+            
+            const isDarkMode = document.body.classList.contains(DARK_MODE_CLASS);
+            updateIcons(isDarkMode);
+        }
+        
+        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        mediaQuery.addEventListener('change', function(e) {
+            const savedTheme = localStorage.getItem(THEME_KEY);
+            if (!savedTheme) {
+                applyTheme(e.matches ? THEMES.DARK : THEMES.LIGHT);
+            }
+        });
+    }
+    
+    window.ThemeManager = {
+        getCurrentTheme: getCurrentTheme,
+        applyTheme: applyTheme,
+        toggleTheme: toggleTheme,
+        isDarkMode: function() {
+            return document.body.classList.contains(DARK_MODE_CLASS);
+        }
+    };
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeTheme);
+    } else {
+        initializeTheme();
+    }
+    // ADD THIS: Keyboard shortcut for theme toggle
+document.addEventListener('keydown', function(e) {
+    // Ctrl/Cmd + D to toggle dark mode
+    if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
+        e.preventDefault();
+        if (window.ThemeManager) {
+            window.ThemeManager.toggleTheme();
+        }
+    }
+});
+    
+})();
+</script>
 </body>
 </html>

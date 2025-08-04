@@ -6,6 +6,40 @@
     <meta http-equiv="X-Frame-Options" content="DENY">
     <meta http-equiv="X-XSS-Protection" content="1; mode=block">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- CRITICAL: No-flash script for dark mode -->
+<script>
+(function() {
+    'use strict';
+    
+    const THEME_KEY = 'theme';
+    const DARK_MODE_CLASS = 'dark-mode';
+    
+    try {
+        const savedTheme = localStorage.getItem(THEME_KEY);
+        
+        if (savedTheme === 'dark') {
+            document.documentElement.classList.add(DARK_MODE_CLASS);
+            if (document.body) {
+                document.body.classList.add(DARK_MODE_CLASS);
+            }
+        } else if (savedTheme === 'light') {
+            document.documentElement.classList.remove(DARK_MODE_CLASS);
+            if (document.body) {
+                document.body.classList.remove(DARK_MODE_CLASS);
+            }
+        } else {
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.documentElement.classList.add(DARK_MODE_CLASS);
+                if (document.body) {
+                    document.body.classList.add(DARK_MODE_CLASS);
+                }
+            }
+        }
+    } catch (e) {
+        console.warn('Theme persistence not available:', e);
+    }
+})();
+</script>
     <title>CSS Properties Explorer - Learn CSS Interactively</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -305,6 +339,35 @@
             color: #0066cc;
         }
 
+        /* Toast notification styles */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1050;
+        }
+
+        .toast-notification {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            display: none;
+            min-width: 250px;
+            border-left: 4px solid #28a745;
+        }
+
+        .toast-notification.show {
+            display: block;
+            animation: slideInRight 0.3s ease;
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
         @media (max-width: 768px) {
             .property-tabs {
                 flex-direction: column;
@@ -317,62 +380,65 @@
     </style>
 </head>
 <body>
-<!-- Navigation -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="#" onclick="showToast('Welcome to Live Coding Playground!', 'info')">
-            <i class="bi bi-code-square me-2"></i>Live Coding Playground
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <div class="navbar-nav ms-auto">
-                <a class="nav-link" href="#" onclick="loadPreset('basic-page')">
-                    <i class="bi bi-house me-1"></i>Home
-                </a>
-                <a class="nav-link" href="#" onclick="loadPreset('flexbox-demo')">
-                    <i class="bi bi-grid-3x3 me-1"></i>Flexbox
-                </a>
-                <a class="nav-link" href="#" onclick="switchTab('html')">
-                    <i class="bi bi-code me-1"></i>HTML
-                </a>
-                <a class="nav-link" href="#" onclick="switchTab('bootstrap')">
-                    <i class="bi bi-bootstrap me-1"></i>Bootstrap
-                </a>
-                <a class="nav-link active" href="#" onclick="showToast('You are here!', 'info')">
-                    <i class="bi bi-play-circle me-1"></i>Live Coding
-                </a>
-                <div class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="bi bi-grid-3x3-gap me-1"></i>Templates
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#" onclick="showToast('Welcome to Live Coding Playground!', 'info')">
+                <i class="bi bi-code-square me-2"></i>Live Coding Playground
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <div class="navbar-nav ms-auto">
+                    <a class="nav-link" href="#" onclick="showToast('Loading Home...', 'info')">
+                        <i class="bi bi-house me-1"></i>Home
                     </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#" onclick="loadPreset('landing-page')">
-                            <i class="bi bi-layout-text-window me-2"></i>Landing Page
-                        </a></li>
-                        <li><a class="dropdown-item" href="#" onclick="loadPreset('card-layout')">
-                            <i class="bi bi-card-list me-2"></i>Card Layout
-                        </a></li>
-                        <li><a class="dropdown-item" href="#" onclick="loadPreset('form-design')">
-                            <i class="bi bi-ui-checks me-2"></i>Form Design
-                        </a></li>
-                        <li><a class="dropdown-item" href="#" onclick="loadPreset('navigation')">
-                            <i class="bi bi-menu-button-wide me-2"></i>Navigation
-                        </a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="#" onclick="loadPreset('animation-demo')">
-                            <i class="bi bi-stars me-2"></i>Animations
-                        </a></li>
-                        <li><a class="dropdown-item" href="#" onclick="loadPreset('grid-system')">
-                            <i class="bi bi-grid me-2"></i>Grid System
-                        </a></li>
-                    </ul>
+                    <a class="nav-link" href="#" onclick="showToast('Loading Flexbox Demo...', 'info')">
+                        <i class="bi bi-grid-3x3 me-1"></i>Flexbox
+                    </a>
+                    <a class="nav-link" href="#" onclick="showToast('Loading HTML Editor...', 'info')">
+                        <i class="bi bi-code me-1"></i>HTML
+                    </a>
+                    <a class="nav-link" href="#" onclick="showToast('Loading Bootstrap Components...', 'info')">
+                        <i class="bi bi-bootstrap me-1"></i>Bootstrap
+                    </a>
+                    <a class="nav-link active" href="#" onclick="showToast('You are here!', 'success')">
+                        <i class="bi bi-play-circle me-1"></i>Live Coding
+                    </a>
+                    <div class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-grid-3x3-gap me-1"></i>Templates
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" onclick="showToast('Loading Landing Page Template...', 'info')">
+                                <i class="bi bi-layout-text-window me-2"></i>Landing Page
+                            </a></li>
+                            <li><a class="dropdown-item" href="#" onclick="showToast('Loading Card Layout Template...', 'info')">
+                                <i class="bi bi-card-list me-2"></i>Card Layout
+                            </a></li>
+                            <li><a class="dropdown-item" href="#" onclick="showToast('Loading Form Design Template...', 'info')">
+                                <i class="bi bi-ui-checks me-2"></i>Form Design
+                            </a></li>
+                            <li><a class="dropdown-item" href="#" onclick="showToast('Loading Navigation Template...', 'info')">
+                                <i class="bi bi-menu-button-wide me-2"></i>Navigation
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" onclick="showToast('Loading Animation Demo...', 'info')">
+                                <i class="bi bi-stars me-2"></i>Animations
+                            </a></li>
+                            <li><a class="dropdown-item" href="#" onclick="showToast('Loading Grid System...', 'info')">
+                                <i class="bi bi-grid me-2"></i>Grid System
+                            </a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</nav>
+    </nav>
 
     <!-- Hero Section -->
     <section class="hero-section">
@@ -1188,7 +1254,52 @@
             updateBorders();
             updateEffects();
             updateTransform();
+            
+            // Show welcome message
+            setTimeout(() => {
+                showToast('Welcome to CSS Properties Explorer! Start experimenting with the controls.', 'success');
+            }, 1000);
         });
+
+        // Toast notification system
+        function showToast(message, type = 'success') {
+            const toastContainer = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'toast-notification show';
+            
+            const icons = {
+                success: 'check-circle-fill',
+                info: 'info-circle-fill',
+                warning: 'exclamation-triangle-fill',
+                error: 'x-circle-fill'
+            };
+
+            const colors = {
+                success: '#28a745',
+                info: '#17a2b8',
+                warning: '#ffc107',
+                error: '#dc3545'
+            };
+
+            toast.style.borderLeftColor = colors[type] || colors.success;
+            toast.innerHTML = `
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-${icons[type] || icons.success} me-2" style="color: ${colors[type] || colors.success}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+
+            toastContainer.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.animation = 'slideInRight 0.3s ease reverse';
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toastContainer.removeChild(toast);
+                    }
+                }, 300);
+            }, 3000);
+        }
 
         // Tab switching
         function switchPropertyTab(tabName) {
@@ -1207,6 +1318,8 @@
             
             // Add active class to clicked button
             event.target.classList.add('active');
+            
+            showToast(`Switched to ${tabName} properties`, 'info');
         }
 
         // Layout Element Management
@@ -1220,6 +1333,7 @@
             container.appendChild(newElement);
             updateLayoutElementCount();
             updateDemo();
+            showToast(`Added element ${layoutElementCount}`, 'success');
         }
 
         function removeLayoutElement() {
@@ -1230,7 +1344,10 @@
                     layoutElementCount--;
                     updateLayoutElementCount();
                     updateDemo();
+                    showToast('Removed element', 'info');
                 }
+            } else {
+                showToast('Cannot remove the last element', 'warning');
             }
         }
 
@@ -1245,6 +1362,7 @@
             layoutElementCount = 1;
             updateLayoutElementCount();
             updateDemo();
+            showToast('Reset elements', 'info');
         }
 
         function updateLayoutElementCount() {
@@ -1263,6 +1381,7 @@
             container.appendChild(newElement);
             updateSpacingElementCount();
             updateSpacing();
+            showToast(`Added spacing element ${spacingElementCount}`, 'success');
         }
 
         function removeSpacingElement() {
@@ -1273,7 +1392,10 @@
                     spacingElementCount--;
                     updateSpacingElementCount();
                     updateSpacing();
+                    showToast('Removed spacing element', 'info');
                 }
+            } else {
+                showToast('Cannot remove the last element', 'warning');
             }
         }
 
@@ -1288,6 +1410,7 @@
             spacingElementCount = 1;
             updateSpacingElementCount();
             updateSpacing();
+            showToast('Reset spacing elements', 'info');
         }
 
         function updateSpacingElementCount() {
@@ -1737,6 +1860,7 @@
                     break;
             }
             updateDemo();
+            showToast(`Applied ${preset} preset`, 'success');
         }
 
         function applyTypographyPreset(preset) {
@@ -1763,6 +1887,7 @@
                     break;
             }
             updateTypography();
+            showToast(`Applied ${preset} typography preset`, 'success');
         }
 
         function applyColorPreset(preset) {
@@ -1785,6 +1910,7 @@
                     break;
             }
             updateColors();
+            showToast(`Applied ${preset} color preset`, 'success');
         }
 
         function applySpacingPreset(preset) {
@@ -1811,6 +1937,7 @@
                     break;
             }
             updateSpacing();
+            showToast(`Applied ${preset} spacing preset`, 'success');
         }
 
         function applyBorderPreset(preset) {
@@ -1844,6 +1971,7 @@
                     break;
             }
             updateBorders();
+            showToast(`Applied ${preset} border preset`, 'success');
         }
 
         function applyEffectPreset(preset) {
@@ -1878,6 +2006,7 @@
                     break;
             }
             updateEffects();
+            showToast(`Applied ${preset} effect preset`, 'success');
         }
 
         function applyTransformPreset(preset) {
@@ -1912,6 +2041,7 @@
                     break;
             }
             updateTransform();
+            showToast(`Applied ${preset} transform preset`, 'success');
         }
 
         // Copy functionality
@@ -1927,6 +2057,8 @@
                     button.classList.remove('copied');
                     button.innerHTML = originalText;
                 }, 2000);
+                
+                showToast('CSS code copied to clipboard!', 'success');
             }).catch(() => {
                 // Fallback for older browsers
                 const textArea = document.createElement('textarea');
@@ -1940,17 +2072,161 @@
                 setTimeout(() => {
                     button.innerHTML = 'Copy';
                 }, 2000);
+                
+                showToast('CSS code copied to clipboard!', 'success');
             });
         }
 
-        // Placeholder functions for navbar
-        function showComingSoon(feature) {
-            alert(`${feature} coming soon!`);
-        }
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Number keys 1-7 to switch tabs
+            if (e.key >= '1' && e.key <= '7' && !e.ctrlKey && !e.metaKey && !e.altKey) {
+                e.preventDefault();
+                const tabNames = ['layout', 'typography', 'colors', 'spacing', 'borders', 'effects', 'transform'];
+                const tabIndex = parseInt(e.key) - 1;
+                if (tabIndex < tabNames.length) {
+                    switchPropertyTab(tabNames[tabIndex]);
+                }
+            }
 
-        function showAbout() {
-            alert('CSS Properties Explorer - Interactive learning tool for CSS properties');
-        }
+            // Ctrl/Cmd + C to copy current CSS
+            if ((e.ctrlKey || e.metaKey) && e.key === 'c' && e.shiftKey) {
+                e.preventDefault();
+                const activeTab = document.querySelector('.tab-content.active');
+                if (activeTab) {
+                    const codeOutput = activeTab.querySelector('.code-output');
+                    if (codeOutput) {
+                        const codeText = codeOutput.textContent;
+                        navigator.clipboard.writeText(codeText);
+                        showToast('CSS copied via keyboard shortcut!', 'success');
+                    }
+                }
+            }
+        });
+
+        // Show keyboard shortcuts info on first load
+        setTimeout(() => {
+            showToast('💡 Tip: Use number keys 1-7 to switch tabs quickly!', 'info');
+        }, 5000);
     </script>
+    <!-- ADD THIS: Dark Mode JavaScript -->
+<script>
+// Dark mode functionality
+(function() {
+    'use strict';
+    
+    const THEME_KEY = 'theme';
+    const DARK_MODE_CLASS = 'dark-mode';
+    const THEMES = {
+        LIGHT: 'light',
+        DARK: 'dark'
+    };
+    
+    // Cache DOM elements
+    let themeToggle = null;
+    let sunIcon = null;
+    let moonIcon = null;
+    
+    function updateIcons(isDarkMode) {
+        if (sunIcon && moonIcon) {
+            sunIcon.style.display = isDarkMode ? 'inline-block' : 'none';
+            moonIcon.style.display = isDarkMode ? 'none' : 'inline-block';
+        }
+    }
+    
+    function getCurrentTheme() {
+        const savedTheme = localStorage.getItem(THEME_KEY);
+        
+        if (savedTheme === THEMES.DARK || savedTheme === THEMES.LIGHT) {
+            return savedTheme;
+        }
+        
+        return window.matchMedia('(prefers-color-scheme: dark)').matches 
+            ? THEMES.DARK 
+            : THEMES.LIGHT;
+    }
+    
+    function applyTheme(theme) {
+        const isDarkMode = theme === THEMES.DARK;
+        
+        if (isDarkMode) {
+            document.body.classList.add(DARK_MODE_CLASS);
+        } else {
+            document.body.classList.remove(DARK_MODE_CLASS);
+        }
+        
+        localStorage.setItem(THEME_KEY, theme);
+        updateIcons(isDarkMode);
+        
+        // Show toast if showToast function exists
+        if (typeof showToast === 'function') {
+            showToast(`Switched to ${theme} mode`, 'info');
+        }
+    }
+    
+    function toggleTheme() {
+        const currentTheme = getCurrentTheme();
+        const newTheme = currentTheme === THEMES.DARK ? THEMES.LIGHT : THEMES.DARK;
+        applyTheme(newTheme);
+    }
+    
+    function initializeTheme() {
+        const currentTheme = getCurrentTheme();
+        applyTheme(currentTheme);
+        
+        themeToggle = document.getElementById('theme-toggle');
+        sunIcon = document.getElementById('theme-toggle-sun');
+        moonIcon = document.getElementById('theme-toggle-moon');
+        
+        if (themeToggle) {
+            themeToggle.addEventListener('click', toggleTheme);
+            
+            themeToggle.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    toggleTheme();
+                }
+            });
+            
+            const isDarkMode = document.body.classList.contains(DARK_MODE_CLASS);
+            updateIcons(isDarkMode);
+        }
+        
+        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        mediaQuery.addEventListener('change', function(e) {
+            const savedTheme = localStorage.getItem(THEME_KEY);
+            if (!savedTheme) {
+                applyTheme(e.matches ? THEMES.DARK : THEMES.LIGHT);
+            }
+        });
+    }
+    
+    window.ThemeManager = {
+        getCurrentTheme: getCurrentTheme,
+        applyTheme: applyTheme,
+        toggleTheme: toggleTheme,
+        isDarkMode: function() {
+            return document.body.classList.contains(DARK_MODE_CLASS);
+        }
+    };
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeTheme);
+    } else {
+        initializeTheme();
+    }
+    // ADD THIS: Keyboard shortcut for theme toggle
+document.addEventListener('keydown', function(e) {
+    // Ctrl/Cmd + D to toggle dark mode
+    if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
+        e.preventDefault();
+        if (window.ThemeManager) {
+            window.ThemeManager.toggleTheme();
+        }
+    }
+});
+    
+})();
+</script>
 </body>
 </html>

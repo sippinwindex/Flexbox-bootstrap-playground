@@ -4,581 +4,1034 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Interactive Flexbox playground with drag & drop nested containers for learning CSS Flexbox layout">
+<!-- CRITICAL: No-flash script for dark mode -->
+<script>
+(function() {
+    'use strict';
+    
+    const THEME_KEY = 'theme';
+    const DARK_MODE_CLASS = 'dark-mode';
+    
+    try {
+        const savedTheme = localStorage.getItem(THEME_KEY);
+        
+        if (savedTheme === 'dark') {
+            document.documentElement.classList.add(DARK_MODE_CLASS);
+            if (document.body) {
+                document.body.classList.add(DARK_MODE_CLASS);
+            }
+        } else if (savedTheme === 'light') {
+            document.documentElement.classList.remove(DARK_MODE_CLASS);
+            if (document.body) {
+                document.body.classList.remove(DARK_MODE_CLASS);
+            }
+        } else {
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.documentElement.classList.add(DARK_MODE_CLASS);
+                if (document.body) {
+                    document.body.classList.add(DARK_MODE_CLASS);
+                }
+            }
+        }
+    } catch (e) {
+        console.warn('Theme persistence not available:', e);
+    }
+})();
+</script>
     <title>Enhanced Flexbox Playground - Drag & Drop Nested Containers</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
-    <style>
-        :root {
-            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --success-gradient: linear-gradient(135deg, #28a745, #20c997);
-            --warning-gradient: linear-gradient(135deg, #ffc107, #ff8c00);
-            --info-gradient: linear-gradient(135deg, #17a2b8, #20c997);
-            --container-gradient: linear-gradient(135deg, #e74c3c, #c0392b);
-            --bg-light: #f8f9fa;
-            --border-color: #dee2e6;
-            --text-muted: #6c757d;
-            --shadow-sm: 0 2px 8px rgba(0,0,0,0.1);
-            --shadow-md: 0 4px 15px rgba(0,0,0,0.15);
-        }
-
-        body {
-            background: var(--bg-light);
-            font-family: system-ui, -apple-system, sans-serif;
-            line-height: 1.6;
-        }
-
-        .hero-section {
-            background: var(--primary-gradient);
-            color: white;
-            padding: 2rem 0;
-        }
-
-        .playground-container {
-            background: white;
-            border-radius: 12px;
-            box-shadow: var(--shadow-md);
-            overflow: hidden;
-            margin-bottom: 1.5rem;
-        }
-
-        .playground-header {
-            background: var(--primary-gradient);
-            color: white;
-            padding: 1rem 1.5rem;
-            position: relative;
-        }
-
-        .controls-panel {
-            background: #f8f9fa;
-            border-right: 1px solid var(--border-color);
-            max-height: 85vh;
-            overflow-y: auto;
-        }
-
-        .control-group {
-            background: white;
-            border-radius: 8px;
-            box-shadow: var(--shadow-sm);
-            margin-bottom: 1rem;
-            overflow: hidden;
-        }
-
-        .control-group h6 {
-            background: var(--primary-gradient);
-            color: white;
-            margin: 0;
-            padding: 0.75rem 1rem;
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-
-        .control-body {
-            padding: 1rem;
-        }
-
-        /* Main flex container */
-        .flex-container {
-            background: white;
-            border: 3px dashed #667eea;
-            border-radius: 12px;
-            padding: 20px;
-            min-height: 400px;
-            display: flex;
-            position: relative;
-            transition: all 0.3s ease;
-            overflow: visible;
-        }
-
-        .flex-container::before {
-            content: 'Main Container (Drop Zone)';
-            position: absolute;
-            top: -12px;
-            left: 20px;
-            background: #667eea;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            z-index: 10;
-        }
-
-        /* Nested flex containers */
-        .nested-container {
-            background: rgba(231, 76, 60, 0.1);
-            border: 2px dashed #e74c3c;
-            border-radius: 8px;
-            padding: 15px;
-            margin: 5px;
-            display: flex;
-            position: relative;
-            min-height: 100px;
-            transition: all 0.3s ease;
-        }
-
-        .nested-container::before {
-            content: 'Container Group (Drop Zone)';
-            position: absolute;
-            top: -10px;
-            left: 15px;
-            background: #e74c3c;
-            color: white;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 0.7rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            z-index: 5;
-        }
-
-        .nested-container.selected::before {
-            content: 'Container Group (Selected - Drop Zone)';
-            background: #ffc107;
-            color: #000;
-        }
-
-        /* Flex items - Enhanced for drag & drop */
-        .flex-item {
-            position: relative;
-            transition: all 0.3s ease;
-            cursor: move;
-            border-radius: 8px;
-            margin: 5px;
-            user-select: none;
-        }
-
-        .flex-item[draggable="true"] {
-            cursor: grab;
-        }
-
-        .flex-item[draggable="true"]:active {
-            cursor: grabbing;
-        }
-
-        .flex-item.selected {
-            outline: 3px solid #ffc107;
-            outline-offset: 2px;
-        }
-
-        .nested-container.selected {
-            outline: 3px solid #ffc107;
-            outline-offset: 2px;
-            background: rgba(255, 193, 7, 0.1);
-        }
-
-        .flex-item:hover:not(.nested-container):not(.dragging) {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .item-controls {
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            background: white;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: var(--shadow-md);
-            z-index: 20;
-            cursor: pointer;
-        }
-
-        .flex-item:hover .item-controls {
-            opacity: 1;
-        }
-
-        .delete-btn {
-            position: absolute;
-            top: -8px;
-            left: -8px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            background: #dc3545;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.7rem;
-            cursor: pointer;
-            z-index: 20;
-        }
-
-        .flex-item:hover .delete-btn {
-            opacity: 1;
-        }
-
-        /* Enhanced drag and drop styles */
-        .dragging {
-            opacity: 0.6;
-            transform: rotate(5deg) scale(1.05);
-            z-index: 1000;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
-            cursor: grabbing;
-        }
-
-        .drag-over {
-            background: rgba(40, 167, 69, 0.2) !important;
-            border-color: #28a745 !important;
-            border-style: solid !important;
-            transform: scale(1.02);
-        }
-
-        .drag-over::before {
-            background: #28a745 !important;
-            content: 'Drop Here!' !important;
-        }
-
-        /* Drop indicators */
-        .drop-indicator {
-            background: linear-gradient(90deg, #28a745, #20c997);
-            height: 4px;
-            border-radius: 2px;
-            margin: 2px 0;
-            opacity: 0;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .drop-indicator::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
-            animation: shimmer 1.5s infinite;
-        }
-
-        .drop-indicator.active {
-            opacity: 1;
-        }
-
-        @keyframes shimmer {
-            0% { left: -100%; }
-            100% { left: 100%; }
-        }
-
-        /* Placeholder for empty containers */
-        .empty-placeholder {
-            text-align: center;
-            color: #6c757d;
-            padding: 2rem;
-            border: 2px dashed #dee2e6;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            width: 100%;
-        }
-
-        .empty-placeholder:hover {
-            border-color: #28a745;
-            background: rgba(40, 167, 69, 0.05);
-        }
-
-        .empty-placeholder.drag-over {
-            border-color: #28a745;
-            background: rgba(40, 167, 69, 0.1);
-            border-style: solid;
-        }
-
-        /* Specific element styles */
-        .navbar-element {
-            background: #343a40;
-            color: white;
-            padding: 1rem 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            border-radius: 8px;
-        }
-
-        .card-element {
-            background: white;
-            border: 1px solid #dee2e6;
-            border-radius: 8px;
-            padding: 1.5rem;
-            max-width: 300px;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .image-element {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            padding: 2rem;
-            text-align: center;
-            border-radius: 8px;
-            min-width: 150px;
-            min-height: 100px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .button-element {
-            background: #007bff;
-            color: white;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 6px;
-            font-weight: 500;
-            cursor: pointer;
-        }
-
-        .text-element {
-            background: #f8f9fa;
-            border: 1px solid #dee2e6;
-            padding: 1rem;
-            border-radius: 6px;
-            color: #495057;
-        }
-
-        .sidebar-element {
-            background: #6c757d;
-            color: white;
-            padding: 1.5rem;
-            min-height: 200px;
-            width: 200px;
-            border-radius: 8px;
-        }
-
-        .code-output {
-            background: #1a1a1a;
-            color: #e6e6e6;
-            border-radius: 8px;
-            padding: 1rem;
-            font-family: 'Consolas', 'Monaco', monospace;
-            font-size: 13px;
-            line-height: 1.5;
-            max-height: 400px;
-            overflow-y: auto;
-            position: relative;
-        }
-
-        .copy-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: #28a745;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            padding: 5px 10px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            z-index: 10;
-        }
-
-        .element-btn {
-            width: 100%;
-            margin-bottom: 0.5rem;
-            padding: 0.75rem;
-            border: 2px solid #dee2e6;
-            background: white;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .element-btn:hover {
-            border-color: #667eea;
-            background: #f8f9fa;
-        }
-
-        .element-btn.container-btn {
-            border-color: #e74c3c;
-        }
-
-        .element-btn.container-btn:hover {
-            border-color: #c0392b;
-            background: #fff5f5;
-        }
-
-        .css-property { color: #79b6f2; }
-        .css-value { color: #90ee90; }
-        .css-selector { color: #ffd700; }
-        .html-tag { color: #ff6b6b; }
-        .html-attr { color: #4ecdc4; }
-        .css-comment { color: #999; }
-
-        .live-indicator {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: #28a745;
-            color: white;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 0.7rem;
-            font-weight: bold;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-
-        .preset-example {
-            border: 2px dashed #28a745;
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .preset-example:hover {
-            border-color: #20c997;
-            background: #f8fff9;
-        }
-
-        .property-tabs {
-            display: flex;
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 0.25rem;
-            margin-bottom: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .tab-btn {
-            flex: 1;
-            min-width: 100px;
-            padding: 0.75rem;
-            border: none;
-            background: transparent;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 500;
-            font-size: 0.85rem;
-            color: #6c757d;
-        }
-
-        .tab-btn.active {
-            background: white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            color: #667eea;
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        .description-text {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            margin-bottom: 0.75rem;
-        }
-
-        .container-breadcrumb {
-            background: #e9ecef;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            margin-bottom: 1rem;
-            font-size: 0.9rem;
-        }
-
-        .breadcrumb-item {
-            color: #6c757d;
-            cursor: pointer;
-        }
-
-        .breadcrumb-item.active {
-            color: #495057;
-            font-weight: 600;
-        }
-
-        .breadcrumb-item:hover:not(.active) {
-            color: #007bff;
-            text-decoration: underline;
-        }
-
-        /* Drag feedback */
-        .drag-helper {
-            position: absolute;
-            pointer-events: none;
-            z-index: 9999;
-            background: rgba(102, 126, 234, 0.9);
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        }
-
-        /* Mobile responsiveness for drag */
-        @media (max-width: 768px) {
-            .flex-item {
-                margin: 10px 5px;
-                min-width: 120px;
-            }
-            
-            .item-controls,
-            .delete-btn {
-                width: 32px;
-                height: 32px;
-                font-size: 1rem;
-            }
-        }
-
-        .toast-container {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 9999;
-        }
-
-        .toast {
-            background: #28a745;
-            color: white;
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 0.5rem;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            animation: slideIn 0.3s ease;
-        }
-
-        .toast.error {
-            background: #dc3545;
-        }
-
-        .toast.info {
-            background: #17a2b8;
-        }
-
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-    </style>
-</head>
+<style>
+:root {
+    /* Unified theme variables that change with dark mode */
+    --theme-bg-primary: #ffffff;
+    --theme-bg-secondary: #f8f9fa;
+    --theme-bg-tertiary: #e9ecef;
+    --theme-text-primary: #212529;
+    --theme-text-secondary: #6c757d;
+    --theme-text-muted: #a0aec0;
+    --theme-border-color: #dee2e6;
+    --theme-border-focus: #667eea;
+    --theme-shadow-sm: 0 2px 8px rgba(0,0,0,0.1);
+    --theme-shadow-md: 0 4px 15px rgba(0,0,0,0.15);
+    --theme-shadow-lg: 0 8px 25px rgba(0,0,0,0.2);
+
+    /* Consistent gradients across all files */
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --success-gradient: linear-gradient(135deg, #28a745, #20c997);
+    --warning-gradient: linear-gradient(135deg, #ffc107, #ff8c00);
+    --info-gradient: linear-gradient(135deg, #17a2b8, #20c997);
+    --container-gradient: linear-gradient(135deg, #e74c3c, #c0392b);
+    --danger-gradient: linear-gradient(135deg, #dc3545, #fd79a8);
+
+    /* Specific component colors */
+    --navbar-bg: #343a40;
+    --code-bg: #1a1a1a;
+    --code-text: #e6e6e6;
+    --demo-border: #667eea;
+    --empty-placeholder-bg: rgba(0,0,0,0.02);
+
+    /* Animation Variables */
+    --transition-fast: 0.15s ease-out;
+    --transition-base: 0.3s ease-out;
+    --transition-slow: 0.5s ease-out;
+}
+
+/* Dark mode overrides - standardized */
+body.dark-mode {
+    --theme-bg-primary: #2d2d2d;
+    --theme-bg-secondary: #1a1a1a;
+    --theme-bg-tertiary: #404040;
+    --theme-text-primary: #e4e4e7;
+    --theme-text-secondary: #a1a1aa;
+    --theme-text-muted: #718096;
+    --theme-border-color: #404040;
+    --theme-border-focus: #63b3ed;
+    --theme-shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+    --theme-shadow-md: 0 4px 15px rgba(0,0,0,0.4);
+    --theme-shadow-lg: 0 8px 25px rgba(0,0,0,0.3);
+
+    --navbar-bg: #1f1f1f;
+    --code-bg: #0d1117;
+    --code-text: #e6edf3;
+    --empty-placeholder-bg: rgba(255,255,255,0.02);
+}
+
+/* Smooth transitions for theme switching */
+*,
+*::before,
+*::after {
+    transition: 
+        background-color var(--transition-base),
+        color var(--transition-base),
+        border-color var(--transition-base),
+        box-shadow var(--transition-base);
+}
+
+/* Base styles with unified theme variables */
+body {
+    background: var(--theme-bg-secondary);
+    font-family: system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
+    color: var(--theme-text-primary);
+}
+
+/* Dark mode toggle button - standardized */
+.theme-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1060;
+    background: var(--primary-gradient);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition-base);
+    box-shadow: var(--theme-shadow-md);
+}
+
+.theme-toggle:hover {
+    transform: scale(1.1);
+    box-shadow: var(--theme-shadow-lg);
+}
+
+.theme-toggle i {
+    font-size: 1.2rem;
+    transition: transform var(--transition-base);
+}
+
+/* Navigation */
+.navbar-dark {
+    background-color: var(--navbar-bg) !important;
+    border-bottom: 1px solid var(--theme-border-color);
+}
+
+.navbar-dark .navbar-nav .nav-link {
+    color: var(--theme-text-secondary);
+}
+
+.navbar-dark .navbar-nav .nav-link:hover,
+.navbar-dark .navbar-nav .nav-link.active {
+    color: var(--theme-text-primary);
+}
+
+.hero-section {
+    background: var(--primary-gradient);
+    color: white;
+    padding: 2rem 0;
+}
+
+.playground-container {
+    background: var(--theme-bg-primary);
+    border-radius: 12px;
+    box-shadow: var(--theme-shadow-md);
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--theme-border-color);
+}
+
+.playground-header {
+    background: var(--primary-gradient);
+    color: white;
+    padding: 1rem 1.5rem;
+    position: relative;
+}
+
+.controls-panel {
+    background: var(--theme-bg-secondary);
+    border-right: 1px solid var(--theme-border-color);
+    max-height: 85vh;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--theme-border-color) transparent;
+}
+
+.controls-panel::-webkit-scrollbar {
+    width: 8px;
+}
+
+.controls-panel::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.controls-panel::-webkit-scrollbar-thumb {
+    background: var(--theme-border-color);
+    border-radius: 4px;
+}
+
+.controls-panel::-webkit-scrollbar-thumb:hover {
+    background: var(--theme-text-secondary);
+}
+
+.control-group {
+    background: var(--theme-bg-primary);
+    border-radius: 8px;
+    box-shadow: var(--theme-shadow-sm);
+    margin-bottom: 1rem;
+    overflow: hidden;
+    border: 1px solid var(--theme-border-color);
+}
+
+.control-group h6 {
+    background: var(--primary-gradient);
+    color: white;
+    margin: 0;
+    padding: 0.75rem 1rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.control-body {
+    padding: 1rem;
+}
+
+/* Form controls - standardized */
+.form-select,
+.form-control,
+.form-range {
+    background-color: var(--theme-bg-primary);
+    border-color: var(--theme-border-color);
+    color: var(--theme-text-primary);
+}
+
+.form-select:focus,
+.form-control:focus {
+    background-color: var(--theme-bg-primary);
+    border-color: var(--theme-border-focus);
+    color: var(--theme-text-primary);
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+.form-select option {
+    background-color: var(--theme-bg-primary);
+    color: var(--theme-text-primary);
+}
+
+/* Main flex container */
+.flex-container {
+    background: var(--theme-bg-primary);
+    border: 3px dashed var(--demo-border);
+    border-radius: 12px;
+    padding: 20px;
+    min-height: 400px;
+    display: flex;
+    position: relative;
+    transition: all var(--transition-base);
+    overflow: visible;
+}
+
+.flex-container::before {
+    content: 'Main Container (Drop Zone)';
+    position: absolute;
+    top: -12px;
+    left: 20px;
+    background: var(--demo-border);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    z-index: 10;
+}
+
+/* Nested flex containers */
+.nested-container {
+    background: rgba(231, 76, 60, 0.1);
+    border: 2px dashed #e74c3c;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 5px;
+    display: flex;
+    position: relative;
+    min-height: 100px;
+    transition: all var(--transition-base);
+}
+
+body.dark-mode .nested-container {
+    background: rgba(231, 76, 60, 0.15);
+}
+
+.nested-container::before {
+    content: 'Container Group (Drop Zone)';
+    position: absolute;
+    top: -10px;
+    left: 15px;
+    background: #e74c3c;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    z-index: 5;
+}
+
+.nested-container.selected::before {
+    content: 'Container Group (Selected - Drop Zone)';
+    background: #ffc107;
+    color: #000;
+}
+
+/* Flex items - Enhanced for drag & drop */
+.flex-item {
+    position: relative;
+    transition: all var(--transition-base);
+    cursor: move;
+    border-radius: 8px;
+    margin: 5px;
+    user-select: none;
+}
+
+.flex-item[draggable="true"] {
+    cursor: grab;
+}
+
+.flex-item[draggable="true"]:active {
+    cursor: grabbing;
+}
+
+.flex-item.selected {
+    outline: 3px solid #ffc107;
+    outline-offset: 2px;
+}
+
+.nested-container.selected {
+    outline: 3px solid #ffc107;
+    outline-offset: 2px;
+    background: rgba(255, 193, 7, 0.1);
+}
+
+.flex-item:hover:not(.nested-container):not(.dragging) {
+    transform: translateY(-2px);
+    box-shadow: var(--theme-shadow-md);
+}
+
+.item-controls {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    opacity: 0;
+    transition: opacity var(--transition-base);
+    background: var(--theme-bg-primary);
+    border: 1px solid var(--theme-border-color);
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--theme-shadow-md);
+    z-index: 20;
+    cursor: pointer;
+    color: var(--theme-text-primary);
+}
+
+.flex-item:hover .item-controls {
+    opacity: 1;
+}
+
+.delete-btn {
+    position: absolute;
+    top: -8px;
+    left: -8px;
+    opacity: 0;
+    transition: opacity var(--transition-base);
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    cursor: pointer;
+    z-index: 20;
+}
+
+.flex-item:hover .delete-btn {
+    opacity: 1;
+}
+
+/* Enhanced drag and drop styles */
+.dragging {
+    opacity: 0.6;
+    transform: rotate(5deg) scale(1.05);
+    z-index: 1000;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+    cursor: grabbing;
+}
+
+.drag-over {
+    background: rgba(40, 167, 69, 0.2) !important;
+    border-color: #28a745 !important;
+    border-style: solid !important;
+    transform: scale(1.02);
+}
+
+.drag-over::before {
+    background: #28a745 !important;
+    content: 'Drop Here!' !important;
+}
+
+/* Drop indicators */
+.drop-indicator {
+    background: linear-gradient(90deg, #28a745, #20c997);
+    height: 4px;
+    border-radius: 2px;
+    margin: 2px 0;
+    opacity: 0;
+    transition: all var(--transition-base);
+    position: relative;
+    overflow: hidden;
+}
+
+.drop-indicator::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
+    animation: shimmer 1.5s infinite;
+}
+
+.drop-indicator.active {
+    opacity: 1;
+}
+
+@keyframes shimmer {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+/* Placeholder for empty containers */
+.empty-placeholder {
+    text-align: center;
+    color: var(--theme-text-secondary);
+    padding: 2rem;
+    border: 2px dashed var(--theme-border-color);
+    border-radius: 8px;
+    transition: all var(--transition-base);
+    cursor: pointer;
+    width: 100%;
+    background: var(--empty-placeholder-bg);
+}
+
+.empty-placeholder:hover {
+    border-color: #28a745;
+    background: rgba(40, 167, 69, 0.05);
+}
+
+.empty-placeholder.drag-over {
+    border-color: #28a745;
+    background: rgba(40, 167, 69, 0.1);
+    border-style: solid;
+}
+
+/* Specific element styles */
+.navbar-element {
+    background: #343a40;
+    color: white;
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    border-radius: 8px;
+}
+
+.card-element {
+    background: var(--theme-bg-primary);
+    border: 1px solid var(--theme-border-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+    max-width: 300px;
+    box-shadow: var(--theme-shadow-sm);
+    color: var(--theme-text-primary);
+}
+
+.image-element {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    padding: 2rem;
+    text-align: center;
+    border-radius: 8px;
+    min-width: 150px;
+    min-height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.button-element {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-base);
+}
+
+.button-element:hover {
+    background: #0056b3;
+    transform: translateY(-1px);
+}
+
+.text-element {
+    background: var(--theme-bg-secondary);
+    border: 1px solid var(--theme-border-color);
+    padding: 1rem;
+    border-radius: 6px;
+    color: var(--theme-text-primary);
+}
+
+.sidebar-element {
+    background: #6c757d;
+    color: white;
+    padding: 1.5rem;
+    min-height: 200px;
+    width: 200px;
+    border-radius: 8px;
+}
+
+.code-output {
+    background: var(--code-bg);
+    color: var(--code-text);
+    border-radius: 8px;
+    padding: 1rem;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 13px;
+    line-height: 1.5;
+    max-height: 400px;
+    overflow-y: auto;
+    position: relative;
+    border: 1px solid var(--theme-border-color);
+}
+
+.copy-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 10px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    z-index: 10;
+    transition: all var(--transition-base);
+}
+
+.copy-btn:hover {
+    background: #218838;
+    transform: scale(1.05);
+}
+
+.copy-btn.copied {
+    background: #17a2b8;
+}
+
+.element-btn {
+    width: 100%;
+    margin-bottom: 0.5rem;
+    padding: 0.75rem;
+    border: 2px solid var(--theme-border-color);
+    background: var(--theme-bg-primary);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all var(--transition-base);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--theme-text-primary);
+}
+
+.element-btn:hover {
+    border-color: var(--theme-border-focus);
+    background: var(--theme-bg-secondary);
+}
+
+.element-btn.container-btn {
+    border-color: #e74c3c;
+}
+
+.element-btn.container-btn:hover {
+    border-color: #c0392b;
+    background: rgba(231, 76, 60, 0.1);
+}
+
+/* Code syntax highlighting */
+.css-property { color: #79b6f2; }
+.css-value { color: #90ee90; }
+.css-selector { color: #ffd700; }
+.html-tag { color: #ff6b6b; }
+.html-attr { color: #4ecdc4; }
+.css-comment { color: #999; }
+
+/* Dark theme syntax highlighting adjustments */
+body.dark-mode .css-property { color: #9db4ff; }
+body.dark-mode .css-value { color: #a5d6a7; }
+body.dark-mode .css-selector { color: #fff59d; }
+body.dark-mode .html-tag { color: #ffab91; }
+body.dark-mode .html-attr { color: #80cbc4; }
+body.dark-mode .css-comment { color: #757575; }
+
+.live-indicator {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #28a745;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+.preset-example {
+    border: 2px dashed #28a745;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    cursor: pointer;
+    transition: all var(--transition-base);
+    background: var(--theme-bg-primary);
+    color: var(--theme-text-primary);
+}
+
+.preset-example:hover {
+    border-color: #20c997;
+    background: rgba(40, 167, 69, 0.05);
+}
+
+.property-tabs {
+    display: flex;
+    background: var(--theme-bg-secondary);
+    border-radius: 8px;
+    padding: 0.25rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    border: 1px solid var(--theme-border-color);
+}
+
+.tab-btn {
+    flex: 1;
+    min-width: 100px;
+    padding: 0.75rem;
+    border: none;
+    background: transparent;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all var(--transition-base);
+    font-weight: 500;
+    font-size: 0.85rem;
+    color: var(--theme-text-secondary);
+}
+
+.tab-btn.active {
+    background: var(--theme-bg-primary);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    color: var(--theme-border-focus);
+}
+
+.tab-btn:hover:not(.active) {
+    background: var(--theme-bg-tertiary);
+    color: var(--theme-text-primary);
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.description-text {
+    font-size: 0.9rem;
+    color: var(--theme-text-secondary);
+    margin-bottom: 0.75rem;
+}
+
+.container-breadcrumb {
+    background: var(--theme-bg-secondary);
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    border: 1px solid var(--theme-border-color);
+}
+
+.breadcrumb-item {
+    color: var(--theme-text-secondary);
+    cursor: pointer;
+}
+
+.breadcrumb-item.active {
+    color: var(--theme-text-primary);
+    font-weight: 600;
+}
+
+.breadcrumb-item:hover:not(.active) {
+    color: var(--theme-border-focus);
+    text-decoration: underline;
+}
+
+/* Alert styling */
+.alert-info {
+    background-color: rgba(23, 162, 184, 0.1);
+    border-color: rgba(23, 162, 184, 0.2);
+    color: #0c5460;
+}
+
+body.dark-mode .alert-info {
+    background-color: rgba(23, 162, 184, 0.15);
+    border-color: rgba(23, 162, 184, 0.3);
+    color: #7dd3fc;
+}
+
+.alert-warning {
+    background-color: rgba(255, 193, 7, 0.1);
+    border-color: rgba(255, 193, 7, 0.2);
+    color: #856404;
+}
+
+body.dark-mode .alert-warning {
+    background-color: rgba(255, 193, 7, 0.15);
+    border-color: rgba(255, 193, 7, 0.3);
+    color: #ffdf7e;
+}
+
+.alert-success {
+    background-color: rgba(40, 167, 69, 0.1);
+    border-color: rgba(40, 167, 69, 0.2);
+    color: #155724;
+}
+
+body.dark-mode .alert-success {
+    background-color: rgba(40, 167, 69, 0.15);
+    border-color: rgba(40, 167, 69, 0.3);
+    color: #88d488;
+}
+
+/* Badge styling */
+.badge {
+    color: white;
+}
+
+.badge.bg-primary {
+    background: var(--theme-border-focus) !important;
+}
+
+.badge.bg-secondary {
+    background: #6c757d !important;
+}
+
+/* Button styling */
+.btn {
+    border: 1px solid var(--theme-border-color);
+    transition: all var(--transition-base);
+}
+
+.btn-outline-primary,
+.btn-outline-success,
+.btn-outline-info,
+.btn-outline-warning,
+.btn-outline-secondary {
+    background-color: var(--theme-bg-primary);
+    color: var(--theme-text-primary);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--theme-border-focus);
+    border-color: var(--theme-border-focus);
+    color: white;
+}
+
+.btn-outline-success:hover {
+    background-color: #28a745;
+    border-color: #28a745;
+    color: white;
+}
+
+/* Drag feedback */
+.drag-helper {
+    position: absolute;
+    pointer-events: none;
+    z-index: 9999;
+    background: rgba(102, 126, 234, 0.9);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.toast-container {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    z-index: 9999;
+}
+
+.toast {
+    background: #28a745;
+    color: white;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    box-shadow: var(--theme-shadow-md);
+    animation: slideIn 0.3s ease;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.toast.error {
+    background: #dc3545;
+}
+
+.toast.info {
+    background: #17a2b8;
+}
+
+@keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .theme-toggle {
+        top: 10px;
+        right: 10px;
+        width: 45px;
+        height: 45px;
+    }
+
+    .toast-container {
+        top: 70px;
+        right: 10px;
+    }
+
+    .flex-item {
+        margin: 10px 5px;
+        min-width: 120px;
+    }
+    
+    .item-controls,
+    .delete-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 1rem;
+    }
+
+    .property-tabs {
+        flex-direction: column;
+    }
+
+    .tab-btn {
+        flex: none;
+        margin: 0.125rem 0;
+    }
+}
+
+/* Ensure some elements don't transition during drag */
+.code-output,
+.drag-helper,
+.dragging {
+    transition: none;
+}
+
+/* Animation for theme toggle icon */
+body.dark-mode .theme-toggle .sun-icon {
+    transform: rotate(180deg);
+}
+
+body:not(.dark-mode) .theme-toggle .moon-icon {
+    transform: rotate(-180deg);
+}
+
+/* Focus styles */
+:focus-visible {
+    outline: 2px solid var(--theme-border-focus);
+    outline-offset: 2px;
+}
+
+/* Dropdown theming */
+.dropdown-menu {
+    background-color: var(--theme-bg-primary);
+    border-color: var(--theme-border-color);
+    box-shadow: var(--theme-shadow-md);
+}
+
+.dropdown-item {
+    color: var(--theme-text-primary);
+}
+
+.dropdown-item:hover {
+    background-color: var(--theme-bg-secondary);
+    color: var(--theme-text-primary);
+}
+
+/* Loading states */
+.loading-placeholder {
+    background: linear-gradient(
+        90deg,
+        var(--theme-bg-tertiary) 25%,
+        var(--theme-bg-secondary) 50%,
+        var(--theme-bg-tertiary) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite linear;
+    border-radius: 4px;
+    height: 20px;
+}
+
+/* Enhanced scrollbars */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--theme-bg-tertiary);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, var(--theme-border-color), var(--theme-text-secondary));
+    border-radius: 4px;
+    border: 2px solid var(--theme-bg-tertiary);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, var(--theme-text-secondary), var(--theme-text-primary));
+}
+</style>
+
+<head></head>
 <body>
+    <!-- Add a dark mode toggle button for testing -->
+    <button onclick="toggleDarkMode()" style="position: fixed; top: 10px; left: 10px; z-index: 9999; padding: 10px; border: none; border-radius: 5px; background: var(--theme-bg-primary); color: var(--theme-text-primary); cursor: pointer; border: 1px solid var(--theme-border-color);">
+        🌙 Toggle Dark Mode
+    </button>
+
+    <script>
+        // Dark mode script - matches your other files
+        (function() {
+            'use strict';
+            
+            const THEME_KEY = 'theme';
+            const DARK_MODE_CLASS = 'dark-mode';
+            
+            try {
+                const savedTheme = localStorage.getItem(THEME_KEY);
+                
+                if (savedTheme === 'dark') {
+                    document.documentElement.classList.add(DARK_MODE_CLASS);
+                    if (document.body) {
+                        document.body.classList.add(DARK_MODE_CLASS);
+                    }
+                } else if (savedTheme === 'light') {
+                    document.documentElement.classList.remove(DARK_MODE_CLASS);
+                    if (document.body) {
+                        document.body.classList.remove(DARK_MODE_CLASS);
+                    }
+                } else {
+                    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                        document.documentElement.classList.add(DARK_MODE_CLASS);
+                        if (document.body) {
+                            document.body.classList.add(DARK_MODE_CLASS);
+                        }
+                    }
+                }
+            } catch (e) {
+                console.warn('Theme persistence not available:', e);
+            }
+        })();
+
+        function toggleDarkMode() {
+            const body = document.body;
+            const isDark = body.classList.contains('dark-mode');
+            
+            if (isDark) {
+                body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.classList.add('dark-mode');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+    </script>
+</body>
+
+<!-- Theme Toggle Button -->
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle dark/light mode">
+    <i class="bi bi-sun-fill sun-icon" id="sun-icon"></i>
+    <i class="bi bi-moon-fill moon-icon" id="moon-icon" style="display: none;"></i>
+</button>
 
 <!-- Navigation -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
@@ -613,12 +1066,13 @@
                     <h1 class="display-6 fw-bold mb-3">
                         <i class="bi bi-grid-3x3 me-3"></i>Enhanced Flexbox Playground
                     </h1>
-                    <p class="lead mb-0">Build complex layouts with nested containers! Drag & drop elements, reorder them dynamically, and watch the code update in real-time.</p>
+                    <p class="lead mb-0">Build complex layouts with nested containers! Drag & drop elements, reorder them dynamically, and watch the code update in real-time. Now with dark mode support!</p>
                     <div class="mt-3">
                         <span class="badge bg-light text-dark me-2"><i class="bi bi-arrows-move me-1"></i>Drag & Drop</span>
                         <span class="badge bg-light text-dark me-2"><i class="bi bi-arrow-repeat me-1"></i>Reorder Elements</span>
                         <span class="badge bg-light text-dark me-2"><i class="bi bi-plus-circle me-1"></i>Nested Containers</span>
-                        <span class="badge bg-light text-dark"><i class="bi bi-code me-1"></i>Live Code Updates</span>
+                        <span class="badge bg-light text-dark me-2"><i class="bi bi-code me-1"></i>Live Code Updates</span>
+                        <span class="badge bg-light text-dark"><i class="bi bi-moon me-1"></i>Dark Mode</span>
                     </div>
                 </div>
                 <div class="col-lg-4 text-center">
@@ -1096,6 +1550,68 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
+        // Dark Mode Functionality
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            // Update theme toggle icons
+            const sunIcon = document.getElementById('sun-icon');
+            const moonIcon = document.getElementById('moon-icon');
+            
+            if (newTheme === 'dark') {
+                sunIcon.style.display = 'none';
+                moonIcon.style.display = 'block';
+                showToast('Switched to dark mode - perfect for night coding!', 'info');
+            } else {
+                sunIcon.style.display = 'block';
+                moonIcon.style.display = 'none';
+                showToast('Switched to light mode', 'info');
+            }
+        }
+
+        // Initialize theme on page load
+        function initializeTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const initialTheme = savedTheme || (prefersDark ? 'dark' : 'light');
+            
+            document.documentElement.setAttribute('data-theme', initialTheme);
+            
+            const sunIcon = document.getElementById('sun-icon');
+            const moonIcon = document.getElementById('moon-icon');
+            
+            if (initialTheme === 'dark') {
+                sunIcon.style.display = 'none';
+                moonIcon.style.display = 'block';
+            } else {
+                sunIcon.style.display = 'block';
+                moonIcon.style.display = 'none';
+            }
+        }
+
+        // Listen for system theme changes
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+            if (!localStorage.getItem('theme')) {
+                const newTheme = e.matches ? 'dark' : 'light';
+                document.documentElement.setAttribute('data-theme', newTheme);
+                
+                const sunIcon = document.getElementById('sun-icon');
+                const moonIcon = document.getElementById('moon-icon');
+                
+                if (newTheme === 'dark') {
+                    sunIcon.style.display = 'none';
+                    moonIcon.style.display = 'block';
+                } else {
+                    sunIcon.style.display = 'block';
+                    moonIcon.style.display = 'none';
+                }
+            }
+        });
+
         let elementCounter = 0;
         let containerCounter = 0;
         let selectedElement = null;
@@ -1123,10 +1639,18 @@
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
+            // Initialize theme first
+            initializeTheme();
+            
             containers['main-container'].element = document.getElementById('flex-container');
             setupDragAndDrop();
             updateActiveContainer();
             generateCode();
+            
+            // Show welcome message with dark mode info
+            setTimeout(() => {
+                showToast('🌙 Enhanced Flexbox Playground loaded! Try the dark mode toggle in the top-right corner.', 'success');
+            }, 1000);
         });
 
         // ===== DRAG AND DROP FUNCTIONALITY =====
@@ -2537,6 +3061,144 @@ ${cssContent}
             generateCode();
             showToast('Code generated successfully!', 'success');
         }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Ctrl/Cmd + D to toggle dark mode
+            if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
+                e.preventDefault();
+                toggleTheme();
+            }
+            
+            // Escape to clear selection
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.selected').forEach(el => {
+                    el.classList.remove('selected');
+                });
+                selectedElement = null;
+                document.getElementById('no-selection-alert').style.display = 'block';
+                document.getElementById('item-controls-panel').style.display = 'none';
+            }
+        });
     </script>
+    <!-- ADD THIS: Dark Mode JavaScript -->
+<script>
+// Dark mode functionality
+(function() {
+    'use strict';
+    
+    const THEME_KEY = 'theme';
+    const DARK_MODE_CLASS = 'dark-mode';
+    const THEMES = {
+        LIGHT: 'light',
+        DARK: 'dark'
+    };
+    
+    // Cache DOM elements
+    let themeToggle = null;
+    let sunIcon = null;
+    let moonIcon = null;
+    
+    function updateIcons(isDarkMode) {
+        if (sunIcon && moonIcon) {
+            sunIcon.style.display = isDarkMode ? 'inline-block' : 'none';
+            moonIcon.style.display = isDarkMode ? 'none' : 'inline-block';
+        }
+    }
+    
+    function getCurrentTheme() {
+        const savedTheme = localStorage.getItem(THEME_KEY);
+        
+        if (savedTheme === THEMES.DARK || savedTheme === THEMES.LIGHT) {
+            return savedTheme;
+        }
+        
+        return window.matchMedia('(prefers-color-scheme: dark)').matches 
+            ? THEMES.DARK 
+            : THEMES.LIGHT;
+    }
+    
+    function applyTheme(theme) {
+        const isDarkMode = theme === THEMES.DARK;
+        
+        if (isDarkMode) {
+            document.body.classList.add(DARK_MODE_CLASS);
+        } else {
+            document.body.classList.remove(DARK_MODE_CLASS);
+        }
+        
+        localStorage.setItem(THEME_KEY, theme);
+        updateIcons(isDarkMode);
+        
+        // Show toast if showToast function exists
+        if (typeof showToast === 'function') {
+            showToast(`Switched to ${theme} mode`, 'info');
+        }
+    }
+    
+    function toggleTheme() {
+        const currentTheme = getCurrentTheme();
+        const newTheme = currentTheme === THEMES.DARK ? THEMES.LIGHT : THEMES.DARK;
+        applyTheme(newTheme);
+    }
+    
+    function initializeTheme() {
+        const currentTheme = getCurrentTheme();
+        applyTheme(currentTheme);
+        
+        themeToggle = document.getElementById('theme-toggle');
+        sunIcon = document.getElementById('theme-toggle-sun');
+        moonIcon = document.getElementById('theme-toggle-moon');
+        
+        if (themeToggle) {
+            themeToggle.addEventListener('click', toggleTheme);
+            
+            themeToggle.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    toggleTheme();
+                }
+            });
+            
+            const isDarkMode = document.body.classList.contains(DARK_MODE_CLASS);
+            updateIcons(isDarkMode);
+        }
+        
+        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        mediaQuery.addEventListener('change', function(e) {
+            const savedTheme = localStorage.getItem(THEME_KEY);
+            if (!savedTheme) {
+                applyTheme(e.matches ? THEMES.DARK : THEMES.LIGHT);
+            }
+        });
+    }
+    
+    window.ThemeManager = {
+        getCurrentTheme: getCurrentTheme,
+        applyTheme: applyTheme,
+        toggleTheme: toggleTheme,
+        isDarkMode: function() {
+            return document.body.classList.contains(DARK_MODE_CLASS);
+        }
+    };
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeTheme);
+    } else {
+        initializeTheme();
+    }
+    // ADD THIS: Keyboard shortcut for theme toggle
+document.addEventListener('keydown', function(e) {
+    // Ctrl/Cmd + D to toggle dark mode
+    if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
+        e.preventDefault();
+        if (window.ThemeManager) {
+            window.ThemeManager.toggleTheme();
+        }
+    }
+});
+    
+})();
+</script>
 </body>
 </html>

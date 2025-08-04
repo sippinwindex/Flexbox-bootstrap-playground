@@ -3,1948 +3,1555 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Live coding playground for HTML, CSS, and Bootstrap">
-    <title>Live Coding Playground - HTML + CSS + Bootstrap</title>
-    
-    <!-- Security Headers -->
-    <meta http-equiv="X-Content-Type-Options" content="nosniff">
-    <meta http-equiv="X-Frame-Options" content="DENY">
-    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    <title>Enhanced Live Coding Platform</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+<!-- CRITICAL: No-flash script for dark mode -->
+<script>
+(function() {
+    'use strict';
     
-    <!-- CodeMirror for syntax highlighting -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/github.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/dracula.min.css">
+    const THEME_KEY = 'theme';
+    const DARK_MODE_CLASS = 'dark-mode';
     
-    <style>
-        :root {
-            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --success-gradient: linear-gradient(135deg, #28a745, #20c997);
-            --warning-gradient: linear-gradient(135deg, #ffc107, #ff8c00);
-            --info-gradient: linear-gradient(135deg, #17a2b8, #20c997);
-            --danger-gradient: linear-gradient(135deg, #dc3545, #c82333);
-            --dark-gradient: linear-gradient(135deg, #343a40, #495057);
-            --bg-light: #f8f9fa;
-            --border-color: #dee2e6;
-            --shadow-sm: 0 2px 8px rgba(0,0,0,0.1);
-            --shadow-md: 0 4px 15px rgba(0,0,0,0.15);
-            --transition-base: 0.3s ease-out;
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            background: var(--bg-light);
-            font-family: system-ui, -apple-system, sans-serif;
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
-        }
-
-        /* Fullscreen styles */
-        .fullscreen-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: var(--bg-light);
-            z-index: 9999;
-            display: none;
-        }
-
-        .fullscreen-container.active {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .fullscreen-header {
-            background: var(--primary-gradient);
-            color: white;
-            padding: 10px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-shrink: 0;
-        }
-
-        .fullscreen-content {
-            flex: 1;
-            display: flex;
-            overflow: hidden;
-        }
-
-        /* Main container styles */
-        .main-container {
-            height: calc(100vh - 140px);
-            display: flex;
-            gap: 1rem;
-            padding: 1rem;
-            min-height: 600px;
-        }
-
-        .main-container.fullscreen {
-            height: 100%;
-            padding: 0;
-            gap: 0;
-        }
-
-        .editor-section {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background: white;
-            border-radius: 12px;
-            box-shadow: var(--shadow-md);
-            overflow: hidden;
-            min-width: 300px;
-        }
-
-        .fullscreen .editor-section {
-            border-radius: 0;
-            box-shadow: none;
-        }
-
-        .preview-section {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background: white;
-            border-radius: 12px;
-            box-shadow: var(--shadow-md);
-            overflow: hidden;
-            min-width: 300px;
-        }
-
-        .fullscreen .preview-section {
-            border-radius: 0;
-            box-shadow: none;
-        }
-
-        .editor-tabs {
-            background: #f8f9fa;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            padding: 0;
-            margin: 0;
-            flex-shrink: 0;
-        }
-
-        .tab-btn {
-            background: transparent;
-            border: none;
-            padding: 12px 20px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            color: #6c757d;
-            cursor: pointer;
-            transition: all var(--transition-base);
-            border-bottom: 3px solid transparent;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .tab-btn.active {
-            color: #495057;
-            background: white;
-            border-bottom-color: #667eea;
-        }
-
-        .tab-btn:hover:not(.active) {
-            background: #e9ecef;
-            color: #495057;
-        }
-
-        .editor-container {
-            flex: 1;
-            display: flex;
-            overflow: hidden;
-        }
-
-        .editor-panel {
-            flex: 1;
-            display: none;
-            flex-direction: column;
-            height: 100%;
-        }
-
-        .editor-panel.active {
-            display: flex;
-        }
-
-        .CodeMirror {
-            height: 100% !important;
-            font-size: 14px;
-            line-height: 1.5;
-            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-        }
-
-        .preview-header {
-            background: var(--success-gradient);
-            color: white;
-            padding: 12px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-shrink: 0;
-        }
-
-        .preview-frame {
-            flex: 1;
-            border: none;
-            background: white;
-            width: 100%;
-        }
-
-        .live-indicator {
-            background: rgba(255,255,255,0.2);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-
-        .toolbar {
-            background: white;
-            border-bottom: 1px solid var(--border-color);
-            padding: 8px 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 8px;
-            flex-shrink: 0;
-        }
-
-        .toolbar-group {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .toolbar-btn {
-            background: #f8f9fa;
-            border: 1px solid var(--border-color);
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            white-space: nowrap;
-        }
-
-        .toolbar-btn:hover {
-            background: #e9ecef;
-            border-color: #adb5bd;
-        }
-
-        .toolbar-btn.active {
-            background: #667eea;
-            color: white;
-            border-color: #667eea;
-        }
-
-        .fullscreen-btn {
-            background: var(--info-gradient) !important;
-            color: white !important;
-            border-color: transparent !important;
-        }
-
-        .fullscreen-btn:hover {
-            background: var(--primary-gradient) !important;
-        }
-
-        .theme-selector {
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            padding: 4px 8px;
-            font-size: 0.8rem;
-            background: white;
-        }
-
-        .status-bar {
-            background: #f8f9fa;
-            border-top: 1px solid var(--border-color);
-            padding: 8px 16px;
-            font-size: 0.8rem;
-            color: #6c757d;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-shrink: 0;
-        }
-
-        .error-indicator {
-            color: #dc3545;
-            display: none;
-        }
-
-        .error-indicator.show {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .preset-dropdown {
-            position: relative;
-        }
-
-        .preset-menu {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            background: white;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            box-shadow: var(--shadow-md);
-            min-width: 250px;
-            z-index: 1000;
-            display: none;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .preset-menu.show {
-            display: block;
-        }
-
-        .preset-item {
-            padding: 12px 16px;
-            cursor: pointer;
-            border-bottom: 1px solid #f8f9fa;
-            transition: background 0.2s;
-        }
-
-        .preset-item:hover {
-            background: #f8f9fa;
-        }
-
-        .preset-item:last-child {
-            border-bottom: none;
-        }
-
-        .preset-title {
-            font-weight: 600;
-            color: #495057;
-            margin-bottom: 4px;
-        }
-
-        .preset-description {
-            font-size: 0.8rem;
-            color: #6c757d;
-        }
-
-        .responsive-controls {
-            display: flex;
-            gap: 4px;
-        }
-
-        .responsive-btn {
-            background: #f8f9fa;
-            border: 1px solid var(--border-color);
-            padding: 4px 8px;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 0.7rem;
-        }
-
-        .responsive-btn.active {
-            background: #667eea;
-            color: white;
-            border-color: #667eea;
-        }
-
-        .console-panel {
-            background: #1a1a1a;
-            color: #e6e6e6;
-            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-            font-size: 12px;
-            padding: 12px;
-            max-height: 200px;
-            overflow-y: auto;
-            border-top: 1px solid var(--border-color);
-            display: none;
-            flex-shrink: 0;
-        }
-
-        .console-panel.show {
-            display: block;
-        }
-
-        .console-filters {
-            display: flex;
-            gap: 4px;
-        }
-
-        .filter-btn {
-            background: #333;
-            color: #ccc;
-            border: 1px solid #555;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 10px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .filter-btn.active,
-        .filter-btn:hover {
-            background: #667eea;
-            color: white;
-            border-color: #667eea;
-        }
-
-        .console-log {
-            margin: 4px 0;
-            padding: 2px 0;
-            border-left: 3px solid transparent;
-            padding-left: 8px;
-        }
-
-        .console-error {
-            color: #ff6b6b;
-            border-left-color: #ff6b6b;
-            background: rgba(255, 107, 107, 0.1);
-        }
-
-        .console-warn {
-            color: #feca57;
-            border-left-color: #feca57;
-            background: rgba(254, 202, 87, 0.1);
-        }
-
-        .console-info {
-            color: #48cae4;
-            border-left-color: #48cae4;
-            background: rgba(72, 202, 228, 0.1);
-        }
-
-        .console-log.console-log {
-            color: #e6e6e6;
-            border-left-color: #666;
-        }
-
-        .console-time {
-            color: #888;
-            font-size: 10px;
-        }
-
-        .resize-handle {
-            width: 4px;
-            background: var(--border-color);
-            cursor: col-resize;
-            transition: background 0.2s;
-            position: relative;
-            flex-shrink: 0;
-        }
-
-        .resize-handle:hover {
-            background: #667eea;
-        }
-
-        .fullscreen .resize-handle {
-            display: block;
-        }
-
-        .exit-fullscreen {
-            background: rgba(255,255,255,0.2);
-            border: 1px solid rgba(255,255,255,0.3);
-            color: white;
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .exit-fullscreen:hover {
-            background: rgba(255,255,255,0.3);
-        }
-
-        @media (max-width: 768px) {
-            .main-container {
-                flex-direction: column;
-                height: auto;
-                min-height: auto;
+    try {
+        const savedTheme = localStorage.getItem(THEME_KEY);
+        
+        if (savedTheme === 'dark') {
+            document.documentElement.classList.add(DARK_MODE_CLASS);
+            if (document.body) {
+                document.body.classList.add(DARK_MODE_CLASS);
             }
-            
-            .editor-section,
-            .preview-section {
-                flex: none;
-                min-height: 400px;
+        } else if (savedTheme === 'light') {
+            document.documentElement.classList.remove(DARK_MODE_CLASS);
+            if (document.body) {
+                document.body.classList.remove(DARK_MODE_CLASS);
             }
-            
-            .toolbar {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 8px;
-            }
-            
-            .toolbar-group {
-                justify-content: center;
-                flex-wrap: wrap;
-            }
-
-            .resize-handle {
-                display: none;
-            }
-
-            .fullscreen-content {
-                flex-direction: column;
-            }
-
-            .fullscreen .editor-section,
-            .fullscreen .preview-section {
-                flex: 1;
+        } else {
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.documentElement.classList.add(DARK_MODE_CLASS);
+                if (document.body) {
+                    document.body.classList.add(DARK_MODE_CLASS);
+                }
             }
         }
+    } catch (e) {
+        console.warn('Theme persistence not available:', e);
+    }
+})();
+</script>    
+<style>
+:root {
+    /* Theme variables that change with dark mode */
+    --theme-bg-primary: #ffffff;
+    --theme-bg-secondary: #f8f9fa;
+    --theme-bg-tertiary: #e9ecef;
+    --theme-text-primary: #495057;
+    --theme-text-secondary: #6c757d;
+    --theme-text-muted: #a0aec0;
+    --theme-border-color: #dee2e6;
+    --theme-border-focus: #667eea;
+    --theme-shadow-sm: 0 2px 8px rgba(0,0,0,0.1);
+    --theme-shadow-md: 0 4px 15px rgba(0,0,0,0.15);
+    --theme-shadow-lg: 0 8px 25px rgba(0,0,0,0.2);
 
-        .loading-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(255,255,255,0.9);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            display: none;
-        }
-
-        .loading-overlay.show {
-            display: flex;
-        }
-
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Improved focus styles */
-        .toolbar-btn:focus,
-        .tab-btn:focus,
-        .responsive-btn:focus {
-            outline: 2px solid #667eea;
-            outline-offset: 2px;
-        }
-    </style>
-</head>
-<body>
-
-<!-- Navigation -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top" id="main-nav">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="#" onclick="showToast('Welcome to Live Coding Playground!', 'info')">
-            <i class="bi bi-code-square me-2"></i>Live Coding Playground
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <div class="navbar-nav ms-auto">
-                <a class="nav-link" href="#" onclick="loadPreset('basic-page')">
-                    <i class="bi bi-house me-1"></i>Home
-                </a>
-                <a class="nav-link" href="#" onclick="loadPreset('flexbox-demo')">
-                    <i class="bi bi-grid-3x3 me-1"></i>Flexbox
-                </a>
-                <a class="nav-link" href="#" onclick="switchTab('html')">
-                    <i class="bi bi-code me-1"></i>HTML
-                </a>
-                <a class="nav-link" href="#" onclick="switchTab('bootstrap')">
-                    <i class="bi bi-bootstrap me-1"></i>Bootstrap
-                </a>
-                <a class="nav-link active" href="#" onclick="showToast('You are here!', 'info')">
-                    <i class="bi bi-play-circle me-1"></i>Live Coding
-                </a>
-                <div class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="bi bi-grid-3x3-gap me-1"></i>Templates
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#" onclick="loadPreset('landing-page')">
-                            <i class="bi bi-layout-text-window me-2"></i>Landing Page
-                        </a></li>
-                        <li><a class="dropdown-item" href="#" onclick="loadPreset('card-layout')">
-                            <i class="bi bi-card-list me-2"></i>Card Layout
-                        </a></li>
-                        <li><a class="dropdown-item" href="#" onclick="loadPreset('form-design')">
-                            <i class="bi bi-ui-checks me-2"></i>Form Design
-                        </a></li>
-                        <li><a class="dropdown-item" href="#" onclick="loadPreset('navigation')">
-                            <i class="bi bi-menu-button-wide me-2"></i>Navigation
-                        </a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="#" onclick="loadPreset('animation-demo')">
-                            <i class="bi bi-stars me-2"></i>Animations
-                        </a></li>
-                        <li><a class="dropdown-item" href="#" onclick="loadPreset('grid-system')">
-                            <i class="bi bi-grid me-2"></i>Grid System
-                        </a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-</nav>
-
-<!-- Hero Section -->
-<section class="bg-gradient text-white py-3" style="background: var(--primary-gradient);" id="hero-section">
-    <div class="container-fluid">
-        <div class="row align-items-center">
-            <div class="col-lg-8">
-                <h1 class="h4 fw-bold mb-2">
-                    <i class="bi bi-play-circle me-2"></i>Live Coding Playground
-                </h1>
-                <p class="mb-0 small">Write HTML, CSS, and Bootstrap code and see instant results. Perfect for learning and experimentation!</p>
-            </div>
-            <div class="col-lg-4 text-end">
-                <div class="d-flex justify-content-end gap-2">
-                    <span class="badge bg-light text-dark small"><i class="bi bi-lightning me-1"></i>Real-time</span>
-                    <span class="badge bg-light text-dark small"><i class="bi bi-bootstrap me-1"></i>Bootstrap 5</span>
-                    <span class="badge bg-light text-dark small"><i class="bi bi-palette me-1"></i>Syntax Highlighting</span>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Fullscreen Container -->
-<div class="fullscreen-container" id="fullscreen-container">
-    <div class="fullscreen-header">
-        <div>
-            <h5 class="mb-0">
-                <i class="bi bi-arrows-fullscreen me-2"></i>Fullscreen Coding Mode
-            </h5>
-        </div>
-        <button class="exit-fullscreen" onclick="exitFullscreen()">
-            <i class="bi bi-fullscreen-exit"></i>
-            Exit Fullscreen
-        </button>
-    </div>
-    <div class="fullscreen-content" id="fullscreen-content">
-        <!-- Content will be moved here when fullscreen -->
-    </div>
-</div>
-
-<!-- Main Content -->
-<div class="main-container" id="main-container">
-    <!-- Editor Section -->
-    <div class="editor-section" id="editor-section">
-        <!-- Toolbar -->
-        <div class="toolbar">
-            <div class="toolbar-group">
-                <div class="preset-dropdown">
-                    <button class="toolbar-btn" onclick="togglePresets()">
-                        <i class="bi bi-collection"></i>Templates
-                    </button>
-                    <div class="preset-menu" id="preset-menu">
-                        <div class="preset-item" onclick="loadPreset('basic-page')">
-                            <div class="preset-title">Basic Page</div>
-                            <div class="preset-description">Simple HTML structure with Bootstrap</div>
-                        </div>
-                        <div class="preset-item" onclick="loadPreset('landing-page')">
-                            <div class="preset-title">Landing Page</div>
-                            <div class="preset-description">Hero section with call-to-action</div>
-                        </div>
-                        <div class="preset-item" onclick="loadPreset('card-layout')">
-                            <div class="preset-title">Card Layout</div>
-                            <div class="preset-description">Bootstrap cards with custom CSS</div>
-                        </div>
-                        <div class="preset-item" onclick="loadPreset('form-design')">
-                            <div class="preset-title">Form Design</div>
-                            <div class="preset-description">Styled contact form</div>
-                        </div>
-                        <div class="preset-item" onclick="loadPreset('navigation')">
-                            <div class="preset-title">Navigation Bar</div>
-                            <div class="preset-description">Responsive navbar with dropdown</div>
-                        </div>
-                        <div class="preset-item" onclick="loadPreset('flexbox-demo')">
-                            <div class="preset-title">Flexbox Demo</div>
-                            <div class="preset-description">CSS Flexbox with Bootstrap utilities</div>
-                        </div>
-                        <div class="preset-item" onclick="loadPreset('grid-system')">
-                            <div class="preset-title">Grid System</div>
-                            <div class="preset-description">Bootstrap grid with custom styling</div>
-                        </div>
-                        <div class="preset-item" onclick="loadPreset('animation-demo')">
-                            <div class="preset-title">CSS Animations</div>
-                            <div class="preset-description">CSS transitions and animations</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <button class="toolbar-btn" onclick="runCode()">
-                    <i class="bi bi-play-fill"></i>Run
-                </button>
-                
-                <button class="toolbar-btn" onclick="clearCode()">
-                    <i class="bi bi-trash"></i>Clear
-                </button>
-                
-                <button class="toolbar-btn" onclick="formatCode()">
-                    <i class="bi bi-code"></i>Format
-                </button>
-
-                <button class="toolbar-btn fullscreen-btn" onclick="enterFullscreen()">
-                    <i class="bi bi-arrows-fullscreen"></i>Fullscreen
-                </button>
-            </div>
-            
-            <div class="toolbar-group">
-                <select class="theme-selector" id="theme-selector" onchange="changeTheme()">
-                    <option value="github">Light Theme</option>
-                    <option value="monokai" selected>Dark Theme</option>
-                    <option value="dracula">Dracula</option>
-                </select>
-                
-                <button class="toolbar-btn" onclick="toggleConsole()">
-                    <i class="bi bi-terminal"></i>Console
-                </button>
-                
-                <button class="toolbar-btn" onclick="showShortcuts()">
-                    <i class="bi bi-question-circle"></i>Help
-                </button>
-            </div>
-        </div>
-
-        <!-- Editor Tabs -->
-        <div class="editor-tabs">
-            <button class="tab-btn active" onclick="switchTab('html')" id="html-tab">
-                <i class="bi bi-code-slash"></i>HTML
-            </button>
-            <button class="tab-btn" onclick="switchTab('css')" id="css-tab">
-                <i class="bi bi-palette"></i>CSS
-            </button>
-            <button class="tab-btn" onclick="switchTab('bootstrap')" id="bootstrap-tab">
-                <i class="bi bi-bootstrap"></i>Bootstrap Classes
-            </button>
-        </div>
-
-        <!-- Editor Container -->
-        <div class="editor-container">
-            <!-- HTML Editor -->
-            <div class="editor-panel active" id="html-panel">
-                <textarea id="html-editor" placeholder="Write your HTML here...">
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow-lg">
-                <div class="card-header bg-primary text-white">
-                    <h3 class="mb-0">Welcome to Live Coding!</h3>
-                </div>
-                <div class="card-body">
-                    <p class="lead">Start editing the HTML, CSS, or Bootstrap classes to see live changes.</p>
-                    <button class="btn btn-success btn-lg">Get Started</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div></textarea>
-            </div>
-
-            <!-- CSS Editor -->
-            <div class="editor-panel" id="css-panel">
-                <textarea id="css-editor" placeholder="Write your CSS here...">
-/* Custom CSS Styles */
-.card {
-    border: none;
-    border-radius: 15px;
-    transition: transform 0.3s ease;
+    /* Editor-specific variables (stay dark for authenticity) */
+    --dark-bg: #1e1e1e;
+    --dark-panel: #252526;
+    --dark-border: #3e3e42;
+    --editor-bg: #1e1e1e;
+    --editor-text: #d4d4d4;
+    --terminal-bg: #0c0c0c;
+    
+    /* Original gradients */
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --success-gradient: linear-gradient(135deg, #28a745, #20c997);
+    --danger-gradient: linear-gradient(135deg, #ff6b6b, #ee5a52);
+    --info-gradient: linear-gradient(135deg, #17a2b8, #20c997);
 }
 
-.card:hover {
-    transform: translateY(-5px);
+/* Dark mode overrides */
+body.dark-mode {
+    --theme-bg-primary: #1a202c;
+    --theme-bg-secondary: #2d3748;
+    --theme-bg-tertiary: #4a5568;
+    --theme-text-primary: #e2e8f0;
+    --theme-text-secondary: #a0aec0;
+    --theme-text-muted: #718096;
+    --theme-border-color: #4a5568;
+    --theme-border-focus: #63b3ed;
+    --theme-shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+    --theme-shadow-md: 0 4px 15px rgba(0,0,0,0.4);
+    --theme-shadow-lg: 0 8px 25px rgba(0,0,0,0.3);
 }
 
-.card-header {
-    border-radius: 15px 15px 0 0 !important;
+/* Smooth transitions for theme switching */
+*,
+*::before,
+*::after {
+    transition: 
+        background-color 0.3s ease,
+        color 0.3s ease,
+        border-color 0.3s ease,
+        box-shadow 0.3s ease;
 }
 
-.btn-success {
-    background: linear-gradient(45deg, #28a745, #20c997);
-    border: none;
-    border-radius: 25px;
-    padding: 12px 30px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    transition: all 0.3s ease;
-}
-
-.btn-success:hover {
-    transform: scale(1.05);
-    box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 body {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    min-height: 100vh;
-}</textarea>
-            </div>
-
-            <!-- Bootstrap Classes Helper -->
-            <div class="editor-panel" id="bootstrap-panel">
-                <textarea id="bootstrap-editor" placeholder="Bootstrap classes and utilities reference...">
-<!-- Bootstrap 5 Quick Reference -->
-
-<!-- Layout Classes -->
-.container, .container-fluid
-.row, .col, .col-md-6, .col-lg-4
-
-<!-- Spacing Utilities -->
-.m-0 to .m-5 (margin)
-.p-0 to .p-5 (padding)
-.mt-3, .mb-4, .ms-2, .me-1 (directional)
-
-<!-- Flexbox Utilities -->
-.d-flex, .justify-content-center, .align-items-center
-.flex-column, .flex-row, .flex-wrap
-
-<!-- Text Utilities -->
-.text-center, .text-start, .text-end
-.text-primary, .text-success, .text-danger
-.fw-bold, .fw-normal, .fs-1 to .fs-6
-
-<!-- Background Colors -->
-.bg-primary, .bg-success, .bg-warning
-.bg-light, .bg-dark, .bg-transparent
-
-<!-- Components -->
-.btn .btn-primary .btn-lg .btn-outline-success
-.card .card-header .card-body .card-footer
-.navbar .nav-link .dropdown-menu
-.alert .alert-info .alert-dismissible
-
-<!-- Responsive Display -->
-.d-none .d-md-block .d-lg-inline
-.d-sm-flex .d-xl-none
-
-<!-- Position Utilities -->
-.position-relative .position-absolute
-.top-0 .bottom-0 .start-0 .end-0
-
-<!-- Border Utilities -->
-.border .border-0 .rounded .rounded-circle
-.border-primary .border-2
-
-<!-- Shadow Utilities -->
-.shadow-sm .shadow .shadow-lg
-
-Copy and paste these classes into your HTML to see them in action!</textarea>
-            </div>
-        </div>
-
-        <!-- Status Bar -->
-        <div class="status-bar">
-            <div>
-                <span id="cursor-position">Ln 1, Col 1</span>
-                <span class="ms-3" id="word-count">0 words</span>
-            </div>
-            <div class="error-indicator" id="error-indicator">
-                <i class="bi bi-exclamation-triangle"></i>
-                <span id="error-message">No errors</span>
-            </div>
-            <div>
-                <span id="auto-save-status">Auto-save: On</span>
-            </div>
-        </div>
-
-        <!-- Enhanced Console Panel -->
-        <div class="console-panel" id="console-panel">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-                <div class="d-flex align-items-center gap-3">
-                    <strong>Console Output</strong>
-                    <div class="console-filters">
-                        <button class="filter-btn active" data-filter="all" onclick="filterConsole('all')">All</button>
-                        <button class="filter-btn" data-filter="log" onclick="filterConsole('log')">Logs</button>
-                        <button class="filter-btn" data-filter="error" onclick="filterConsole('error')">Errors</button>
-                        <button class="filter-btn" data-filter="warn" onclick="filterConsole('warn')">Warnings</button>
-                    </div>
-                </div>
-                <div class="d-flex gap-2">
-                    <button class="btn btn-sm btn-outline-light" onclick="testConsole()">Test</button>
-                    <button class="btn btn-sm btn-outline-light" onclick="clearConsole()">Clear</button>
-                </div>
-            </div>
-            <div id="console-output">
-                <div class="console-log console-info">
-                    [${new Date().toLocaleTimeString()}] Console ready - Try adding JavaScript to your HTML!
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Resize Handle -->
-    <div class="resize-handle" id="resize-handle"></div>
-
-    <!-- Preview Section -->
-    <div class="preview-section" id="preview-section">
-        <div class="preview-header">
-            <div>
-                <h6 class="mb-0">
-                    <i class="bi bi-eye me-2"></i>Live Preview
-                </h6>
-            </div>
-            <div class="d-flex align-items-center gap-3">
-                <div class="responsive-controls">
-                    <button class="responsive-btn active" onclick="setPreviewSize('100%')" title="Desktop">
-                        <i class="bi bi-display"></i>
-                    </button>
-                    <button class="responsive-btn" onclick="setPreviewSize('768px')" title="Tablet">
-                        <i class="bi bi-tablet"></i>
-                    </button>
-                    <button class="responsive-btn" onclick="setPreviewSize('375px')" title="Mobile">
-                        <i class="bi bi-phone"></i>
-                    </button>
-                </div>
-                <div class="live-indicator">LIVE</div>
-            </div>
-        </div>
-        
-        <div style="flex: 1; position: relative;">
-            <div class="loading-overlay" id="loading-overlay">
-                <div class="spinner"></div>
-            </div>
-            <iframe id="preview-frame" class="preview-frame"></iframe>
-        </div>
-    </div>
-</div>
-
-<!-- Keyboard Shortcuts Modal -->
-<div class="modal fade" id="shortcutsModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">
-                    <i class="bi bi-keyboard me-2"></i>Keyboard Shortcuts
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-6">
-                        <div class="d-flex justify-content-between mb-2">
-                            <span>Run Code</span>
-                            <kbd class="bg-light text-dark px-2 py-1 rounded">Ctrl + Enter</kbd>
-                        </div>
-                        <div class="d-flex justify-content-between mb-2">
-                            <span>Format Code</span>
-                            <kbd class="bg-light text-dark px-2 py-1 rounded">Ctrl + Shift + F</kbd>
-                        </div>
-                        <div class="d-flex justify-content-between mb-2">
-                            <span>Save</span>
-                            <kbd class="bg-light text-dark px-2 py-1 rounded">Ctrl + S</kbd>
-                        </div>
-                        <div class="d-flex justify-content-between mb-2">
-                            <span>Find</span>
-                            <kbd class="bg-light text-dark px-2 py-1 rounded">Ctrl + F</kbd>
-                        </div>
-                        <div class="d-flex justify-content-between mb-2">
-                            <span>Replace</span>
-                            <kbd class="bg-light text-dark px-2 py-1 rounded">Ctrl + H</kbd>
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="d-flex justify-content-between mb-2">
-                            <span>Switch to HTML</span>
-                            <kbd class="bg-light text-dark px-2 py-1 rounded">Alt + 1</kbd>
-                        </div>
-                        <div class="d-flex justify-content-between mb-2">
-                            <span>Switch to CSS</span>
-                            <kbd class="bg-light text-dark px-2 py-1 rounded">Alt + 2</kbd>
-                        </div>
-                        <div class="d-flex justify-content-between mb-2">
-                            <span>Switch to Bootstrap</span>
-                            <kbd class="bg-light text-dark px-2 py-1 rounded">Alt + 3</kbd>
-                        </div>
-                        <div class="d-flex justify-content-between mb-2">
-                            <span>Toggle Console</span>
-                            <kbd class="bg-light text-dark px-2 py-1 rounded">Ctrl + `</kbd>
-                        </div>
-                        <div class="d-flex justify-content-between mb-2">
-                            <span>Fullscreen</span>
-                            <kbd class="bg-light text-dark px-2 py-1 rounded">F11</kbd>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Toast Container -->
-<div class="toast-container position-fixed top-0 end-0 p-3">
-    <div id="main-toast" class="toast" role="alert">
-        <div class="toast-header">
-            <i class="bi bi-check-circle text-success me-2"></i>
-            <strong class="me-auto" id="toast-title">Success</strong>
-            <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
-        </div>
-        <div class="toast-body" id="toast-message">
-            Code executed successfully!
-        </div>
-    </div>
-</div>
-
-<!-- Scripts -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-<!-- CodeMirror Scripts -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/xml/xml.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/css/css.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/htmlmixed/htmlmixed.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closetag.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/selection/active-line.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/search/search.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/search/searchcursor.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/dialog/dialog.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/dialog/dialog.min.css"></script>
-
-<!-- Main Application Script -->
-<script>
-    // Global variables
-    let htmlEditor, cssEditor, bootstrapEditor;
-    let currentTab = 'html';
-    let autoSaveInterval;
-    let updateTimeout;
-    let isFullscreen = false;
-
-    // Initialize on page load
-    document.addEventListener('DOMContentLoaded', function() {
-        try {
-            initializeEditors();
-            setupEventListeners();
-            loadFromLocalStorage();
-            updatePreview();
-            startAutoSave();
-        } catch (error) {
-            console.error('Initialization error:', error);
-            showToast('Initialization failed: ' + error.message, 'error');
-        }
-    });
-
-    function initializeEditors() {
-        // HTML Editor
-        htmlEditor = CodeMirror.fromTextArea(document.getElementById('html-editor'), {
-            mode: 'htmlmixed',
-            theme: 'monokai',
-            lineNumbers: true,
-            autoCloseTags: true,
-            autoCloseBrackets: true,
-            matchBrackets: true,
-            styleActiveLine: true,
-            indentUnit: 2,
-            tabSize: 2,
-            lineWrapping: true,
-            extraKeys: {
-                "Ctrl-Enter": runCode,
-                "Ctrl-S": saveCode,
-                "Ctrl-Shift-F": formatCode,
-                "Alt-1": () => switchTab('html'),
-                "Alt-2": () => switchTab('css'),
-                "Alt-3": () => switchTab('bootstrap'),
-                "Ctrl-`": toggleConsole,
-                "F11": toggleFullscreen
-            }
-        });
-
-        // CSS Editor
-        cssEditor = CodeMirror.fromTextArea(document.getElementById('css-editor'), {
-            mode: 'css',
-            theme: 'monokai',
-            lineNumbers: true,
-            autoCloseBrackets: true,
-            matchBrackets: true,
-            styleActiveLine: true,
-            indentUnit: 2,
-            tabSize: 2,
-            lineWrapping: true,
-            extraKeys: {
-                "Ctrl-Enter": runCode,
-                "Ctrl-S": saveCode,
-                "Ctrl-Shift-F": formatCode,
-                "Alt-1": () => switchTab('html'),
-                "Alt-2": () => switchTab('css'),
-                "Alt-3": () => switchTab('bootstrap'),
-                "Ctrl-`": toggleConsole,
-                "F11": toggleFullscreen
-            }
-        });
-
-        // Bootstrap Editor
-        bootstrapEditor = CodeMirror.fromTextArea(document.getElementById('bootstrap-editor'), {
-            mode: 'htmlmixed',
-            theme: 'monokai',
-            lineNumbers: true,
-            readOnly: false,
-            styleActiveLine: true,
-            lineWrapping: true,
-            extraKeys: {
-                "Ctrl-Enter": runCode,
-                "Alt-1": () => switchTab('html'),
-                "Alt-2": () => switchTab('css'),
-                "Alt-3": () => switchTab('bootstrap'),
-                "F11": toggleFullscreen
-            }
-        });
-
-        // Set up change listeners
-        htmlEditor.on('change', debounceUpdate);
-        cssEditor.on('change', debounceUpdate);
-        
-        // Cursor position tracking
-        htmlEditor.on('cursorActivity', updateCursorPosition);
-        cssEditor.on('cursorActivity', updateCursorPosition);
-    }
-
-    function debounceUpdate() {
-        clearTimeout(updateTimeout);
-        updateTimeout = setTimeout(() => {
-            updatePreview();
-            updateWordCount();
-        }, 300);
-    }
-
-    function setupEventListeners() {
-        // Resize handle
-        setupResizeHandle();
-        
-        // Keyboard shortcuts
-        document.addEventListener('keydown', handleKeyboardShortcuts);
-        
-        // Close preset menu when clicking outside
-        document.addEventListener('click', function(e) {
-            if (!e.target.closest('.preset-dropdown')) {
-                document.getElementById('preset-menu').classList.remove('show');
-            }
-        });
-
-        // Auto-save on beforeunload
-        window.addEventListener('beforeunload', saveToLocalStorage);
-
-        // Fullscreen API events
-        document.addEventListener('fullscreenchange', handleFullscreenChange);
-        document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
-        document.addEventListener('mozfullscreenchange', handleFullscreenChange);
-        document.addEventListener('MSFullscreenChange', handleFullscreenChange);
-    }
-
-    function setupResizeHandle() {
-        const resizeHandle = document.getElementById('resize-handle');
-        const mainContainer = document.querySelector('.main-container');
-        let isResizing = false;
-
-        resizeHandle.addEventListener('mousedown', function(e) {
-            isResizing = true;
-            document.addEventListener('mousemove', handleResize);
-            document.addEventListener('mouseup', stopResize);
-            e.preventDefault();
-        });
-
-        function handleResize(e) {
-            if (!isResizing) return;
-            
-            const containerRect = mainContainer.getBoundingClientRect();
-            const percentage = ((e.clientX - containerRect.left) / containerRect.width) * 100;
-            
-            if (percentage > 20 && percentage < 80) {
-                const editorSection = document.querySelector('.editor-section');
-                const previewSection = document.querySelector('.preview-section');
-                
-                editorSection.style.flex = `0 0 ${percentage}%`;
-                previewSection.style.flex = `0 0 ${100 - percentage}%`;
-                
-                // Refresh editors after resize
-                setTimeout(() => {
-                    htmlEditor.refresh();
-                    cssEditor.refresh();
-                    bootstrapEditor.refresh();
-                }, 100);
-            }
-        }
-
-        function stopResize() {
-            isResizing = false;
-            document.removeEventListener('mousemove', handleResize);
-            document.removeEventListener('mouseup', stopResize);
-        }
-    }
-
-    function handleKeyboardShortcuts(e) {
-        // F11 for fullscreen toggle
-        if (e.key === 'F11') {
-            e.preventDefault();
-            toggleFullscreen();
-        }
-        
-        // Ctrl+Enter for run
-        if (e.ctrlKey && e.key === 'Enter') {
-            e.preventDefault();
-            runCode();
-        }
-        
-        // Ctrl+Shift+F for format
-        if (e.ctrlKey && e.shiftKey && e.key === 'F') {
-            e.preventDefault();
-            formatCode();
-        }
-        
-        // Ctrl+S for save
-        if (e.ctrlKey && e.key === 's') {
-            e.preventDefault();
-            saveCode();
-        }
-    }
-
-    // Fullscreen functionality
-    function enterFullscreen() {
-        const container = document.getElementById('fullscreen-container');
-        const content = document.getElementById('fullscreen-content');
-        const mainContainer = document.getElementById('main-container');
-        
-        // Move content to fullscreen container
-        content.appendChild(mainContainer);
-        
-        // Show fullscreen container
-        container.classList.add('active');
-        mainContainer.classList.add('fullscreen');
-        
-        // Hide main nav and hero
-        document.getElementById('main-nav').style.display = 'none';
-        document.getElementById('hero-section').style.display = 'none';
-        
-        isFullscreen = true;
-        
-        // Refresh editors
-        setTimeout(() => {
-            htmlEditor.refresh();
-            cssEditor.refresh();
-            bootstrapEditor.refresh();
-        }, 100);
-        
-        showToast('Entered fullscreen mode', 'info');
-    }
-
-    function exitFullscreen() {
-        const container = document.getElementById('fullscreen-container');
-        const mainContainer = document.getElementById('main-container');
-        const originalParent = document.body;
-        
-        // Move content back to original position
-        originalParent.appendChild(mainContainer);
-        
-        // Hide fullscreen container
-        container.classList.remove('active');
-        mainContainer.classList.remove('fullscreen');
-        
-        // Show main nav and hero
-        document.getElementById('main-nav').style.display = 'block';
-        document.getElementById('hero-section').style.display = 'block';
-        
-        // Reset flex styles
-        document.querySelector('.editor-section').style.flex = '';
-        document.querySelector('.preview-section').style.flex = '';
-        
-        isFullscreen = false;
-        
-        // Refresh editors
-        setTimeout(() => {
-            htmlEditor.refresh();
-            cssEditor.refresh();
-            bootstrapEditor.refresh();
-        }, 100);
-        
-        showToast('Exited fullscreen mode', 'info');
-    }
-
-    function toggleFullscreen() {
-        if (isFullscreen) {
-            exitFullscreen();
-        } else {
-            enterFullscreen();
-        }
-    }
-
-    function handleFullscreenChange() {
-        // Handle browser fullscreen API
-        const isInFullscreen = document.fullscreenElement || 
-                              document.webkitFullscreenElement || 
-                              document.mozFullScreenElement || 
-                              document.msFullscreenElement;
-        
-        if (!isInFullscreen && isFullscreen) {
-            // Browser exited fullscreen, but we're still in app fullscreen
-            // User might have pressed ESC, so we should exit our fullscreen too
-            exitFullscreen();
-        }
-    }
-
-    // Tab switching
-    function switchTab(tab) {
-        try {
-            // Update tab buttons
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById(`${tab}-tab`).classList.add('active');
-            
-            // Update editor panels
-            document.querySelectorAll('.editor-panel').forEach(panel => panel.classList.remove('active'));
-            document.getElementById(`${tab}-panel`).classList.add('active');
-            
-            currentTab = tab;
-            
-            // Refresh the active editor
-            setTimeout(() => {
-                if (tab === 'html') htmlEditor.refresh();
-                else if (tab === 'css') cssEditor.refresh();
-                else if (tab === 'bootstrap') bootstrapEditor.refresh();
-            }, 100);
-            
-        } catch (error) {
-            console.error('Tab switching error:', error);
-            showToast('Failed to switch tab', 'error');
-        }
-    }
-
-    // Update preview
-    function updatePreview() {
-        try {
-            const htmlContent = htmlEditor.getValue();
-            const cssContent = cssEditor.getValue();
-            
-            const fullHTML = generateFullHTML(htmlContent, cssContent);
-            
-            const iframe = document.getElementById('preview-frame');
-            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-            
-            iframeDoc.open();
-            iframeDoc.write(fullHTML);
-            iframeDoc.close();
-            
-            // Clear any previous errors
-            hideError();
-            
-        } catch (error) {
-            showError('Preview Error: ' + error.message);
-            console.error('Preview update error:', error);
-        }
-    }
-
-    function generateFullHTML(htmlContent, cssContent) {
-        return `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Preview</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
-    <style>
-        /* Reset and base styles */
-        * { box-sizing: border-box; }
-        body { margin: 0; font-family: system-ui, -apple-system, sans-serif; }
-        
-        /* User CSS */
-        ${cssContent}
-    </style>
-</head>
-<body>
-    ${htmlContent}
-    
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"><\/script>
-    <script>
-        // Enhanced console capture
-        const originalConsole = { ...console };
-        
-        function sendToParent(type, method, args) {
-            try {
-                parent.postMessage({
-                    type: type,
-                    method: method,
-                    args: args,
-                    timestamp: new Date().toISOString()
-                }, '*');
-            } catch (e) {
-                // Ignore cross-origin errors
-            }
-        }
-        
-        // Capture all console methods
-        ['log', 'error', 'warn', 'info', 'debug', 'table', 'group', 'groupEnd'].forEach(method => {
-            console[method] = function(...args) {
-                originalConsole[method](...args);
-                
-                const formattedArgs = args.map(arg => {
-                    if (typeof arg === 'object') {
-                        try {
-                            return JSON.stringify(arg, null, 2);
-                        } catch (e) {
-                            return '[Object object]';
-                        }
-                    }
-                    return String(arg);
-                });
-                
-                sendToParent('console', method === 'debug' ? 'log' : method, formattedArgs);
-            };
-        });
-        
-        // Capture errors
-        window.addEventListener('error', function(e) {
-            sendToParent('error', 'error', [
-                \`\${e.message} at \${e.filename}:\${e.lineno}:\${e.colno}\`
-            ]);
-        });
-        
-        // Capture unhandled promise rejections
-        window.addEventListener('unhandledrejection', function(e) {
-            sendToParent('error', 'error', [
-                'Unhandled Promise Rejection: ' + e.reason
-            ]);
-        });
-        
-        // Performance monitoring
-        window.addEventListener('load', function() {
-            const loadTime = performance.now();
-            if (loadTime > 100) {
-                sendToParent('console', 'warn', [
-                    \`Page load time: \${loadTime.toFixed(2)}ms\`
-                ]);
-            }
-        });
-        
-        // Add helper functions for testing
-        window.testConsole = function() {
-            console.log('Test log from preview');
-            console.warn('Test warning from preview');
-            console.error('Test error from preview');
-            console.info('Test info from preview');
-        };
-    <\/script>
-</body>
-</html>`;
-    }
-
-    // Enhanced message handling from iframe
-    window.addEventListener('message', function(e) {
-        if (e.data.type === 'console') {
-            addConsoleMessage(e.data.method, e.data.args.join(' '));
-        } else if (e.data.type === 'error') {
-            addConsoleMessage('error', e.data.args ? e.data.args[0] : `${e.data.message} at line ${e.data.lineno}`);
-            showError(`Runtime Error: ${e.data.message || e.data.args[0]}`);
-        }
-    });
-
-    // Enhanced console functionality
-    let consoleFilter = 'all';
-    let consoleMessages = [];
-
-    function addConsoleMessage(type, message) {
-        const timestamp = new Date().toLocaleTimeString();
-        const messageObj = { type, message, timestamp };
-        consoleMessages.push(messageObj);
-        
-        // Limit to last 100 messages
-        if (consoleMessages.length > 100) {
-            consoleMessages.shift();
-        }
-        
-        updateConsoleDisplay();
-    }
-
-    function updateConsoleDisplay() {
-        const consoleOutput = document.getElementById('console-output');
-        if (!consoleOutput) return;
-        
-        // Filter messages based on current filter
-        const filteredMessages = consoleMessages.filter(msg => 
-            consoleFilter === 'all' || msg.type === consoleFilter
-        );
-        
-        // Clear and rebuild console
-        consoleOutput.innerHTML = '';
-        
-        filteredMessages.forEach(msg => {
-            const logEntry = document.createElement('div');
-            logEntry.className = `console-log console-${msg.type}`;
-            logEntry.innerHTML = `<span class="console-time">[${msg.timestamp}]</span> ${msg.message}`;
-            consoleOutput.appendChild(logEntry);
-        });
-        
-        consoleOutput.scrollTop = consoleOutput.scrollHeight;
-    }
-
-    function filterConsole(filter) {
-        consoleFilter = filter;
-        
-        // Update filter buttons
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-            btn.classList.toggle('active', btn.dataset.filter === filter);
-        });
-        
-        updateConsoleDisplay();
-    }
-
-    function testConsole() {
-        // Add test messages to demonstrate console functionality
-        addConsoleMessage('log', 'This is a test log message');
-        addConsoleMessage('info', 'Bootstrap and JavaScript are loaded successfully');
-        addConsoleMessage('warn', 'This is a warning message example');
-        addConsoleMessage('error', 'This is an error message example');
-        
-        showToast('Console test messages added!', 'info');
-    }
-
-    function clearConsole() {
-        consoleMessages = [];
-        document.getElementById('console-output').innerHTML = '';
-        addConsoleMessage('info', 'Console cleared');
-        showToast('Console cleared!', 'info');
-    }
-
-    // Toolbar functions
-    function runCode() {
-        try {
-            showLoading();
-            setTimeout(() => {
-                updatePreview();
-                hideLoading();
-                showToast('Code executed successfully!', 'success');
-            }, 200);
-        } catch (error) {
-            hideLoading();
-            console.error('Run code error:', error);
-            showToast('Failed to run code', 'error');
-        }
-    }
-
-    function clearCode() {
-        if (confirm('Are you sure you want to clear all code? This action cannot be undone.')) {
-            htmlEditor.setValue('');
-            cssEditor.setValue('');
-            clearConsole();
-            updatePreview();
-            showToast('Code cleared!', 'info');
-        }
-    }
-
-    function formatCode() {
-        try {
-            const currentEditor = getCurrentEditor();
-            if (!currentEditor) return;
-            
-            const code = currentEditor.getValue();
-            let formatted = code;
-            
-            if (currentTab === 'html') {
-                formatted = formatHTML(code);
-            } else if (currentTab === 'css') {
-                formatted = formatCSS(code);
-            }
-            
-            currentEditor.setValue(formatted);
-            showToast('Code formatted!', 'success');
-            
-        } catch (error) {
-            console.error('Format code error:', error);
-            showToast('Failed to format code', 'error');
-        }
-    }
-
-    function formatHTML(html) {
-        // Simple HTML formatting
-        return html
-            .replace(/></g, '>\n<')
-            .replace(/^\s+|\s+$/g, '')
-            .split('\n')
-            .map((line, index, arr) => {
-                const trimmed = line.trim();
-                if (!trimmed) return '';
-                
-                let indent = 0;
-                for (let i = 0; i < index; i++) {
-                    const prevLine = arr[i].trim();
-                    if (prevLine) {
-                        const prevOpenTags = (prevLine.match(/<[^\/][^>]*>/g) || []).length;
-                        const prevCloseTags = (prevLine.match(/<\/[^>]*>/g) || []).length;
-                        const prevSelfClosing = (prevLine.match(/<[^>]*\/>/g) || []).length;
-                        indent += (prevOpenTags - prevSelfClosing) - prevCloseTags;
-                    }
-                }
-                
-                if (trimmed.startsWith('</')) indent = Math.max(0, indent - 1);
-                
-                return '  '.repeat(Math.max(0, indent)) + trimmed;
-            })
-            .filter(line => line.trim())
-            .join('\n');
-    }
-
-    function formatCSS(css) {
-        // Simple CSS formatting
-        return css
-            .replace(/\{/g, ' {\n  ')
-            .replace(/\}/g, '\n}\n')
-            .replace(/;/g, ';\n  ')
-            .replace(/,/g, ',\n')
-            .replace(/\n\s*\n/g, '\n')
-            .replace(/^\s+|\s+$/g, '');
-    }
-
-    function getCurrentEditor() {
-        switch (currentTab) {
-            case 'html': return htmlEditor;
-            case 'css': return cssEditor;
-            case 'bootstrap': return bootstrapEditor;
-            default: return htmlEditor;
-        }
-    }
-
-    function changeTheme() {
-        const theme = document.getElementById('theme-selector').value;
-        htmlEditor.setOption('theme', theme);
-        cssEditor.setOption('theme', theme);
-        bootstrapEditor.setOption('theme', theme);
-        
-        showToast(`Theme changed to ${theme}!`, 'info');
-    }
-
-    function toggleConsole() {
-        const consolePanel = document.getElementById('console-panel');
-        consolePanel.classList.toggle('show');
-        
-        if (consolePanel.classList.contains('show')) {
-            showToast('Console opened', 'info');
-        } else {
-            showToast('Console closed', 'info');
-        }
-    }
-
-    function clearConsole() {
-        document.getElementById('console-output').innerHTML = '';
-        showToast('Console cleared!', 'info');
-    }
-
-    function setPreviewSize(width) {
-        const iframe = document.getElementById('preview-frame');
-        iframe.style.width = width;
-        iframe.style.margin = width === '100%' ? '0' : '0 auto';
-        
-        // Update active button
-        document.querySelectorAll('.responsive-btn').forEach(btn => btn.classList.remove('active'));
-        event.target.classList.add('active');
-        
-        const deviceName = width === '100%' ? 'Desktop' : width === '768px' ? 'Tablet' : 'Mobile';
-        showToast(`Preview size: ${deviceName}`, 'info');
-    }
-
-    // Preset templates
-    function togglePresets() {
-        document.getElementById('preset-menu').classList.toggle('show');
-    }
-
-    function loadPreset(presetName) {
-        const presets = {
-            'basic-page': {
-                html: `<div class="container py-5">
-    <div class="row">
-        <div class="col-12 text-center">
-            <h1 class="display-4 mb-4">Welcome to My Website</h1>
-            <p class="lead">This is a basic Bootstrap page template.</p>
-            <button class="btn btn-primary btn-lg">Get Started</button>
-        </div>
-    </div>
-</div>`,
-                css: `body {
-    background-color: #f8f9fa;
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    background: var(--theme-bg-secondary);
+    color: var(--theme-text-primary);
+    overflow: hidden;
+    line-height: 1.6;
 }
 
-.display-4 {
-    color: #495057;
-    font-weight: 300;
-}
-
-.btn-primary {
-    background: linear-gradient(45deg, #007bff, #0056b3);
-    border: none;
-    border-radius: 25px;
-    padding: 12px 30px;
-}`
-            },
-            'flexbox-demo': {
-                html: `<div class="container py-5">
-    <div class="row mb-5">
-        <div class="col-12 text-center">
-            <h2>CSS Flexbox + Bootstrap Demo</h2>
-            <p class="lead">Combining CSS Flexbox with Bootstrap utilities</p>
-        </div>
-    </div>
-    
-    <!-- Flexbox Layout Examples -->
-    <div class="row g-4">
-        <div class="col-md-6">
-            <div class="demo-card">
-                <h4>Centered Content</h4>
-                <div class="flex-demo flex-center">
-                    <div class="flex-item">Item 1</div>
-                    <div class="flex-item">Item 2</div>
-                    <div class="flex-item">Item 3</div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="col-md-6">
-            <div class="demo-card">
-                <h4>Space Between</h4>
-                <div class="flex-demo flex-between">
-                    <div class="flex-item">Start</div>
-                    <div class="flex-item">Middle</div>
-                    <div class="flex-item">End</div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>`,
-                css: `body {
-    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-}
-
-.demo-card {
-    background: white;
-    padding: 1.5rem;
-    border-radius: 15px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-    height: 100%;
-}
-
-.demo-card h4 {
-    color: #333;
-    margin-bottom: 1rem;
-    font-weight: 600;
-}
-
-.flex-demo {
-    background: #f8f9fa;
-    border: 2px dashed #dee2e6;
-    border-radius: 10px;
-    padding: 1rem;
-    min-height: 120px;
-}
-
-.flex-center {
+.platform-container {
+    height: 100vh;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 1rem;
+    flex-direction: column;
 }
 
-.flex-between {
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 6px;
+    background: #000;
+    color: white;
+    padding: 8px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 600;
+    z-index: 10000;
+    transition: top 0.15s ease-out;
+}
+
+.skip-link:focus {
+    top: 6px;
+}
+
+.sr-only {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+}
+
+.top-nav {
+    background: var(--theme-bg-primary);
+    border-bottom: 1px solid var(--theme-border-color);
+    padding: 8px 16px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-shrink: 0;
+    z-index: 1000;
 }
 
-.flex-item {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 0.5rem 1rem;
+.nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--theme-text-primary);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.nav-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.nav-btn {
+    background: transparent;
+    border: 1px solid var(--theme-border-color);
+    color: var(--theme-text-primary);
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.nav-btn:hover {
+    background: var(--theme-bg-tertiary);
+    border-color: var(--theme-border-focus);
+}
+
+.main-split {
+    flex: 1;
+    display: flex;
+    height: calc(100vh - 50px);
+}
+
+.editor-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: var(--dark-panel);
+    border-right: 1px solid var(--dark-border);
+    min-width: 300px;
+}
+
+.preview-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: var(--theme-bg-primary);
+    border-left: 1px solid var(--theme-border-color);
+    min-width: 300px;
+}
+
+.editor-toolbar {
+    background: var(--dark-bg);
+    border-bottom: 1px solid var(--dark-border);
+    padding: 6px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.toolbar-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.toolbar-btn {
+    background: transparent;
+    border: 1px solid var(--dark-border);
+    color: #8a8a8a;
+    padding: 4px 8px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.toolbar-btn:hover {
+    background: #404040;
+    color: #fff;
+    border-color: #555;
+}
+
+.toolbar-btn.success {
+    background: var(--success-gradient);
+    color: #fff;
+    border-color: transparent;
+}
+
+.toolbar-btn.danger {
+    background: var(--danger-gradient);
+    color: #fff;
+    border-color: transparent;
+}
+
+.editor-tabs {
+    background: var(--dark-bg);
+    border-bottom: 1px solid var(--dark-border);
+    display: flex;
+    align-items: center;
+    padding: 0;
+    flex-shrink: 0;
+}
+
+.tab-btn {
+    background: transparent;
+    border: none;
+    padding: 10px 16px;
+    color: #8a8a8a;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-bottom: 2px solid transparent;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    border-right: 1px solid var(--dark-border);
+}
+
+.tab-btn.active {
+    color: #fff;
+    background: var(--dark-panel);
+    border-bottom-color: #007acc;
+}
+
+.tab-btn:hover:not(.active) {
+    background: #404040;
+    color: #fff;
+}
+
+.editor-container {
+    flex: 1;
+    display: flex;
+    position: relative;
+    overflow: hidden;
+}
+
+.editor-panel {
+    flex: 1;
+    display: none;
+    flex-direction: column;
+}
+
+.editor-panel.active {
+    display: flex;
+}
+
+.code-editor {
+    flex: 1;
+    border: none;
+    resize: none;
+    padding: 16px;
+    font-family: 'Cascadia Code', 'Fira Code', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 14px;
+    line-height: 1.6;
+    background: var(--editor-bg);
+    color: var(--editor-text);
+    outline: none;
+    tab-size: 2;
+    white-space: pre;
+    overflow-wrap: break-word;
+}
+
+.code-editor::placeholder {
+    color: #6a6a6a;
+}
+
+.terminal-section {
+    height: 200px;
+    background: var(--terminal-bg);
+    border-top: 1px solid var(--dark-border);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+}
+
+.terminal-header {
+    background: var(--dark-panel);
+    padding: 8px 16px;
+    border-bottom: 1px solid var(--dark-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #8a8a8a;
+    font-size: 0.8rem;
+}
+
+.terminal-content {
+    flex: 1;
+    padding: 12px;
+    font-family: 'Cascadia Code', monospace;
+    font-size: 12px;
+    color: #e6e6e6;
+    overflow-y: auto;
+    white-space: pre-wrap;
+}
+
+.terminal-line {
+    margin: 2px 0;
+    padding: 1px 0;
+}
+
+.terminal-error { color: #ff6b6b; }
+.terminal-warn { color: #feca57; }
+.terminal-info { color: #48cae4; }
+.terminal-success { color: #4ecdc4; }
+
+.preview-header {
+    background: var(--theme-bg-primary);
+    padding: 8px 16px;
+    border-bottom: 1px solid var(--theme-border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--theme-text-primary);
+    font-size: 0.85rem;
+}
+
+.preview-frame {
+    flex: 1;
+    border: none;
+    background: #fff;
+    width: 100%;
+}
+
+.live-indicator {
+    background: rgba(76, 175, 80, 0.2);
+    color: #4caf50;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    border: 1px solid #4caf50;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+.responsive-controls {
+    display: flex;
+    gap: 4px;
+}
+
+.responsive-btn {
+    background: transparent;
+    border: 1px solid var(--theme-border-color);
+    color: var(--theme-text-secondary);
+    padding: 4px 8px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.7rem;
+}
+
+.responsive-btn.active,
+.responsive-btn:hover {
+    background: var(--theme-bg-tertiary);
+    color: var(--theme-text-primary);
+    border-color: var(--theme-border-focus);
+}
+
+.quick-guide-float {
+    position: fixed;
+    top: 60px;
+    right: 20px;
+    z-index: 9999;
+    background: var(--theme-bg-primary);
+    border: 1px solid var(--theme-border-color);
     border-radius: 8px;
-    font-weight: 500;
-    text-align: center;
-    min-width: 80px;
-}`
+    box-shadow: var(--theme-shadow-lg);
+    width: 320px;
+    max-height: 80vh;
+    display: none;
+    flex-direction: column;
+}
+
+.quick-guide-float.show {
+    display: flex;
+}
+
+.guide-header {
+    background: var(--info-gradient);
+    color: #fff;
+    padding: 10px 16px;
+    border-radius: 8px 8px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.guide-close {
+    background: transparent;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    padding: 2px;
+    border-radius: 2px;
+}
+
+.guide-tabs {
+    background: var(--theme-bg-secondary);
+    display: flex;
+    border-bottom: 1px solid var(--theme-border-color);
+}
+
+.guide-tab {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--theme-text-secondary);
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.8rem;
+    border-bottom: 2px solid transparent;
+}
+
+.guide-tab.active {
+    color: var(--theme-text-primary);
+    border-bottom-color: #17a2b8;
+    background: var(--theme-bg-primary);
+}
+
+.guide-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0;
+}
+
+.guide-panel {
+    display: none;
+    padding: 16px;
+}
+
+.guide-panel.active {
+    display: block;
+}
+
+.guide-section {
+    margin-bottom: 20px;
+}
+
+.guide-title {
+    color: var(--theme-text-primary);
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--theme-border-color);
+}
+
+.guide-item {
+    background: var(--theme-bg-secondary);
+    border: 1px solid var(--theme-border-color);
+    border-radius: 4px;
+    padding: 8px 10px;
+    margin-bottom: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Cascadia Code', monospace;
+    font-size: 0.75rem;
+    color: var(--theme-text-primary);
+}
+
+.guide-item:hover {
+    background: var(--theme-bg-tertiary);
+    border-color: var(--theme-border-focus);
+    transform: translateX(2px);
+}
+
+.guide-item code {
+    color: #4fc3f7;
+    background: none;
+}
+
+.guide-description {
+    color: var(--theme-text-secondary);
+    font-size: 0.7rem;
+    margin-top: 3px;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.status-bar {
+    background: #007acc;
+    color: #fff;
+    padding: 2px 16px;
+    font-size: 0.7rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10000;
+    pointer-events: none;
+}
+
+.toast {
+    background: var(--theme-bg-primary);
+    border: 1px solid var(--theme-border-color);
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 8px;
+    box-shadow: var(--theme-shadow-md);
+    transform: translateX(120%);
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    max-width: 300px;
+    color: var(--theme-text-primary);
+    pointer-events: auto;
+}
+
+.toast.show {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.toast.success {
+    border-left: 4px solid #28a745;
+}
+
+.toast.error {
+    border-left: 4px solid #dc3545;
+}
+
+.toast.warn {
+    border-left: 4px solid #feca57;
+}
+
+.toast.info {
+    border-left: 4px solid #17a2b8;
+}
+
+/* Theme toggle button styles */
+#theme-toggle {
+    background: transparent;
+    border: 2px solid var(--theme-border-color);
+    color: var(--theme-text-primary);
+    padding: 0.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+    position: relative;
+    overflow: hidden;
+}
+
+#theme-toggle::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(99, 179, 237, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+#theme-toggle:hover::before {
+    left: 100%;
+}
+
+#theme-toggle:hover {
+    background-color: var(--theme-bg-secondary);
+    border-color: var(--theme-border-focus);
+    transform: scale(1.05);
+}
+
+#theme-toggle:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(99, 179, 237, 0.3);
+}
+
+#theme-toggle i {
+    font-size: 1.2rem;
+    transition: transform 0.3s ease;
+    position: relative;
+    z-index: 1;
+}
+
+#theme-toggle:hover i {
+    transform: rotate(15deg) scale(1.1);
+}
+
+#theme-toggle-moon {
+    color: #ffd700;
+}
+
+#theme-toggle-sun {
+    color: #ff8c00;
+}
+
+@media (max-width: 768px) {
+    .main-split {
+        flex-direction: column;
+    }
+    
+    .editor-section,
+    .preview-section {
+        flex: 1;
+        min-width: auto;
+        min-height: 300px;
+    }
+    
+    .quick-guide-float {
+        right: 10px;
+        left: 10px;
+        width: auto;
+        top: 60px;
+    }
+    
+    .nav-controls {
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+    
+    #theme-toggle {
+        min-width: 40px;
+        min-height: 40px;
+        padding: 0.375rem;
+    }
+    
+    #theme-toggle i {
+        font-size: 1rem;
+    }
+}
+</style>
+
+<head></head>
+<body>
+    <!-- Add a dark mode toggle button for testing -->
+    <button onclick="toggleDarkMode()" style="position: fixed; top: 10px; right: 10px; z-index: 9999; padding: 10px; border: none; border-radius: 5px; background: var(--theme-bg-primary); color: var(--theme-text-primary); cursor: pointer; border: 1px solid var(--theme-border-color);">
+        🌙 Toggle Dark Mode
+    </button>
+
+    <script>
+        // Dark mode script
+        (function() {
+            'use strict';
+            
+            const THEME_KEY = 'theme';
+            const DARK_MODE_CLASS = 'dark-mode';
+            
+            try {
+                const savedTheme = localStorage.getItem(THEME_KEY);
+                
+                if (savedTheme === 'dark') {
+                    document.documentElement.classList.add(DARK_MODE_CLASS);
+                    if (document.body) {
+                        document.body.classList.add(DARK_MODE_CLASS);
+                    }
+                } else if (savedTheme === 'light') {
+                    document.documentElement.classList.remove(DARK_MODE_CLASS);
+                    if (document.body) {
+                        document.body.classList.remove(DARK_MODE_CLASS);
+                    }
+                } else {
+                    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                        document.documentElement.classList.add(DARK_MODE_CLASS);
+                        if (document.body) {
+                            document.body.classList.add(DARK_MODE_CLASS);
+                        }
+                    }
+                }
+            } catch (e) {
+                console.warn('Theme persistence not available:', e);
             }
+        })();
+
+        function toggleDarkMode() {
+            const body = document.body;
+            const isDark = body.classList.contains('dark-mode');
+            
+            if (isDark) {
+                body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.classList.add('dark-mode');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+    </script>
+</body>
+    <div class="platform-container">
+        <a href="#main-content" class="skip-link">Skip to main content</a>
+        <div id="announcements" aria-live="polite" aria-atomic="true" class="sr-only"></div>
+
+        <nav class="top-nav">
+            <a href="#" class="nav-brand">
+                <i class="bi bi-code-square"></i>
+                Enhanced Live Coding Platform
+            </a>
+            
+            <div class="nav-controls">
+                <button class="nav-btn" onclick="toggleQuickGuide()">
+                    <i class="bi bi-book"></i>
+                    Guide
+                </button>
+                
+                <button class="nav-btn" onclick="runCode()">
+                    <i class="bi bi-play-fill"></i>
+                    Run
+                </button>
+                
+                <button class="nav-btn" onclick="formatCode()">
+                    <i class="bi bi-code"></i>
+                    Format
+                </button>
+                
+                <button class="nav-btn" onclick="toggleFullscreen()">
+                    <i class="bi bi-arrows-fullscreen"></i>
+                    Fullscreen
+                </button>
+                
+                <select class="nav-btn" onchange="loadTemplate(this.value)" style="background: transparent; color: inherit;">
+                    <option value="">Templates</option>
+                    <option value="basic">Basic Page</option>
+                    <option value="interactive">Interactive Demo</option>
+                    <option value="bootstrap">Bootstrap Components</option>
+                </select>
+                
+                <button class="nav-btn" onclick="downloadProject()">
+                    <i class="bi bi-download"></i>
+                    Save
+                </button>
+                
+                <button class="nav-btn" onclick="resetWorkspace()">
+                    <i class="bi bi-arrow-clockwise"></i>
+                    Reset
+                </button>
+            </div>
+        </nav>
+
+        <main class="main-split" id="main-content" role="main">
+            <div class="editor-section" id="editorSection">
+                <div class="editor-toolbar">
+                    <div class="toolbar-group">
+                        <button class="toolbar-btn success" onclick="runCode()">
+                            <i class="bi bi-play-fill"></i>
+                            Execute
+                        </button>
+                        <button class="toolbar-btn" onclick="formatCode()">
+                            <i class="bi bi-code"></i>
+                            Format
+                        </button>
+                        <button class="toolbar-btn danger" onclick="clearCurrentEditor()">
+                            <i class="bi bi-trash"></i>
+                            Clear
+                        </button>
+                    </div>
+                    
+                    <div class="toolbar-group">
+                        <span style="color: #8a8a8a; font-size: 0.7rem;" id="editorStatus">Ready</span>
+                    </div>
+                </div>
+
+                <div class="editor-tabs">
+                    <button class="tab-btn active" onclick="switchEditorTab('html')" id="htmlTab">
+                        <i class="bi bi-filetype-html"></i>
+                        HTML
+                    </button>
+                    <button class="tab-btn" onclick="switchEditorTab('css')" id="cssTab">
+                        <i class="bi bi-filetype-css"></i>
+                        CSS
+                    </button>
+                    <button class="tab-btn" onclick="switchEditorTab('js')" id="jsTab">
+                        <i class="bi bi-filetype-js"></i>
+                        JavaScript
+                    </button>
+                </div>
+
+                <div class="editor-container">
+                    <div class="editor-panel active" id="htmlPanel">
+                        <textarea 
+                            class="code-editor" 
+                            id="htmlEditor" 
+                            placeholder="<!-- Write your HTML here -->"
+                            spellcheck="false"
+                        ></textarea>
+                    </div>
+
+                    <div class="editor-panel" id="cssPanel">
+                        <textarea 
+                            class="code-editor" 
+                            id="cssEditor" 
+                            placeholder="/* Write your CSS here */"
+                            spellcheck="false"
+                        ></textarea>
+                    </div>
+
+                    <div class="editor-panel" id="jsPanel">
+                        <textarea 
+                            class="code-editor" 
+                            id="jsEditor" 
+                            placeholder="// Write your JavaScript here"
+                            spellcheck="false"
+                        ></textarea>
+                    </div>
+                </div>
+
+                <div class="terminal-section" id="terminalSection">
+                    <div class="terminal-header">
+                        <span><i class="bi bi-terminal"></i> Console Output</span>
+                        <button class="nav-btn" onclick="clearTerminal()" style="padding: 2px 6px;">
+                            <i class="bi bi-trash"></i>
+                            Clear
+                        </button>
+                    </div>
+                    <div class="terminal-content" id="terminalContent">
+                        <div class="terminal-line terminal-info">[INFO] Enhanced Live Coding Platform initialized</div>
+                        <div class="terminal-line terminal-success">[READY] All editors loaded successfully</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="preview-section" id="previewSection">
+                <div class="preview-header">
+                    <div>
+                        <i class="bi bi-eye"></i>
+                        Live Preview
+                    </div>
+                    
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div class="responsive-controls">
+                            <button class="responsive-btn active" onclick="setPreviewSize('100%')">
+                                <i class="bi bi-display"></i>
+                            </button>
+                            <button class="responsive-btn" onclick="setPreviewSize('768px')">
+                                <i class="bi bi-tablet"></i>
+                            </button>
+                            <button class="responsive-btn" onclick="setPreviewSize('375px')">
+                                <i class="bi bi-phone"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="live-indicator">
+                            <i class="bi bi-broadcast"></i>
+                            LIVE
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="flex: 1; position: relative; background: #f0f0f0;">
+                    <iframe id="previewFrame" class="preview-frame" style="width: 100%; height: 100%; border: none; background: #fff;"></iframe>
+                </div>
+            </div>
+        </main>
+
+        <div class="status-bar">
+            <div>
+                <span id="cursorPosition">Line 1, Column 1</span>
+                <span style="margin-left: 16px;" id="wordCount">0 words</span>
+                <span style="margin-left: 16px;" id="characterCount">0 characters</span>
+            </div>
+            <div>
+                <span id="autoSaveStatus">Auto-save: Enabled</span>
+                <span style="margin-left: 16px;">Enhanced Live Coding Platform v2.0</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="quick-guide-float" id="quickGuide">
+        <div class="guide-header">
+            <span><i class="bi bi-book"></i> Quick Reference</span>
+            <button class="guide-close" onclick="toggleQuickGuide()">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+        
+        <div class="guide-tabs">
+            <button class="guide-tab active" onclick="switchGuideTab('html')" id="htmlGuideTab">HTML</button>
+            <button class="guide-tab" onclick="switchGuideTab('css')" id="cssGuideTab">CSS</button>
+            <button class="guide-tab" onclick="switchGuideTab('js')" id="jsGuideTab">JS</button>
+            <button class="guide-tab" onclick="switchGuideTab('bootstrap')" id="bootstrapGuideTab">Bootstrap</button>
+        </div>
+        
+        <div class="guide-content">
+            <div class="guide-panel active" id="htmlGuide">
+                <div class="guide-section">
+                    <div class="guide-title">Basic Tags</div>
+                    <div class="guide-item" onclick="insertCode('<h1>Title</h1>')">
+                        <code><h1></code>
+                        <div class="guide-description">Main heading</div>
+                    </div>
+                    <div class="guide-item" onclick="insertCode('<p>Paragraph text</p>')">
+                        <code><p></code>
+                        <div class="guide-description">Paragraph</div>
+                    </div>
+                    <div class="guide-item" onclick="insertCode('<div class=\'container\'></div>')">
+                        <code><div></code>
+                        <div class="guide-description">Container element</div>
+                    </div>
+                    <div class="guide-item" onclick="insertCode('<button onclick=\'myFunction()\'>Click Me</button>')">
+                        <code><button></code>
+                        <div class="guide-description">Button element</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="guide-panel" id="cssGuide">
+                <div class="guide-section">
+                    <div class="guide-title">Layout</div>
+                    <div class="guide-item" onclick="insertCode('display: flex;')">
+                        <code>display: flex</code>
+                        <div class="guide-description">Flexbox layout</div>
+                    </div>
+                    <div class="guide-item" onclick="insertCode('justify-content: center;')">
+                        <code>justify-content</code>
+                        <div class="guide-description">Horizontal alignment</div>
+                    </div>
+                    <div class="guide-item" onclick="insertCode('background: linear-gradient(45deg, #667eea, #764ba2);')">
+                        <code>background</code>
+                        <div class="guide-description">Background gradient</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="guide-panel" id="jsGuide">
+                <div class="guide-section">
+                    <div class="guide-title">DOM Manipulation</div>
+                    <div class="guide-item" onclick="insertCode('document.getElementById(\'myId\')')">
+                        <code>getElementById</code>
+                        <div class="guide-description">Get element by ID</div>
+                    </div>
+                    <div class="guide-item" onclick="insertCode('console.log(\'Debug message\');')">
+                        <code>console.log</code>
+                        <div class="guide-description">Print to console</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="guide-panel" id="bootstrapGuide">
+                <div class="guide-section">
+                    <div class="guide-title">Layout</div>
+                    <div class="guide-item" onclick="insertCode('container')">
+                        <code>.container</code>
+                        <div class="guide-description">Fixed-width container</div>
+                    </div>
+                    <div class="guide-item" onclick="insertCode('btn btn-primary')">
+                        <code>.btn .btn-primary</code>
+                        <div class="guide-description">Primary button</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+    (function() {
+        'use strict';
+        
+        const state = {
+            currentTab: 'html',
+            currentGuideTab: 'html',
+            editors: {},
+            updateTimeout: null,
+            autoSaveInterval: null,
+            isFullscreen: false
         };
 
-        const preset = presets[presetName];
-        if (preset) {
-            if (preset.html) htmlEditor.setValue(preset.html);
-            if (preset.css) cssEditor.setValue(preset.css);
+        function init() {
+            console.log('🚀 Enhanced Live Coding Platform initializing...');
             
-            updatePreview();
-            showToast(`Loaded ${presetName.replace('-', ' ')} template!`, 'success');
-        }
-        
-        togglePresets(); // Close menu
-    }
-
-    // Utility functions
-    function updateCursorPosition() {
-        const editor = getCurrentEditor();
-        if (!editor) return;
-        
-        const cursor = editor.getCursor();
-        document.getElementById('cursor-position').textContent = `Ln ${cursor.line + 1}, Col ${cursor.ch + 1}`;
-    }
-
-    function updateWordCount() {
-        const htmlContent = htmlEditor.getValue();
-        const cssContent = cssEditor.getValue();
-        const totalContent = htmlContent + ' ' + cssContent;
-        const wordCount = totalContent.trim().split(/\s+/).filter(word => word.length > 0).length;
-        
-        document.getElementById('word-count').textContent = `${wordCount} words`;
-    }
-
-    function showError(message) {
-        const errorIndicator = document.getElementById('error-indicator');
-        const errorMessage = document.getElementById('error-message');
-        
-        errorIndicator.classList.add('show');
-        errorMessage.textContent = message;
-    }
-
-    function hideError() {
-        document.getElementById('error-indicator').classList.remove('show');
-    }
-
-    function showLoading() {
-        document.getElementById('loading-overlay').classList.add('show');
-    }
-
-    function hideLoading() {
-        document.getElementById('loading-overlay').classList.remove('show');
-    }
-
-    // Auto-save functionality
-    function startAutoSave() {
-        autoSaveInterval = setInterval(() => {
-            saveToLocalStorage();
-        }, 30000); // Save every 30 seconds
-    }
-
-    function saveToLocalStorage() {
-        try {
-            const data = {
-                html: htmlEditor.getValue(),
-                css: cssEditor.getValue(),
-                bootstrap: bootstrapEditor.getValue(),
-                timestamp: new Date().toISOString()
+            state.editors = {
+                html: document.getElementById('htmlEditor'),
+                css: document.getElementById('cssEditor'),
+                js: document.getElementById('jsEditor')
             };
             
-            localStorage.setItem('liveCodingPlayground', JSON.stringify(data));
-            document.getElementById('auto-save-status').textContent = 'Auto-save: ✓ Saved';
+            setupEventListeners();
+            loadFromStorage();
+            if (!localStorage.getItem('liveCodingHtml')) {
+                loadDefaultContent();
+            }
+            startAutoSave();
+            debounceUpdate();
+            
+            logToTerminal('Platform initialized successfully!', 'success');
+            logToTerminal('Start coding to see live changes!', 'info');
+            
+            console.log('✅ Platform ready!');
+        }
+
+        function setupEventListeners() {
+            Object.values(state.editors).forEach(editor => {
+                if (editor) {
+                    editor.addEventListener('input', () => {
+                        debounceUpdate();
+                        updateStats();
+                    });
+                    editor.addEventListener('keydown', handleEditorKeydown);
+                    editor.addEventListener('focus', updateEditorStatus);
+                    editor.addEventListener('keyup', updateStats);
+                    editor.addEventListener('click', updateStats);
+                }
+            });
+
+            document.addEventListener('keydown', handleGlobalKeydown);
+            window.addEventListener('beforeunload', saveToStorage);
+            window.addEventListener('message', handleIframeMessage);
+        }
+
+        function handleEditorKeydown(e) {
+            if (e.key === 'Tab') {
+                e.preventDefault();
+                const editor = e.target;
+                const start = editor.selectionStart;
+                const end = editor.selectionEnd;
+                
+                // Indent with two spaces
+                editor.value = editor.value.substring(0, start) + '  ' + editor.value.substring(end);
+                editor.selectionStart = editor.selectionEnd = start + 2;
+                
+                debounceUpdate();
+            }
+        }
+
+        function handleGlobalKeydown(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                e.preventDefault();
+                runCode();
+            }
+            
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                e.preventDefault();
+                saveToStorage();
+                showToast('Project saved!', 'success');
+            }
+            
+            if (e.key === 'F11') {
+                e.preventDefault();
+                toggleFullscreen();
+            }
+        }
+
+        function debounceUpdate() {
+            clearTimeout(state.updateTimeout);
+            state.updateTimeout = setTimeout(updatePreview, 300);
+        }
+
+        function loadDefaultContent() {
+            state.editors.html.value = `<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white text-center">
+                    <h2 class="mb-0">Welcome to Enhanced Live Coding!</h2>
+                </div>
+                <div class="card-body text-center p-5">
+                    <p class="lead mb-4">Start editing to see live changes in real-time!</p>
+                    <button class="btn btn-success btn-lg me-3" onclick="showDemo()">Try JavaScript</button>
+                    <button class="btn btn-outline-primary btn-lg" onclick="changeTheme()">Change Theme</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>`;
+
+            state.editors.css.value = `body {
+    font-family: system-ui, -apple-system, sans-serif;
+    transition: background-color 0.3s, color 0.3s;
+    background-color: #f8f9fa;
+}
+
+body.dark-theme {
+    background-color: #212529 !important;
+    color: #f8f9fa;
+}
+`;
+
+            state.editors.js.value = `function showDemo() {
+    alert('JavaScript is working! You can edit this in the JS tab.');
+}
+
+function changeTheme() {
+    document.body.classList.toggle('dark-theme');
+}`;
+            updatePreview();
+        }
+
+        function updatePreview() {
+            const iframe = document.getElementById('previewFrame');
+            const content = `
+                <!DOCTYPE html>
+                <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+                    <style>${state.editors.css.value}</style>
+                </head>
+                <body>
+                    ${state.editors.html.value}
+                    <script>
+                        (function() {
+                            const postError = (error) => window.parent.postMessage({ type: 'error', message: error.toString() }, '*');
+                            window.addEventListener('error', event => postError(event.error));
+                            
+                            const originalLog = console.log;
+                            console.log = function(...args) {
+                                window.parent.postMessage({ type: 'log', message: args.join(' ') }, '*');
+                                originalLog.apply(console, args);
+                            };
+
+                            try {
+                                ${state.editors.js.value}
+                            } catch (error) {
+                                postError(error);
+                            }
+                        })();
+                    <\/script>
+                </body>
+                </html>
+            `;
+            
+            iframe.srcdoc = content;
+        }
+
+        function runCode() {
+            updatePreview();
+            logToTerminal('Code executed successfully', 'success');
+            showToast('Code executed!', 'success');
+        }
+
+        function formatCode() {
+            alert("A real code formatter (like Prettier) is complex to implement here. This is a placeholder.");
+            logToTerminal('Format action triggered', 'info');
+        }
+
+        function clearCurrentEditor() {
+            const currentEditor = state.editors[state.currentTab];
+            if (currentEditor && confirm(`Are you sure you want to clear the ${state.currentTab.toUpperCase()} editor?`)) {
+                currentEditor.value = '';
+                debounceUpdate();
+                logToTerminal(`${state.currentTab.toUpperCase()} editor cleared`, 'warn');
+            }
+        }
+
+        function switchEditorTab(tab) {
+            state.currentTab = tab;
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`${tab}Tab`).classList.add('active');
+            
+            document.querySelectorAll('.editor-panel').forEach(panel => panel.classList.remove('active'));
+            document.getElementById(`${tab}Panel`).classList.add('active');
+            
+            state.editors[state.currentTab].focus();
+            updateStats();
+        }
+
+        window.toggleQuickGuide = function() {
+            document.getElementById('quickGuide').classList.toggle('show');
+        }
+
+        window.switchGuideTab = function(tab) {
+            state.currentGuideTab = tab;
+            document.querySelectorAll('.guide-tab').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`${tab}GuideTab`).classList.add('active');
+            
+            document.querySelectorAll('.guide-panel').forEach(panel => panel.classList.remove('active'));
+            document.getElementById(`${tab}Guide`).classList.add('active');
+        }
+
+        window.insertCode = function(code) {
+            const currentEditor = state.editors[state.currentTab];
+            if (currentEditor) {
+                const start = currentEditor.selectionStart;
+                document.execCommand('insertText', false, code);
+                currentEditor.focus();
+                debounceUpdate();
+                // toggleQuickGuide(); // Uncomment to close guide after inserting
+                logToTerminal('Code snippet inserted', 'info');
+            }
+        }
+
+        function logToTerminal(message, type = 'info') {
+            const terminal = document.getElementById('terminalContent');
+            const line = document.createElement('div');
+            line.className = `terminal-line terminal-${type}`;
+            const timestamp = new Date().toLocaleTimeString();
+            line.innerHTML = `<span>[${timestamp}]</span> <span class="terminal-${type}">[${type.toUpperCase()}]</span> ${message}`;
+            terminal.appendChild(line);
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+
+        window.clearTerminal = function() {
+            document.getElementById('terminalContent').innerHTML = '';
+            logToTerminal('Console cleared', 'info');
+        }
+
+        function updateStats() {
+            const currentEditor = state.editors[state.currentTab];
+            if (currentEditor) {
+                const text = currentEditor.value;
+                const cursorPos = currentEditor.selectionStart;
+                const line = text.substr(0, cursorPos).split('\n').length;
+                const col = cursorPos - text.lastIndexOf('\n', cursorPos - 1);
+                document.getElementById('cursorPosition').textContent = `Line ${line}, Col ${col}`;
+                
+                const wordCount = text.trim() ? text.trim().split(/\s+/).length : 0;
+                document.getElementById('wordCount').textContent = `${wordCount} words`;
+                document.getElementById('characterCount').textContent = `${text.length} chars`;
+            }
+        }
+
+        function updateEditorStatus() {
+            document.getElementById('editorStatus').textContent = `Editing ${state.currentTab.toUpperCase()}`;
+        }
+
+        window.setPreviewSize = function(width) {
+            const frame = document.getElementById('previewFrame');
+            document.querySelectorAll('.responsive-btn').forEach(btn => btn.classList.remove('active'));
+            
+            let targetButton;
+            if (width === '100%') targetButton = document.querySelector('.responsive-btn .bi-display');
+            else if (width === '768px') targetButton = document.querySelector('.responsive-btn .bi-tablet');
+            else if (width === '375px') targetButton = document.querySelector('.responsive-btn .bi-phone');
+            
+            if (targetButton) targetButton.closest('button').classList.add('active');
+            
+            frame.style.width = width;
+            frame.style.transition = 'width 0.3s ease';
+        }
+
+        window.toggleFullscreen = function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => alert(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`));
+                state.isFullscreen = true;
+            } else {
+                document.exitFullscreen();
+                state.isFullscreen = false;
+            }
+        }
+
+        window.loadTemplate = function(template) {
+            if (!template) return;
+            
+            if (!confirm(`This will replace the current content. Are you sure you want to load the "${template}" template?`)) {
+                document.querySelector('select.nav-btn').value = "";
+                return;
+            }
+
+            const templates = {
+                basic: {
+                    html: '<!DOCTYPE html>\n<html lang="en">\n<head>\n  <title>Basic Page</title>\n</head>\n<body>\n  <h1>Hello World</h1>\n  <p>This is a basic HTML page.</p>\n</body>\n</html>',
+                    css: 'body {\n  font-family: Arial, sans-serif;\n  line-height: 1.6;\n  padding: 20px;\n}',
+                    js: '// Basic template has no JavaScript by default.'
+                },
+                interactive: {
+                    html: '<h1>Interactive Demo</h1>\n<p>Button has been clicked <strong id="count">0</strong> times.</p>\n<button onclick="incrementCounter()">Click Me</button>',
+                    css: '#count {\n  color: #007acc;\n}',
+                    js: 'let counter = 0;\nfunction incrementCounter() {\n  counter++;\n  document.getElementById("count").textContent = counter;\n}'
+                },
+                bootstrap: {
+                    html: '<div class="container mt-4">\n  <div class="alert alert-primary">This is a Bootstrap Alert!</div>\n  <button class="btn btn-primary">Primary Button</button>\n</div>',
+                    css: '/* Custom Bootstrap styles can go here */',
+                    js: '// No custom JS for this template.'
+                }
+            };
+
+            const selected = templates[template];
+            if (selected) {
+                state.editors.html.value = selected.html;
+                state.editors.css.value = selected.css;
+                state.editors.js.value = selected.js;
+                debounceUpdate();
+                logToTerminal(`Template "${template}" loaded`, 'success');
+                showToast(`Template "${template}" loaded!`, 'info');
+            }
+            document.querySelector('select.nav-btn').value = "";
+        }
+
+        window.downloadProject = function() {
+            alert("Downloading as a ZIP requires an external library (like JSZip), which is not included in this static HTML file.");
+        }
+
+        window.resetWorkspace = function() {
+            if (confirm('Are you sure you want to reset the entire workspace? This will clear all editors and local storage.')) {
+                Object.values(state.editors).forEach(editor => editor.value = '');
+                localStorage.removeItem('liveCodingHtml');
+                localStorage.removeItem('liveCodingCss');
+                localStorage.removeItem('liveCodingJs');
+                loadDefaultContent();
+                logToTerminal('Workspace has been reset to default', 'warn');
+                showToast('Workspace Reset!', 'warn');
+            }
+        }
+
+        function startAutoSave() {
+            state.autoSaveInterval = setInterval(() => {
+                saveToStorage();
+                document.getElementById('autoSaveStatus').textContent = `Auto-saved: ${new Date().toLocaleTimeString()}`;
+            }, 30000);
+        }
+
+        function saveToStorage() {
+            localStorage.setItem('liveCodingHtml', state.editors.html.value);
+            localStorage.setItem('liveCodingCss', state.editors.css.value);
+            localStorage.setItem('liveCodingJs', state.editors.js.value);
+        }
+
+        function loadFromStorage() {
+            const html = localStorage.getItem('liveCodingHtml');
+            const css = localStorage.getItem('liveCodingCss');
+            const js = localStorage.getItem('liveCodingJs');
+
+            if (html || css || js) {
+                state.editors.html.value = html || '';
+                state.editors.css.value = css || '';
+                state.editors.js.value = js || '';
+                logToTerminal('Loaded saved project from local storage', 'info');
+            }
+        }
+        
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            container.appendChild(toast);
+            
+            setTimeout(() => toast.classList.add('show'), 10);
             
             setTimeout(() => {
-                document.getElementById('auto-save-status').textContent = 'Auto-save: On';
-            }, 2000);
-            
-        } catch (error) {
-            console.error('Auto-save failed:', error);
-            document.getElementById('auto-save-status').textContent = 'Auto-save: Failed';
+                toast.classList.remove('show');
+                toast.addEventListener('transitionend', () => toast.remove());
+            }, 3000);
         }
-    }
 
-    function loadFromLocalStorage() {
-        try {
-            const saved = localStorage.getItem('liveCodingPlayground');
-            if (saved) {
-                const data = JSON.parse(saved);
-                
-                if (data.html) htmlEditor.setValue(data.html);
-                if (data.css) cssEditor.setValue(data.css);
-                if (data.bootstrap) bootstrapEditor.setValue(data.bootstrap);
-                
-                showToast('Previous session restored!', 'info');
+        function handleIframeMessage(e) {
+            if (e.source !== document.getElementById('previewFrame').contentWindow) return;
+            if (e.data.type === 'error') {
+                logToTerminal(`JS Error: ${e.data.message}`, 'error');
+            } else if (e.data.type === 'log') {
+                 logToTerminal(`Console: ${e.data.message}`, 'info');
             }
-        } catch (error) {
-            console.error('Failed to load from localStorage:', error);
+        }
+
+        window.runCode = runCode;
+        window.formatCode = formatCode;
+        window.clearCurrentEditor = clearCurrentEditor;
+        window.switchEditorTab = switchEditorTab;
+        window.resetWorkspace = resetWorkspace;
+
+        init();
+    })();
+    </script>
+    <!-- ADD THIS: Dark Mode JavaScript -->
+<script>
+// Dark mode functionality
+(function() {
+    'use strict';
+    
+    const THEME_KEY = 'theme';
+    const DARK_MODE_CLASS = 'dark-mode';
+    const THEMES = {
+        LIGHT: 'light',
+        DARK: 'dark'
+    };
+    
+    // Cache DOM elements
+    let themeToggle = null;
+    let sunIcon = null;
+    let moonIcon = null;
+    
+    function updateIcons(isDarkMode) {
+        if (sunIcon && moonIcon) {
+            sunIcon.style.display = isDarkMode ? 'inline-block' : 'none';
+            moonIcon.style.display = isDarkMode ? 'none' : 'inline-block';
         }
     }
-
-    function saveCode() {
-        saveToLocalStorage();
-        showToast('Code saved!', 'success');
-    }
-
-    function showShortcuts() {
-        const modal = new bootstrap.Modal(document.getElementById('shortcutsModal'));
-        modal.show();
-    }
-
-    // Toast notification system
-    function showToast(message, type = 'success') {
-        const toastEl = document.getElementById('main-toast');
-        const titleEl = document.getElementById('toast-title');
-        const messageEl = document.getElementById('toast-message');
+    
+    function getCurrentTheme() {
+        const savedTheme = localStorage.getItem(THEME_KEY);
         
-        if (!toastEl || !titleEl || !messageEl) return;
-        
-        const toastHeader = toastEl.querySelector('.toast-header');
-        const toastIcon = toastHeader.querySelector('i');
-        
-        const typeConfigs = {
-            success: { icon: 'bi-check-circle', color: 'text-success', title: 'Success' },
-            error: { icon: 'bi-x-circle', color: 'text-danger', title: 'Error' },
-            warning: { icon: 'bi-exclamation-triangle', color: 'text-warning', title: 'Warning' },
-            info: { icon: 'bi-info-circle', color: 'text-info', title: 'Info' }
-        };
-        
-        const config = typeConfigs[type] || typeConfigs.success;
-        
-        toastIcon.className = `${config.icon} ${config.color} me-2`;
-        titleEl.textContent = config.title;
-        messageEl.textContent = message;
-        
-        const toast = new bootstrap.Toast(toastEl, {
-            autohide: true,
-            delay: type === 'error' ? 5000 : 3000
-        });
-        toast.show();
-    }
-
-    // Clean up on page unload
-    window.addEventListener('beforeunload', function() {
-        if (autoSaveInterval) {
-            clearInterval(autoSaveInterval);
+        if (savedTheme === THEMES.DARK || savedTheme === THEMES.LIGHT) {
+            return savedTheme;
         }
-        saveToLocalStorage();
-    });
-
-    // Performance monitoring
-    if ('performance' in window) {
-        window.addEventListener('load', function() {
-            setTimeout(function() {
-                const navigation = performance.getEntriesByType('navigation')[0];
-                if (navigation && navigation.loadEventEnd > 3000) {
-                    console.warn('Page load time:', navigation.loadEventEnd + 'ms');
+        
+        return window.matchMedia('(prefers-color-scheme: dark)').matches 
+            ? THEMES.DARK 
+            : THEMES.LIGHT;
+    }
+    
+    function applyTheme(theme) {
+        const isDarkMode = theme === THEMES.DARK;
+        
+        if (isDarkMode) {
+            document.body.classList.add(DARK_MODE_CLASS);
+        } else {
+            document.body.classList.remove(DARK_MODE_CLASS);
+        }
+        
+        localStorage.setItem(THEME_KEY, theme);
+        updateIcons(isDarkMode);
+        
+        // Show toast if showToast function exists
+        if (typeof showToast === 'function') {
+            showToast(`Switched to ${theme} mode`, 'info');
+        }
+    }
+    
+    function toggleTheme() {
+        const currentTheme = getCurrentTheme();
+        const newTheme = currentTheme === THEMES.DARK ? THEMES.LIGHT : THEMES.DARK;
+        applyTheme(newTheme);
+    }
+    
+    function initializeTheme() {
+        const currentTheme = getCurrentTheme();
+        applyTheme(currentTheme);
+        
+        themeToggle = document.getElementById('theme-toggle');
+        sunIcon = document.getElementById('theme-toggle-sun');
+        moonIcon = document.getElementById('theme-toggle-moon');
+        
+        if (themeToggle) {
+            themeToggle.addEventListener('click', toggleTheme);
+            
+            themeToggle.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    toggleTheme();
                 }
-            }, 1000);
+            });
+            
+            const isDarkMode = document.body.classList.contains(DARK_MODE_CLASS);
+            updateIcons(isDarkMode);
+        }
+        
+        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        mediaQuery.addEventListener('change', function(e) {
+            const savedTheme = localStorage.getItem(THEME_KEY);
+            if (!savedTheme) {
+                applyTheme(e.matches ? THEMES.DARK : THEMES.LIGHT);
+            }
         });
     }
+    
+    window.ThemeManager = {
+        getCurrentTheme: getCurrentTheme,
+        applyTheme: applyTheme,
+        toggleTheme: toggleTheme,
+        isDarkMode: function() {
+            return document.body.classList.contains(DARK_MODE_CLASS);
+        }
+    };
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeTheme);
+    } else {
+        initializeTheme();
+    }
+    // ADD THIS: Keyboard shortcut for theme toggle
+document.addEventListener('keydown', function(e) {
+    // Ctrl/Cmd + D to toggle dark mode
+    if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
+        e.preventDefault();
+        if (window.ThemeManager) {
+            window.ThemeManager.toggleTheme();
+        }
+    }
+});
+    
+})();
+</script>
+</body>
+</html>
