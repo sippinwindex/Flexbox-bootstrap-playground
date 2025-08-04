@@ -2,7 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Advanced live coding platform with HTML, CSS, JavaScript editor and real-time preview">
     <title>Enhanced Live Coding Platform</title>
     
     <!-- Bootstrap CSS -->
@@ -17,8 +21,44 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/nord.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/base16-light.min.css">
 
+    <!-- CRITICAL: No-flash script for dark mode -->
+    <script>
+    (function() {
+        'use strict';
+        
+        const THEME_KEY = 'theme';
+        const DARK_MODE_CLASS = 'dark-mode';
+        
+        try {
+            const savedTheme = localStorage.getItem(THEME_KEY);
+            
+            if (savedTheme === 'dark') {
+                document.documentElement.classList.add(DARK_MODE_CLASS);
+                if (document.body) {
+                    document.body.classList.add(DARK_MODE_CLASS);
+                }
+            } else if (savedTheme === 'light') {
+                document.documentElement.classList.remove(DARK_MODE_CLASS);
+                if (document.body) {
+                    document.body.classList.remove(DARK_MODE_CLASS);
+                }
+            } else {
+                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    document.documentElement.classList.add(DARK_MODE_CLASS);
+                    if (document.body) {
+                        document.body.classList.add(DARK_MODE_CLASS);
+                    }
+                }
+            }
+        } catch (e) {
+            console.warn('Theme persistence not available:', e);
+        }
+    })();
+    </script>
+
     <style>
         :root {
+            /* Theme variables that change with dark mode */
             --theme-bg-primary: #ffffff;
             --theme-bg-secondary: #f8f9fa;
             --theme-bg-tertiary: #e9ecef;
@@ -30,6 +70,8 @@
             --theme-shadow-sm: 0 2px 8px rgba(0,0,0,0.1);
             --theme-shadow-md: 0 4px 15px rgba(0,0,0,0.15);
             --theme-shadow-lg: 0 8px 25px rgba(0,0,0,0.2);
+
+            /* Editor specific variables */
             --dark-bg: #1e1e1e;
             --dark-panel: #252526;
             --dark-border: #3e3e42;
@@ -40,8 +82,19 @@
             --success-gradient: linear-gradient(135deg, #28a745, #20c997);
             --danger-gradient: linear-gradient(135deg, #ff6b6b, #ee5a52);
             --info-gradient: linear-gradient(135deg, #17a2b8, #20c997);
+
+            /* Animation Variables */
+            --transition-fast: 0.15s ease-out;
+            --transition-base: 0.3s ease-out;
+            --transition-slow: 0.5s ease-out;
+            
+            /* Glass morphism variables */
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --glass-backdrop: blur(20px);
         }
 
+        /* Dark mode overrides */
         body.dark-mode {
             --theme-bg-primary: #1a202c;
             --theme-bg-secondary: #2d3748;
@@ -54,13 +107,16 @@
             --theme-shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
             --theme-shadow-md: 0 4px 15px rgba(0,0,0,0.4);
             --theme-shadow-lg: 0 8px 25px rgba(0,0,0,0.3);
+            
+            --glass-bg: rgba(0, 0, 0, 0.2);
+            --glass-border: rgba(255, 255, 255, 0.1);
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+            transition: background-color var(--transition-base), color var(--transition-base), border-color var(--transition-base);
         }
 
         body {
@@ -126,49 +182,95 @@
             color: var(--theme-text-primary);
         }
 
+        .nav-btn.success {
+            background: var(--success-gradient);
+            color: white;
+            border-color: transparent;
+        }
+
+        .nav-btn.danger {
+            background: var(--danger-gradient);
+            color: white;
+            border-color: transparent;
+        }
+
+        /* Advanced theme toggle styles */
         .theme-toggle-wrapper {
             position: fixed;
-            top: 50%;
+            top: 20px;
             right: 20px;
-            transform: translateY(-50%);
-            z-index: 9999;
+            z-index: 1100;
+            cursor: move;
+            user-select: none;
         }
 
         .theme-toggle {
             width: 50px;
             height: 50px;
-            border: 2px solid var(--theme-border-color);
             border-radius: 50%;
-            background: var(--theme-bg-primary);
+            border: 2px solid var(--theme-border-color);
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-backdrop);
             color: var(--theme-text-primary);
             cursor: pointer;
+            transition: all var(--transition-base);
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 1.2rem;
             box-shadow: var(--theme-shadow-md);
-            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .theme-toggle::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .theme-toggle:hover::before {
+            left: 100%;
         }
 
         .theme-toggle:hover {
             transform: scale(1.1);
-            box-shadow: var(--theme-shadow-lg);
             border-color: var(--theme-border-focus);
+            box-shadow: var(--theme-shadow-lg);
+        }
+
+        .sun-icon, .moon-icon {
+            transition: all var(--transition-base);
+        }
+
+        .moon-icon {
+            color: #ffd700;
+        }
+
+        .sun-icon {
+            color: #ff6b35;
         }
 
         .theme-selector {
             position: absolute;
             top: 60px;
             right: 0;
+            min-width: 200px;
             background: var(--theme-bg-primary);
             border: 1px solid var(--theme-border-color);
-            border-radius: 8px;
+            border-radius: 12px;
             box-shadow: var(--theme-shadow-lg);
-            padding: 8px;
-            min-width: 200px;
             opacity: 0;
             visibility: hidden;
             transform: translateY(-10px);
-            transition: all 0.3s ease;
+            transition: all var(--transition-base);
+            z-index: 1000;
+            overflow: hidden;
         }
 
         .theme-selector.show {
@@ -180,21 +282,61 @@
         .theme-option {
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 8px 12px;
-            border-radius: 4px;
+            gap: 12px;
+            padding: 12px 16px;
             cursor: pointer;
-            transition: all 0.2s ease;
-            font-size: 0.85rem;
+            transition: all var(--transition-base);
+            border-bottom: 1px solid var(--theme-border-color);
+            position: relative;
+        }
+
+        .theme-option:last-child {
+            border-bottom: none;
+        }
+
+        .theme-option::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--theme-border-focus);
+            transform: scaleY(0);
+            transition: transform var(--transition-base);
+        }
+
+        .theme-option:hover::before,
+        .theme-option.active::before {
+            transform: scaleY(1);
         }
 
         .theme-option:hover {
             background: var(--theme-bg-tertiary);
+            transform: translateX(4px);
         }
 
         .theme-option.active {
-            background: var(--theme-border-focus);
-            color: white;
+            background: rgba(102, 126, 234, 0.1);
+            color: var(--theme-border-focus);
+            font-weight: 600;
+        }
+
+        .theme-option i {
+            font-size: 1.1rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .theme-option div {
+            flex: 1;
+        }
+
+        .theme-option small {
+            display: block;
+            margin-top: 2px;
+            font-size: 0.75rem;
+            opacity: 0.7;
         }
 
         .main-split {
@@ -386,6 +528,24 @@
             width: 100%;
         }
 
+        .fullscreen-btn {
+            background: var(--info-gradient);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .fullscreen-btn:hover {
+            transform: scale(1.05);
+        }
+
         .live-indicator {
             background: rgba(76, 175, 80, 0.2);
             color: #4caf50;
@@ -468,6 +628,22 @@
         .toast.warn { border-left: 4px solid #feca57; }
         .toast.info { border-left: 4px solid #17a2b8; }
 
+        /* Fullscreen styles */
+        .fullscreen {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            z-index: 9999 !important;
+            background: #fff !important;
+        }
+
+        .fullscreen .preview-frame {
+            width: 100% !important;
+            height: 100% !important;
+        }
+
         @media (max-width: 768px) {
             .main-split {
                 flex-direction: column;
@@ -501,7 +677,7 @@
             </a>
             
             <div class="nav-controls">
-                <button class="nav-btn" onclick="runCode()">
+                <button class="nav-btn success" onclick="runCode()">
                     <i class="bi bi-play-fill"></i>
                     Run
                 </button>
@@ -534,17 +710,18 @@
                     <option value="react">React Components</option>
                 </select>
                 
-                <button class="nav-btn" onclick="resetWorkspace()">
+                <button class="nav-btn danger" onclick="resetWorkspace()">
                     <i class="bi bi-arrow-clockwise"></i>
                     Reset
                 </button>
             </div>
         </nav>
 
-        <div class="theme-toggle-wrapper">
-            <button class="theme-toggle" id="themeToggle" title="Toggle Theme">
-                <i class="bi bi-sun-fill" id="sunIcon"></i>
-                <i class="bi bi-moon-fill" id="moonIcon" style="display: none;"></i>
+        <!-- Advanced Theme Toggle -->
+        <div class="theme-toggle-wrapper" id="themeToggleWrapper">
+            <button class="theme-toggle" id="themeToggle" title="Toggle Theme" aria-label="Toggle between light and dark themes">
+                <i class="bi bi-sun-fill sun-icon" id="sunIcon"></i>
+                <i class="bi bi-moon-fill moon-icon" id="moonIcon" style="display: none;"></i>
             </button>
             
             <div class="theme-selector" id="themeSelector">
@@ -552,35 +729,35 @@
                     <i class="bi bi-sun-fill"></i>
                     <div>
                         <div>Light Theme</div>
-                        <small style="opacity: 0.7;">Light syntax</small>
+                        <small>Light syntax</small>
                     </div>
                 </div>
                 <div class="theme-option active" data-theme="dark" data-syntax="dracula">
                     <i class="bi bi-moon-fill"></i>
                     <div>
                         <div>Dark Dracula</div>
-                        <small style="opacity: 0.7;">Dracula syntax</small>
+                        <small>Dracula syntax</small>
                     </div>
                 </div>
                 <div class="theme-option" data-theme="dark" data-syntax="monokai">
-                    <i class="bi bi-circle-fill" style="color: #272822;"></i>
+                    <i class="bi bi-circle-fill" style="color: #a6e22e;"></i>
                     <div>
                         <div>Dark Monokai</div>
-                        <small style="opacity: 0.7;">Monokai syntax</small>
+                        <small>Monokai syntax</small>
                     </div>
                 </div>
                 <div class="theme-option" data-theme="dark" data-syntax="material">
-                    <i class="bi bi-circle-fill" style="color: #263238;"></i>
+                    <i class="bi bi-circle-fill" style="color: #80cbc4;"></i>
                     <div>
                         <div>Material Dark</div>
-                        <small style="opacity: 0.7;">Material syntax</small>
+                        <small>Material syntax</small>
                     </div>
                 </div>
                 <div class="theme-option" data-theme="dark" data-syntax="nord">
-                    <i class="bi bi-circle-fill" style="color: #2E3440;"></i>
+                    <i class="bi bi-circle-fill" style="color: #88c0d0;"></i>
                     <div>
                         <div>Nord Dark</div>
-                        <small style="opacity: 0.7;">Nord syntax</small>
+                        <small>Nord syntax</small>
                     </div>
                 </div>
             </div>
@@ -651,7 +828,7 @@
                 </div>
             </div>
 
-            <div class="preview-section">
+            <div class="preview-section" id="previewSection">
                 <div class="preview-header">
                     <div>
                         <i class="bi bi-eye"></i>
@@ -660,16 +837,21 @@
                     
                     <div style="display: flex; align-items: center; gap: 12px;">
                         <div class="responsive-controls">
-                            <button class="responsive-btn active" onclick="setPreviewSize('100%')">
+                            <button class="responsive-btn active" onclick="setPreviewSize('100%')" title="Desktop">
                                 <i class="bi bi-display"></i>
                             </button>
-                            <button class="responsive-btn" onclick="setPreviewSize('768px')">
+                            <button class="responsive-btn" onclick="setPreviewSize('768px')" title="Tablet">
                                 <i class="bi bi-tablet"></i>
                             </button>
-                            <button class="responsive-btn" onclick="setPreviewSize('375px')">
+                            <button class="responsive-btn" onclick="setPreviewSize('375px')" title="Mobile">
                                 <i class="bi bi-phone"></i>
                             </button>
                         </div>
+                        
+                        <button class="fullscreen-btn" onclick="toggleFullscreen()" id="fullscreenBtn">
+                            <i class="bi bi-fullscreen"></i>
+                            Fullscreen
+                        </button>
                         
                         <div class="live-indicator">
                             <i class="bi bi-broadcast"></i>
@@ -711,6 +893,305 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/selection/active-line.min.js"></script>
 
     <script>
+    // Advanced Dark Mode System
+    (function() {
+        'use strict';
+        
+        const THEME_KEY = 'theme';
+        const SYNTAX_THEME_KEY = 'syntaxTheme';
+        const TOGGLE_POSITION_KEY = 'themeTogglePosition';
+        const DARK_MODE_CLASS = 'dark-mode';
+        
+        const THEMES = {
+            LIGHT: 'light',
+            DARK: 'dark'
+        };
+        
+        // Cache DOM elements
+        let themeToggle = null;
+        let themeSelector = null;
+        let themeToggleWrapper = null;
+        let sunIcon = null;
+        let moonIcon = null;
+        let isDragging = false;
+        let dragOffset = { x: 0, y: 0 };
+        
+        function updateIcons(isDarkMode) {
+            if (sunIcon && moonIcon) {
+                sunIcon.style.display = isDarkMode ? 'none' : 'inline-block';
+                moonIcon.style.display = isDarkMode ? 'inline-block' : 'none';
+            }
+        }
+        
+        function getCurrentTheme() {
+            const savedTheme = localStorage.getItem(THEME_KEY);
+            
+            if (savedTheme === THEMES.DARK || savedTheme === THEMES.LIGHT) {
+                return savedTheme;
+            }
+            
+            return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches 
+                ? THEMES.DARK 
+                : THEMES.LIGHT;
+        }
+        
+        function getCurrentSyntaxTheme() {
+            return localStorage.getItem(SYNTAX_THEME_KEY) || 'dracula';
+        }
+        
+        function applyTheme(theme) {
+            const isDarkMode = theme === THEMES.DARK;
+            
+            if (isDarkMode) {
+                document.body.classList.add(DARK_MODE_CLASS);
+                document.documentElement.classList.add(DARK_MODE_CLASS);
+            } else {
+                document.body.classList.remove(DARK_MODE_CLASS);
+                document.documentElement.classList.remove(DARK_MODE_CLASS);
+            }
+            
+            localStorage.setItem(THEME_KEY, theme);
+            updateIcons(isDarkMode);
+            
+            // Update syntax highlighting if applicable
+            if (window.platform && window.platform.state && window.platform.state.codeMirrorInstances) {
+                updateSyntaxHighlighting();
+            }
+            
+            // Show toast notification
+            showToast(`Switched to ${theme} mode`, 'info');
+            
+            // Dispatch custom event
+            window.dispatchEvent(new CustomEvent('themeChanged', {
+                detail: { theme, isDarkMode }
+            }));
+        }
+        
+        function applySyntaxTheme(syntaxTheme) {
+            localStorage.setItem(SYNTAX_THEME_KEY, syntaxTheme);
+            updateSyntaxHighlighting();
+            
+            window.dispatchEvent(new CustomEvent('syntaxThemeChanged', {
+                detail: { syntaxTheme }
+            }));
+        }
+        
+        function updateSyntaxHighlighting() {
+            if (window.platform && window.platform.state && window.platform.state.codeMirrorInstances) {
+                const syntaxTheme = getCurrentSyntaxTheme();
+                Object.values(window.platform.state.codeMirrorInstances).forEach(instance => {
+                    if (instance) {
+                        instance.setOption('theme', syntaxTheme);
+                    }
+                });
+            }
+        }
+        
+        function updateActiveThemeOption() {
+            if (!themeSelector) return;
+            
+            const currentTheme = getCurrentTheme();
+            const currentSyntax = getCurrentSyntaxTheme();
+            const themeOptions = themeSelector.querySelectorAll('.theme-option');
+            
+            themeOptions.forEach(option => {
+                option.classList.remove('active');
+                if (option.dataset.theme === currentTheme && option.dataset.syntax === currentSyntax) {
+                    option.classList.add('active');
+                }
+            });
+        }
+        
+        function makeDraggable() {
+            if (!themeToggleWrapper) return;
+            
+            let currentX, currentY, initialX, initialY;
+            
+            function dragStart(e) {
+                if (e.target.closest('.theme-selector')) return;
+                
+                const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+                const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+                
+                if (!clientX || !clientY) return;
+                
+                initialX = clientX - dragOffset.x;
+                initialY = clientY - dragOffset.y;
+                
+                if (e.target === themeToggleWrapper || e.target.closest('.theme-toggle')) {
+                    isDragging = true;
+                    themeToggleWrapper.style.cursor = 'grabbing';
+                    e.preventDefault();
+                }
+            }
+            
+            function drag(e) {
+                if (!isDragging) return;
+                
+                e.preventDefault();
+                
+                const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+                const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+                
+                if (!clientX || !clientY) return;
+                
+                currentX = clientX - initialX;
+                currentY = clientY - initialY;
+                
+                dragOffset.x = currentX;
+                dragOffset.y = currentY;
+                
+                // Constrain to viewport
+                const rect = themeToggleWrapper.getBoundingClientRect();
+                const maxX = window.innerWidth - rect.width;
+                const maxY = window.innerHeight - rect.height;
+                
+                dragOffset.x = Math.max(0, Math.min(maxX, currentX));
+                dragOffset.y = Math.max(0, Math.min(maxY, currentY));
+                
+                themeToggleWrapper.style.transform = `translate(${dragOffset.x}px, ${dragOffset.y}px)`;
+            }
+            
+            function dragEnd() {
+                if (!isDragging) return;
+                
+                isDragging = false;
+                themeToggleWrapper.style.cursor = 'move';
+                
+                localStorage.setItem(TOGGLE_POSITION_KEY, JSON.stringify(dragOffset));
+            }
+            
+            // Mouse events
+            themeToggleWrapper.addEventListener('mousedown', dragStart);
+            document.addEventListener('mousemove', drag);
+            document.addEventListener('mouseup', dragEnd);
+            
+            // Touch events for mobile
+            themeToggleWrapper.addEventListener('touchstart', dragStart, { passive: false });
+            document.addEventListener('touchmove', drag, { passive: false });
+            document.addEventListener('touchend', dragEnd);
+            
+            // Load saved position
+            loadSavedPosition();
+        }
+        
+        function loadSavedPosition() {
+            if (!themeToggleWrapper) return;
+            
+            const savedPosition = localStorage.getItem(TOGGLE_POSITION_KEY);
+            if (savedPosition) {
+                try {
+                    dragOffset = JSON.parse(savedPosition);
+                    themeToggleWrapper.style.transform = `translate(${dragOffset.x}px, ${dragOffset.y}px)`;
+                } catch (e) {
+                    console.warn('Failed to load saved theme toggle position:', e);
+                }
+            }
+        }
+        
+        function toggleTheme() {
+            const currentTheme = getCurrentTheme();
+            const newTheme = currentTheme === THEMES.DARK ? THEMES.LIGHT : THEMES.DARK;
+            applyTheme(newTheme);
+            updateActiveThemeOption();
+        }
+        
+        function setupThemeSelector() {
+            if (!themeToggle || !themeSelector) return;
+            
+            // Toggle theme selector
+            themeToggle.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (!isDragging) {
+                    themeSelector.classList.toggle('show');
+                }
+            });
+            
+            // Close theme selector when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!themeSelector.contains(e.target) && !themeToggle.contains(e.target)) {
+                    themeSelector.classList.remove('show');
+                }
+            });
+            
+            // Theme option selection
+            const themeOptions = themeSelector.querySelectorAll('.theme-option');
+            themeOptions.forEach(option => {
+                option.addEventListener('click', () => {
+                    const theme = option.dataset.theme;
+                    const syntax = option.dataset.syntax;
+                    
+                    applyTheme(theme);
+                    applySyntaxTheme(syntax);
+                    updateActiveThemeOption();
+                    
+                    themeSelector.classList.remove('show');
+                    
+                    const themeName = option.textContent.trim().split('\n')[0];
+                    showToast(`Applied ${themeName} theme`, 'success');
+                });
+            });
+            
+            updateActiveThemeOption();
+        }
+        
+        function initializeTheme() {
+            // Cache DOM elements
+            themeToggle = document.getElementById('themeToggle');
+            themeSelector = document.getElementById('themeSelector');
+            themeToggleWrapper = document.getElementById('themeToggleWrapper');
+            sunIcon = document.getElementById('sunIcon');
+            moonIcon = document.getElementById('moonIcon');
+            
+            // Apply the initial theme
+            const currentTheme = getCurrentTheme();
+            applyTheme(currentTheme);
+            
+            // Set up event listeners
+            if (themeToggle) {
+                themeToggle.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        if (themeSelector && themeSelector.classList.contains('show')) {
+                            themeSelector.classList.remove('show');
+                        } else {
+                            toggleTheme();
+                        }
+                    }
+                });
+            }
+            
+            // Setup theme selector
+            setupThemeSelector();
+            
+            // Make draggable
+            makeDraggable();
+        }
+        
+        // Public API for other scripts
+        window.ThemeManager = {
+            getCurrentTheme: getCurrentTheme,
+            getCurrentSyntaxTheme: getCurrentSyntaxTheme,
+            applyTheme: applyTheme,
+            applySyntaxTheme: applySyntaxTheme,
+            toggleTheme: toggleTheme,
+            updateActiveThemeOption: updateActiveThemeOption,
+            isDarkMode: function() {
+                return document.body.classList.contains(DARK_MODE_CLASS);
+            },
+            THEMES: THEMES
+        };
+        
+        // Initialize when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeTheme);
+        } else {
+            initializeTheme();
+        }
+        
+    })();
+
+    // Enhanced Live Coding Platform Class
     class LiveCodingPlatform {
         constructor() {
             this.state = {
@@ -720,7 +1201,8 @@
                 updateTimeout: null,
                 autoSaveInterval: 30000,
                 syntaxTheme: 'dracula',
-                isDarkMode: true
+                isDarkMode: true,
+                isFullscreen: false
             };
             
             this.init();
@@ -731,7 +1213,6 @@
             
             this.setupEditors();
             this.initializeCodeMirror();
-            this.initializeTheme();
             this.setupEventListeners();
             this.loadFromStorage();
             
@@ -755,6 +1236,8 @@
         }
 
         initializeCodeMirror() {
+            const currentSyntaxTheme = window.ThemeManager ? window.ThemeManager.getCurrentSyntaxTheme() : 'dracula';
+            
             const commonOptions = {
                 lineNumbers: true,
                 autoCloseTags: true,
@@ -764,7 +1247,7 @@
                 indentUnit: 2,
                 tabSize: 2,
                 lineWrapping: true,
-                theme: this.state.syntaxTheme,
+                theme: currentSyntaxTheme,
                 extraKeys: {
                     "Ctrl-Space": "autocomplete",
                     "Tab": (cm) => {
@@ -805,96 +1288,31 @@
             });
         }
 
-        initializeTheme() {
-            const themeToggle = document.getElementById('themeToggle');
-            const themeSelector = document.getElementById('themeSelector');
-            const themeOptions = document.querySelectorAll('.theme-option');
-
-            // Load saved theme preferences
-            const savedTheme = localStorage.getItem('syntaxTheme') || 'dracula';
-            const savedMode = localStorage.getItem('themeMode') || 'dark';
-            
-            this.state.syntaxTheme = savedTheme;
-            this.state.isDarkMode = savedMode === 'dark';
-            
-            this.applySyntaxTheme(savedTheme);
-            this.applyModeTheme(savedMode);
-            this.updateActiveThemeOption();
-
-            // Theme toggle click handler
-            themeToggle.addEventListener('click', (e) => {
-                e.stopPropagation();
-                themeSelector.classList.toggle('show');
-            });
-
-            // Close theme selector when clicking outside
-            document.addEventListener('click', (e) => {
-                if (!themeSelector.contains(e.target) && !themeToggle.contains(e.target)) {
-                    themeSelector.classList.remove('show');
-                }
-            });
-
-            // Theme option selection
-            themeOptions.forEach(option => {
-                option.addEventListener('click', () => {
-                    const theme = option.dataset.theme;
-                    const syntax = option.dataset.syntax;
-                    
-                    this.state.isDarkMode = theme === 'dark';
-                    this.state.syntaxTheme = syntax;
-                    
-                    this.applyModeTheme(theme);
-                    this.applySyntaxTheme(syntax);
-                    this.updateActiveThemeOption();
-                    
-                    localStorage.setItem('themeMode', theme);
-                    localStorage.setItem('syntaxTheme', syntax);
-                    
-                    themeSelector.classList.remove('show');
-                    this.showToast(`Applied ${option.textContent.trim()} theme`, 'success');
-                });
-            });
-        }
-
-        applyModeTheme(mode) {
-            const body = document.body;
-            const sunIcon = document.getElementById('sunIcon');
-            const moonIcon = document.getElementById('moonIcon');
-
-            if (mode === 'dark') {
-                body.classList.add('dark-mode');
-                sunIcon.style.display = 'none';
-                moonIcon.style.display = 'inline-block';
-            } else {
-                body.classList.remove('dark-mode');
-                sunIcon.style.display = 'inline-block';
-                moonIcon.style.display = 'none';
-            }
-        }
-
-        applySyntaxTheme(theme) {
-            Object.values(this.state.codeMirrorInstances).forEach(instance => {
-                if (instance) {
-                    instance.setOption('theme', theme);
-                }
-            });
-        }
-
-        updateActiveThemeOption() {
-            const themeOptions = document.querySelectorAll('.theme-option');
-            themeOptions.forEach(option => {
-                option.classList.remove('active');
-                if (option.dataset.syntax === this.state.syntaxTheme) {
-                    option.classList.add('active');
-                }
-            });
-        }
-
         setupEventListeners() {
             // Global keyboard shortcuts
             document.addEventListener('keydown', (e) => this.handleGlobalKeydown(e));
             window.addEventListener('beforeunload', () => this.saveToStorage());
             window.addEventListener('message', (e) => this.handleIframeMessage(e));
+            
+            // Listen for theme changes
+            window.addEventListener('themeChanged', () => {
+                this.updateStats();
+            });
+            
+            window.addEventListener('syntaxThemeChanged', (e) => {
+                const syntaxTheme = e.detail.syntaxTheme;
+                Object.values(this.state.codeMirrorInstances).forEach(instance => {
+                    if (instance) {
+                        instance.setOption('theme', syntaxTheme);
+                    }
+                });
+            });
+            
+            // Fullscreen event listeners
+            document.addEventListener('fullscreenchange', () => this.handleFullscreenChange());
+            document.addEventListener('webkitfullscreenchange', () => this.handleFullscreenChange());
+            document.addEventListener('mozfullscreenchange', () => this.handleFullscreenChange());
+            document.addEventListener('MSFullscreenChange', () => this.handleFullscreenChange());
         }
 
         handleGlobalKeydown(e) {
@@ -907,6 +1325,11 @@
                 e.preventDefault();
                 this.saveToStorage();
                 this.showToast('Project saved!', 'success');
+            }
+            
+            if (e.key === 'F11') {
+                e.preventDefault();
+                this.toggleFullscreen();
             }
         }
 
@@ -945,7 +1368,1651 @@
                     type: "console", 
                     level: "log", 
                     message: args.map(arg => typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)).join(' ')
-                }, "*");
+                },
+                interactive: {
+                    html: `<div class="app">
+    <h1>🎮 Interactive Counter App</h1>
+    <div class="counter-display">
+        <span id="count">0</span>
+    </div>
+    <div class="button-group">
+        <button class="btn btn-success" onclick="increment()">
+            <i class="icon">+</i>
+            Increment
+        </button>
+        <button class="btn btn-danger" onclick="decrement()">
+            <i class="icon">-</i>
+            Decrement
+        </button>
+        <button class="btn btn-secondary" onclick="reset()">
+            <i class="icon">↻</i>
+            Reset
+        </button>
+    </div>
+    <div class="stats">
+        <p>Total clicks: <span id="totalClicks">0</span></p>
+        <p>Highest value: <span id="highestValue">0</span></p>
+    </div>
+</div>`,
+                    css: `.app {
+    text-align: center;
+    padding: 2rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+h1 {
+    color: white;
+    margin-bottom: 2rem;
+    font-size: 2.5rem;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.counter-display {
+    background: white;
+    border-radius: 20px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    min-width: 200px;
+}
+
+#count {
+    font-size: 4rem;
+    font-weight: bold;
+    color: #333;
+    display: block;
+    transition: all 0.3s ease;
+}
+
+.button-group {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.btn {
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    color: white;
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #dc3545, #fd79a8);
+    color: white;
+}
+
+.btn-secondary {
+    background: linear-gradient(135deg, #6c757d, #495057);
+    color: white;
+}
+
+.icon {
+    font-size: 1.3rem;
+    font-weight: bold;
+}
+
+.stats {
+    background: rgba(255,255,255,0.9);
+    padding: 1.5rem;
+    border-radius: 12px;
+    color: #333;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.stats p {
+    margin: 0.5rem 0;
+    font-size: 1.1rem;
+}
+
+.stats span {
+    font-weight: bold;
+    color: #007acc;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-10px); }
+    60% { transform: translateY(-5px); }
+}
+
+.bounce {
+    animation: bounce 0.6s ease;
+}`,
+                    js: `let counter = 0;
+let totalClicks = 0;
+let highestValue = 0;
+
+function updateDisplay() {
+    const countElement = document.getElementById('count');
+    const totalClicksElement = document.getElementById('totalClicks');
+    const highestValueElement = document.getElementById('highestValue');
+    
+    countElement.textContent = counter;
+    totalClicksElement.textContent = totalClicks;
+    highestValueElement.textContent = highestValue;
+    
+    // Add bounce animation
+    countElement.classList.add('bounce');
+    setTimeout(() => {
+        countElement.classList.remove('bounce');
+    }, 600);
+    
+    // Update color based on value
+    if (counter > 0) {
+        countElement.style.color = '#28a745';
+    } else if (counter < 0) {
+        countElement.style.color = '#dc3545';
+    } else {
+        countElement.style.color = '#333';
+    }
+}
+
+function increment() {
+    counter++;
+    totalClicks++;
+    
+    if (counter > highestValue) {
+        highestValue = counter;
+    }
+    
+    updateDisplay();
+    console.log('Counter incremented to:', counter);
+    
+    // Special effects for milestones
+    if (counter % 10 === 0 && counter > 0) {
+        console.log('🎉 Milestone reached:', counter);
+    }
+}
+
+function decrement() {
+    counter--;
+    totalClicks++;
+    updateDisplay();
+    console.log('Counter decremented to:', counter);
+}
+
+function reset() {
+    counter = 0;
+    totalClicks = 0;
+    highestValue = 0;
+    updateDisplay();
+    console.log('Counter reset to 0');
+    console.log('🔄 All stats reset!');
+}
+
+// Initialize display
+updateDisplay();
+console.log('🎮 Interactive Counter App initialized!');
+console.log('Try clicking the buttons to see the counter in action!');`
+                },
+                bootstrap: {
+                    html: `<div class="container-fluid bg-primary text-white py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold mb-3">Bootstrap Demo</h1>
+                <p class="lead mb-4">Showcase of Bootstrap components with interactive features</p>
+                <button class="btn btn-light btn-lg me-3" onclick="showModal()">
+                    <i class="bi bi-rocket-takeoff"></i> Show Modal
+                </button>
+                <button class="btn btn-outline-light btn-lg" onclick="toggleAlert()">
+                    <i class="bi bi-bell"></i> Toggle Alert
+                </button>
+            </div>
+            <div class="col-lg-6 text-center">
+                <i class="bi bi-bootstrap display-1 opacity-75"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container my-5">
+    <div class="row g-4">
+        <div class="col-md-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-gradient">
+                    <h4 class="mb-0 text-white">
+                        <i class="bi bi-gear-fill me-2"></i>Interactive Components
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-success alert-dismissible fade show" role="alert" id="dynamicAlert">
+                        <i class="bi bi-check-circle-fill me-2"></i>
+                        <strong>Success!</strong> This is a dismissible alert with Bootstrap styling.
+                        <button type="button" class="btn-close" onclick="toggleAlert()"></button>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h5>Progress Indicators</h5>
+                        <div class="progress mb-2" style="height: 25px;">
+                            <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" 
+                                 role="progressbar" style="width: 75%" id="progressBar">
+                                75% Complete
+                            </div>
+                        </div>
+                        <button class="btn btn-outline-primary btn-sm" onclick="animateProgress()">
+                            <i class="bi bi-arrow-repeat"></i> Animate Progress
+                        </button>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h5>Form Controls</h5>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text"><i class="bi bi-person"></i></span>
+                            <input type="text" class="form-control" placeholder="Enter your name" id="nameInput">
+                            <button class="btn btn-primary" onclick="greetUser()">Greet</button>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h5>Button Variations</h5>
+                        <div class="btn-group" role="group">
+                            <button class="btn btn-primary" onclick="changeTheme('primary')">Primary</button>
+                            <button class="btn btn-success" onclick="changeTheme('success')">Success</button>
+                            <button class="btn btn-warning" onclick="changeTheme('warning')">Warning</button>
+                            <button class="btn btn-danger" onclick="changeTheme('danger')">Danger</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card border-primary">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-info-circle me-2"></i>Information</h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">This demo showcases various Bootstrap components working together.</p>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Responsive Grid
+                            <span class="badge bg-primary rounded-pill">✓</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Interactive Components
+                            <span class="badge bg-success rounded-pill">✓</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Modern Styling
+                            <span class="badge bg-info rounded-pill">✓</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card mt-4 border-0 shadow">
+                <div class="card-body text-center">
+                    <i class="bi bi-heart-fill text-danger display-4 mb-3"></i>
+                    <h5>Made with Bootstrap</h5>
+                    <p class="text-muted">Responsive, mobile-first framework</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="demoModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">
+                    <i class="bi bi-star-fill me-2"></i>Bootstrap Modal
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <i class="bi bi-check-circle text-success display-4 mb-3"></i>
+                <h4>Success!</h4>
+                <p>This is a responsive Bootstrap modal with custom styling and animations.</p>
+                <div class="mt-4">
+                    <button class="btn btn-success me-2" onclick="closeModal()">
+                        <i class="bi bi-check"></i> Awesome!
+                    </button>
+                    <button class="btn btn-outline-secondary" onclick="closeModal()">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>`,
+                    css: `body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.bg-gradient {
+    background: linear-gradient(135deg, #007bff, #6610f2) !important;
+}
+
+.card {
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15) !important;
+}
+
+.btn {
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+}
+
+.progress-bar {
+    transition: width 0.6s ease;
+}
+
+.modal-content {
+    border: none;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.modal-header {
+    border-bottom: none;
+}
+
+.list-group-item {
+    border: none;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.list-group-item:last-child {
+    border-bottom: none;
+}
+
+.alert {
+    border: none;
+    border-radius: 10px;
+}
+
+.card-header {
+    border-bottom: none;
+}
+
+.input-group .form-control:focus {
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    border-color: #007bff;
+}
+
+.btn-group .btn {
+    border-radius: 0;
+}
+
+.btn-group .btn:first-child {
+    border-top-left-radius: 0.375rem;
+    border-bottom-left-radius: 0.375rem;
+}
+
+.btn-group .btn:last-child {
+    border-top-right-radius: 0.375rem;
+    border-bottom-right-radius: 0.375rem;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.6s ease;
+}`,
+                    js: `// Bootstrap Modal functionality
+function showModal() {
+    const modal = new bootstrap.Modal(document.getElementById('demoModal'));
+    modal.show();
+    console.log('📱 Bootstrap modal opened');
+}
+
+function closeModal() {
+    const modal = bootstrap.Modal.getInstance(document.getElementById('demoModal'));
+    if (modal) {
+        modal.hide();
+    }
+    console.log('📱 Bootstrap modal closed');
+}
+
+// Alert toggle functionality
+function toggleAlert() {
+    const alert = document.getElementById('dynamicAlert');
+    if (alert.style.display === 'none') {
+        alert.style.display = 'block';
+        alert.classList.add('fade-in-up');
+        console.log('🚨 Alert shown');
+    } else {
+        alert.style.display = 'none';
+        console.log('🚨 Alert hidden');
+    }
+}
+
+// Progress bar animation
+function animateProgress() {
+    const progressBar = document.getElementById('progressBar');
+    const randomWidth = Math.floor(Math.random() * 100) + 1;
+    
+    progressBar.style.width = randomWidth + '%';
+    progressBar.textContent = randomWidth + '% Complete';
+    
+    // Change color based on progress
+    progressBar.className = 'progress-bar progress-bar-striped progress-bar-animated';
+    if (randomWidth < 30) {
+        progressBar.classList.add('bg-danger');
+    } else if (randomWidth < 70) {
+        progressBar.classList.add('bg-warning');
+    } else {
+        progressBar.classList.add('bg-success');
+    }
+    
+    console.log('📊 Progress updated to:', randomWidth + '%');
+}
+
+// User greeting functionality
+function greetUser() {
+    const nameInput = document.getElementById('nameInput');
+    const name = nameInput.value.trim();
+    
+    if (name) {
+        alert(\`Hello, \${name}! Welcome to the Bootstrap demo! 👋\`);
+        console.log('👋 Greeted user:', name);
+        nameInput.value = '';
+    } else {
+        alert('Please enter your name first! 😊');
+        nameInput.focus();
+    }
+}
+
+// Theme changing functionality
+function changeTheme(theme) {
+    const card = document.querySelector('.card-header.bg-gradient');
+    const button = event.target;
+    
+    // Remove all theme classes
+    card.className = 'card-header';
+    
+    // Add new theme
+    switch(theme) {
+        case 'primary':
+            card.classList.add('bg-primary', 'text-white');
+            break;
+        case 'success':
+            card.classList.add('bg-success', 'text-white');
+            break;
+        case 'warning':
+            card.classList.add('bg-warning', 'text-dark');
+            break;
+        case 'danger':
+            card.classList.add('bg-danger', 'text-white');
+            break;
+        default:
+            card.classList.add('bg-gradient');
+    }
+    
+    // Add visual feedback
+    button.classList.add('fade-in-up');
+    setTimeout(() => {
+        button.classList.remove('fade-in-up');
+    }, 600);
+    
+    console.log('🎨 Theme changed to:', theme);
+}
+
+// Initialize
+console.log('🚀 Bootstrap Demo initialized!');
+console.log('💡 Try interacting with the components above!');
+
+// Add Bootstrap 5 JS if not already loaded
+if (typeof bootstrap === 'undefined') {
+    console.warn('⚠️ Bootstrap JS not detected. Some features may not work properly.');
+}`
+                },
+                react: {
+                    html: `<div id="root"></div>`,
+                    css: `.react-app {
+    padding: 2rem;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+}
+
+.app-header {
+    text-align: center;
+    color: white;
+    margin-bottom: 2rem;
+}
+
+.app-title {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.app-subtitle {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    margin-bottom: 2rem;
+}
+
+.todo-container {
+    max-width: 600px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 15px;
+    padding: 2rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.add-todo {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.add-todo input {
+    flex: 1;
+    padding: 1rem;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.add-todo input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.add-todo button {
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, #28a745, #20c997);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.add-todo button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+}
+
+.add-todo button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.todo-stats {
+    display: flex;
+    justify-content: space-between;
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+    color: #495057;
+}
+
+.todo-list {
+    min-height: 200px;
+}
+
+.todo-item {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid #e9ecef;
+    transition: all 0.3s ease;
+}
+
+.todo-item:hover {
+    background: #f8f9fa;
+}
+
+.todo-item:last-child {
+    border-bottom: none;
+}
+
+.todo-item.completed {
+    opacity: 0.6;
+}
+
+.todo-item input[type="checkbox"] {
+    margin-right: 1rem;
+    transform: scale(1.2);
+    cursor: pointer;
+}
+
+.todo-text {
+    flex: 1;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.todo-item.completed .todo-text {
+    text-decoration: line-through;
+    color: #6c757d;
+}
+
+.todo-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.delete-btn {
+    background: linear-gradient(135deg, #dc3545, #c82333);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.3s ease;
+}
+
+.delete-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba(220, 53, 69, 0.4);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #6c757d;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.clear-completed {
+    margin-top: 1rem;
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, #6c757d, #495057);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.clear-completed:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(108, 117, 125, 0.4);
+}
+
+.clear-completed:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.todo-item {
+    animation: slideIn 0.3s ease;
+}`,
+                    js: `// React-like Component System for Todo App
+class TodoApp {
+    constructor() {
+        this.state = {
+            todos: [
+                { id: 1, text: 'Learn HTML & CSS', completed: true },
+                { id: 2, text: 'Master JavaScript', completed: false },
+                { id: 3, text: 'Build awesome projects', completed: false }
+            ],
+            inputValue: '',
+            nextId: 4
+        };
+        
+        this.render();
+        this.bindEvents();
+    }
+    
+    setState(newState) {
+        this.state = { ...this.state, ...newState };
+        this.render();
+        this.logStats();
+    }
+    
+    addTodo() {
+        const text = this.state.inputValue.trim();
+        if (!text) return;
+        
+        const newTodo = {
+            id: this.state.nextId,
+            text: text,
+            completed: false
+        };
+        
+        this.setState({
+            todos: [...this.state.todos, newTodo],
+            inputValue: '',
+            nextId: this.state.nextId + 1
+        });
+        
+        console.log('✅ Added todo:', text);
+    }
+    
+    toggleTodo(id) {
+        const todos = this.state.todos.map(todo =>
+            todo.id === id ? { ...todo, completed: !todo.completed } : todo
+        );
+        
+        this.setState({ todos });
+        
+        const todo = todos.find(t => t.id === id);
+        console.log(todo.completed ? '✅ Completed:' : '🔄 Uncompleted:', todo.text);
+    }
+    
+    deleteTodo(id) {
+        const todo = this.state.todos.find(t => t.id === id);
+        const todos = this.state.todos.filter(todo => todo.id !== id);
+        
+        this.setState({ todos });
+        console.log('🗑️ Deleted todo:', todo.text);
+    }
+    
+    clearCompleted() {
+        const completedCount = this.state.todos.filter(t => t.completed).length;
+        const todos = this.state.todos.filter(todo => !todo.completed);
+        
+        this.setState({ todos });
+        console.log(\`🧹 Cleared \${completedCount} completed todos\`);
+    }
+    
+    updateInput(value) {
+        this.setState({ inputValue: value });
+    }
+    
+    getStats() {
+        const total = this.state.todos.length;
+        const completed = this.state.todos.filter(t => t.completed).length;
+        const remaining = total - completed;
+        
+        return { total, completed, remaining };
+    }
+    
+    logStats() {
+        const stats = this.getStats();
+        console.log(\`📊 Stats - Total: \${stats.total}, Completed: \${stats.completed}, Remaining: \${stats.remaining}\`);
+    }
+    
+    bindEvents() {
+        // Handle Enter key in input
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && e.target.classList.contains('todo-input')) {
+                this.addTodo();
+            }
+        });
+    }
+    
+    render() {
+        const stats = this.getStats();
+        
+        const root = document.getElementById('root');
+        root.innerHTML = \`
+            <div class="react-app">
+                <div class="app-header">
+                    <h1 class="app-title">⚛️ React-Style Todo App</h1>
+                    <p class="app-subtitle">Built with vanilla JavaScript using React patterns</p>
+                </div>
+                
+                <div class="todo-container">
+                    <div class="add-todo">
+                        <input 
+                            type="text" 
+                            class="todo-input"
+                            placeholder="Add a new todo..." 
+                            value="\${this.state.inputValue}"
+                            oninput="todoApp.updateInput(this.value)"
+                        >
+                        <button onclick="todoApp.addTodo()" \${!this.state.inputValue.trim() ? 'disabled' : ''}>
+                            ➕ Add Todo
+                        </button>
+                    </div>
+                    
+                    <div class="todo-stats">
+                        <span>📝 Total: \${stats.total}</span>
+                        <span>✅ Completed: \${stats.completed}</span>
+                        <span>⏳ Remaining: \${stats.remaining}</span>
+                    </div>
+                    
+                    <div class="todo-list">
+                        \${this.state.todos.length === 0 ? \`
+                            <div class="empty-state">
+                                <i>📝</i>
+                                <h3>No todos yet!</h3>
+                                <p>Add your first todo above to get started.</p>
+                            </div>
+                        \` : this.state.todos.map(todo => \`
+                            <div class="todo-item \${todo.completed ? 'completed' : ''}">
+                                <input 
+                                    type="checkbox" 
+                                    \${todo.completed ? 'checked' : ''}
+                                    onchange="todoApp.toggleTodo(\${todo.id})"
+                                >
+                                <span class="todo-text">\${todo.text}</span>
+                                <div class="todo-actions">
+                                    <button class="delete-btn" onclick="todoApp.deleteTodo(\${todo.id})">
+                                        🗑️ Delete
+                                    </button>
+                                </div>
+                            </div>
+                        \`).join('')}
+                    </div>
+                    
+                    \${stats.completed > 0 ? \`
+                        <button class="clear-completed" onclick="todoApp.clearCompleted()">
+                            🧹 Clear Completed (\${stats.completed})
+                        </button>
+                    \` : ''}
+                </div>
+            </div>
+        \`;
+    }
+}
+
+// Initialize the Todo App
+const todoApp = new TodoApp();
+
+// Make it globally accessible for HTML event handlers
+window.todoApp = todoApp;
+
+console.log('⚛️ React-style Todo App initialized!');
+console.log('🚀 Try adding, completing, and deleting todos!');
+console.log('💡 This demonstrates React patterns with vanilla JavaScript');`
+                }
+            };
+
+            const selected = templates[template];
+            if (selected) {
+                this.state.codeMirrorInstances.html.setValue(selected.html);
+                this.state.codeMirrorInstances.css.setValue(selected.css);
+                this.state.codeMirrorInstances.js.setValue(selected.js);
+                this.debounceUpdate();
+                this.logToTerminal(`Template "${template}" loaded`, 'success');
+                this.showToast(`Template "${template}" loaded!`, 'info');
+            }
+            
+            document.querySelector('select.nav-btn').value = "";
+        }
+
+        downloadProject() {
+            const html = this.state.codeMirrorInstances.html.getValue();
+            const css = this.state.codeMirrorInstances.css.getValue();
+            const js = this.state.codeMirrorInstances.js.getValue();
+            
+            const fullHTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Live Coding Project</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+${css}
+    </style>
+</head>
+<body>
+${html}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+${js}
+    </script>
+</body>
+</html>`;
+            
+            const blob = new Blob([fullHTML], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'live-coding-project.html';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            this.showToast('Project downloaded!', 'success');
+            this.logToTerminal('Project downloaded as live-coding-project.html', 'success');
+        }
+
+        openInCodePen() {
+            const html = this.state.codeMirrorInstances.html.getValue();
+            const css = this.state.codeMirrorInstances.css.getValue();
+            const js = this.state.codeMirrorInstances.js.getValue();
+            
+            const data = {
+                title: 'Live Coding Project',
+                html: html,
+                css: css,
+                js: js,
+                html_pre_processor: 'none',
+                css_pre_processor: 'none',
+                js_pre_processor: 'none'
+            };
+            
+            const form = document.createElement('form');
+            form.action = 'https://codepen.io/pen/define';
+            form.method = 'POST';
+            form.target = '_blank';
+            
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'data';
+            input.value = JSON.stringify(data);
+            
+            form.appendChild(input);
+            document.body.appendChild(form);
+            form.submit();
+            document.body.removeChild(form);
+            
+            this.showToast('Opening in CodePen...', 'info');
+            this.logToTerminal('Project sent to CodePen', 'info');
+        }
+
+        openInJSFiddle() {
+            const html = this.state.codeMirrorInstances.html.getValue();
+            const css = this.state.codeMirrorInstances.css.getValue();
+            const js = this.state.codeMirrorInstances.js.getValue();
+            
+            const form = document.createElement('form');
+            form.action = 'https://jsfiddle.net/api/post/library/pure/';
+            form.method = 'POST';
+            form.target = '_blank';
+            
+            const inputs = [
+                { name: 'title', value: 'Live Coding Project' },
+                { name: 'html', value: html },
+                { name: 'css', value: css },
+                { name: 'js', value: js }
+            ];
+            
+            inputs.forEach(inputData => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = inputData.name;
+                input.value = inputData.value;
+                form.appendChild(input);
+            });
+            
+            document.body.appendChild(form);
+            form.submit();
+            document.body.removeChild(form);
+            
+            this.showToast('Opening in JSFiddle...', 'info');
+            this.logToTerminal('Project sent to JSFiddle', 'info');
+        }
+
+        resetWorkspace() {
+            if (confirm('Are you sure you want to reset the entire workspace? This will clear all editors and storage.')) {
+                Object.values(this.state.codeMirrorInstances).forEach(instance => {
+                    instance.setValue('');
+                });
+                
+                localStorage.removeItem('liveCodingHtml');
+                localStorage.removeItem('liveCodingCss');
+                localStorage.removeItem('liveCodingJs');
+                
+                this.loadDefaultContent();
+                this.logToTerminal('Workspace has been reset to default', 'warn');
+                this.showToast('Workspace Reset!', 'warn');
+            }
+        }
+
+        loadDefaultContent() {
+            const defaultContent = {
+                html: `<div class="hero-container">
+    <div class="hero-content">
+        <h1 class="hero-title">🚀 Welcome to Enhanced Live Coding!</h1>
+        <p class="hero-subtitle">Start editing to see live changes in real-time!</p>
+        <div class="hero-buttons">
+            <button class="btn btn-primary" onclick="showDemo()">
+                <i class="icon">▶</i> Try JavaScript
+            </button>
+            <button class="btn btn-secondary" onclick="changeTheme()">
+                <i class="icon">🎨</i> Change Theme
+            </button>
+            <button class="btn btn-success" onclick="showFeatures()">
+                <i class="icon">✨</i> Show Features
+            </button>
+        </div>
+        <div class="info-card">
+            <h3>🔥 Pro Tips</h3>
+            <ul>
+                <li><strong>Ctrl+Enter</strong> to run code</li>
+                <li><strong>Ctrl+S</strong> to save project</li>
+                <li><strong>F11</strong> for fullscreen preview</li>
+                <li>Check the console below for output!</li>
+            </ul>
+        </div>
+    </div>
+    <div class="floating-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+    </div>
+</div>`,
+                css: `* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: system-ui, -apple-system, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+.hero-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    position: relative;
+}
+
+.hero-content {
+    text-align: center;
+    color: white;
+    max-width: 800px;
+    position: relative;
+    z-index: 10;
+}
+
+.hero-title {
+    font-size: clamp(2rem, 5vw, 4rem);
+    font-weight: 700;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    animation: fadeInUp 1s ease;
+}
+
+.hero-subtitle {
+    font-size: clamp(1rem, 3vw, 1.5rem);
+    margin-bottom: 2rem;
+    opacity: 0.9;
+    animation: fadeInUp 1s ease 0.2s both;
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 3rem;
+    animation: fadeInUp 1s ease 0.4s both;
+}
+
+.btn {
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+}
+
+.btn:active {
+    transform: translateY(-1px);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    color: white;
+}
+
+.btn-secondary {
+    background: linear-gradient(135deg, #6c757d, #495057);
+    color: white;
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #28a745, #1e7e34);
+    color: white;
+}
+
+.icon {
+    font-size: 1.2rem;
+}
+
+.info-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    padding: 2rem;
+    animation: fadeInUp 1s ease 0.6s both;
+}
+
+.info-card h3 {
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
+
+.info-card ul {
+    list-style: none;
+    text-align: left;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.info-card li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.info-card li:last-child {
+    border-bottom: none;
+}
+
+.floating-shapes {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.shape {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    animation: float 6s ease-in-out infinite;
+}
+
+.shape-1 {
+    width: 80px;
+    height: 80px;
+    top: 20%;
+    left: 10%;
+    animation-delay: 0s;
+}
+
+.shape-2 {
+    width: 120px;
+    height: 120px;
+    top: 60%;
+    right: 10%;
+    animation-delay: 2s;
+}
+
+.shape-3 {
+    width: 60px;
+    height: 60px;
+    bottom: 20%;
+    left: 20%;
+    animation-delay: 4s;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px) rotate(0deg);
+    }
+    33% {
+        transform: translateY(-20px) rotate(120deg);
+    }
+    66% {
+        transform: translateY(10px) rotate(240deg);
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .btn {
+        width: 100%;
+        max-width: 280px;
+        justify-content: center;
+    }
+    
+    .info-card {
+        padding: 1.5rem;
+    }
+}`,
+                js: `// Enhanced welcome functions with animations
+function showDemo() {
+    console.log("🎉 JavaScript is working perfectly!");
+    console.log("🚀 Enhanced Live Coding Platform Demo");
+    console.log("💡 Features:");
+    console.log("  • Real-time preview");
+    console.log("  • Syntax highlighting");
+    console.log("  • Multiple themes");
+    console.log("  • Export to CodePen/JSFiddle");
+    console.log("  • Auto-save functionality");
+    console.log("  • Fullscreen preview");
+    
+    // Create sparkle effect
+    createSparkles();
+    
+    // Show success message
+    showNotification("🎉 JavaScript Demo Complete! Check the console for details.", "success");
+}
+
+function changeTheme() {
+    const themes = [
+        { name: 'Ocean Breeze', gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' },
+        { name: 'Sunset Glow', gradient: 'linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%)' },
+        { name: 'Forest Green', gradient: 'linear-gradient(135deg, #134e5e 0%, #71b280 100%)' },
+        { name: 'Purple Rain', gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' },
+        { name: 'Fire Sunset', gradient: 'linear-gradient(135deg, #ff6b6b 0%, #feca57 100%)' }
+    ];
+    
+    const randomTheme = themes[Math.floor(Math.random() * themes.length)];
+    document.body.style.background = randomTheme.gradient;
+    
+    console.log(\`🎨 Theme changed to: \${randomTheme.name}\`);
+    showNotification(\`🎨 Theme changed to \${randomTheme.name}!\`, "info");
+    
+    // Add bounce effect to the button
+    const button = event.target;
+    button.style.transform = 'scale(0.95)';
+    setTimeout(() => {
+        button.style.transform = 'scale(1)';
+    }, 150);
+}
+
+function showFeatures() {
+    const features = [
+        "🎨 Multiple syntax themes (Dracula, Monokai, Material, Nord)",
+        "📱 Responsive preview modes (Desktop, Tablet, Mobile)",
+        "🔄 Real-time live preview with console output",
+        "💾 Auto-save and manual save functionality",
+        "📤 Export to CodePen and JSFiddle",
+        "📦 Download complete HTML projects",
+        "⌨️ Keyboard shortcuts (Ctrl+Enter, Ctrl+S, F11)",
+        "🎭 Draggable theme toggle",
+        "📋 Built-in code templates",
+        "🔧 Code formatting and syntax highlighting"
+    ];
+    
+    console.log("✨ Enhanced Live Coding Platform Features:");
+    features.forEach((feature, index) => {
+        setTimeout(() => {
+            console.log(\`  \${feature}\`);
+        }, index * 100);
+    });
+    
+    showNotification("✨ Features logged to console! This platform has everything you need for live coding.", "info");
+}
+
+function createSparkles() {
+    for (let i = 0; i < 10; i++) {
+        setTimeout(() => {
+            const sparkle = document.createElement('div');
+            sparkle.innerHTML = '✨';
+            sparkle.style.position = 'fixed';
+            sparkle.style.left = Math.random() * window.innerWidth + 'px';
+            sparkle.style.top = Math.random() * window.innerHeight + 'px';
+            sparkle.style.fontSize = '20px';
+            sparkle.style.pointerEvents = 'none';
+            sparkle.style.zIndex = '9999';
+            sparkle.style.animation = 'sparkle 2s ease-out forwards';
+            
+            document.body.appendChild(sparkle);
+            
+            setTimeout(() => {
+                sparkle.remove();
+            }, 2000);
+        }, i * 100);
+    }
+}
+
+function showNotification(message, type) {
+    // This will use the platform's toast system if available
+    if (window.platform && typeof window.platform.showToast === 'function') {
+        window.platform.showToast(message, type);
+    } else {
+        // Fallback for standalone HTML
+        alert(message);
+    }
+}
+
+// Add sparkle animation CSS
+const sparkleCSS = \`
+@keyframes sparkle {
+    0% {
+        opacity: 1;
+        transform: scale(0) rotate(0deg);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1) rotate(180deg);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(0) rotate(360deg);
+    }
+}
+\`;
+
+const style = document.createElement('style');
+style.textContent = sparkleCSS;
+document.head.appendChild(style);
+
+// Initialize welcome
+console.log("🚀 Enhanced Live Coding Platform Initialized!");
+console.log("💡 Click the buttons above to explore features!");
+console.log("🎯 Start editing HTML, CSS, or JS to see live changes!");
+console.log("🔥 Press F11 to preview in fullscreen mode!");
+
+// Add some interactive welcome effects
+setTimeout(() => {
+    if (Math.random() > 0.7) {
+        console.log("💫 Pro tip: Try dragging the theme toggle in the top-right corner!");
+    }
+}, 3000);`
+            };
+
+            this.state.codeMirrorInstances.html.setValue(defaultContent.html);
+            this.state.codeMirrorInstances.css.setValue(defaultContent.css);
+            this.state.codeMirrorInstances.js.setValue(defaultContent.js);
+            
+            this.updatePreview();
+        }
+
+        startAutoSave() {
+            setInterval(() => {
+                this.saveToStorage();
+                document.getElementById('autoSaveStatus').textContent = `Auto-saved: ${new Date().toLocaleTimeString()}`;
+            }, this.state.autoSaveInterval);
+        }
+
+        saveToStorage() {
+            try {
+                localStorage.setItem('liveCodingHtml', this.state.codeMirrorInstances.html.getValue());
+                localStorage.setItem('liveCodingCss', this.state.codeMirrorInstances.css.getValue());
+                localStorage.setItem('liveCodingJs', this.state.codeMirrorInstances.js.getValue());
+            } catch (e) {
+                console.warn('Could not save to localStorage:', e);
+            }
+        }
+
+        loadFromStorage() {
+            try {
+                const html = localStorage.getItem('liveCodingHtml');
+                const css = localStorage.getItem('liveCodingCss');
+                const js = localStorage.getItem('liveCodingJs');
+
+                if (html) this.state.codeMirrorInstances.html.setValue(html);
+                if (css) this.state.codeMirrorInstances.css.setValue(css);
+                if (js) this.state.codeMirrorInstances.js.setValue(js);
+
+                if (html || css || js) {
+                    this.logToTerminal('Loaded saved project from local storage', 'info');
+                }
+            } catch (e) {
+                console.warn('Could not load from localStorage:', e);
+            }
+        }
+
+        hasStoredContent() {
+            return localStorage.getItem('liveCodingHtml') || 
+                   localStorage.getItem('liveCodingCss') || 
+                   localStorage.getItem('liveCodingJs');
+        }
+
+        clearTerminal() {
+            document.getElementById('terminalContent').innerHTML = '';
+            this.logToTerminal('Console cleared', 'info');
+        }
+
+        logToTerminal(message, type = 'info') {
+            const terminal = document.getElementById('terminalContent');
+            const line = document.createElement('div');
+            line.className = `terminal-line terminal-${type}`;
+            const timestamp = new Date().toLocaleTimeString();
+            line.innerHTML = `<span>[${timestamp}]</span> <span class="terminal-${type}">[${type.toUpperCase()}]</span> ${message}`;
+            terminal.appendChild(line);
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+
+        showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <i class="bi bi-${type === 'success' ? 'check-circle' : type === 'error' ? 'x-circle' : type === 'warn' ? 'exclamation-triangle' : 'info-circle'}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            container.appendChild(toast);
+            
+            setTimeout(() => toast.classList.add('show'), 10);
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+    }
+
+    // Global functions for HTML onclick handlers
+    let platform;
+
+    function runCode() {
+        platform.runCode();
+    }
+
+    function formatCode() {
+        platform.formatCode();
+    }
+
+    function clearCurrentEditor() {
+        platform.clearCurrentEditor();
+    }
+
+    function switchEditorTab(tab) {
+        platform.switchEditorTab(tab);
+    }
+
+    function setPreviewSize(width) {
+        platform.setPreviewSize(width);
+    }
+
+    function toggleFullscreen() {
+        platform.toggleFullscreen();
+    }
+
+    function loadTemplate(template) {
+        platform.loadTemplate(template);
+    }
+
+    function downloadProject() {
+        platform.downloadProject();
+    }
+
+    function openInCodePen() {
+        platform.openInCodePen();
+    }
+
+    function openInJSFiddle() {
+        platform.openInJSFiddle();
+    }
+
+    function resetWorkspace() {
+        platform.resetWorkspace();
+    }
+
+    function clearTerminal() {
+        platform.clearTerminal();
+    }
+
+    // Enhanced Toast system compatible with dark mode
+    function showToast(message, type = 'info') {
+        if (platform && typeof platform.showToast === 'function') {
+            platform.showToast(message, type);
+        } else {
+            console.log(`Toast: ${message} (${type})`);
+        }
+    }
+
+    // Initialize the platform when DOM is ready
+    document.addEventListener('DOMContentLoaded', () => {
+        platform = new LiveCodingPlatform();
+        
+        // Make platform globally accessible
+        window.platform = platform;
+        
+        console.log('🚀 Enhanced Live Coding Platform fully loaded and ready!');
+        showToast('🎉 Welcome to Enhanced Live Coding Platform!', 'success');
+    });
+
+    // Additional keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+        // Ctrl/Cmd + D for theme toggle (handled by ThemeManager)
+        if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
+            e.preventDefault();
+            if (window.ThemeManager) {
+                window.ThemeManager.toggleTheme();
+            }
+        }
+        
+        // Ctrl/Cmd + 1, 2, 3 for editor tabs
+        if ((e.ctrlKey || e.metaKey) && ['1', '2', '3'].includes(e.key)) {
+            e.preventDefault();
+            const tabs = ['html', 'css', 'js'];
+            switchEditorTab(tabs[parseInt(e.key) - 1]);
+        }
+        
+        // F5 to run code (override refresh)
+        if (e.key === 'F5') {
+            e.preventDefault();
+            runCode();
+        }
+
+        // Esc to exit fullscreen
+        if (e.key === 'Escape' && platform && platform.state.isFullscreen) {
+            e.preventDefault();
+            toggleFullscreen();
+        }
+    });
+
+    // Prevent accidental page refresh when code has been modified
+    let isCodeChanged = false;
+    window.addEventListener('beforeunload', (e) => {
+        if (isCodeChanged && platform) {
+            platform.saveToStorage();
+            e.preventDefault();
+            e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
+        }
+    });
+
+    // Track if code has changed
+    document.addEventListener('DOMContentLoaded', () => {
+        setTimeout(() => {
+            if (platform && platform.state.codeMirrorInstances) {
+                Object.values(platform.state.codeMirrorInstances).forEach(instance => {
+                    instance.on('change', () => {
+                        isCodeChanged = true;
+                        // Reset the flag after auto-save
+                        setTimeout(() => {
+                            isCodeChanged = false;
+                        }, platform.state.autoSaveInterval + 1000);
+                    });
+                });
+            }
+        }, 1000);
+    });
+
+    // Handle visibility change to pause/resume auto-save
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden && platform) {
+            platform.saveToStorage();
+            console.log('💾 Project saved before tab became hidden');
+        }
+    });
+    </script>
+</body>
+</html> "*");
                 originalLog.apply(console, args);
             };
             
@@ -1107,6 +3174,67 @@
             
             frame.style.width = width;
             frame.style.transition = 'width 0.3s ease';
+            frame.style.margin = width !== '100%' ? '0 auto' : '0';
+        }
+
+        toggleFullscreen() {
+            const previewSection = document.getElementById('previewSection');
+            const fullscreenBtn = document.getElementById('fullscreenBtn');
+            
+            if (!this.state.isFullscreen) {
+                // Enter fullscreen
+                if (previewSection.requestFullscreen) {
+                    previewSection.requestFullscreen();
+                } else if (previewSection.webkitRequestFullscreen) {
+                    previewSection.webkitRequestFullscreen();
+                } else if (previewSection.mozRequestFullScreen) {
+                    previewSection.mozRequestFullScreen();
+                } else if (previewSection.msRequestFullscreen) {
+                    previewSection.msRequestFullscreen();
+                } else {
+                    // Fallback for browsers that don't support fullscreen API
+                    previewSection.classList.add('fullscreen');
+                    this.state.isFullscreen = true;
+                    this.updateFullscreenButton();
+                }
+            } else {
+                // Exit fullscreen
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.mozCancelFullScreen) {
+                    document.mozCancelFullScreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                } else {
+                    // Fallback
+                    previewSection.classList.remove('fullscreen');
+                    this.state.isFullscreen = false;
+                    this.updateFullscreenButton();
+                }
+            }
+        }
+
+        handleFullscreenChange() {
+            const isCurrentlyFullscreen = !!(document.fullscreenElement || document.webkitFullscreenElement || 
+                                            document.mozFullScreenElement || document.msFullscreenElement);
+            
+            this.state.isFullscreen = isCurrentlyFullscreen;
+            this.updateFullscreenButton();
+        }
+
+        updateFullscreenButton() {
+            const fullscreenBtn = document.getElementById('fullscreenBtn');
+            const icon = fullscreenBtn.querySelector('i');
+            
+            if (this.state.isFullscreen) {
+                icon.className = 'bi bi-fullscreen-exit';
+                fullscreenBtn.innerHTML = '<i class="bi bi-fullscreen-exit"></i> Exit Fullscreen';
+            } else {
+                icon.className = 'bi bi-fullscreen';
+                fullscreenBtn.innerHTML = '<i class="bi bi-fullscreen"></i> Fullscreen';
+            }
         }
 
         loadTemplate(template) {
@@ -1127,712 +3255,72 @@
     <title>Basic Page</title>
 </head>
 <body>
-    <h1>Hello World</h1>
-    <p>This is a basic HTML page.</p>
-    <button onclick="greet()">Click me!</button>
+    <div class="container">
+        <h1>Hello World</h1>
+        <p>This is a basic HTML page.</p>
+        <button onclick="greet()">Click me!</button>
+    </div>
 </body>
 </html>`,
                     css: `body {
     font-family: Arial, sans-serif;
     line-height: 1.6;
+    margin: 0;
     padding: 20px;
-    background: #f4f4f4;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #333;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
 }
 
 h1 {
     color: #333;
+    text-align: center;
+    margin-bottom: 1rem;
 }
 
 button {
     background: #007acc;
     color: white;
     border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
+    padding: 12px 24px;
+    border-radius: 6px;
     cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.3s ease;
 }
 
 button:hover {
     background: #005a9e;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }`,
                     js: `function greet() {
-    alert('Hello from JavaScript!');
+    const messages = [
+        'Hello from JavaScript! 🚀',
+        'Welcome to Live Coding! ✨',
+        'Keep coding and learning! 💻',
+        'You\'re doing great! 🎉'
+    ];
+    
+    const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+    alert(randomMessage);
+    
     console.log('Button was clicked!');
-}`
-                },
-                interactive: {
-                    html: `<div class="container">
-    <h1>Interactive Counter</h1>
-    <div class="counter-display">
-        <span id="count">0</span>
-    </div>
-    <div class="buttons">
-        <button onclick="increment()">+</button>
-        <button onclick="decrement()">-</button>
-        <button onclick="reset()">Reset</button>
-    </div>
-</div>`,
-                    css: `.container {
-    text-align: center;
-    padding: 50px;
-    font-family: Arial, sans-serif;
-}
-
-.counter-display {
-    font-size: 4rem;
-    margin: 30px 0;
-    color: #007acc;
-    font-weight: bold;
-}
-
-.buttons button {
-    font-size: 1.5rem;
-    padding: 15px 30px;
-    margin: 0 10px;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.buttons button:first-child {
-    background: #28a745;
-    color: white;
-}
-
-.buttons button:nth-child(2) {
-    background: #dc3545;
-    color: white;
-}
-
-.buttons button:last-child {
-    background: #6c757d;
-    color: white;
-}
-
-.buttons button:hover {
-    transform: scale(1.1);
-}`,
-                    js: `let counter = 0;
-
-function increment() {
-    counter++;
-    updateDisplay();
-    console.log('Counter incremented to:', counter);
-}
-
-function decrement() {
-    counter--;
-    updateDisplay();
-    console.log('Counter decremented to:', counter);
-}
-
-function reset() {
-    counter = 0;
-    updateDisplay();
-    console.log('Counter reset to 0');
-}
-
-function updateDisplay() {
-    document.getElementById('count').textContent = counter;
-}`
-                },
-                bootstrap: {
-                    html: `<div class="container mt-5">
-    <div class="row">
-        <div class="col-md-8 mx-auto">
-            <div class="card">
-                <div class="card-header bg-primary text-white">
-                    <h2 class="mb-0">Bootstrap Demo</h2>
-                </div>
-                <div class="card-body">
-                    <p class="lead">This is a Bootstrap component demo.</p>
-                    <div class="alert alert-success" role="alert">
-                        <strong>Success!</strong> This is a success alert.
-                    </div>
-                    <button class="btn btn-primary me-2" onclick="showModal()">Show Modal</button>
-                    <button class="btn btn-outline-secondary" onclick="toggleAlert()">Toggle Alert</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="demoModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Demo Modal</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <p>This is a Bootstrap modal!</p>
-            </div>
-        </div>
-    </div>
-</div>`,
-                    css: `/* Custom Bootstrap overrides */
-.card {
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    border: none;
-}
-
-.btn {
-    transition: all 0.3s ease;
-}
-
-.btn:hover {
-    transform: translateY(-2px);
-}`,
-                    js: `function showModal() {
-    // Note: Bootstrap 5 modal functionality would need Bootstrap JS
-    alert('Modal would open here with Bootstrap JS loaded');
-    console.log('Modal triggered');
-}
-
-function toggleAlert() {
-    const alert = document.querySelector('.alert');
-    if (alert.style.display === 'none') {
-        alert.style.display = 'block';
-        console.log('Alert shown');
-    } else {
-        alert.style.display = 'none';
-        console.log('Alert hidden');
-    }
-}`
-                },
-                react: {
-                    html: `<div id="root"></div>`,
-                    css: `.app {
-    padding: 20px;
-    font-family: Arial, sans-serif;
-}
-
-.todo-item {
-    display: flex;
-    align-items: center;
-    padding: 10px;
-    border-bottom: 1px solid #eee;
-}
-
-.todo-item input {
-    margin-right: 10px;
-}
-
-.todo-item.completed {
-    text-decoration: line-through;
-    opacity: 0.6;
-}
-
-.add-todo {
-    display: flex;
-    margin-bottom: 20px;
-}
-
-.add-todo input {
-    flex: 1;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-}
-
-.add-todo button {
-    padding: 10px 20px;
-    background: #007acc;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    margin-left: 10px;
-    cursor: pointer;
-}`,
-                    js: `// Simple React-like component system
-function createComponent(props = {}) {
-    return {
-        state: props.initialState || {},
-        setState: function(newState) {
-            Object.assign(this.state, newState);
-            this.render();
-        },
-        render: function() {
-            // Override in actual components
-        }
-    };
-}
-
-// Todo App Component
-const TodoApp = createComponent({
-    initialState: {
-        todos: [],
-        inputValue: ''
-    }
-});
-
-TodoApp.addTodo = function() {
-    if (this.state.inputValue.trim()) {
-        this.state.todos.push({
-            id: Date.now(),
-            text: this.state.inputValue,
-            completed: false
-        });
-        this.setState({ inputValue: '', todos: this.state.todos });
-    }
-};
-
-TodoApp.toggleTodo = function(id) {
-    const todo = this.state.todos.find(t => t.id === id);
-    if (todo) {
-        todo.completed = !todo.completed;
-        this.setState({ todos: this.state.todos });
-    }
-};
-
-TodoApp.render = function() {
-    const root = document.getElementById('root');
-    root.innerHTML = \`
-        <div class="app">
-            <h1>React-like Todo App</h1>
-            <div class="add-todo">
-                <input 
-                    type="text" 
-                    placeholder="Add a todo..." 
-                    value="\${this.state.inputValue}"
-                    onkeyup="if(event.key==='Enter') TodoApp.addTodo()"
-                    oninput="TodoApp.state.inputValue = this.value"
-                >
-                <button onclick="TodoApp.addTodo()">Add</button>
-            </div>
-            <div class="todos">
-                \${this.state.todos.map(todo => \`
-                    <div class="todo-item \${todo.completed ? 'completed' : ''}">
-                        <input 
-                            type="checkbox" 
-                            \${todo.completed ? 'checked' : ''}
-                            onchange="TodoApp.toggleTodo(\${todo.id})"
-                        >
-                        <span>\${todo.text}</span>
-                    </div>
-                \`).join('')}
-            </div>
-        </div>
-    \`;
-};
-
-// Initialize the app
-TodoApp.render();
-console.log('React-like Todo App initialized');`
-                }
-            };
-
-            const selected = templates[template];
-            if (selected) {
-                this.state.codeMirrorInstances.html.setValue(selected.html);
-                this.state.codeMirrorInstances.css.setValue(selected.css);
-                this.state.codeMirrorInstances.js.setValue(selected.js);
-                this.debounceUpdate();
-                this.logToTerminal(`Template "${template}" loaded`, 'success');
-                this.showToast(`Template "${template}" loaded!`, 'info');
-            }
-            
-            document.querySelector('select.nav-btn').value = "";
-        }
-
-        downloadProject() {
-            const html = this.state.codeMirrorInstances.html.getValue();
-            const css = this.state.codeMirrorInstances.css.getValue();
-            const js = this.state.codeMirrorInstances.js.getValue();
-            
-            const fullHTML = `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Live Coding Project</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-${css}
-    </style>
-</head>
-<body>
-${html}
-    <script>
-${js}
-    </script>
-</body>
-</html>`;
-            
-            const blob = new Blob([fullHTML], { type: 'text/html' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'live-coding-project.html';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            
-            this.showToast('Project downloaded!', 'success');
-            this.logToTerminal('Project downloaded as live-coding-project.html', 'success');
-        }
-
-        openInCodePen() {
-            const html = this.state.codeMirrorInstances.html.getValue();
-            const css = this.state.codeMirrorInstances.css.getValue();
-            const js = this.state.codeMirrorInstances.js.getValue();
-            
-            const data = {
-                title: 'Live Coding Project',
-                html: html,
-                css: css,
-                js: js,
-                html_pre_processor: 'none',
-                css_pre_processor: 'none',
-                js_pre_processor: 'none'
-            };
-            
-            const form = document.createElement('form');
-            form.action = 'https://codepen.io/pen/define';
-            form.method = 'POST';
-            form.target = '_blank';
-            
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = 'data';
-            input.value = JSON.stringify(data);
-            
-            form.appendChild(input);
-            document.body.appendChild(form);
-            form.submit();
-            document.body.removeChild(form);
-            
-            this.showToast('Opening in CodePen...', 'info');
-            this.logToTerminal('Project sent to CodePen', 'info');
-        }
-
-        openInJSFiddle() {
-            const html = this.state.codeMirrorInstances.html.getValue();
-            const css = this.state.codeMirrorInstances.css.getValue();
-            const js = this.state.codeMirrorInstances.js.getValue();
-            
-            const form = document.createElement('form');
-            form.action = 'https://jsfiddle.net/api/post/library/pure/';
-            form.method = 'POST';
-            form.target = '_blank';
-            
-            const inputs = [
-                { name: 'title', value: 'Live Coding Project' },
-                { name: 'html', value: html },
-                { name: 'css', value: css },
-                { name: 'js', value: js }
-            ];
-            
-            inputs.forEach(inputData => {
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = inputData.name;
-                input.value = inputData.value;
-                form.appendChild(input);
-            });
-            
-            document.body.appendChild(form);
-            form.submit();
-            document.body.removeChild(form);
-            
-            this.showToast('Opening in JSFiddle...', 'info');
-            this.logToTerminal('Project sent to JSFiddle', 'info');
-        }
-
-        resetWorkspace() {
-            if (confirm('Are you sure you want to reset the entire workspace? This will clear all editors and storage.')) {
-                Object.values(this.state.codeMirrorInstances).forEach(instance => {
-                    instance.setValue('');
-                });
-                
-                localStorage.removeItem('liveCodingHtml');
-                localStorage.removeItem('liveCodingCss');
-                localStorage.removeItem('liveCodingJs');
-                
-                this.loadDefaultContent();
-                this.logToTerminal('Workspace has been reset to default', 'warn');
-                this.showToast('Workspace Reset!', 'warn');
-            }
-        }
-
-        loadDefaultContent() {
-            const defaultContent = {
-                html: `<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="card shadow-lg border-0">
-                <div class="card-header bg-primary text-white text-center">
-                    <h2 class="mb-0">🚀 Welcome to Enhanced Live Coding!</h2>
-                </div>
-                <div class="card-body text-center p-5">
-                    <p class="lead mb-4">Start editing to see live changes in real-time!</p>
-                    <div class="mb-4">
-                        <button class="btn btn-success btn-lg me-3" onclick="showDemo()">
-                            <i class="bi bi-play-fill"></i> Try JavaScript
-                        </button>
-                        <button class="btn btn-outline-primary btn-lg" onclick="changeTheme()">
-                            <i class="bi bi-palette"></i> Change Theme
-                        </button>
-                    </div>
-                    <div class="alert alert-info">
-                        <strong>Pro Tip:</strong> Use Ctrl+Enter to run code, Ctrl+S to save!
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>`,
-                css: `body {
-    font-family: system-ui, -apple-system, sans-serif;
-    transition: all 0.3s ease;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    min-height: 100vh;
-}
-
-body.dark-theme {
-    background: linear-gradient(135deg, #2c3e50 0%, #4a6741 100%) !important;
-    color: #f8f9fa;
-}
-
-.card {
-    backdrop-filter: blur(10px);
-    background: rgba(255, 255, 255, 0.95);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-body.dark-theme .card {
-    background: rgba(0, 0, 0, 0.8);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.btn {
-    transition: all 0.3s ease;
-}
-
-.btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-}`,
-                js: `function showDemo() {
-    console.log("🎉 JavaScript is working perfectly!");
-    console.log("You can see this message in the terminal below!");
+    console.log('Random message shown:', randomMessage);
     
-    // Create a fun animation
-    const card = document.querySelector('.card');
-    card.style.transform = 'scale(1.05)';
+    // Add some visual feedback
+    const button = event.target;
+    button.style.transform = 'scale(0.95)';
     setTimeout(() => {
-        card.style.transform = 'scale(1)';
-    }, 300);
-    
-    alert("✨ JavaScript is working! Check the console terminal below for more details.");
-}
-
-function changeTheme() {
-    document.body.classList.toggle("dark-theme");
-    console.log("🎨 Theme toggled!");
-    
-    const isDark = document.body.classList.contains("dark-theme");
-    console.log(\`Current theme: \${isDark ? 'Dark' : 'Light'}\`);
-}
-
-// Log a welcome message
-console.log("🚀 Welcome to Enhanced Live Coding Platform!");
-console.log("💡 Try editing the HTML, CSS, or JavaScript and see live changes!");
-console.log("🔧 Available features:");
-console.log("  • Live preview with console output");
-console.log("  • Syntax highlighting with multiple themes");
-console.log("  • Export to CodePen & JSFiddle");  
-console.log("  • Download projects as HTML files");
-console.log("  • Auto-save functionality");`
-            };
-
-            this.state.codeMirrorInstances.html.setValue(defaultContent.html);
-            this.state.codeMirrorInstances.css.setValue(defaultContent.css);
-            this.state.codeMirrorInstances.js.setValue(defaultContent.js);
-            
-            this.updatePreview();
-        }
-
-        startAutoSave() {
-            setInterval(() => {
-                this.saveToStorage();
-                document.getElementById('autoSaveStatus').textContent = `Auto-saved: ${new Date().toLocaleTimeString()}`;
-            }, this.state.autoSaveInterval);
-        }
-
-        saveToStorage() {
-            try {
-                localStorage.setItem('liveCodingHtml', this.state.codeMirrorInstances.html.getValue());
-                localStorage.setItem('liveCodingCss', this.state.codeMirrorInstances.css.getValue());
-                localStorage.setItem('liveCodingJs', this.state.codeMirrorInstances.js.getValue());
-            } catch (e) {
-                console.warn('Could not load from localStorage:', e);
-            }
-        }
-
-        hasStoredContent() {
-            return localStorage.getItem('liveCodingHtml') || 
-                   localStorage.getItem('liveCodingCss') || 
-                   localStorage.getItem('liveCodingJs');
-        }
-
-        clearTerminal() {
-            document.getElementById('terminalContent').innerHTML = '';
-            this.logToTerminal('Console cleared', 'info');
-        }
-
-        logToTerminal(message, type = 'info') {
-            const terminal = document.getElementById('terminalContent');
-            const line = document.createElement('div');
-            line.className = `terminal-line terminal-${type}`;
-            const timestamp = new Date().toLocaleTimeString();
-            line.innerHTML = `<span>[${timestamp}]</span> <span class="terminal-${type}">[${type.toUpperCase()}]</span> ${message}`;
-            terminal.appendChild(line);
-            terminal.scrollTop = terminal.scrollHeight;
-        }
-
-        showToast(message, type = 'info') {
-            const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            toast.innerHTML = `
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <i class="bi bi-${type === 'success' ? 'check-circle' : type === 'error' ? 'x-circle' : type === 'warn' ? 'exclamation-triangle' : 'info-circle'}"></i>
-                    <span>${message}</span>
-                </div>
-            `;
-            container.appendChild(toast);
-            
-            setTimeout(() => toast.classList.add('show'), 10);
-            
-            setTimeout(() => {
-                toast.classList.remove('show');
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
-        }
-    }
-
-    // Global functions for HTML onclick handlers
-    let platform;
-
-    function runCode() {
-        platform.runCode();
-    }
-
-    function formatCode() {
-        platform.formatCode();
-    }
-
-    function clearCurrentEditor() {
-        platform.clearCurrentEditor();
-    }
-
-    function switchEditorTab(tab) {
-        platform.switchEditorTab(tab);
-    }
-
-    function setPreviewSize(width) {
-        platform.setPreviewSize(width);
-    }
-
-    function loadTemplate(template) {
-        platform.loadTemplate(template);
-    }
-
-    function downloadProject() {
-        platform.downloadProject();
-    }
-
-    function openInCodePen() {
-        platform.openInCodePen();
-    }
-
-    function openInJSFiddle() {
-        platform.openInJSFiddle();
-    }
-
-    function resetWorkspace() {
-        platform.resetWorkspace();
-    }
-
-    function clearTerminal() {
-        platform.clearTerminal();
-    }
-
-    // Initialize the platform when DOM is ready
-    document.addEventListener('DOMContentLoaded', () => {
-        platform = new LiveCodingPlatform();
-        
-        // Make platform globally accessible for debugging
-        window.liveCodingPlatform = platform;
-        
-        console.log('🚀 Enhanced Live Coding Platform fully loaded and ready!');
-    });
-
-    // Additional keyboard shortcuts
-    document.addEventListener('keydown', (e) => {
-        // Ctrl/Cmd + D for theme toggle
-        if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
-            e.preventDefault();
-            document.getElementById('themeToggle').click();
-        }
-        
-        // Ctrl/Cmd + 1, 2, 3 for editor tabs
-        if ((e.ctrlKey || e.metaKey) && ['1', '2', '3'].includes(e.key)) {
-            e.preventDefault();
-            const tabs = ['html', 'css', 'js'];
-            switchEditorTab(tabs[parseInt(e.key) - 1]);
-        }
-        
-        // F5 or Ctrl/Cmd + R to run code (override refresh)
-        if (e.key === 'F5' || ((e.ctrlKey || e.metaKey) && e.key === 'r')) {
-            e.preventDefault();
-            runCode();
-        }
-    });
-
-    // Prevent accidental page refresh
-    let isCodeChanged = false;
-    window.addEventListener('beforeunload', (e) => {
-        if (isCodeChanged) {
-            platform.saveToStorage();
-            e.preventDefault();
-            e.returnValue = '';
-        }
-    });
-
-    // Track if code has changed
-    document.addEventListener('DOMContentLoaded', () => {
-        setTimeout(() => {
-            if (platform && platform.state.codeMirrorInstances) {
-                Object.values(platform.state.codeMirrorInstances).forEach(instance => {
-                    instance.on('change', () => {
-                        isCodeChanged = true;
-                    });
-                });
-            }
-        }, 1000);
-    });
-    </script>
-</body>
-</html>warn('Could not save to localStorage:', e);
-            }
-        }
-
-        loadFromStorage() {
-            try {
-                const html = localStorage.getItem('liveCodingHtml');
-                const css = localStorage.getItem('liveCodingCss');
-                const js = localStorage.getItem('liveCodingJs');
-
-                if (html) this.state.codeMirrorInstances.html.setValue(html);
-                if (css) this.state.codeMirrorInstances.css.setValue(css);
-                if (js) this.state.codeMirrorInstances.js.setValue(js);
-
-                if (html || css || js) {
-                    this.logToTerminal('Loaded saved project from local storage', 'info');
-                }
-            } catch (e) {
-                console.
+        button.style.transform = 'scale(1)';
+    }, 150);
+}`
+                },
