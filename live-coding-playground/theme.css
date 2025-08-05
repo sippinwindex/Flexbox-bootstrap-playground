@@ -1,0 +1,336 @@
+/* Theme System CSS - Dark mode toggle and theme switching */
+
+/* Advanced theme toggle styles */
+.theme-toggle-wrapper {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1100;
+    cursor: move;
+    user-select: none;
+}
+
+.theme-toggle {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 2px solid var(--theme-border-color);
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-backdrop);
+    color: var(--theme-text-primary);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    box-shadow: var(--theme-shadow-md);
+    position: relative;
+    overflow: hidden;
+}
+
+.theme-toggle::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.6s ease;
+}
+
+.theme-toggle:hover::before {
+    left: 100%;
+}
+
+.theme-toggle:hover {
+    transform: scale(1.1);
+    border-color: var(--theme-border-focus);
+    box-shadow: var(--theme-shadow-lg);
+}
+
+.theme-toggle:focus {
+    outline: 2px solid var(--theme-border-focus);
+    outline-offset: 2px;
+}
+
+.sun-icon, .moon-icon {
+    transition: all var(--transition-base);
+}
+
+.moon-icon {
+    color: #ffd700;
+}
+
+.sun-icon {
+    color: #ff6b35;
+}
+
+/* Theme selector dropdown */
+.theme-selector {
+    position: absolute;
+    top: 60px;
+    right: 0;
+    min-width: 200px;
+    background: var(--theme-bg-primary);
+    border: 1px solid var(--theme-border-color);
+    border-radius: 12px;
+    box-shadow: var(--theme-shadow-lg);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all var(--transition-base);
+    z-index: 1000;
+    overflow: hidden;
+}
+
+.theme-selector.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.theme-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: all var(--transition-base);
+    border-bottom: 1px solid var(--theme-border-color);
+    position: relative;
+}
+
+.theme-option:last-child {
+    border-bottom: none;
+}
+
+.theme-option::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--theme-border-focus);
+    transform: scaleY(0);
+    transition: transform var(--transition-base);
+}
+
+.theme-option:hover::before,
+.theme-option.active::before {
+    transform: scaleY(1);
+}
+
+.theme-option:hover {
+    background: var(--theme-bg-tertiary);
+    transform: translateX(4px);
+}
+
+.theme-option.active {
+    background: rgba(102, 126, 234, 0.1);
+    color: var(--theme-border-focus);
+    font-weight: 600;
+}
+
+.theme-option i {
+    font-size: 1.1rem;
+    width: 20px;
+    text-align: center;
+}
+
+.theme-option div {
+    flex: 1;
+}
+
+.theme-option small {
+    display: block;
+    margin-top: 2px;
+    font-size: 0.75rem;
+    opacity: 0.7;
+}
+
+/* Progress indicator */
+.progress-indicator {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 3px;
+    background: var(--primary-gradient);
+    z-index: 9999;
+    transition: width var(--transition-base);
+}
+
+/* Back to top button */
+.back-to-top {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--primary-gradient);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition-base);
+    z-index: 1000;
+}
+
+.back-to-top:hover {
+    transform: scale(1.1);
+    box-shadow: var(--theme-shadow-lg);
+}
+
+.back-to-top.show {
+    display: flex;
+}
+
+/* Theme-aware Bootstrap overrides */
+.navbar {
+    background-color: var(--theme-bg-primary) !important;
+    border-bottom: 1px solid var(--theme-border-color);
+}
+
+.navbar-light .navbar-nav .nav-link {
+    color: var(--theme-text-primary);
+}
+
+.navbar-light .navbar-nav .nav-link:hover {
+    color: var(--theme-text-secondary);
+}
+
+.dropdown-menu {
+    background-color: var(--theme-bg-primary);
+    border: 1px solid var(--theme-border-color);
+    box-shadow: var(--theme-shadow-md);
+}
+
+.dropdown-item {
+    color: var(--theme-text-primary);
+}
+
+.dropdown-item:hover {
+    background-color: var(--theme-bg-tertiary);
+    color: var(--theme-text-primary);
+}
+
+.card {
+    background-color: var(--theme-bg-primary);
+    color: var(--theme-text-primary);
+    border: 1px solid var(--theme-border-color);
+}
+
+.bg-light {
+    background-color: var(--theme-bg-secondary) !important;
+}
+
+.form-control {
+    background-color: var(--theme-bg-primary);
+    border-color: var(--theme-border-color);
+    color: var(--theme-text-primary);
+}
+
+.form-control:focus {
+    background-color: var(--theme-bg-primary);
+    border-color: var(--theme-border-focus);
+    color: var(--theme-text-primary);
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+/* Feature card theme variants */
+body:not(.dark-mode) .feature-card.html-card {
+    background: linear-gradient(135deg, rgba(13, 110, 253, 0.05), rgba(13, 110, 253, 0.1));
+}
+
+body:not(.dark-mode) .feature-card.css-card {
+    background: linear-gradient(135deg, rgba(108, 117, 125, 0.05), rgba(108, 117, 125, 0.1));
+}
+
+body:not(.dark-mode) .feature-card.flexbox-card {
+    background: linear-gradient(135deg, rgba(25, 135, 84, 0.05), rgba(25, 135, 84, 0.1));
+}
+
+body:not(.dark-mode) .feature-card.bootstrap-card {
+    background: linear-gradient(135deg, rgba(13, 202, 240, 0.05), rgba(13, 202, 240, 0.1));
+}
+
+body:not(.dark-mode) .feature-card.terminal-card {
+    background: linear-gradient(135deg, rgba(45, 55, 72, 0.05), rgba(26, 32, 44, 0.1));
+}
+
+body:not(.dark-mode) .feature-card.tutorial-card {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.05), rgba(255, 193, 7, 0.1));
+}
+
+body:not(.dark-mode) .feature-card.utility-card {
+    background: linear-gradient(135deg, rgba(220, 53, 69, 0.05), rgba(220, 53, 69, 0.1));
+}
+
+body:not(.dark-mode) .feature-card.component-card {
+    background: linear-gradient(135deg, rgba(33, 37, 41, 0.05), rgba(33, 37, 41, 0.1));
+}
+
+body:not(.dark-mode) .feature-card.coding-card {
+    background: linear-gradient(135deg, rgba(108, 117, 125, 0.05), rgba(73, 80, 87, 0.1));
+}
+
+/* Dark mode card backgrounds */
+body.dark-mode .feature-card.html-card {
+    background: linear-gradient(135deg, rgba(99, 179, 237, 0.1), rgba(99, 179, 237, 0.15));
+}
+
+body.dark-mode .feature-card.css-card {
+    background: linear-gradient(135deg, rgba(160, 174, 192, 0.1), rgba(160, 174, 192, 0.15));
+}
+
+body.dark-mode .feature-card.flexbox-card {
+    background: linear-gradient(135deg, rgba(72, 187, 120, 0.1), rgba(72, 187, 120, 0.15));
+}
+
+body.dark-mode .feature-card.bootstrap-card {
+    background: linear-gradient(135deg, rgba(56, 178, 172, 0.1), rgba(56, 178, 172, 0.15));
+}
+
+body.dark-mode .feature-card.terminal-card {
+    background: linear-gradient(135deg, rgba(74, 85, 104, 0.1), rgba(45, 55, 72, 0.15));
+}
+
+body.dark-mode .feature-card.tutorial-card {
+    background: linear-gradient(135deg, rgba(236, 201, 75, 0.1), rgba(236, 201, 75, 0.15));
+}
+
+body.dark-mode .feature-card.utility-card {
+    background: linear-gradient(135deg, rgba(245, 101, 101, 0.1), rgba(245, 101, 101, 0.15));
+}
+
+body.dark-mode .feature-card.component-card {
+    background: linear-gradient(135deg, rgba(113, 128, 150, 0.1), rgba(113, 128, 150, 0.15));
+}
+
+body.dark-mode .feature-card.coding-card {
+    background: linear-gradient(135deg, rgba(160, 174, 192, 0.1), rgba(113, 128, 150, 0.15));
+}
+
+/* Responsive theme adjustments */
+@media (max-width: 768px) {
+    .theme-toggle-wrapper {
+        top: 10px;
+        right: 10px;
+    }
+
+    .theme-toggle {
+        width: 45px;
+        height: 45px;
+        font-size: 1.1rem;
+    }
+
+    .theme-selector {
+        min-width: 180px;
+    }
+}

@@ -512,6 +512,13 @@ body.dark-mode .css-comment { color: #757575; }
     font-size: 1rem;
 }
 
+.description-text {
+    font-size: 0.85rem;
+    color: var(--theme-text-secondary);
+    margin-bottom: 0.75rem;
+    line-height: 1.4;
+}
+
 .range-value {
     font-weight: 700;
     color: var(--theme-border-focus);
@@ -580,6 +587,20 @@ body.dark-mode .css-comment { color: #757575; }
     background-color: var(--theme-bg-secondary);
     color: var(--theme-text-primary);
     transform: translateY(-1px);
+}
+
+/* Tab content visibility */
+.tab-content {
+    display: none;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all var(--transition-base);
+}
+
+.tab-content.active {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
 }
 
 /* Enhanced preset buttons */
@@ -757,6 +778,53 @@ body.dark-mode .css-comment { color: #757575; }
 
 .theme-toggle:not(.dark) .moon-icon {
     opacity: 0.3;
+}
+
+/* Enhanced range inputs with better cross-browser support */
+input[type="range"] {
+    width: 100%;
+    background: var(--theme-bg-tertiary);
+    height: 8px;
+    border-radius: 4px;
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+    margin: 0.5rem 0;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: var(--theme-border-focus);
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: var(--theme-shadow-sm);
+    transition: all var(--transition-base);
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+    box-shadow: var(--theme-shadow-md);
+}
+
+input[type="range"]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: var(--theme-border-focus);
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+    box-shadow: var(--theme-shadow-sm);
+}
+
+input[type="range"]::-moz-range-track {
+    width: 100%;
+    height: 8px;
+    background: var(--theme-bg-tertiary);
+    border-radius: 4px;
+    border: none;
 }
 
 /* Enhanced animations */
@@ -1001,41 +1069,6 @@ body.dark-mode .learning-tip {
     box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.25);
 }
 
-/* Enhanced range inputs */
-input[type="range"] {
-    background: var(--theme-bg-tertiary);
-    height: 8px;
-    border-radius: 4px;
-    outline: none;
-    -webkit-appearance: none;
-}
-
-input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 20px;
-    height: 20px;
-    background: var(--theme-border-focus);
-    border-radius: 50%;
-    cursor: pointer;
-    box-shadow: var(--theme-shadow-sm);
-    transition: all var(--transition-base);
-}
-
-input[type="range"]::-webkit-slider-thumb:hover {
-    transform: scale(1.2);
-    box-shadow: var(--theme-shadow-md);
-}
-
-input[type="range"]::-moz-range-thumb {
-    width: 20px;
-    height: 20px;
-    background: var(--theme-border-focus);
-    border-radius: 50%;
-    cursor: pointer;
-    border: none;
-    box-shadow: var(--theme-shadow-sm);
-}
-
 /* Enhanced navigation */
 .navbar {
     background-color: var(--theme-bg-primary) !important;
@@ -1178,6 +1211,27 @@ body.dark-mode .alert-info {
 @keyframes shimmer {
     0% { transform: translateX(-100%); }
     100% { transform: translateX(100%); }
+}
+
+/* Live indicator for property headers */
+.live-indicator {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
 }
 
 /* Enhanced responsive design */
@@ -2095,8 +2149,172 @@ html {
                                 </div>
 
                                 <div class="alert alert-info">
-                                    <h6><i class="bi bi-lightbulb
+                                    <h6><i class="bi bi-lightbulb me-2"></i>Box Model Tips</h6>
+                                    <ul class="mb-0 small">
+                                        <li>Use <code>box-sizing: border-box</code> for predictable sizing</li>
+                                        <li>Margins collapse between adjacent block elements</li>
+                                        <li>Padding increases the clickable area of elements</li>
+                                        <li>Use relative units (%, em, rem) for responsive design</li>
+                                        <li>CSS Grid and Flexbox handle spacing more reliably than margins</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
 
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <h5><i class="bi bi-code-square me-2"></i>Generated CSS</h5>
+                                <div class="position-relative">
+                                    <button class="copy-btn" onclick="copyCode('sizing-css-output')">
+                                        <i class="bi bi-clipboard me-1"></i>Copy
+                                    </button>
+                                    <div class="code-output" id="sizing-css-output">/* Sizing CSS will be generated here */</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Learning Lab Tab -->
+            <div id="learning-tab" class="tab-content">
+                <div class="property-card">
+                    <div class="property-header learning">
+                        <h3 class="mb-0"><i class="bi bi-mortarboard me-2"></i>CSS Learning Lab</h3>
+                        <p class="mb-0 opacity-75">Interactive challenges and tutorials to master CSS concepts</p>
+                        <div class="live-indicator">LEARN</div>
+                    </div>
+                    <div class="property-body">
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5><i class="bi bi-trophy me-2"></i>Learning Progress</h5>
+                                <div class="progress-indicator">
+                                    <div class="progress-bar-custom" id="learning-progress" style="width: 0%"></div>
+                                </div>
+                                <small class="text-muted">Complete challenges to unlock new concepts and advance your CSS mastery</small>
+                            </div>
+                        </div>
+
+                        <div class="row g-4">
+                            <!-- Layout Challenge -->
+                            <div class="col-md-6 col-lg-4">
+                                <div class="learning-challenge-card" onclick="startChallenge('layout')">
+                                    <div>
+                                        <div class="challenge-icon"><i class="bi bi-grid-3x3"></i></div>
+                                        <h6>Layout Mastery</h6>
+                                        <p class="small text-muted">Learn CSS Grid, Flexbox, and modern layout techniques through hands-on challenges.</p>
+                                    </div>
+                                    <div class="challenge-difficulty">
+                                        <span class="badge bg-success">Beginner</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Responsive Challenge -->
+                            <div class="col-md-6 col-lg-4">
+                                <div class="learning-challenge-card" onclick="startChallenge('responsive')">
+                                    <div>
+                                        <div class="challenge-icon"><i class="bi bi-phone"></i></div>
+                                        <h6>Responsive Design</h6>
+                                        <p class="small text-muted">Master media queries, fluid layouts, and mobile-first design principles.</p>
+                                    </div>
+                                    <div class="challenge-difficulty">
+                                        <span class="badge bg-warning">Intermediate</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Animation Challenge -->
+                            <div class="col-md-6 col-lg-4">
+                                <div class="learning-challenge-card" onclick="startChallenge('animations')">
+                                    <div>
+                                        <div class="challenge-icon"><i class="bi bi-play-circle"></i></div>
+                                        <h6>CSS Animations</h6>
+                                        <p class="small text-muted">Create smooth transitions, keyframe animations, and micro-interactions.</p>
+                                    </div>
+                                    <div class="challenge-difficulty">
+                                        <span class="badge bg-warning">Intermediate</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Modern CSS Challenge -->
+                            <div class="col-md-6 col-lg-4">
+                                <div class="learning-challenge-card" onclick="startChallenge('modern')">
+                                    <div>
+                                        <div class="challenge-icon"><i class="bi bi-lightning"></i></div>
+                                        <h6>Modern CSS</h6>
+                                        <p class="small text-muted">Explore CSS custom properties, container queries, and cutting-edge features.</p>
+                                    </div>
+                                    <div class="challenge-difficulty">
+                                        <span class="badge bg-danger">Advanced</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Performance Challenge -->
+                            <div class="col-md-6 col-lg-4">
+                                <div class="learning-challenge-card" onclick="startChallenge('performance')">
+                                    <div>
+                                        <div class="challenge-icon"><i class="bi bi-speedometer2"></i></div>
+                                        <h6>CSS Performance</h6>
+                                        <p class="small text-muted">Learn optimization techniques for faster rendering and better user experience.</p>
+                                    </div>
+                                    <div class="challenge-difficulty">
+                                        <span class="badge bg-danger">Advanced</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Accessibility Challenge -->
+                            <div class="col-md-6 col-lg-4">
+                                <div class="learning-challenge-card" onclick="startChallenge('accessibility')">
+                                    <div>
+                                        <div class="challenge-icon"><i class="bi bi-universal-access"></i></div>
+                                        <h6>CSS Accessibility</h6>
+                                        <p class="small text-muted">Build inclusive designs with proper contrast, focus states, and screen reader support.</p>
+                                    </div>
+                                    <div class="challenge-difficulty">
+                                        <span class="badge bg-info">Essential</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Learning Tips Section -->
+                        <div class="row mt-5">
+                            <div class="col-12">
+                                <h5><i class="bi bi-lightbulb me-2"></i>Pro Learning Tips</h5>
+                                <div class="row g-4">
+                                    <div class="col-md-6">
+                                        <div class="learning-tip">
+                                            <strong>Practice Daily:</strong> Spend 15-30 minutes each day experimenting with CSS properties. Consistent practice builds muscle memory and deepens understanding.
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="learning-tip">
+                                            <strong>Build Real Projects:</strong> Apply your CSS knowledge to actual websites and applications. This helps you understand practical constraints and best practices.
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="learning-tip">
+                                            <strong>Study DevTools:</strong> Use browser developer tools to inspect and modify CSS in real-time. This is crucial for debugging and learning from other sites.
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="learning-tip">
+                                            <strong>Stay Updated:</strong> CSS evolves rapidly. Follow CSS Working Group specifications and modern browser feature releases to stay current.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional tabs would be added here -->
+            
         </div>
     </div>
 
@@ -2433,512 +2651,7 @@ html {
             }
         }
 
-        // Additional demo update functions for remaining tabs
-        function updateSizingDemo() {
-            const selectedElement = document.getElementById('sizing-demo-element-' + selectedElements.sizing);
-            if (!selectedElement) return;
-
-            const width = document.getElementById('sizing-width').value + 'px';
-            const height = document.getElementById('sizing-height').value + 'px';
-            const margin = document.getElementById('sizing-margin').value + 'px';
-            const padding = document.getElementById('sizing-padding').value + 'px';
-            const boxSizing = document.getElementById('sizing-box-sizing').value;
-
-            Object.assign(selectedElement.style, {
-                width, height, margin, padding, boxSizing
-            });
-
-            generateSizingCSS();
-        }
-
-        function generateSizingCSS() {
-            const width = document.getElementById('sizing-width').value;
-            const height = document.getElementById('sizing-height').value;
-            const margin = document.getElementById('sizing-margin').value;
-            const padding = document.getElementById('sizing-padding').value;
-            const boxSizing = document.getElementById('sizing-box-sizing').value;
-
-            let css = `<span class="css-selector">.sizing-element</span> {\n`;
-            css += `  <span class="css-property">width</span>: <span class="css-value">${width}px</span>;\n`;
-            css += `  <span class="css-property">height</span>: <span class="css-value">${height}px</span>;\n`;
-            css += `  <span class="css-property">margin</span>: <span class="css-value">${margin}px</span>;\n`;
-            css += `  <span class="css-property">padding</span>: <span class="css-value">${padding}px</span>;\n`;
-            css += `  <span class="css-property">box-sizing</span>: <span class="css-value">${boxSizing}</span>;\n`;
-            css += `}`;
-
-            document.getElementById('sizing-css-output').innerHTML = css;
-        }
-
-        function updateBordersDemo() {
-            const selectedElement = document.getElementById('borders-demo-element-' + selectedElements.borders);
-            if (!selectedElement) return;
-
-            const borderWidth = document.getElementById('borders-width').value + 'px';
-            const borderStyle = document.getElementById('borders-style').value;
-            const borderColor = document.getElementById('borders-color').value;
-            const borderRadius = document.getElementById('borders-radius').value + 'px';
-
-            // Update hex input
-            document.getElementById('borders-color-hex').value = borderColor;
-
-            Object.assign(selectedElement.style, {
-                borderWidth, borderStyle, borderColor, borderRadius
-            });
-
-            generateBordersCSS();
-        }
-
-        function generateBordersCSS() {
-            const borderWidth = document.getElementById('borders-width').value;
-            const borderStyle = document.getElementById('borders-style').value;
-            const borderColor = document.getElementById('borders-color').value;
-            const borderRadius = document.getElementById('borders-radius').value;
-
-            let css = `<span class="css-selector">.border-element</span> {\n`;
-            
-            if (borderStyle !== 'none') {
-                css += `  <span class="css-property">border</span>: <span class="css-value">${borderWidth}px ${borderStyle} ${borderColor}</span>;\n`;
-            }
-            
-            if (borderRadius !== '0') css += `  <span class="css-property">border-radius</span>: <span class="css-value">${borderRadius}px</span>;\n`;
-            
-            css += `}`;
-
-            document.getElementById('borders-css-output').innerHTML = css;
-        }
-
-        function updateEffectsDemo() {
-            const selectedElement = document.getElementById('effects-demo-element-' + selectedElements.effects);
-            if (!selectedElement) return;
-
-            const shadowBlur = document.getElementById('effects-shadow-blur').value;
-            const shadowX = document.getElementById('effects-shadow-x').value;
-            const shadowColor = document.getElementById('effects-shadow-color').value;
-            const scale = document.getElementById('effects-scale').value;
-            const blur = document.getElementById('effects-blur').value;
-
-            // Update hex input
-            document.getElementById('effects-shadow-color-hex').value = shadowColor;
-
-            const boxShadow = shadowBlur === '0' ? 'none' : `${shadowX}px ${shadowX}px ${shadowBlur}px ${shadowColor}`;
-            const transform = scale !== '1' ? `scale(${scale})` : 'none';
-            const filter = blur !== '0' ? `blur(${blur}px)` : 'none';
-
-            Object.assign(selectedElement.style, {
-                boxShadow, transform, filter
-            });
-
-            generateEffectsCSS();
-        }
-
-        function generateEffectsCSS() {
-            const shadowBlur = document.getElementById('effects-shadow-blur').value;
-            const shadowX = document.getElementById('effects-shadow-x').value;
-            const shadowColor = document.getElementById('effects-shadow-color').value;
-            const scale = document.getElementById('effects-scale').value;
-            const blur = document.getElementById('effects-blur').value;
-
-            let css = `<span class="css-selector">.effects-element</span> {\n`;
-            
-            if (shadowBlur !== '0') {
-                css += `  <span class="css-property">box-shadow</span>: <span class="css-value">${shadowX}px ${shadowX}px ${shadowBlur}px ${shadowColor}</span>;\n`;
-            }
-            
-            if (scale !== '1') {
-                css += `  <span class="css-property">transform</span>: <span class="css-value">scale(${scale})</span>;\n`;
-            }
-            
-            if (blur !== '0') {
-                css += `  <span class="css-property">filter</span>: <span class="css-value">blur(${blur}px)</span>;\n`;
-            }
-            
-            css += `}`;
-
-            document.getElementById('effects-css-output').innerHTML = css;
-        }
-
-        function updateAnimationsDemo() {
-            const selectedElement = document.getElementById('animations-demo-element-' + selectedElements.animations);
-            if (!selectedElement) return;
-
-            const animationName = document.getElementById('animations-name').value;
-            const animationDuration = document.getElementById('animations-duration').value + 's';
-            const animationIteration = document.getElementById('animations-iteration').value;
-            const transitionDuration = document.getElementById('animations-transition').value + 's';
-
-            // Remove existing animation classes
-            selectedElement.classList.remove('spin', 'bounce', 'shake', 'fade', 'zoom', 'float');
-            
-            if (animationName !== 'none') {
-                selectedElement.classList.add('animation-demo', animationName);
-                selectedElement.style.animationDuration = animationDuration;
-                selectedElement.style.animationIterationCount = animationIteration;
-            } else {
-                selectedElement.classList.remove('animation-demo');
-            }
-
-            selectedElement.style.transition = `all ${transitionDuration}`;
-
-            // Add hover effect
-            selectedElement.onmouseenter = function() {
-                this.style.transform = 'scale(1.1)';
-            };
-            selectedElement.onmouseleave = function() {
-                this.style.transform = 'scale(1)';
-            };
-
-            generateAnimationsCSS();
-        }
-
-        function generateAnimationsCSS() {
-            const animationName = document.getElementById('animations-name').value;
-            const animationDuration = document.getElementById('animations-duration').value;
-            const animationIteration = document.getElementById('animations-iteration').value;
-            const transitionDuration = document.getElementById('animations-transition').value;
-
-            let css = `<span class="css-selector">.animation-element</span> {\n`;
-            
-            if (animationName !== 'none') {
-                css += `  <span class="css-property">animation</span>: <span class="css-value">${animationName} ${animationDuration}s infinite</span>;\n`;
-            }
-            
-            if (transitionDuration !== '0') {
-                css += `  <span class="css-property">transition</span>: <span class="css-value">all ${transitionDuration}s</span>;\n`;
-            }
-            
-            css += `}\n\n`;
-            css += `<span class="css-selector">.animation-element:hover</span> {\n`;
-            css += `  <span class="css-property">transform</span>: <span class="css-value">scale(1.1)</span>;\n`;
-            css += `}`;
-
-            document.getElementById('animations-css-output').innerHTML = css;
-        }
-
-        function updateAdvancedDemo() {
-            const container = document.getElementById('advanced-demo-container');
-            if (!container) return;
-
-            const displayMode = document.getElementById('advanced-display-mode').value;
-            const gridColumns = document.getElementById('advanced-grid-columns').value;
-            const gridGap = document.getElementById('advanced-grid-gap').value + 'px';
-            const justifyContent = document.getElementById('advanced-justify-content').value;
-
-            // Show/hide controls based on display mode
-            const gridControls = document.getElementById('grid-controls');
-            const flexControls = document.getElementById('flex-controls');
-            
-            if (displayMode === 'grid') {
-                gridControls.style.display = 'block';
-                flexControls.style.display = 'none';
-                Object.assign(container.style, {
-                    display: 'grid',
-                    gridTemplateColumns: gridColumns,
-                    gap: gridGap
-                });
-            } else if (displayMode === 'flex') {
-                gridControls.style.display = 'none';
-                flexControls.style.display = 'block';
-                Object.assign(container.style, {
-                    display: 'flex',
-                    justifyContent: justifyContent,
-                    gap: gridGap,
-                    flexWrap: 'wrap'
-                });
-            } else {
-                gridControls.style.display = 'none';
-                flexControls.style.display = 'none';
-                container.style.display = 'block';
-            }
-
-            generateAdvancedCSS();
-        }
-
-        function generateAdvancedCSS() {
-            const displayMode = document.getElementById('advanced-display-mode').value;
-            const gridColumns = document.getElementById('advanced-grid-columns').value;
-            const gridGap = document.getElementById('advanced-grid-gap').value;
-            const justifyContent = document.getElementById('advanced-justify-content').value;
-
-            let css = `<span class="css-selector">.container</span> {\n`;
-            css += `  <span class="css-property">display</span>: <span class="css-value">${displayMode}</span>;\n`;
-            
-            if (displayMode === 'grid') {
-                css += `  <span class="css-property">grid-template-columns</span>: <span class="css-value">${gridColumns}</span>;\n`;
-                css += `  <span class="css-property">gap</span>: <span class="css-value">${gridGap}px</span>;\n`;
-            } else if (displayMode === 'flex') {
-                css += `  <span class="css-property">justify-content</span>: <span class="css-value">${justifyContent}</span>;\n`;
-                css += `  <span class="css-property">gap</span>: <span class="css-value">${gridGap}px</span>;\n`;
-                css += `  <span class="css-property">flex-wrap</span>: <span class="css-value">wrap</span>;\n`;
-            }
-            
-            css += `}`;
-
-            document.getElementById('advanced-css-output').innerHTML = css;
-        }
-
-        // Enhanced preset functions for remaining tabs
-        function applySizingPreset(preset) {
-            const presets = {
-                'small': { width: '100', height: '60', padding: '10', margin: '5' },
-                'medium': { width: '200', height: '100', padding: '20', margin: '10' },
-                'large': { width: '300', height: '150', padding: '30', margin: '15' }
-            };
-
-            const config = presets[preset];
-            if (config) {
-                Object.entries(config).forEach(([key, value]) => {
-                    const element = document.getElementById(`sizing-${key}`);
-                    if (element) {
-                        element.value = value;
-                        updateRangeValue(element.id, 'px');
-                    }
-                });
-                updateDemo('sizing');
-                showToast(`Applied ${preset} sizing preset!`, 'success');
-            }
-        }
-
-        function applyBorderPreset(preset) {
-            const presets = {
-                'thin': { width: '1', style: 'solid', radius: '0' },
-                'thick': { width: '5', style: 'solid', radius: '0' },
-                'rounded': { width: '2', style: 'solid', radius: '25' }
-            };
-
-            const config = presets[preset];
-            if (config) {
-                Object.entries(config).forEach(([key, value]) => {
-                    const element = document.getElementById(`borders-${key}`);
-                    if (element) {
-                        element.value = value;
-                        if (element.type === 'range') {
-                            updateRangeValue(element.id, 'px');
-                        }
-                    }
-                });
-                updateDemo('borders');
-                showToast(`Applied ${preset} border preset!`, 'success');
-            }
-        }
-
-        function applyEffectPreset(preset) {
-            const presets = {
-                'glow': { shadowBlur: '20', shadowX: '0', shadowColor: '#667eea', scale: '1' },
-                'shadow': { shadowBlur: '15', shadowX: '5', shadowColor: '#000000', scale: '1' },
-                'blur': { shadowBlur: '0', shadowX: '0', blur: '5', scale: '1' }
-            };
-
-            const config = presets[preset];
-            if (config) {
-                Object.entries(config).forEach(([key, value]) => {
-                    const element = document.getElementById(`effects-${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`);
-                    if (element) {
-                        element.value = value;
-                        if (element.type === 'range') {
-                            const unit = key.includes('Color') ? '' : 'px';
-                            updateRangeValue(element.id, unit);
-                        }
-                        if (key.includes('Color')) {
-                            const hexElement = document.getElementById(element.id + '-hex');
-                            if (hexElement) hexElement.value = value;
-                        }
-                    }
-                });
-                updateDemo('effects');
-                showToast(`Applied ${preset} effect preset!`, 'success');
-            }
-        }
-
-        function applyAnimationPreset(preset) {
-            const presets = {
-                'pulse': { name: 'zoom', duration: '1', iteration: 'infinite' },
-                'wiggle': { name: 'shake', duration: '0.5', iteration: 'infinite' },
-                'glow': { name: 'fade', duration: '2', iteration: 'infinite' }
-            };
-
-            const config = presets[preset];
-            if (config) {
-                Object.entries(config).forEach(([key, value]) => {
-                    const element = document.getElementById(`animations-${key}`);
-                    if (element) {
-                        element.value = value;
-                        if (element.type === 'range') {
-                            updateRangeValue(element.id, 's');
-                        }
-                    }
-                });
-                updateDemo('animations');
-                showToast(`Applied ${preset} animation preset!`, 'success');
-            }
-        }
-
-        function applyAdvancedPreset(preset) {
-            const presets = {
-                'flexbox': { displayMode: 'flex', justifyContent: 'space-between' },
-                'grid': { displayMode: 'grid', gridColumns: 'repeat(3, 1fr)' },
-                'holy-grail': { displayMode: 'grid', gridColumns: '200px 1fr 200px' }
-            };
-
-            const config = presets[preset];
-            if (config) {
-                Object.entries(config).forEach(([key, value]) => {
-                    const element = document.getElementById(`advanced-${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`);
-                    if (element) {
-                        element.value = value;
-                    }
-                });
-                updateDemo('advanced');
-                showToast(`Applied ${preset} layout preset!`, 'success');
-            }
-        }
-
-        // Animation control functions
-        function pauseAnimation() {
-            const selectedElement = document.getElementById('animations-demo-element-' + selectedElements.animations);
-            if (selectedElement) {
-                selectedElement.style.animationPlayState = 'paused';
-                showToast('Animation paused', 'info');
-            }
-        }
-
-        function playAnimation() {
-            const selectedElement = document.getElementById('animations-demo-element-' + selectedElements.animations);
-            if (selectedElement) {
-                selectedElement.style.animationPlayState = 'running';
-                showToast('Animation playing', 'info');
-            }
-        }
-
-        function restartAnimation() {
-            const selectedElement = document.getElementById('animations-demo-element-' + selectedElements.animations);
-            if (selectedElement) {
-                selectedElement.style.animation = 'none';
-                setTimeout(() => {
-                    updateAnimationsDemo();
-                }, 10);
-                showToast('Animation restarted', 'info');
-            }
-        }
-
-        // Learning Lab functions
-        function startChallenge(challengeType) {
-            showToast(`Starting ${challengeType} challenge...`, 'info');
-            
-            // Update progress
-            const progressBar = document.getElementById('learning-progress');
-            let currentWidth = parseInt(progressBar.style.width) || 0;
-            let newWidth = Math.min(currentWidth + 15, 100);
-            progressBar.style.width = newWidth + '%';
-            
-            // Challenge-specific logic would be implemented here
-            const challenges = {
-                'layout': 'Create a centered card layout using CSS Grid',
-                'responsive': 'Make this design work on mobile devices',
-                'animations': 'Add smooth hover animations to buttons',
-                'modern': 'Use CSS custom properties for theming',
-                'performance': 'Optimize this CSS for better performance',
-                'accessibility': 'Ensure this design is accessible to all users'
-            };
-            
-            showToast(`Challenge: ${challenges[challengeType]}`, 'info');
-        }
-
-        // CSS Learning Card Styles
-        const learningCardStyles = `
-            .learning-challenge-card {
-                background: var(--theme-bg-primary);
-                border: 1px solid var(--theme-border-color);
-                border-radius: 12px;
-                padding: 1.5rem;
-                text-align: center;
-                cursor: pointer;
-                transition: all var(--transition-base);
-                height: 100%;
-                display: flex;
-                flex-direction: column;
-                justify-content: space-between;
-            }
-
-            .learning-challenge-card:hover {
-                transform: translateY(-4px);
-                box-shadow: var(--theme-shadow-lg);
-                border-color: var(--theme-border-focus);
-            }
-
-            .challenge-icon {
-                font-size: 2.5rem;
-                color: var(--theme-border-focus);
-                margin-bottom: 1rem;
-            }
-
-            .challenge-difficulty {
-                margin-top: 1rem;
-            }
-        `;
-
-        // Add the learning card styles to the page
-        const styleSheet = document.createElement('style');
-        styleSheet.textContent = learningCardStyles;
-        document.head.appendChild(styleSheet);
-
-        // Update demo function to handle all tabs
-        function updateDemo(tabName) {
-            switch(tabName) {
-                case 'layout':
-                    updateLayoutDemo();
-                    break;
-                case 'typography':
-                    updateTypographyDemo();
-                    break;
-                case 'colors':
-                    updateColorsDemo();
-                    break;
-                case 'sizing':
-                    updateSizingDemo();
-                    break;
-                case 'borders':
-                    updateBordersDemo();
-                    break;
-                case 'effects':
-                    updateEffectsDemo();
-                    break;
-                case 'animations':
-                    updateAnimationsDemo();
-                    break;
-                case 'advanced':
-                    updateAdvancedDemo();
-                    break;
-            }
-        }
-
-        // Initialize all demos when page loads
-        function initializeAllDemos() {
-            ['layout', 'typography', 'colors', 'sizing', 'borders', 'effects', 'animations', 'advanced'].forEach(tab => {
-                updateDemo(tab);
-            });
-        }
-
-        // Enhanced initialization
-        document.addEventListener('DOMContentLoaded', function() {
-            initializePlayground();
-            setupKeyboardShortcuts();
-            setupAdvancedFeatures();
-            initializeAllDemos();
-            
-            // Initialize theme
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme === 'dark') {
-                document.body.classList.add('dark-mode');
-                document.documentElement.classList.add('dark-mode');
-            }
-            updateThemeToggle();
-            
-            // Show welcome message
-            setTimeout(() => {
-                showToast('🎉 Welcome to CSS Properties Master Playground! Use 1-9 keys to switch tabs, A to add elements, Del to clear.', 'info');
-            }, 1500);
-        });
-
+        // Demo update functions
         function updateLayoutDemo() {
             const selectedElement = document.getElementById('layout-demo-element-' + selectedElements.layout);
             if (!selectedElement) return;
@@ -3085,6 +2798,59 @@ html {
             document.getElementById('colors-css-output').innerHTML = css;
         }
 
+        function updateSizingDemo() {
+            const selectedElement = document.getElementById('sizing-demo-element-' + selectedElements.sizing);
+            if (!selectedElement) return;
+
+            const width = document.getElementById('sizing-width').value + 'px';
+            const height = document.getElementById('sizing-height').value + 'px';
+            const margin = document.getElementById('sizing-margin').value + 'px';
+            const padding = document.getElementById('sizing-padding').value + 'px';
+            const boxSizing = document.getElementById('sizing-box-sizing').value;
+
+            Object.assign(selectedElement.style, {
+                width, height, margin, padding, boxSizing
+            });
+
+            generateSizingCSS();
+        }
+
+        function generateSizingCSS() {
+            const width = document.getElementById('sizing-width').value;
+            const height = document.getElementById('sizing-height').value;
+            const margin = document.getElementById('sizing-margin').value;
+            const padding = document.getElementById('sizing-padding').value;
+            const boxSizing = document.getElementById('sizing-box-sizing').value;
+
+            let css = `<span class="css-selector">.sizing-element</span> {\n`;
+            css += `  <span class="css-property">width</span>: <span class="css-value">${width}px</span>;\n`;
+            css += `  <span class="css-property">height</span>: <span class="css-value">${height}px</span>;\n`;
+            css += `  <span class="css-property">margin</span>: <span class="css-value">${margin}px</span>;\n`;
+            css += `  <span class="css-property">padding</span>: <span class="css-value">${padding}px</span>;\n`;
+            css += `  <span class="css-property">box-sizing</span>: <span class="css-value">${boxSizing}</span>;\n`;
+            css += `}`;
+
+            document.getElementById('sizing-css-output').innerHTML = css;
+        }
+
+        // Update demo function to handle all tabs
+        function updateDemo(tabName) {
+            switch(tabName) {
+                case 'layout':
+                    updateLayoutDemo();
+                    break;
+                case 'typography':
+                    updateTypographyDemo();
+                    break;
+                case 'colors':
+                    updateColorsDemo();
+                    break;
+                case 'sizing':
+                    updateSizingDemo();
+                    break;
+            }
+        }
+
         // Enhanced preset functions
         function applyLayoutPreset(preset) {
             const presets = {
@@ -3122,55 +2888,6 @@ html {
             if (config) {
                 Object.entries(config).forEach(([key, value]) => {
                     const element = document.getElementById(`layout-${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`);
-                    if (element) {
-                        element.value = value;
-                        if (element.type === 'range') {
-                            updateRangeValue(element.id, key.includes('top') || key.includes('left') ? 'px' : '');
-                        }
-                    }
-                });
-                updateDemo('layout');
-                showToast(`Applied ${preset.replace('-', ' ')} layout preset!`, 'success');
-            }
-        }
-
-        function applyTypographyPreset(preset) {
-            const presets = {
-                'heading': {
-                    fontSize: '36',
-                    fontWeight: '700',
-                    lineHeight: '1.2',
-                    fontFamily: 'Arial, sans-serif'
-                },
-                'body': {
-                    fontSize: '16',
-                    fontWeight: '400',
-                    lineHeight: '1.6',
-                    fontFamily: 'Georgia, serif'
-                },
-                'caption': {
-                    fontSize: '12',
-                    fontWeight: '400',
-                    textTransform: 'uppercase',
-                    letterSpacing: '1'
-                },
-                'code': {
-                    fontFamily: "'Courier New', monospace",
-                    fontSize: '14',
-                    fontWeight: '400'
-                },
-                'display': {
-                    fontSize: '48',
-                    fontWeight: '900',
-                    lineHeight: '1.1',
-                    letterSpacing: '-1'
-                }
-            };
-
-            const config = presets[preset];
-            if (config) {
-                Object.entries(config).forEach(([key, value]) => {
-                    const element = document.getElementById(`typography-${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`);
                     if (element) {
                         element.value = value;
                         if (element.type === 'range') {
@@ -3229,6 +2946,50 @@ html {
                 updateDemo('colors');
                 showToast(`Applied ${preset} color preset!`, 'success');
             }
+        }
+
+        function applySizingPreset(preset) {
+            const presets = {
+                'small': { width: '100', height: '60', padding: '10', margin: '5' },
+                'medium': { width: '200', height: '100', padding: '20', margin: '10' },
+                'large': { width: '300', height: '150', padding: '30', margin: '15' }
+            };
+
+            const config = presets[preset];
+            if (config) {
+                Object.entries(config).forEach(([key, value]) => {
+                    const element = document.getElementById(`sizing-${key}`);
+                    if (element) {
+                        element.value = value;
+                        updateRangeValue(element.id, 'px');
+                    }
+                });
+                updateDemo('sizing');
+                showToast(`Applied ${preset} sizing preset!`, 'success');
+            }
+        }
+
+        // Learning Lab functions
+        function startChallenge(challengeType) {
+            showToast(`Starting ${challengeType} challenge...`, 'info');
+            
+            // Update progress
+            const progressBar = document.getElementById('learning-progress');
+            let currentWidth = parseInt(progressBar.style.width) || 0;
+            let newWidth = Math.min(currentWidth + 15, 100);
+            progressBar.style.width = newWidth + '%';
+            
+            // Challenge-specific logic would be implemented here
+            const challenges = {
+                'layout': 'Create a centered card layout using CSS Grid',
+                'responsive': 'Make this design work on mobile devices',
+                'animations': 'Add smooth hover animations to buttons',
+                'modern': 'Use CSS custom properties for theming',
+                'performance': 'Optimize this CSS for better performance',
+                'accessibility': 'Ensure this design is accessible to all users'
+            };
+            
+            showToast(`Challenge: ${challenges[challengeType]}`, 'info');
         }
 
         // Advanced Features
@@ -3494,3 +3255,52 @@ html {
     </script>
 </body>
 </html>
+                            updateRangeValue(element.id, key.includes('top') || key.includes('left') ? 'px' : '');
+                        }
+                    }
+                });
+                updateDemo('layout');
+                showToast(`Applied ${preset.replace('-', ' ')} layout preset!`, 'success');
+            }
+        }
+
+        function applyTypographyPreset(preset) {
+            const presets = {
+                'heading': {
+                    fontSize: '36',
+                    fontWeight: '700',
+                    lineHeight: '1.2',
+                    fontFamily: 'Arial, sans-serif'
+                },
+                'body': {
+                    fontSize: '16',
+                    fontWeight: '400',
+                    lineHeight: '1.6',
+                    fontFamily: 'Georgia, serif'
+                },
+                'caption': {
+                    fontSize: '12',
+                    fontWeight: '400',
+                    textTransform: 'uppercase',
+                    letterSpacing: '1'
+                },
+                'code': {
+                    fontFamily: "'Courier New', monospace",
+                    fontSize: '14',
+                    fontWeight: '400'
+                },
+                'display': {
+                    fontSize: '48',
+                    fontWeight: '900',
+                    lineHeight: '1.1',
+                    letterSpacing: '-1'
+                }
+            };
+
+            const config = presets[preset];
+            if (config) {
+                Object.entries(config).forEach(([key, value]) => {
+                    const element = document.getElementById(`typography-${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`);
+                    if (element) {
+                        element.value = value;
+                        if (element.type === 'range') {

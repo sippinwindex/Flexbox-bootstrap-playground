@@ -1,0 +1,196 @@
+/* Base CSS - Core variables and resets */
+
+:root {
+    /* Theme variables that change with dark mode */
+    --theme-bg-primary: #ffffff;
+    --theme-bg-secondary: #f8f9fa;
+    --theme-bg-tertiary: #e9ecef;
+    --theme-text-primary: #495057;
+    --theme-text-secondary: #6c757d;
+    --theme-text-muted: #a0aec0;
+    --theme-border-color: #dee2e6;
+    --theme-border-focus: #667eea;
+    --theme-shadow-sm: 0 2px 8px rgba(0,0,0,0.1);
+    --theme-shadow-md: 0 4px 15px rgba(0,0,0,0.15);
+    --theme-shadow-lg: 0 8px 25px rgba(0,0,0,0.2);
+
+    /* Editor specific variables */
+    --dark-bg: #1e1e1e;
+    --dark-panel: #252526;
+    --dark-border: #3e3e42;
+    --editor-bg: #1e1e1e;
+    --editor-text: #d4d4d4;
+    --terminal-bg: #0c0c0c;
+    
+    /* Gradients */
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --success-gradient: linear-gradient(135deg, #28a745, #20c997);
+    --danger-gradient: linear-gradient(135deg, #ff6b6b, #ee5a52);
+    --info-gradient: linear-gradient(135deg, #17a2b8, #20c997);
+    --warning-gradient: linear-gradient(135deg, #ffc107, #ff8c00);
+    --terminal-gradient: linear-gradient(135deg, #2d3748, #1a202c);
+
+    /* Animation Variables */
+    --transition-fast: 0.15s ease-out;
+    --transition-base: 0.3s ease-out;
+    --transition-slow: 0.5s ease-out;
+    
+    /* Glass morphism variables */
+    --glass-bg: rgba(255, 255, 255, 0.1);
+    --glass-border: rgba(255, 255, 255, 0.2);
+    --glass-backdrop: blur(20px);
+}
+
+/* Dark mode overrides */
+body.dark-mode {
+    --theme-bg-primary: #1a202c;
+    --theme-bg-secondary: #2d3748;
+    --theme-bg-tertiary: #4a5568;
+    --theme-text-primary: #e2e8f0;
+    --theme-text-secondary: #a0aec0;
+    --theme-text-muted: #718096;
+    --theme-border-color: #4a5568;
+    --theme-border-focus: #63b3ed;
+    --theme-shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+    --theme-shadow-md: 0 4px 15px rgba(0,0,0,0.4);
+    --theme-shadow-lg: 0 8px 25px rgba(0,0,0,0.3);
+    
+    --glass-bg: rgba(0, 0, 0, 0.2);
+    --glass-border: rgba(255, 255, 255, 0.1);
+}
+
+/* Reset and base styles */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    transition: background-color var(--transition-base), 
+                color var(--transition-base), 
+                border-color var(--transition-base);
+}
+
+body {
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    background: var(--theme-bg-secondary);
+    color: var(--theme-text-primary);
+    line-height: 1.6;
+    scroll-behavior: smooth;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--theme-text-primary);
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+p {
+    color: var(--theme-text-primary);
+    margin-bottom: 1rem;
+}
+
+a {
+    color: var(--theme-border-focus);
+    text-decoration: none;
+    transition: color var(--transition-base);
+}
+
+a:hover {
+    color: var(--theme-text-primary);
+}
+
+/* Text utilities */
+.text-muted {
+    color: var(--theme-text-secondary) !important;
+}
+
+.text-primary-theme {
+    color: var(--theme-text-primary) !important;
+}
+
+.text-secondary-theme {
+    color: var(--theme-text-secondary) !important;
+}
+
+/* Background utilities */
+.bg-primary-theme {
+    background-color: var(--theme-bg-primary) !important;
+}
+
+.bg-secondary-theme {
+    background-color: var(--theme-bg-secondary) !important;
+}
+
+.bg-tertiary-theme {
+    background-color: var(--theme-bg-tertiary) !important;
+}
+
+/* Border utilities */
+.border-theme {
+    border: 1px solid var(--theme-border-color) !important;
+}
+
+.border-focus-theme {
+    border-color: var(--theme-border-focus) !important;
+}
+
+/* Shadow utilities */
+.shadow-sm-theme {
+    box-shadow: var(--theme-shadow-sm) !important;
+}
+
+.shadow-md-theme {
+    box-shadow: var(--theme-shadow-md) !important;
+}
+
+.shadow-lg-theme {
+    box-shadow: var(--theme-shadow-lg) !important;
+}
+
+/* Accessibility */
+.keyboard-navigation *:focus {
+    outline: 2px solid var(--theme-border-focus) !important;
+    outline-offset: 2px !important;
+}
+
+/* Loading spinner */
+.spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--theme-border-color);
+    border-top: 2px solid var(--theme-border-focus);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Responsive utilities */
+@media (max-width: 768px) {
+    body {
+        font-size: 14px;
+    }
+    
+    h1 { font-size: 1.8rem; }
+    h2 { font-size: 1.5rem; }
+    h3 { font-size: 1.3rem; }
+}
+
+/* Print styles */
+@media print {
+    * {
+        background: white !important;
+        color: black !important;
+    }
+    
+    .theme-toggle-wrapper,
+    .back-to-top,
+    .toast-container {
+        display: none !important;
+    }
+}

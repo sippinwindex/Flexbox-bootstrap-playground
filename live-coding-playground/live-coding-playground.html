@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Advanced live coding platform with HTML, CSS, JavaScript editor and real-time preview">
+    <title>Enhanced Live Coding Platform</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <!-- CodeMirror for syntax highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/monokai.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/nord.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/base16-light.min.css">
+
+    <!-- Custom CSS Files -->
+    <link rel="stylesheet" href="assets/css/base.css">
+    <link rel="stylesheet" href="assets/css/theme.css">
+    <link rel="stylesheet" href="assets/css/components.css">
+    <link rel="stylesheet" href="assets/css/playground.css">
+</head>
+
+<body>
+    <!-- Progress Indicator -->
+    <div class="progress-indicator" id="progress-indicator"></div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <div class="platform-container">
+        <nav class="top-nav">
+            <a href="index.html" class="nav-brand">
+                <i class="bi bi-code-square"></i>
+                Enhanced Live Coding Platform
+            </a>
+            
+            <div class="nav-controls">
+                <button class="nav-btn success" onclick="runCode()">
+                    <i class="bi bi-play-fill"></i>
+                    Run
+                </button>
+                
+                <button class="nav-btn" onclick="formatCode()">
+                    <i class="bi bi-code"></i>
+                    Format
+                </button>
+                
+                <button class="nav-btn" onclick="downloadProject()">
+                    <i class="bi bi-download"></i>
+                    Download
+                </button>
+                
+                <button class="nav-btn" onclick="openInCodePen()">
+                    <i class="bi bi-box-arrow-up-right"></i>
+                    CodePen
+                </button>
+                
+                <button class="nav-btn" onclick="openInJSFiddle()">
+                    <i class="bi bi-box-arrow-up-right"></i>
+                    JSFiddle
+                </button>
+                
+                <select class="nav-btn" onchange="loadTemplate(this.value)">
+                    <option value="">Load Template</option>
+                    <option value="basic">Basic HTML</option>
+                    <option value="interactive">Interactive Demo</option>
+                    <option value="bootstrap">Bootstrap Components</option>
+                    <option value="react">React Components</option>
+                </select>
+                
+                <button class="nav-btn danger" onclick="resetWorkspace()">
+                    <i class="bi bi-arrow-clockwise"></i>
+                    Reset
+                </button>
+            </div>
+        </nav>
+
+        <main class="main-split">
+            <div class="editor-section">
+                <div class="editor-toolbar">
+                    <div class="toolbar-group">
+                        <button class="toolbar-btn success" onclick="runCode()">
+                            <i class="bi bi-play-fill"></i>
+                            Execute
+                        </button>
+                        <button class="toolbar-btn" onclick="formatCode()">
+                            <i class="bi bi-code"></i>
+                            Format
+                        </button>
+                        <button class="toolbar-btn danger" onclick="clearCurrentEditor()">
+                            <i class="bi bi-trash"></i>
+                            Clear
+                        </button>
+                    </div>
+                    
+                    <div class="toolbar-group">
+                        <span class="editor-status" id="editorStatus">Ready</span>
+                    </div>
+                </div>
+
+                <div class="editor-tabs">
+                    <button class="tab-btn active" onclick="switchEditorTab('html')" id="htmlTab">
+                        <i class="bi bi-filetype-html"></i>
+                        HTML
+                    </button>
+                    <button class="tab-btn" onclick="switchEditorTab('css')" id="cssTab">
+                        <i class="bi bi-filetype-css"></i>
+                        CSS
+                    </button>
+                    <button class="tab-btn" onclick="switchEditorTab('js')" id="jsTab">
+                        <i class="bi bi-filetype-js"></i>
+                        JavaScript
+                    </button>
+                </div>
+
+                <div class="editor-container">
+                    <div class="editor-panel active" id="htmlPanel">
+                        <textarea id="htmlEditor"></textarea>
+                    </div>
+                    <div class="editor-panel" id="cssPanel">
+                        <textarea id="cssEditor"></textarea>
+                    </div>
+                    <div class="editor-panel" id="jsPanel">
+                        <textarea id="jsEditor"></textarea>
+                    </div>
+                </div>
+
+                <div class="terminal-section">
+                    <div class="terminal-header">
+                        <span><i class="bi bi-terminal"></i> Console Output</span>
+                        <button class="toolbar-btn" onclick="clearTerminal()">
+                            <i class="bi bi-trash"></i>
+                            Clear
+                        </button>
+                    </div>
+                    <div class="terminal-content" id="terminalContent">
+                        <div class="terminal-line terminal-info">[INFO] Enhanced Live Coding Platform initialized</div>
+                        <div class="terminal-line terminal-success">[READY] All editors loaded successfully</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="preview-section" id="previewSection">
+                <div class="preview-header">
+                    <div>
+                        <i class="bi bi-eye"></i>
+                        Live Preview
+                    </div>
+                    
+                    <div class="preview-controls">
+                        <div class="responsive-controls">
+                            <button class="responsive-btn active" onclick="setPreviewSize('100%')" title="Desktop">
+                                <i class="bi bi-display"></i>
+                            </button>
+                            <button class="responsive-btn" onclick="setPreviewSize('768px')" title="Tablet">
+                                <i class="bi bi-tablet"></i>
+                            </button>
+                            <button class="responsive-btn" onclick="setPreviewSize('375px')" title="Mobile">
+                                <i class="bi bi-phone"></i>
+                            </button>
+                        </div>
+                        
+                        <button class="fullscreen-btn" onclick="toggleFullscreen()" id="fullscreenBtn">
+                            <i class="bi bi-fullscreen"></i>
+                            Fullscreen
+                        </button>
+                        
+                        <div class="live-indicator">
+                            <i class="bi bi-broadcast"></i>
+                            LIVE
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="preview-frame-container">
+                    <iframe id="previewFrame" class="preview-frame"></iframe>
+                </div>
+            </div>
+        </main>
+
+        <div class="status-bar">
+            <div>
+                <span id="cursorPosition">Line 1, Column 1</span>
+                <span class="status-separator" id="wordCount">0 words</span>
+                <span class="status-separator" id="characterCount">0 characters</span>
+            </div>
+            <div>
+                <span id="autoSaveStatus">Auto-save: Enabled</span>
+                <span class="status-separator">Enhanced Live Coding Platform v2.0</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back to Top Button -->
+    <button class="back-to-top" id="back-to-top" onclick="scrollToTop()">
+        <i class="bi bi-arrow-up"></i>
+    </button>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- CodeMirror Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closetag.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/selection/active-line.min.js"></script>
+
+    <!-- Custom JavaScript Files -->
+    <script src="assets/js/theme-manager.js"></script>
+    <script src="assets/js/utils.js"></script>
+    <script src="assets/js/toast.js"></script>
+    <script src="assets/templates/code-templates.js"></script>
+    <script src="assets/js/live-coding.js"></script>
+</body>
+</html>
