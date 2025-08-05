@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- CRITICAL: No-flash script for dark mode -->
+    <script>
+    (function() {
+        'use strict';
+        const THEME_KEY = 'bootstrap-playground-theme';
+        const DARK_MODE_CLASS = 'dark-mode';
+        try {
+            const savedTheme = localStorage.getItem(THEME_KEY);
+            if (savedTheme === 'dark') {
+                document.documentElement.classList.add(DARK_MODE_CLASS);
+                if (document.body) document.body.classList.add(DARK_MODE_CLASS);
+            } else if (savedTheme === 'light') {
+                document.documentElement.classList.remove(DARK_MODE_CLASS);
+                if (document.body) document.body.classList.remove(DARK_MODE_CLASS);
+            } else {
+                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    document.documentElement.classList.add(DARK_MODE_CLASS);
+                    if (document.body) document.body.classList.add(DARK_MODE_CLASS);
+                }
+            }
+        } catch (e) {
+            console.warn('Theme persistence not available:', e);
+        }
+    })();
+    </script>
+    
+    <meta name="description" content="Complete interactive Bootstrap components playground with visual learning tools">
+    <meta name="keywords" content="Bootstrap, components, playground, learning, interactive, web development, UI framework">
+    <title>Bootstrap Master Playground - Complete Interactive Edition</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" 
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <!-- Custom styles will be loaded externally -->
+    <link rel="stylesheet" href="bootstrap-playground.css">
+</head>
+
+<body>
+    <!-- FULLSCREEN CONTAINER -->
+    <div class="fullscreen-container" id="fullscreenContainer">
+        <div class="fullscreen-header">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-arrows-fullscreen me-2"></i>
+                <h5 class="mb-0">Bootstrap Master Playground - Fullscreen Mode</h5>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <div class="d-flex gap-2">
+                    <button class="toolbar-btn" id="fullscreen-guide-toggle" onclick="toggleComponentGuides()">
+                        <i class="bi bi-grid-3x3"></i>
+                        Component Guides
+                    </button>
+                    <button class="toolbar-btn" id="fullscreen-measure-toggle" onclick="toggleMeasurements()">
+                        <i class="bi bi-rulers"></i>
+                        Measurements
+                    </button>
+                    <button class="toolbar-btn" id="fullscreen-tips-toggle" onclick="toggleLearningTips()">
+                        <i class="bi bi-lightbulb"></i>
+                        Bootstrap Tips
+                    </button>
+                </div>
+                <button class="exit-fullscreen" onclick="exitFullscreen()">
+                    <i class="bi bi-x-lg"></i>
+                    Exit Fullscreen
+                </button>
+            </div>
+        </div>
+        <div class="fullscreen-content">
+            <div class="fullscreen-playground">
+                <div id="fullscreen-playground-content"></div>
+            </div>
+            <div class="fullscreen-controls">
+                <div id="fullscreen-controls-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Keyboard shortcuts overlay -->
+    <div class="keyboard-shortcuts" id="keyboard-shortcuts">
+        <h6><i class="bi bi-keyboard me-2"></i>Shortcuts</h6>
+        <div class="shortcut-item">
+            <span>Switch components</span>
+            <span class="shortcut-key">1-9</span>
+        </div>
+        <div class="shortcut-item">
+            <span>Add component</span>
+            <span class="shortcut-key">A</span>
+        </div>
+        <div class="shortcut-item">
+            <span>Clear components</span>
+            <span class="shortcut-key">Del</span>
+        </div>
+        <div class="shortcut-item">
+            <span>Toggle theme</span>
+            <span class="shortcut-key">Ctrl+D</span>
+        </div>
+        <div class="shortcut-item">
+            <span>Fullscreen</span>
+            <span class="shortcut-key">F11</span>
+        </div>
+        <div class="shortcut-item">
+            <span>Copy HTML</span>
+            <span class="shortcut-key">Ctrl+Enter</span>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#" onclick="showToast('Welcome to Bootstrap Master Playground!', 'info')">
+                <i class="bi bi-bootstrap me-2"></i>Bootstrap Master Playground
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <div class="navbar-nav ms-auto">
+                    <a class="nav-link" href="#" onclick="switchComponentTab('components')">
+                        <i class="bi bi-puzzle me-1"></i>Components
+                    </a>
+                    <a class="nav-link" href="#" onclick="switchComponentTab('layout')">
+                        <i class="bi bi-grid-3x3 me-1"></i>Layout
+                    </a>
+                    <a class="nav-link" href="#" onclick="switchComponentTab('forms')">
+                        <i class="bi bi-ui-checks me-1"></i>Forms
+                    </a>
+                    <a class="nav-link" href="#" onclick="switchComponentTab('content')">
+                        <i class="bi bi-card-text me-1"></i>Content
+                    </a>
+                    <a class="nav-link" href="#" onclick="switchComponentTab('navigation')">
+                        <i class="bi bi-menu-button-wide me-1"></i>Navigation
+                    </a>
+                    <a class="nav-link" href="#" onclick="switchComponentTab('utilities')">
+                        <i class="bi bi-tools me-1"></i>Utilities
+                    </a>
+                    <a class="nav-link" href="#" onclick="switchComponentTab('advanced')">
+                        <i class="bi bi-gear me-1"></i>Advanced
+                    </a>
+                    <li class="nav-item ms-2">
+                        <button class="toolbar-btn" onclick="toggleFullscreen()" title="Toggle Fullscreen (F11)">
+                            <i class="bi bi-fullscreen" id="fullscreen-icon"></i>
+                        </button>
+                    </li>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="display-5 fw-bold mb-3">
+                        <i class="bi bi-bootstrap me-3"></i>Bootstrap Master Playground
+                        <span class="badge bg-light text-dark ms-2">Complete</span>
+                    </h1>
+                    <p class="lead mb-4">Master ALL Bootstrap components with advanced interactive tools, visual learning aids, and comprehensive examples. From basic buttons to complex layouts - explore the complete power of Bootstrap 5.</p>
+                    
+                    <!-- Hero stats -->
+                    <div class="hero-stats">
+                        <div class="hero-stat">
+                            <span class="hero-stat-number">200+</span>
+                            <span class="hero-stat-label">Components</span>
+                        </div>
+                        <div class="hero-stat">
+                            <span class="hero-stat-number">70+</span>
+                            <span class="hero-stat-label">Interactive Demos</span>
+                        </div>
+                        <div class="hero-stat">
+                            <span class="hero-stat-number">7</span>
+                            <span class="hero-stat-label">Categories</span>
+                        </div>
+                        <div class="hero-stat">
+                            <span class="hero-stat-number">100%</span>
+                            <span class="hero-stat-label">Bootstrap 5</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 text-center">
+                    <div class="d-flex justify-content-center align-items-center" style="height: 200px;">
+                        <div class="d-flex flex-column align-items-center">
+                            <i class="bi bi-bootstrap display-1 opacity-75 mb-3"></i>
+                            <small class="opacity-75">Complete Bootstrap Learning</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="container mt-4">
+        <!-- Visual Toolbar -->
+        <div class="visual-toolbar">
+            <div class="d-flex align-items-center flex-wrap gap-2">
+                <span class="fw-bold me-3">Bootstrap Tools:</span>
+                <button class="toolbar-btn" onclick="toggleMeasurements()" id="measurements-btn">
+                    <i class="bi bi-rulers"></i>Measurements
+                </button>
+                <button class="toolbar-btn" onclick="toggleComponentGuides()" id="guide-btn">
+                    <i class="bi bi-diagram-3"></i>Component Guides
+                </button>
+                <button class="toolbar-btn" onclick="exportBootstrapHTML()" title="Export all HTML">
+                    <i class="bi bi-download"></i>Export HTML
+                </button>
+                <button class="toolbar-btn" onclick="resetAllComponents()" title="Reset all components">
+                    <i class="bi bi-arrow-clockwise"></i>Reset All
+                </button>
+                <button class="toolbar-btn" onclick="validateBootstrapHTML()" title="Validate HTML">
+                    <i class="bi bi-check-square"></i>Validate
+                </button>
+            </div>
+        </div>
+
+        <!-- Component Categories -->
+        <div class="component-tabs">
+            <button class="tab-btn active" onclick="switchComponentTab('components')">
+                <i class="bi bi-puzzle me-1"></i>Components
+            </button>
+            <button class="tab-btn" onclick="switchComponentTab('layout')">
+                <i class="bi bi-grid-3x3 me-1"></i>Layout
+            </button>
+            <button class="tab-btn" onclick="switchComponentTab('forms')">
+                <i class="bi bi-ui-checks me-1"></i>Forms
+            </button>
+            <button class="tab-btn" onclick="switchComponentTab('content')">
+                <i class="bi bi-card-text me-1"></i>Content
+            </button>
+            <button class="tab-btn" onclick="switchComponentTab('navigation')">
+                <i class="bi bi-menu-button-wide me-1"></i>Navigation
+            </button>
+            <button class="tab-btn" onclick="switchComponentTab('utilities')">
+                <i class="bi bi-tools me-1"></i>Utilities
+            </button>
+            <button class="tab-btn" onclick="switchComponentTab('advanced')">
+                <i class="bi bi-gear me-1"></i>Advanced
+            </button>
+        </div>
+
+        <!-- Components Tab (Existing) -->
+        <div id="components-tab" class="tab-content active">
+            <div class="component-card">
+                <div class="component-header">
+                    <div>
+                        <h3 class="mb-0"><i class="bi bi-puzzle me-2"></i>Bootstrap Components</h3>
+                        <p class="mb-0 opacity-75">Essential Bootstrap components like buttons, alerts, badges, cards, and progress bars</p>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="live-indicator pulse">LIVE</div>
+                        <button class="fullscreen-btn" onclick="enterFullscreen('components')" title="Enter Fullscreen Mode">
+                            <i class="bi bi-arrows-fullscreen"></i>
+                            Fullscreen
+                        </button>
+                    </div>
+                </div>
+                <div class="component-body">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="control-group">
+                                <label class="control-label">Component Type</label>
+                                <div class="description-text">Choose which Bootstrap component to customize</div>
+                                <select class="form-select" id="component-type" onchange="updateComponentDemo()">
+                                    <option value="button" selected>Button</option>
+                                    <option value="alert">Alert</option>
+                                    <option value="badge">Badge</option>
+                                    <option value="card">Card</option>
+                                    <option value="progress">Progress Bar</option>
+                                    <option value="spinner">Spinner</option>
+                                    <option value="dropdown">Dropdown</option>
+                                    <option value="toast">Toast</option>
+                                </select>
+                            </div>
+
+                            <!-- Dynamic component controls will be inserted here -->
+                            <div id="component-controls-container"></div>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <h5><i class="bi bi-eye me-2"></i>Live Preview</h5>
+                            <div class="demo-container" id="components-demo-container">
+                                <button type="button" class="btn btn-primary bs-component selected" id="demo-component">Click me!</button>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Component Presets:</label>
+                                <div>
+                                    <button class="preset-btn" onclick="applyComponentPreset('cta-button')">
+                                        <i class="bi bi-cursor me-1"></i>CTA Button
+                                    </button>
+                                    <button class="preset-btn" onclick="applyComponentPreset('success-alert')">
+                                        <i class="bi bi-check-circle me-1"></i>Success Alert
+                                    </button>
+                                    <button class="preset-btn" onclick="applyComponentPreset('info-card')">
+                                        <i class="bi bi-card-text me-1"></i>Info Card
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="learning-tip">
+                                <h6><i class="bi bi-lightbulb me-2"></i>Component Tips</h6>
+                                <ul class="mb-0 small">
+                                    <li>Use contextual classes (primary, success, danger) for semantic meaning</li>
+                                    <li>Combine utility classes for custom spacing and positioning</li>
+                                    <li>Bootstrap components are mobile-first and responsive by default</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h5><i class="bi bi-code-square me-2"></i>Generated HTML</h5>
+                            <div class="position-relative">
+                                <button class="copy-btn" onclick="copyCode('components-html-output')">
+                                    <i class="bi bi-clipboard me-1"></i>Copy
+                                </button>
+                                <div class="code-output" id="components-html-output"><!-- HTML will be generated here --></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Layout Tab (Existing) -->
+        <div id="layout-tab" class="tab-content">
+            <div class="component-card">
+                <div class="component-header layout">
+                    <div>
+                        <h3 class="mb-0"><i class="bi bi-grid-3x3 me-2"></i>Bootstrap Layout System</h3>
+                        <p class="mb-0 opacity-75">Master the Bootstrap grid system, containers, and responsive layouts</p>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="live-indicator pulse">LIVE</div>
+                        <button class="fullscreen-btn" onclick="enterFullscreen('layout')" title="Enter Fullscreen Mode">
+                            <i class="bi bi-arrows-fullscreen"></i>
+                            Fullscreen
+                        </button>
+                    </div>
+                </div>
+                <div class="component-body">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="control-group">
+                                <label class="control-label">Container Type</label>
+                                <div class="description-text">Choose the container type for your layout</div>
+                                <select class="form-select" id="layout-container" onchange="updateLayoutDemo()">
+                                    <option value="container" selected>Container (Fixed-width)</option>
+                                    <option value="container-fluid">Container Fluid (Full-width)</option>
+                                    <option value="container-sm">Container SM (≥576px)</option>
+                                    <option value="container-md">Container MD (≥768px)</option>
+                                    <option value="container-lg">Container LG (≥992px)</option>
+                                    <option value="container-xl">Container XL (≥1200px)</option>
+                                    <option value="container-xxl">Container XXL (≥1400px)</option>
+                                </select>
+                            </div>
+
+                            <div class="control-group">
+                                <label class="control-label">Number of Columns</label>
+                                <div class="description-text">Set how many columns to display in the grid</div>
+                                <input type="range" class="form-range" id="layout-columns" min="1" max="6" value="3" oninput="updateRangeValue('layout-columns')" onchange="updateLayoutDemo()">
+                                <div class="d-flex justify-content-between small text-muted">
+                                    <span>1</span>
+                                    <span class="range-value" id="layout-columns-value">3</span>
+                                    <span>6</span>
+                                </div>
+                            </div>
+
+                            <div class="control-group">
+                                <label class="control-label">Column Breakpoint</label>
+                                <div class="description-text">Set when columns should stack on smaller screens</div>
+                                <select class="form-select" id="layout-breakpoint" onchange="updateLayoutDemo()">
+                                    <option value="col">Always horizontal</option>
+                                    <option value="col-sm">Stack below 576px</option>
+                                    <option value="col-md" selected>Stack below 768px</option>
+                                    <option value="col-lg">Stack below 992px</option>
+                                    <option value="col-xl">Stack below 1200px</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <h5><i class="bi bi-eye me-2"></i>Live Preview</h5>
+                            <div class="demo-container" id="layout-demo-container">
+                                <div class="container">
+                                    <div class="row g-3">
+                                        <div class="col-md">
+                                            <div class="p-3 bg-primary text-white text-center rounded">Column 1</div>
+                                        </div>
+                                        <div class="col-md">
+                                            <div class="p-3 bg-success text-white text-center rounded">Column 2</div>
+                                        </div>
+                                        <div class="col-md">
+                                            <div class="p-3 bg-info text-white text-center rounded">Column 3</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Layout Presets:</label>
+                                <div>
+                                    <button class="preset-btn" onclick="applyLayoutPreset('three-column')">
+                                        <i class="bi bi-columns me-1"></i>Three Column
+                                    </button>
+                                    <button class="preset-btn" onclick="applyLayoutPreset('sidebar')">
+                                        <i class="bi bi-layout-sidebar me-1"></i>Sidebar Layout
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h5><i class="bi bi-code-square me-2"></i>Generated HTML</h5>
+                            <div class="position-relative">
+                                <button class="copy-btn" onclick="copyCode('layout-html-output')">
+                                    <i class="bi bi-clipboard me-1"></i>Copy
+                                </button>
+                                <div class="code-output" id="layout-html-output"><!-- HTML will be generated here --></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Forms Tab -->
+        <div id="forms-tab" class="tab-content">
+            <!-- Content will be loaded from bootstrap-playground-forms.js -->
+        </div>
+
+        <!-- Content Tab -->
+        <div id="content-tab" class="tab-content">
+            <!-- Content will be loaded from bootstrap-playground-content.js -->
+        </div>
+
+        <!-- Navigation Tab -->
+        <div id="navigation-tab" class="tab-content">
+            <!-- Content will be loaded from bootstrap-playground-navigation.js -->
+        </div>
+
+        <!-- Utilities Tab -->
+        <div id="utilities-tab" class="tab-content">
+            <!-- Content will be loaded from bootstrap-playground-utilities.js -->
+        </div>
+
+        <!-- Advanced Tab -->
+        <div id="advanced-tab" class="tab-content">
+            <!-- Content will be loaded from bootstrap-playground-advanced.js -->
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" 
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    <!-- Include external dependencies -->
+    <script src="js/dark-mode.js"></script>
+    <script src="playground-state.js"></script>
+    <script src="utils.js"></script>
+    <script src="js/toast.js"></script>
+    
+    <!-- Main playground script -->
+    <script src="bootstrap-playground.js"></script>
+    
+    <!-- Tab-specific scripts -->
+    <script src="bootstrap-playground-forms.js"></script>
+    <script src="bootstrap-playground-content.js"></script>
+    <script src="bootstrap-playground-navigation.js"></script>
+    <script src="bootstrap-playground-utilities.js"></script>
+    <script src="bootstrap-playground-advanced.js"></script>
+</body>
+</html>
