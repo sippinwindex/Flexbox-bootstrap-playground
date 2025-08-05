@@ -33,8 +33,8 @@
     })();
     </script>
     
-    <meta name="description" content="Complete interactive Bootstrap components playground with visual learning tools">
-    <meta name="keywords" content="Bootstrap, components, playground, learning, interactive, web development, UI framework">
+    <meta name="description" content="Complete interactive Bootstrap components playground with advanced dark mode and visual learning tools">
+    <meta name="keywords" content="Bootstrap, components, playground, learning, interactive, web development, UI framework, dark mode">
     <title>Bootstrap Master Playground - Complete Interactive Edition</title>
     
     <!-- Bootstrap CSS -->
@@ -43,11 +43,1080 @@
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     
-    <!-- Custom styles will be loaded externally -->
-    <link rel="stylesheet" href="bootstrap-playground.css">
+    <style>
+    :root {
+        /* Theme variables that change with dark mode */
+        --theme-bg-primary: #ffffff;
+        --theme-bg-secondary: #f8f9fa;
+        --theme-bg-tertiary: #e9ecef;
+        --theme-text-primary: #495057;
+        --theme-text-secondary: #6c757d;
+        --theme-text-muted: #a0aec0;
+        --theme-border-color: #dee2e6;
+        --theme-border-focus: #0d6efd;
+        --theme-shadow-sm: 0 2px 8px rgba(0,0,0,0.1);
+        --theme-shadow-md: 0 4px 15px rgba(0,0,0,0.15);
+        --theme-shadow-lg: 0 8px 25px rgba(0,0,0,0.2);
+
+        /* Bootstrap-themed gradients */
+        --primary-gradient: linear-gradient(135deg, #0d6efd 0%, #6610f2 100%);
+        --success-gradient: linear-gradient(135deg, #198754, #20c997);
+        --warning-gradient: linear-gradient(135deg, #ffc107, #fd7e14);
+        --info-gradient: linear-gradient(135deg, #0dcaf0, #6f42c1);
+        --danger-gradient: linear-gradient(135deg, #dc3545, #d63384);
+        --secondary-gradient: linear-gradient(135deg, #6c757d, #adb5bd);
+        
+        /* Animation Variables */
+        --transition-fast: 0.15s ease-out;
+        --transition-base: 0.3s ease-out;
+        --transition-slow: 0.5s ease-out;
+        
+        /* Glass morphism variables */
+        --glass-bg: rgba(255, 255, 255, 0.1);
+        --glass-border: rgba(255, 255, 255, 0.2);
+        --glass-backdrop: blur(20px);
+    }
+
+    /* Dark mode overrides - enhanced */
+    body.dark-mode {
+        --theme-bg-primary: #1a202c;
+        --theme-bg-secondary: #2d3748;
+        --theme-bg-tertiary: #4a5568;
+        --theme-text-primary: #e2e8f0;
+        --theme-text-secondary: #a0aec0;
+        --theme-text-muted: #718096;
+        --theme-border-color: #4a5568;
+        --theme-border-focus: #0d6efd;
+        --theme-shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+        --theme-shadow-md: 0 4px 15px rgba(0,0,0,0.4);
+        --theme-shadow-lg: 0 8px 25px rgba(0,0,0,0.3);
+        
+        --glass-bg: rgba(0, 0, 0, 0.2);
+        --glass-border: rgba(255, 255, 255, 0.1);
+    }
+
+    /* Enhanced global transitions */
+    *,
+    *::before,
+    *::after {
+        transition: 
+            background-color var(--transition-base),
+            color var(--transition-base),
+            border-color var(--transition-base),
+            box-shadow var(--transition-base),
+            transform var(--transition-fast);
+    }
+
+    body {
+        font-family: system-ui, -apple-system, sans-serif;
+        background-color: var(--theme-bg-secondary);
+        color: var(--theme-text-primary);
+        line-height: 1.6;
+        overflow-x: hidden;
+    }
+
+    /* Advanced Theme Toggle Styles */
+    .theme-toggle-wrapper {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1100;
+        cursor: move;
+        user-select: none;
+    }
+
+    .theme-toggle {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        border: 2px solid var(--theme-border-color);
+        background: var(--glass-bg);
+        backdrop-filter: var(--glass-backdrop);
+        color: var(--theme-text-primary);
+        cursor: pointer;
+        transition: all var(--transition-base);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        box-shadow: var(--theme-shadow-md);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .theme-toggle::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+        transition: left 0.6s ease;
+    }
+
+    .theme-toggle:hover::before {
+        left: 100%;
+    }
+
+    .theme-toggle:hover {
+        transform: scale(1.1);
+        border-color: var(--theme-border-focus);
+        box-shadow: var(--theme-shadow-lg);
+    }
+
+    .theme-toggle:focus {
+        outline: 2px solid var(--theme-border-focus);
+        outline-offset: 2px;
+    }
+
+    .sun-icon, .moon-icon {
+        transition: all var(--transition-base);
+    }
+
+    .moon-icon {
+        color: #ffd700;
+    }
+
+    .sun-icon {
+        color: #ff6b35;
+    }
+
+    /* Theme selector dropdown */
+    .theme-selector {
+        position: absolute;
+        top: 60px;
+        right: 0;
+        min-width: 200px;
+        background: var(--theme-bg-primary);
+        border: 1px solid var(--theme-border-color);
+        border-radius: 12px;
+        box-shadow: var(--theme-shadow-lg);
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+        transition: all var(--transition-base);
+        z-index: 1000;
+        overflow: hidden;
+    }
+
+    .theme-selector.show {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+
+    .theme-option {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 16px;
+        cursor: pointer;
+        transition: all var(--transition-base);
+        border-bottom: 1px solid var(--theme-border-color);
+        position: relative;
+    }
+
+    .theme-option:last-child {
+        border-bottom: none;
+    }
+
+    .theme-option::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        background: var(--theme-border-focus);
+        transform: scaleY(0);
+        transition: transform var(--transition-base);
+    }
+
+    .theme-option:hover::before,
+    .theme-option.active::before {
+        transform: scaleY(1);
+    }
+
+    .theme-option:hover {
+        background: var(--theme-bg-tertiary);
+        transform: translateX(4px);
+    }
+
+    .theme-option.active {
+        background: rgba(13, 110, 253, 0.1);
+        color: var(--theme-border-focus);
+        font-weight: 600;
+    }
+
+    .theme-option i {
+        font-size: 1.1rem;
+        width: 20px;
+        text-align: center;
+    }
+
+    .theme-option div {
+        flex: 1;
+    }
+
+    .theme-option small {
+        display: block;
+        margin-top: 2px;
+        font-size: 0.75rem;
+        opacity: 0.7;
+    }
+
+    /* FULLSCREEN STYLES */
+    .fullscreen-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: var(--theme-bg-secondary);
+        z-index: 9999;
+        overflow: hidden;
+        padding: 0;
+        margin: 0;
+        display: none;
+    }
+
+    .fullscreen-container.active {
+        display: flex;
+    }
+
+    .fullscreen-header {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 60px;
+        background: var(--theme-bg-tertiary);
+        color: var(--theme-text-primary);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 20px;
+        z-index: 10000;
+        border-bottom: 1px solid var(--theme-border-color);
+    }
+
+    .fullscreen-content {
+        position: absolute;
+        top: 60px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        overflow: hidden;
+    }
+
+    .fullscreen-playground {
+        flex: 1;
+        padding: 20px;
+        overflow: auto;
+        background: var(--theme-bg-primary);
+    }
+
+    .fullscreen-controls {
+        width: 400px;
+        background: var(--theme-bg-secondary);
+        border-left: 1px solid var(--theme-border-color);
+        overflow-y: auto;
+        padding: 20px;
+    }
+
+    .exit-fullscreen {
+        background: #dc3545;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all var(--transition-base);
+    }
+
+    .exit-fullscreen:hover {
+        background: #b02a37;
+        transform: scale(1.05);
+    }
+
+    /* Enhanced hero section */
+    .hero-section {
+        background: var(--primary-gradient);
+        color: white;
+        padding: 3rem 0;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hero-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="bsgrain" patternUnits="userSpaceOnUse" width="100" height="100"><filter id="bsnoiseFilter"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23bsnoiseFilter)" opacity="0.1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23bsgrain)"/></svg>') repeat;
+        opacity: 0.1;
+        pointer-events: none;
+    }
+
+    .hero-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .hero-stat {
+        text-align: center;
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        backdrop-filter: blur(10px);
+    }
+
+    .hero-stat-number {
+        font-size: 2rem;
+        font-weight: 700;
+        display: block;
+    }
+
+    .hero-stat-label {
+        font-size: 0.9rem;
+        opacity: 0.8;
+    }
+
+    /* Enhanced component cards */
+    .component-card {
+        background-color: var(--theme-bg-primary);
+        border-radius: 16px;
+        box-shadow: var(--theme-shadow-md);
+        overflow: hidden;
+        margin-bottom: 2rem;
+        transition: all var(--transition-base);
+        border: 1px solid var(--theme-border-color);
+        position: relative;
+    }
+
+    .component-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--primary-gradient);
+        opacity: 0;
+        transition: opacity var(--transition-base);
+    }
+
+    .component-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--theme-shadow-lg);
+    }
+
+    .component-card:hover::before {
+        opacity: 1;
+    }
+
+    .component-header {
+        background: var(--primary-gradient);
+        color: white;
+        padding: 1.5rem 2rem;
+        border-bottom: none;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .component-header.layout { background: var(--success-gradient); }
+    .component-header.forms { background: var(--info-gradient); }
+    .component-header.content { background: var(--warning-gradient); }
+    .component-header.utilities { background: var(--danger-gradient); }
+    .component-header.navigation { background: var(--secondary-gradient); }
+    .component-header.advanced { background: linear-gradient(135deg, #6f42c1, #e83e8c); }
+
+    .component-header h3 {
+        margin: 0;
+        flex: 1;
+    }
+
+    .component-header .live-indicator {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+    }
+
+    .fullscreen-btn {
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        padding: 8px 16px;
+        border-radius: 8px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all var(--transition-base);
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    .fullscreen-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+    }
+
+    .component-body {
+        padding: 2rem;
+        background-color: var(--theme-bg-primary);
+        color: var(--theme-text-primary);
+    }
+
+    /* Enhanced demo container */
+    .demo-container {
+        background-color: var(--theme-bg-tertiary);
+        border: 3px dashed var(--theme-border-focus);
+        border-radius: 16px;
+        padding: 3rem;
+        min-height: 500px;
+        margin: 1.5rem 0;
+        position: relative;
+        overflow: auto;
+        transition: all var(--transition-base);
+    }
+
+    .demo-container::before {
+        content: 'Live Bootstrap Demo';
+        position: absolute;
+        top: -12px;
+        left: 20px;
+        background: var(--theme-border-focus);
+        color: white;
+        padding: 6px 16px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        z-index: 10;
+        box-shadow: var(--theme-shadow-sm);
+    }
+
+    .demo-container.with-measurements {
+        background-image: 
+            linear-gradient(to right, rgba(13, 110, 253, 0.1) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(13, 110, 253, 0.1) 1px, transparent 1px);
+        background-size: 20px 20px;
+    }
+
+    /* Enhanced code output */
+    .code-output {
+        background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+        color: #e6e6e6;
+        border-radius: 12px;
+        padding: 1.5rem;
+        font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', 'Consolas', monospace;
+        font-size: 14px;
+        line-height: 1.6;
+        max-height: 400px;
+        overflow-y: auto;
+        position: relative;
+        margin: 1.5rem 0;
+        white-space: pre-wrap;
+        border: 1px solid var(--theme-border-color);
+        box-shadow: var(--theme-shadow-md);
+    }
+
+    .copy-btn {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        background: #198754;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 8px 12px;
+        font-size: 0.8rem;
+        cursor: pointer;
+        opacity: 0.9;
+        transition: all var(--transition-base);
+        z-index: 10;
+        font-weight: 500;
+    }
+
+    .copy-btn:hover {
+        opacity: 1;
+        transform: scale(1.05);
+        box-shadow: var(--theme-shadow-sm);
+    }
+
+    .copy-btn.copied {
+        background: #0dcaf0;
+        transform: scale(0.95);
+    }
+
+    /* Enhanced control groups */
+    .control-group {
+        background-color: var(--theme-bg-primary);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        border-left: 4px solid var(--theme-border-focus);
+        box-shadow: var(--theme-shadow-sm);
+        transition: all var(--transition-base);
+        border: 1px solid var(--theme-border-color);
+        position: relative;
+    }
+
+    .control-group:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--theme-shadow-md);
+    }
+
+    .control-label {
+        font-weight: 700;
+        color: var(--theme-text-primary);
+        margin-bottom: 0.75rem;
+        display: block;
+        font-size: 1rem;
+    }
+
+    .description-text {
+        font-size: 0.85rem;
+        color: var(--theme-text-secondary);
+        margin-bottom: 0.75rem;
+        line-height: 1.4;
+    }
+
+    .range-value {
+        font-weight: 700;
+        color: var(--theme-border-focus);
+        min-width: 5rem;
+        text-align: center;
+        font-size: 1rem;
+        display: inline-block;
+        background: var(--theme-bg-tertiary);
+        padding: 0.25rem 0.5rem;
+        border-radius: 6px;
+    }
+
+    /* Enhanced tabs system */
+    .component-tabs {
+        display: flex;
+        background-color: var(--theme-bg-tertiary);
+        border-radius: 12px;
+        padding: 0.5rem;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        border: 1px solid var(--theme-border-color);
+        box-shadow: var(--theme-shadow-sm);
+    }
+
+    .tab-btn {
+        flex: 1;
+        min-width: 120px;
+        padding: 1rem 1.5rem;
+        border: none;
+        background: transparent;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all var(--transition-base);
+        font-weight: 600;
+        font-size: 0.9rem;
+        margin: 0.25rem;
+        color: var(--theme-text-secondary);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .tab-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(13, 110, 253, 0.1), transparent);
+        transition: left 0.6s ease;
+    }
+
+    .tab-btn:hover::before {
+        left: 100%;
+    }
+
+    .tab-btn.active {
+        background: var(--theme-bg-primary);
+        box-shadow: var(--theme-shadow-md);
+        color: var(--theme-border-focus);
+        transform: translateY(-2px);
+    }
+
+    .tab-btn:hover:not(.active) {
+        background-color: var(--theme-bg-secondary);
+        color: var(--theme-text-primary);
+        transform: translateY(-1px);
+    }
+
+    /* Enhanced preset buttons */
+    .preset-btn {
+        padding: 0.75rem 1.25rem;
+        border: 2px solid var(--theme-border-focus);
+        background: transparent;
+        color: var(--theme-border-focus);
+        border-radius: 25px;
+        cursor: pointer;
+        transition: all var(--transition-base);
+        margin: 0.5rem 0.25rem;
+        font-size: 0.9rem;
+        font-weight: 600;
+        position: relative;
+        overflow: hidden;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .preset-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: var(--theme-border-focus);
+        transition: left 0.3s ease;
+        z-index: -1;
+    }
+
+    .preset-btn:hover::before {
+        left: 0;
+    }
+
+    .preset-btn:hover,
+    .preset-btn.active {
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: var(--theme-shadow-md);
+    }
+
+    /* Enhanced toolbar */
+    .visual-toolbar {
+        background: var(--glass-bg);
+        backdrop-filter: var(--glass-backdrop);
+        border: 1px solid var(--glass-border);
+        border-radius: 12px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        align-items: center;
+    }
+
+    .toolbar-btn {
+        background: var(--theme-bg-primary);
+        border: 1px solid var(--theme-border-color);
+        color: var(--theme-text-primary);
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all var(--transition-base);
+        font-size: 0.9rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .toolbar-btn:hover {
+        background: var(--theme-border-focus);
+        color: white;
+        transform: translateY(-1px);
+    }
+
+    .toolbar-btn.active {
+        background: var(--theme-border-focus);
+        color: white;
+    }
+
+    /* Tab content management */
+    .tab-content {
+        display: none;
+    }
+
+    .tab-content.active {
+        display: block;
+        animation: fadeIn 0.5s ease-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Component controls visibility */
+    .component-controls {
+        display: none;
+    }
+
+    .component-controls.active {
+        display: block;
+    }
+
+    /* Enhanced form elements theming */
+    .form-select,
+    .form-control,
+    .form-range {
+        background-color: var(--theme-bg-primary);
+        border-color: var(--theme-border-color);
+        color: var(--theme-text-primary);
+        border-radius: 8px;
+        transition: all var(--transition-base);
+    }
+
+    .form-select:focus,
+    .form-control:focus {
+        background-color: var(--theme-bg-primary);
+        border-color: var(--theme-border-focus);
+        color: var(--theme-text-primary);
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }
+
+    /* Enhanced range inputs */
+    input[type="range"] {
+        background: var(--theme-bg-tertiary);
+        height: 8px;
+        border-radius: 4px;
+        outline: none;
+        -webkit-appearance: none;
+        appearance: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 20px;
+        height: 20px;
+        background: var(--theme-border-focus);
+        border-radius: 50%;
+        cursor: pointer;
+        box-shadow: var(--theme-shadow-sm);
+        transition: all var(--transition-base);
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+        transform: scale(1.2);
+        box-shadow: var(--theme-shadow-md);
+    }
+
+    /* Enhanced navigation */
+    .navbar {
+        background-color: var(--theme-bg-primary) !important;
+        border-bottom: 1px solid var(--theme-border-color);
+        backdrop-filter: blur(20px);
+        box-shadow: var(--theme-shadow-sm);
+    }
+
+    .navbar-dark {
+        background-color: var(--theme-bg-tertiary) !important;
+    }
+
+    /* Enhanced toast notifications */
+    .toast-container {
+        position: fixed;
+        top: 80px;
+        right: 20px;
+        z-index: 1050;
+        max-width: 400px;
+    }
+
+    .toast-custom {
+        background: var(--glass-bg);
+        backdrop-filter: var(--glass-backdrop);
+        color: var(--theme-text-primary);
+        border: 1px solid var(--glass-border);
+        border-radius: 12px;
+        box-shadow: var(--theme-shadow-lg);
+        padding: 1.25rem;
+        margin-bottom: 0.75rem;
+        display: none;
+        min-width: 320px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .toast-custom::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background: #198754;
+    }
+
+    .toast-custom.warning::before { background: #ffc107; }
+    .toast-custom.error::before { background: #dc3545; }
+    .toast-custom.info::before { background: #0dcaf0; }
+
+    .toast-custom.show {
+        display: block;
+        animation: slideInToast 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    @keyframes slideInToast {
+        from { 
+            transform: translateX(100%) scale(0.8); 
+            opacity: 0; 
+        }
+        to { 
+            transform: translateX(0) scale(1); 
+            opacity: 1; 
+        }
+    }
+
+    /* Learning tips */
+    .learning-tip {
+        background: linear-gradient(135deg, #e7f3ff, #cce7ff);
+        border-left: 4px solid #0dcaf0;
+        padding: 1.25rem;
+        margin: 1.5rem 0;
+        border-radius: 0 8px 8px 0;
+        font-size: 0.95rem;
+        position: relative;
+        box-shadow: var(--theme-shadow-sm);
+    }
+
+    body.dark-mode .learning-tip {
+        background: linear-gradient(135deg, rgba(56, 161, 105, 0.2), rgba(47, 133, 90, 0.2));
+        border-left-color: #0dcaf0;
+        color: var(--theme-text-primary);
+    }
+
+    .learning-tip::before {
+        content: '💡';
+        position: absolute;
+        left: -2px;
+        top: -2px;
+        font-size: 1.5rem;
+        background: var(--theme-bg-primary);
+        border-radius: 50%;
+        padding: 0.25rem;
+    }
+
+    /* Keyboard shortcuts overlay */
+    .keyboard-shortcuts {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        background: var(--glass-bg);
+        backdrop-filter: var(--glass-backdrop);
+        border: 1px solid var(--glass-border);
+        border-radius: 12px;
+        padding: 1rem;
+        color: var(--theme-text-primary);
+        font-size: 0.85rem;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all var(--transition-base);
+        z-index: 1000;
+        max-width: 250px;
+        display: none;
+    }
+
+    .keyboard-shortcuts.show {
+        opacity: 1;
+        transform: translateY(0);
+        display: block;
+    }
+
+    .shortcut-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+    }
+
+    .shortcut-key {
+        background: var(--theme-bg-tertiary);
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-family: monospace;
+        font-size: 0.8rem;
+    }
+
+    /* Pulse animation for live indicators */
+    @keyframes pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.5; }
+        100% { opacity: 1; }
+    }
+
+    .pulse {
+        animation: pulse 2s infinite;
+    }
+
+    /* Component interaction styles */
+    .bs-component {
+        transition: all var(--transition-base);
+        cursor: pointer;
+        position: relative;
+    }
+
+    .bs-component.selected {
+        outline: 3px solid #ffc107;
+        outline-offset: 2px;
+        border-radius: 4px;
+    }
+
+    .bs-component:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--theme-shadow-sm);
+    }
+
+    /* Mobile responsive enhancements */
+    @media (max-width: 768px) {
+        .component-tabs {
+            flex-direction: column;
+        }
+        
+        .tab-btn {
+            flex: none;
+            margin: 0.25rem 0;
+            min-width: auto;
+        }
+        
+        .demo-container {
+            min-height: 300px;
+            padding: 1.5rem;
+        }
+        
+        .component-body {
+            padding: 1.5rem;
+        }
+        
+        .visual-toolbar {
+            justify-content: center;
+        }
+        
+        .fullscreen-controls {
+            width: 320px;
+        }
+
+        .fullscreen-header {
+            height: 50px;
+            padding: 0 15px;
+        }
+
+        .fullscreen-content {
+            top: 50px;
+        }
+        
+        .component-header {
+            padding: 1rem;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .component-header h3 {
+            font-size: 1.25rem;
+        }
+
+        .keyboard-shortcuts {
+            display: none !important;
+        }
+
+        .theme-toggle-wrapper {
+            top: 10px;
+            right: 10px;
+        }
+
+        .theme-toggle {
+            width: 45px;
+            height: 45px;
+            font-size: 1.1rem;
+        }
+
+        .theme-selector {
+            min-width: 180px;
+        }
+    }
+
+    /* Accessibility improvements */
+    .sr-only {
+        position: absolute !important;
+        width: 1px !important;
+        height: 1px !important;
+        padding: 0 !important;
+        margin: -1px !important;
+        overflow: hidden !important;
+        clip: rect(0, 0, 0, 0) !important;
+        white-space: nowrap !important;
+        border: 0 !important;
+    }
+
+    /* Focus styles */
+    :focus-visible {
+        outline: 2px solid var(--theme-border-focus);
+        outline-offset: 2px;
+        border-radius: 4px;
+    }
+
+    /* Enhanced scrollbars */
+    ::-webkit-scrollbar {
+        width: 12px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: var(--theme-bg-tertiary);
+        border-radius: 6px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: var(--theme-border-color);
+        border-radius: 6px;
+        border: 2px solid var(--theme-bg-tertiary);
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: var(--theme-text-secondary);
+    }
+
+    /* Smooth scroll behavior */
+    html {
+        scroll-behavior: smooth;
+    }
+
+    /* Enhanced selection styling */
+    ::selection {
+        background: rgba(13, 110, 253, 0.3);
+        color: var(--theme-text-primary);
+    }
+
+    ::-moz-selection {
+        background: rgba(13, 110, 253, 0.3);
+        color: var(--theme-text-primary);
+    }
+    </style>
 </head>
 
 <body>
+    <!-- Advanced Theme Toggle (will be created by JavaScript) -->
+
     <!-- FULLSCREEN CONTAINER -->
     <div class="fullscreen-container" id="fullscreenContainer">
         <div class="fullscreen-header">
@@ -251,7 +1320,7 @@
             </button>
         </div>
 
-        <!-- Components Tab (Existing) -->
+        <!-- Components Tab -->
         <div id="components-tab" class="tab-content active">
             <div class="component-card">
                 <div class="component-header">
@@ -285,8 +1354,32 @@
                                 </select>
                             </div>
 
-                            <!-- Dynamic component controls will be inserted here -->
-                            <div id="component-controls-container"></div>
+                            <div class="control-group">
+                                <label class="control-label">Component Style</label>
+                                <div class="description-text">Choose component color and style</div>
+                                <select class="form-select" id="component-style" onchange="updateComponentDemo()">
+                                    <option value="btn-primary" selected>Primary</option>
+                                    <option value="btn-secondary">Secondary</option>
+                                    <option value="btn-success">Success</option>
+                                    <option value="btn-danger">Danger</option>
+                                    <option value="btn-warning">Warning</option>
+                                    <option value="btn-info">Info</option>
+                                    <option value="btn-light">Light</option>
+                                    <option value="btn-dark">Dark</option>
+                                    <option value="btn-outline-primary">Outline Primary</option>
+                                    <option value="btn-outline-secondary">Outline Secondary</option>
+                                </select>
+                            </div>
+
+                            <div class="control-group">
+                                <label class="control-label">Component Size</label>
+                                <div class="description-text">Control component size</div>
+                                <select class="form-select" id="component-size" onchange="updateComponentDemo()">
+                                    <option value="btn-sm">Small</option>
+                                    <option value="" selected>Default</option>
+                                    <option value="btn-lg">Large</option>
+                                </select>
+                            </div>
                         </div>
 
                         <div class="col-lg-6">
@@ -336,7 +1429,7 @@
             </div>
         </div>
 
-        <!-- Layout Tab (Existing) -->
+        <!-- Layout Tab -->
         <div id="layout-tab" class="tab-content">
             <div class="component-card">
                 <div class="component-header layout">
@@ -422,6 +1515,15 @@
                                     </button>
                                 </div>
                             </div>
+
+                            <div class="learning-tip">
+                                <h6><i class="bi bi-lightbulb me-2"></i>Layout Tips</h6>
+                                <ul class="mb-0 small">
+                                    <li>Bootstrap uses a 12-column grid system</li>
+                                    <li>Use responsive breakpoints for different screen sizes</li>
+                                    <li>Container classes control maximum width and centering</li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
 
@@ -442,48 +1544,1399 @@
 
         <!-- Forms Tab -->
         <div id="forms-tab" class="tab-content">
-            <!-- Content will be loaded from bootstrap-playground-forms.js -->
+            <div class="component-card">
+                <div class="component-header forms">
+                    <div>
+                        <h3 class="mb-0"><i class="bi bi-ui-checks me-2"></i>Bootstrap Forms</h3>
+                        <p class="mb-0 opacity-75">Create beautiful, accessible forms with Bootstrap form controls</p>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="live-indicator pulse">LIVE</div>
+                        <button class="fullscreen-btn" onclick="enterFullscreen('forms')" title="Enter Fullscreen Mode">
+                            <i class="bi bi-arrows-fullscreen"></i>
+                            Fullscreen
+                        </button>
+                    </div>
+                </div>
+                <div class="component-body">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="control-group">
+                                <label class="control-label">Form Type</label>
+                                <div class="description-text">Choose which form component to customize</div>
+                                <select class="form-select" id="form-type" onchange="updateFormDemo()">
+                                    <option value="basic" selected>Basic Form</option>
+                                    <option value="inline">Inline Form</option>
+                                    <option value="grid">Grid Form</option>
+                                    <option value="validation">Validation Form</option>
+                                </select>
+                            </div>
+
+                            <div class="control-group">
+                                <label class="control-label">Input Style</label>
+                                <div class="description-text">Choose input field styling</div>
+                                <select class="form-select" id="form-style" onchange="updateFormDemo()">
+                                    <option value="default" selected>Default</option>
+                                    <option value="floating">Floating Labels</option>
+                                    <option value="sizing">Custom Sizing</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <h5><i class="bi bi-eye me-2"></i>Live Preview</h5>
+                            <div class="demo-container" id="forms-demo-container">
+                                <form>
+                                    <div class="mb-3">
+                                        <label for="exampleEmail" class="form-label">Email address</label>
+                                        <input type="email" class="form-control" id="exampleEmail" placeholder="name@example.com">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="examplePassword" class="form-label">Password</label>
+                                        <input type="password" class="form-control" id="examplePassword">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                </form>
+                            </div>
+
+                            <div class="learning-tip">
+                                <h6><i class="bi bi-lightbulb me-2"></i>Form Tips</h6>
+                                <ul class="mb-0 small">
+                                    <li>Always use proper label elements for accessibility</li>
+                                    <li>Bootstrap includes validation styles for form feedback</li>
+                                    <li>Form controls automatically inherit global styling</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h5><i class="bi bi-code-square me-2"></i>Generated HTML</h5>
+                            <div class="position-relative">
+                                <button class="copy-btn" onclick="copyCode('forms-html-output')">
+                                    <i class="bi bi-clipboard me-1"></i>Copy
+                                </button>
+                                <div class="code-output" id="forms-html-output"><!-- HTML will be generated here --></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Content Tab -->
         <div id="content-tab" class="tab-content">
-            <!-- Content will be loaded from bootstrap-playground-content.js -->
+            <div class="component-card">
+                <div class="component-header content">
+                    <div>
+                        <h3 class="mb-0"><i class="bi bi-card-text me-2"></i>Bootstrap Content</h3>
+                        <p class="mb-0 opacity-75">Typography, images, tables, and content presentation</p>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="live-indicator pulse">LIVE</div>
+                        <button class="fullscreen-btn" onclick="enterFullscreen('content')" title="Enter Fullscreen Mode">
+                            <i class="bi bi-arrows-fullscreen"></i>
+                            Fullscreen
+                        </button>
+                    </div>
+                </div>
+                <div class="component-body">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="control-group">
+                                <label class="control-label">Content Type</label>
+                                <div class="description-text">Choose which content component to display</div>
+                                <select class="form-select" id="content-type" onchange="updateContentDemo()">
+                                    <option value="typography" selected>Typography</option>
+                                    <option value="table">Table</option>
+                                    <option value="image">Images</option>
+                                    <option value="list">Lists</option>
+                                </select>
+                            </div>
+
+                            <div class="control-group">
+                                <label class="control-label">Content Style</label>
+                                <div class="description-text">Choose styling options</div>
+                                <select class="form-select" id="content-style" onchange="updateContentDemo()">
+                                    <option value="default" selected>Default</option>
+                                    <option value="styled">Styled</option>
+                                    <option value="responsive">Responsive</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <h5><i class="bi bi-eye me-2"></i>Live Preview</h5>
+                            <div class="demo-container" id="content-demo-container">
+                                <h1>Display Heading</h1>
+                                <p class="lead">This is a lead paragraph that stands out.</p>
+                                <p>This is a normal paragraph with <strong>bold text</strong> and <em>italic text</em>.</p>
+                                <blockquote class="blockquote">
+                                    <p>"A well-known quote, contained in a blockquote element."</p>
+                                </blockquote>
+                            </div>
+
+                            <div class="learning-tip">
+                                <h6><i class="bi bi-lightbulb me-2"></i>Content Tips</h6>
+                                <ul class="mb-0 small">
+                                    <li>Use display headings for large, attention-grabbing text</li>
+                                    <li>Lead paragraphs help emphasize important content</li>
+                                    <li>Bootstrap tables are responsive by default</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h5><i class="bi bi-code-square me-2"></i>Generated HTML</h5>
+                            <div class="position-relative">
+                                <button class="copy-btn" onclick="copyCode('content-html-output')">
+                                    <i class="bi bi-clipboard me-1"></i>Copy
+                                </button>
+                                <div class="code-output" id="content-html-output"><!-- HTML will be generated here --></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Navigation Tab -->
         <div id="navigation-tab" class="tab-content">
-            <!-- Content will be loaded from bootstrap-playground-navigation.js -->
+            <div class="component-card">
+                <div class="component-header navigation">
+                    <div>
+                        <h3 class="mb-0"><i class="bi bi-menu-button-wide me-2"></i>Bootstrap Navigation</h3>
+                        <p class="mb-0 opacity-75">Navbars, breadcrumbs, pagination, and navigation components</p>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="live-indicator pulse">LIVE</div>
+                        <button class="fullscreen-btn" onclick="enterFullscreen('navigation')" title="Enter Fullscreen Mode">
+                            <i class="bi bi-arrows-fullscreen"></i>
+                            Fullscreen
+                        </button>
+                    </div>
+                </div>
+                <div class="component-body">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="control-group">
+                                <label class="control-label">Navigation Type</label>
+                                <div class="description-text">Choose which navigation component to display</div>
+                                <select class="form-select" id="nav-type" onchange="updateNavigationDemo()">
+                                    <option value="navbar" selected>Navbar</option>
+                                    <option value="breadcrumb">Breadcrumb</option>
+                                    <option value="pagination">Pagination</option>
+                                    <option value="tabs">Tabs</option>
+                                </select>
+                            </div>
+
+                            <div class="control-group">
+                                <label class="control-label">Navigation Style</label>
+                                <div class="description-text">Choose styling options</div>
+                                <select class="form-select" id="nav-style" onchange="updateNavigationDemo()">
+                                    <option value="light" selected>Light</option>
+                                    <option value="dark">Dark</option>
+                                    <option value="primary">Primary</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <h5><i class="bi bi-eye me-2"></i>Live Preview</h5>
+                            <div class="demo-container" id="navigation-demo-container">
+                                <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                                    <div class="container-fluid">
+                                        <a class="navbar-brand" href="#">Brand</a>
+                                        <div class="navbar-nav">
+                                            <a class="nav-link active" href="#">Home</a>
+                                            <a class="nav-link" href="#">Features</a>
+                                            <a class="nav-link" href="#">Pricing</a>
+                                        </div>
+                                    </div>
+                                </nav>
+                            </div>
+
+                            <div class="learning-tip">
+                                <h6><i class="bi bi-lightbulb me-2"></i>Navigation Tips</h6>
+                                <ul class="mb-0 small">
+                                    <li>Navbars are responsive and collapsible by default</li>
+                                    <li>Use breadcrumbs to show page hierarchy</li>
+                                    <li>Pagination helps break up large amounts of content</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h5><i class="bi bi-code-square me-2"></i>Generated HTML</h5>
+                            <div class="position-relative">
+                                <button class="copy-btn" onclick="copyCode('navigation-html-output')">
+                                    <i class="bi bi-clipboard me-1"></i>Copy
+                                </button>
+                                <div class="code-output" id="navigation-html-output"><!-- HTML will be generated here --></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Utilities Tab -->
         <div id="utilities-tab" class="tab-content">
-            <!-- Content will be loaded from bootstrap-playground-utilities.js -->
+            <div class="component-card">
+                <div class="component-header utilities">
+                    <div>
+                        <h3 class="mb-0"><i class="bi bi-tools me-2"></i>Bootstrap Utilities</h3>
+                        <p class="mb-0 opacity-75">Spacing, colors, display, positioning and utility classes</p>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="live-indicator pulse">LIVE</div>
+                        <button class="fullscreen-btn" onclick="enterFullscreen('utilities')" title="Enter Fullscreen Mode">
+                            <i class="bi bi-arrows-fullscreen"></i>
+                            Fullscreen
+                        </button>
+                    </div>
+                </div>
+                <div class="component-body">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="control-group">
+                                <label class="control-label">Utility Type</label>
+                                <div class="description-text">Choose which utility class to demonstrate</div>
+                                <select class="form-select" id="utility-type" onchange="updateUtilityDemo()">
+                                    <option value="spacing" selected>Spacing</option>
+                                    <option value="colors">Colors</option>
+                                    <option value="display">Display</option>
+                                    <option value="flexbox">Flexbox</option>
+                                </select>
+                            </div>
+
+                            <div class="control-group">
+                                <label class="control-label">Spacing Size</label>
+                                <div class="description-text">Control spacing amount (0-5)</div>
+                                <input type="range" class="form-range" id="spacing-size" min="0" max="5" value="3" oninput="updateRangeValue('spacing-size')" onchange="updateUtilityDemo()">
+                                <div class="d-flex justify-content-between small text-muted">
+                                    <span>0</span>
+                                    <span class="range-value" id="spacing-size-value">3</span>
+                                    <span>5</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <h5><i class="bi bi-eye me-2"></i>Live Preview</h5>
+                            <div class="demo-container" id="utilities-demo-container">
+                                <div class="p-3 mb-3 bg-primary text-white">Primary Box</div>
+                                <div class="p-3 mb-3 bg-secondary text-white">Secondary Box</div>
+                                <div class="p-3 mb-3 bg-success text-white">Success Box</div>
+                            </div>
+
+                            <div class="learning-tip">
+                                <h6><i class="bi bi-lightbulb me-2"></i>Utility Tips</h6>
+                                <ul class="mb-0 small">
+                                    <li>Spacing utilities use rem units for consistency</li>
+                                    <li>Display utilities control element visibility and type</li>
+                                    <li>Flexbox utilities provide powerful layout control</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h5><i class="bi bi-code-square me-2"></i>Generated HTML</h5>
+                            <div class="position-relative">
+                                <button class="copy-btn" onclick="copyCode('utilities-html-output')">
+                                    <i class="bi bi-clipboard me-1"></i>Copy
+                                </button>
+                                <div class="code-output" id="utilities-html-output"><!-- HTML will be generated here --></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Advanced Tab -->
         <div id="advanced-tab" class="tab-content">
-            <!-- Content will be loaded from bootstrap-playground-advanced.js -->
+            <div class="component-card">
+                <div class="component-header advanced">
+                    <div>
+                        <h3 class="mb-0"><i class="bi bi-gear me-2"></i>Advanced Bootstrap</h3>
+                        <p class="mb-0 opacity-75">Modals, carousels, accordions, and advanced interactive components</p>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="live-indicator pulse">LIVE</div>
+                        <button class="fullscreen-btn" onclick="enterFullscreen('advanced')" title="Enter Fullscreen Mode">
+                            <i class="bi bi-arrows-fullscreen"></i>
+                            Fullscreen
+                        </button>
+                    </div>
+                </div>
+                <div class="component-body">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="control-group">
+                                <label class="control-label">Advanced Component</label>
+                                <div class="description-text">Choose which advanced component to display</div>
+                                <select class="form-select" id="advanced-type" onchange="updateAdvancedDemo()">
+                                    <option value="modal" selected>Modal</option>
+                                    <option value="carousel">Carousel</option>
+                                    <option value="accordion">Accordion</option>
+                                    <option value="offcanvas">Offcanvas</option>
+                                </select>
+                            </div>
+
+                            <div class="control-group">
+                                <label class="control-label">Component Options</label>
+                                <div class="description-text">Choose component configuration</div>
+                                <select class="form-select" id="advanced-options" onchange="updateAdvancedDemo()">
+                                    <option value="default" selected>Default</option>
+                                    <option value="fade">With Fade</option>
+                                    <option value="centered">Centered</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <h5><i class="bi bi-eye me-2"></i>Live Preview</h5>
+                            <div class="demo-container" id="advanced-demo-container">
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                    Launch Demo Modal
+                                </button>
+                                
+                                <!-- Modal -->
+                                <div class="modal fade" id="exampleModal" tabindex="-1">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Modal Title</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                This is a Bootstrap modal example.
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                <button type="button" class="btn btn-primary">Save changes</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="learning-tip">
+                                <h6><i class="bi bi-lightbulb me-2"></i>Advanced Tips</h6>
+                                <ul class="mb-0 small">
+                                    <li>Modals require JavaScript for full functionality</li>
+                                    <li>Carousels support touch gestures on mobile devices</li>
+                                    <li>Accordions can expand multiple panels or just one</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h5><i class="bi bi-code-square me-2"></i>Generated HTML</h5>
+                            <div class="position-relative">
+                                <button class="copy-btn" onclick="copyCode('advanced-html-output')">
+                                    <i class="bi bi-clipboard me-1"></i>Copy
+                                </button>
+                                <div class="code-output" id="advanced-html-output"><!-- HTML will be generated here --></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" 
             integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    
+    <script>
+    // Global state management
+    let currentTab = 'components';
+    let isFullscreen = false;
+    let measurementsEnabled = false;
+    let guidesEnabled = false;
+    let learningTipsEnabled = true;
 
-    <!-- Include external dependencies -->
-    <script src="js/dark-mode.js"></script>
-    <script src="playground-state.js"></script>
-    <script src="utils.js"></script>
-    <script src="js/toast.js"></script>
+    // Initialize the playground
+    document.addEventListener('DOMContentLoaded', function() {
+        createThemeToggle();
+        updateComponentDemo();
+        updateLayoutDemo();
+        updateFormDemo();
+        updateContentDemo();
+        updateNavigationDemo();
+        updateUtilityDemo();
+        updateAdvancedDemo();
+        setupKeyboardShortcuts();
+        showToast('Welcome! Explore Bootstrap components with this interactive playground.', 'info');
+    });
+
+    // Theme Management
+    function createThemeToggle() {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'theme-toggle-wrapper';
+        
+        const toggle = document.createElement('button');
+        toggle.className = 'theme-toggle';
+        toggle.setAttribute('aria-label', 'Toggle theme');
+        toggle.innerHTML = '<i class="bi bi-moon-stars moon-icon"></i>';
+        
+        const selector = document.createElement('div');
+        selector.className = 'theme-selector';
+        selector.innerHTML = `
+            <div class="theme-option active" data-theme="auto">
+                <i class="bi bi-circle-half"></i>
+                <div>
+                    <strong>Auto</strong>
+                    <small>System preference</small>
+                </div>
+            </div>
+            <div class="theme-option" data-theme="light">
+                <i class="bi bi-sun"></i>
+                <div>
+                    <strong>Light</strong>
+                    <small>Light theme</small>
+                </div>
+            </div>
+            <div class="theme-option" data-theme="dark">
+                <i class="bi bi-moon-stars"></i>
+                <div>
+                    <strong>Dark</strong>
+                    <small>Dark theme</small>
+                </div>
+            </div>
+        `;
+        
+        wrapper.appendChild(toggle);
+        wrapper.appendChild(selector);
+        document.body.appendChild(wrapper);
+        
+        // Theme toggle functionality
+        toggle.addEventListener('click', () => {
+            selector.classList.toggle('show');
+        });
+        
+        // Close selector when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!wrapper.contains(e.target)) {
+                selector.classList.remove('show');
+            }
+        });
+        
+        // Theme option selection
+        selector.addEventListener('click', (e) => {
+            const option = e.target.closest('.theme-option');
+            if (option) {
+                const theme = option.dataset.theme;
+                setTheme(theme);
+                
+                // Update active state
+                document.querySelectorAll('.theme-option').forEach(opt => opt.classList.remove('active'));
+                option.classList.add('active');
+                
+                selector.classList.remove('show');
+            }
+        });
+        
+        // Initialize theme icon
+        updateThemeIcon();
+    }
+
+    function setTheme(theme) {
+        try {
+            localStorage.setItem('bootstrap-playground-theme', theme);
+        } catch (e) {
+            // Handle localStorage not being available
+        }
+        
+        if (theme === 'dark') {
+            document.body.classList.add('dark-mode');
+        } else if (theme === 'light') {
+            document.body.classList.remove('dark-mode');
+        } else {
+            // Auto theme
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+            }
+        }
+        
+        updateThemeIcon();
+    }
+
+    function updateThemeIcon() {
+        const toggle = document.querySelector('.theme-toggle');
+        const isDark = document.body.classList.contains('dark-mode');
+        
+        if (toggle) {
+            toggle.innerHTML = isDark 
+                ? '<i class="bi bi-sun sun-icon"></i>' 
+                : '<i class="bi bi-moon-stars moon-icon"></i>';
+        }
+    }
+
+    // Tab Management
+    function switchComponentTab(tabName) {
+        // Update tab buttons
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        event.target.classList.add('active');
+        
+        // Update tab content
+        document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.remove('active');
+        });
+        document.getElementById(tabName + '-tab').classList.add('active');
+        
+        currentTab = tabName;
+        
+        // Update navbar active state
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.classList.remove('active');
+        });
+        
+        showToast(`Switched to ${tabName.charAt(0).toUpperCase() + tabName.slice(1)} tab`, 'info');
+    }
+
+    // Component Demo Updates
+    function updateComponentDemo() {
+        const type = document.getElementById('component-type').value;
+        const style = document.getElementById('component-style').value;
+        const size = document.getElementById('component-size').value;
+        
+        const container = document.getElementById('components-demo-container');
+        const output = document.getElementById('components-html-output');
+        
+        let html = '';
+        
+        switch(type) {
+            case 'button':
+                html = `<button type="button" class="btn ${style} ${size} bs-component selected">Click me!</button>`;
+                break;
+            case 'alert':
+                const alertClass = style.replace('btn-', 'alert-');
+                html = `<div class="alert ${alertClass} bs-component selected" role="alert">
+    <i class="bi bi-info-circle me-2"></i>This is a ${style.replace('btn-', '')} alert with an icon!
+</div>`;
+                break;
+            case 'badge':
+                const badgeClass = style.replace('btn-', 'bg-');
+                html = `<span class="badge ${badgeClass} bs-component selected">New</span>`;
+                break;
+            case 'card':
+                html = `<div class="card bs-component selected" style="width: 18rem;">
+    <div class="card-body">
+        <h5 class="card-title">Card title</h5>
+        <p class="card-text">Some quick example text to build on the card title.</p>
+        <a href="#" class="btn ${style} ${size}">Go somewhere</a>
+    </div>
+</div>`;
+                break;
+            case 'progress':
+                html = `<div class="progress bs-component selected">
+    <div class="progress-bar ${style.replace('btn-', 'bg-')}" role="progressbar" style="width: 75%" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">75%</div>
+</div>`;
+                break;
+            case 'spinner':
+                html = `<div class="spinner-border text-${style.replace('btn-', '').replace('outline-', '')} bs-component selected" role="status">
+    <span class="visually-hidden">Loading...</span>
+</div>`;
+                break;
+            case 'dropdown':
+                html = `<div class="dropdown bs-component selected">
+    <button class="btn ${style} ${size} dropdown-toggle" type="button" data-bs-toggle="dropdown">
+        Dropdown button
+    </button>
+    <ul class="dropdown-menu">
+        <li><a class="dropdown-item" href="#">Action</a></li>
+        <li><a class="dropdown-item" href="#">Another action</a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item" href="#">Separated link</a></li>
+    </ul>
+</div>`;
+                break;
+            case 'toast':
+                html = `<div class="toast show bs-component selected" role="alert">
+    <div class="toast-header">
+        <strong class="me-auto">Bootstrap</strong>
+        <small>11 mins ago</small>
+        <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+    </div>
+    <div class="toast-body">
+        Hello, world! This is a toast message.
+    </div>
+</div>`;
+                break;
+        }
+        
+        container.innerHTML = html;
+        output.textContent = html;
+    }
+
+    function updateLayoutDemo() {
+        const containerType = document.getElementById('layout-container').value;
+        const columns = document.getElementById('layout-columns').value;
+        const breakpoint = document.getElementById('layout-breakpoint').value;
+        
+        const container = document.getElementById('layout-demo-container');
+        const output = document.getElementById('layout-html-output');
+        
+        const colors = ['primary', 'success', 'info', 'warning', 'danger', 'secondary'];
+        let columnsHtml = '';
+        
+        for (let i = 0; i < columns; i++) {
+            const color = colors[i % colors.length];
+            columnsHtml += `
+        <div class="${breakpoint}">
+            <div class="p-3 bg-${color} text-white text-center rounded">Column ${i + 1}</div>
+        </div>`;
+        }
+        
+        const html = `<div class="${containerType}">
+    <div class="row g-3">${columnsHtml}
+    </div>
+</div>`;
+        
+        container.innerHTML = html;
+        output.textContent = html;
+    }
+
+    function updateFormDemo() {
+        const type = document.getElementById('form-type').value;
+        const style = document.getElementById('form-style').value;
+        
+        const container = document.getElementById('forms-demo-container');
+        const output = document.getElementById('forms-html-output');
+        
+        let html = '';
+        
+        switch(type) {
+            case 'basic':
+                if (style === 'floating') {
+                    html = `<form>
+    <div class="form-floating mb-3">
+        <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
+        <label for="floatingInput">Email address</label>
+    </div>
+    <div class="form-floating mb-3">
+        <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
+        <label for="floatingPassword">Password</label>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>`;
+                } else {
+                    html = `<form>
+    <div class="mb-3">
+        <label for="exampleEmail" class="form-label">Email address</label>
+        <input type="email" class="form-control" id="exampleEmail" placeholder="name@example.com">
+    </div>
+    <div class="mb-3">
+        <label for="examplePassword" class="form-label">Password</label>
+        <input type="password" class="form-control" id="examplePassword">
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>`;
+                }
+                break;
+                
+            case 'inline':
+                html = `<form class="row g-3">
+    <div class="col-auto">
+        <input type="email" class="form-control" placeholder="Email">
+    </div>
+    <div class="col-auto">
+        <input type="password" class="form-control" placeholder="Password">
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+</form>`;
+                break;
+                
+            case 'grid':
+                html = `<form class="row g-3">
+    <div class="col-md-6">
+        <label for="firstName" class="form-label">First name</label>
+        <input type="text" class="form-control" id="firstName">
+    </div>
+    <div class="col-md-6">
+        <label for="lastName" class="form-label">Last name</label>
+        <input type="text" class="form-control" id="lastName">
+    </div>
+    <div class="col-12">
+        <label for="inputEmail" class="form-label">Email</label>
+        <input type="email" class="form-control" id="inputEmail">
+    </div>
+    <div class="col-12">
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+</form>`;
+                break;
+                
+            case 'validation':
+                html = `<form class="needs-validation" novalidate>
+    <div class="mb-3">
+        <label for="validationEmail" class="form-label">Email address</label>
+        <input type="email" class="form-control" id="validationEmail" required>
+        <div class="valid-feedback">Looks good!</div>
+        <div class="invalid-feedback">Please provide a valid email.</div>
+    </div>
+    <div class="mb-3">
+        <label for="validationPassword" class="form-label">Password</label>
+        <input type="password" class="form-control" id="validationPassword" required>
+        <div class="invalid-feedback">Please provide a password.</div>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>`;
+                break;
+        }
+        
+        container.innerHTML = html;
+        output.textContent = html;
+    }
+
+    function updateContentDemo() {
+        const type = document.getElementById('content-type').value;
+        const style = document.getElementById('content-style').value;
+        
+        const container = document.getElementById('content-demo-container');
+        const output = document.getElementById('content-html-output');
+        
+        let html = '';
+        
+        switch(type) {
+            case 'typography':
+                html = `<h1 class="display-4">Display Heading</h1>
+<p class="lead">This is a lead paragraph that stands out.</p>
+<p>This is a normal paragraph with <strong>bold text</strong> and <em>italic text</em>.</p>
+<blockquote class="blockquote">
+    <p>"A well-known quote, contained in a blockquote element."</p>
+</blockquote>`;
+                break;
+                
+            case 'table':
+                const tableClass = style === 'styled' ? 'table-striped table-hover' : '';
+                html = `<table class="table ${tableClass}">
+    <thead class="table-dark">
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">First</th>
+            <th scope="col">Last</th>
+            <th scope="col">Handle</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th scope="row">1</th>
+            <td>Mark</td>
+            <td>Otto</td>
+            <td>@mdo</td>
+        </tr>
+        <tr>
+            <th scope="row">2</th>
+            <td>Jacob</td>
+            <td>Thornton</td>
+            <td>@fat</td>
+        </tr>
+    </tbody>
+</table>`;
+                break;
+                
+            case 'image':
+                const imgClass = style === 'responsive' ? 'img-fluid' : style === 'styled' ? 'img-thumbnail' : '';
+                html = `<img src="https://via.placeholder.com/400x200/007bff/ffffff?text=Bootstrap+Image" class="${imgClass}" alt="Bootstrap Image">`;
+                break;
+                
+            case 'list':
+                if (style === 'styled') {
+                    html = `<ul class="list-group">
+    <li class="list-group-item active">Active item</li>
+    <li class="list-group-item">Second item</li>
+    <li class="list-group-item">Third item</li>
+    <li class="list-group-item disabled">Disabled item</li>
+</ul>`;
+                } else {
+                    html = `<ul>
+    <li>First item</li>
+    <li>Second item</li>
+    <li>Third item</li>
+</ul>`;
+                }
+                break;
+        }
+        
+        container.innerHTML = html;
+        output.textContent = html;
+    }
+
+    function updateNavigationDemo() {
+        const type = document.getElementById('nav-type').value;
+        const style = document.getElementById('nav-style').value;
+        
+        const container = document.getElementById('navigation-demo-container');
+        const output = document.getElementById('navigation-html-output');
+        
+        let html = '';
+        
+        switch(type) {
+            case 'navbar':
+                const navbarClass = style === 'dark' ? 'navbar-dark bg-dark' : style === 'primary' ? 'navbar-dark bg-primary' : 'navbar-light bg-light';
+                html = `<nav class="navbar navbar-expand-lg ${navbarClass}">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Brand</a>
+        <div class="navbar-nav">
+            <a class="nav-link active" href="#">Home</a>
+            <a class="nav-link" href="#">Features</a>
+            <a class="nav-link" href="#">Pricing</a>
+        </div>
+    </div>
+</nav>`;
+                break;
+                
+            case 'breadcrumb':
+                html = `<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="#">Home</a></li>
+        <li class="breadcrumb-item"><a href="#">Library</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Data</li>
+    </ol>
+</nav>`;
+                break;
+                
+            case 'pagination':
+                html = `<nav aria-label="Page navigation">
+    <ul class="pagination">
+        <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+        <li class="page-item"><a class="page-link" href="#">1</a></li>
+        <li class="page-item active"><a class="page-link" href="#">2</a></li>
+        <li class="page-item"><a class="page-link" href="#">3</a></li>
+        <li class="page-item"><a class="page-link" href="#">Next</a></li>
+    </ul>
+</nav>`;
+                break;
+                
+            case 'tabs':
+                html = `<ul class="nav nav-tabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" type="button" role="tab">Home</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" type="button" role="tab">Profile</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" type="button" role="tab">Contact</button>
+    </li>
+</ul>`;
+                break;
+        }
+        
+        container.innerHTML = html;
+        output.textContent = html;
+    }
+
+    function updateUtilityDemo() {
+        const type = document.getElementById('utility-type').value;
+        const spacing = document.getElementById('spacing-size').value;
+        
+        const container = document.getElementById('utilities-demo-container');
+        const output = document.getElementById('utilities-html-output');
+        
+        let html = '';
+        
+        switch(type) {
+            case 'spacing':
+                html = `<div class="p-${spacing} mb-${spacing} bg-primary text-white">Padding: ${spacing}</div>
+<div class="p-${spacing} mb-${spacing} bg-secondary text-white">Padding: ${spacing}</div>
+<div class="p-${spacing} mb-${spacing} bg-success text-white">Padding: ${spacing}</div>`;
+                break;
+                
+            case 'colors':
+                html = `<div class="p-3 mb-3 text-primary">.text-primary</div>
+<div class="p-3 mb-3 text-white bg-primary">.bg-primary</div>
+<div class="p-3 mb-3 text-success">.text-success</div>
+<div class="p-3 mb-3 text-white bg-success">.bg-success</div>`;
+                break;
+                
+            case 'display':
+                html = `<div class="d-block p-2 bg-primary text-white mb-2">.d-block</div>
+<div class="d-inline-block p-2 bg-secondary text-white me-2">.d-inline-block</div>
+<div class="d-inline-block p-2 bg-info text-white">.d-inline-block</div>`;
+                break;
+                
+            case 'flexbox':
+                html = `<div class="d-flex justify-content-between align-items-center p-3 bg-light border">
+    <div class="p-2 bg-primary text-white">Flex item 1</div>
+    <div class="p-2 bg-secondary text-white">Flex item 2</div>
+    <div class="p-2 bg-success text-white">Flex item 3</div>
+</div>`;
+                break;
+        }
+        
+        container.innerHTML = html;
+        output.textContent = html;
+    }
+
+    function updateAdvancedDemo() {
+        const type = document.getElementById('advanced-type').value;
+        const options = document.getElementById('advanced-options').value;
+        
+        const container = document.getElementById('advanced-demo-container');
+        const output = document.getElementById('advanced-html-output');
+        
+        let html = '';
+        
+        switch(type) {
+            case 'modal':
+                const modalClass = options === 'fade' ? 'modal fade' : options === 'centered' ? 'modal fade modal-dialog-centered' : 'modal fade';
+                html = `<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+    Launch Demo Modal
+</button>
+
+<!-- Modal -->
+<div class="${modalClass}" id="exampleModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Modal Title</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                This is a Bootstrap modal example.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>`;
+                break;
+                
+            case 'carousel':
+                html = `<div id="carouselExample" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <div class="d-flex justify-content-center align-items-center bg-primary text-white" style="height: 200px;">
+                <h5>First slide</h5>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <div class="d-flex justify-content-center align-items-center bg-secondary text-white" style="height: 200px;">
+                <h5>Second slide</h5>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <div class="d-flex justify-content-center align-items-center bg-success text-white" style="height: 200px;">
+                <h5>Third slide</h5>
+            </div>
+        </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+        <span class="carousel-control-next-icon"></span>
+    </button>
+</div>`;
+                break;
+                
+            case 'accordion':
+                html = `<div class="accordion" id="accordionExample">
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne">
+                Accordion Item #1
+            </button>
+        </h2>
+        <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+            <div class="accordion-body">
+                This is the first item's accordion body.
+            </div>
+        </div>
+    </div>
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo">
+                Accordion Item #2
+            </button>
+        </h2>
+        <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+            <div class="accordion-body">
+                This is the second item's accordion body.
+            </div>
+        </div>
+    </div>
+</div>`;
+                break;
+                
+            case 'offcanvas':
+                html = `<button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample">
+    Show Offcanvas
+</button>
+
+<div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title">Offcanvas</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body">
+        Content for the offcanvas goes here.
+    </div>
+</div>`;
+                break;
+        }
+        
+        container.innerHTML = html;
+        output.textContent = html;
+    }
+
+    // Utility Functions
+    function updateRangeValue(rangeId) {
+        const range = document.getElementById(rangeId);
+        const valueDisplay = document.getElementById(rangeId + '-value');
+        if (valueDisplay) {
+            valueDisplay.textContent = range.value;
+        }
+    }
+
+    function copyCode(outputId) {
+        const output = document.getElementById(outputId);
+        const text = output.textContent;
+        
+        navigator.clipboard.writeText(text).then(() => {
+            const btn = output.parentElement.querySelector('.copy-btn');
+            const originalContent = btn.innerHTML;
+            btn.innerHTML = '<i class="bi bi-check me-1"></i>Copied!';
+            btn.classList.add('copied');
+            
+            setTimeout(() => {
+                btn.innerHTML = originalContent;
+                btn.classList.remove('copied');
+            }, 2000);
+            
+            showToast('Code copied to clipboard!', 'success');
+        });
+    }
+
+    function showToast(message, type = 'info') {
+        const container = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        toast.className = `toast-custom ${type}`;
+        toast.innerHTML = `
+            <div class="d-flex justify-content-between align-items-center">
+                <span>${message}</span>
+                <button type="button" class="btn-close btn-close-white ms-2" onclick="this.parentElement.parentElement.remove()"></button>
+            </div>
+        `;
+        
+        container.appendChild(toast);
+        toast.classList.add('show');
+        
+        setTimeout(() => {
+            if (toast.parentElement) {
+                toast.remove();
+            }
+        }, 5000);
+    }
+
+    // Preset Functions
+    function applyComponentPreset(preset) {
+        switch(preset) {
+            case 'cta-button':
+                document.getElementById('component-type').value = 'button';
+                document.getElementById('component-style').value = 'btn-success';
+                document.getElementById('component-size').value = 'btn-lg';
+                break;
+            case 'success-alert':
+                document.getElementById('component-type').value = 'alert';
+                document.getElementById('component-style').value = 'btn-success';
+                break;
+            case 'info-card':
+                document.getElementById('component-type').value = 'card';
+                document.getElementById('component-style').value = 'btn-info';
+                break;
+        }
+        updateComponentDemo();
+        showToast(`Applied ${preset} preset!`, 'success');
+    }
+
+    function applyLayoutPreset(preset) {
+        switch(preset) {
+            case 'three-column':
+                document.getElementById('layout-container').value = 'container';
+                document.getElementById('layout-columns').value = '3';
+                document.getElementById('layout-breakpoint').value = 'col-md';
+                updateRangeValue('layout-columns');
+                break;
+            case 'sidebar':
+                document.getElementById('layout-container').value = 'container-fluid';
+                document.getElementById('layout-columns').value = '2';
+                document.getElementById('layout-breakpoint').value = 'col-lg';
+                updateRangeValue('layout-columns');
+                break;
+        }
+        updateLayoutDemo();
+        showToast(`Applied ${preset} preset!`, 'success');
+    }
+
+    // Toolbar Functions
+    function toggleMeasurements() {
+        measurementsEnabled = !measurementsEnabled;
+        const btn = document.getElementById('measurements-btn');
+        
+        document.querySelectorAll('.demo-container').forEach(container => {
+            if (measurementsEnabled) {
+                container.classList.add('with-measurements');
+            } else {
+                container.classList.remove('with-measurements');
+            }
+        });
+        
+        btn.classList.toggle('active', measurementsEnabled);
+        showToast(measurementsEnabled ? 'Measurements enabled' : 'Measurements disabled', 'info');
+    }
+
+    function toggleComponentGuides() {
+        guidesEnabled = !guidesEnabled;
+        const btn = document.getElementById('guide-btn');
+        
+        document.querySelectorAll('.bs-component').forEach(component => {
+            if (guidesEnabled) {
+                component.style.outline = '2px dashed #ffc107';
+                component.style.outlineOffset = '4px';
+            } else {
+                component.style.outline = '';
+                component.style.outlineOffset = '';
+            }
+        });
+        
+        btn.classList.toggle('active', guidesEnabled);
+        showToast(guidesEnabled ? 'Component guides enabled' : 'Component guides disabled', 'info');
+    }
+
+    function exportBootstrapHTML() {
+        const allHTML = [];
+        
+        document.querySelectorAll('.code-output').forEach(output => {
+            const html = output.textContent.trim();
+            if (html) {
+                allHTML.push(html);
+            }
+        });
+        
+        const fullHTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bootstrap Components Export</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body class="p-4">
+    <div class="container">
+        <h1 class="mb-4">Exported Bootstrap Components</h1>
+        
+${allHTML.map(html => `        <div class="mb-5">
+${html.split('\n').map(line => '            ' + line).join('\n')}
+        </div>`).join('\n\n')}
+    </div>
     
-    <!-- Main playground script -->
-    <script src="bootstrap-playground.js"></script>
-    
-    <!-- Tab-specific scripts -->
-    <script src="bootstrap-playground-forms.js"></script>
-    <script src="bootstrap-playground-content.js"></script>
-    <script src="bootstrap-playground-navigation.js"></script>
-    <script src="bootstrap-playground-utilities.js"></script>
-    <script src="bootstrap-playground-advanced.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"><\/script>
+</body>
+</html>`;
+        
+        const blob = new Blob([fullHTML], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'bootstrap-components.html';
+        a.click();
+        URL.revokeObjectURL(url);
+        
+        showToast('HTML exported successfully!', 'success');
+    }
+
+    function resetAllComponents() {
+        // Reset all form values to defaults
+        document.querySelectorAll('select, input[type="range"]').forEach(input => {
+            if (input.hasAttribute('selected')) {
+                input.value = input.querySelector('[selected]')?.value || input.options[0]?.value;
+            } else if (input.type === 'range') {
+                input.value = input.defaultValue || input.getAttribute('value');
+                updateRangeValue(input.id);
+            }
+        });
+        
+        // Update all demos
+        updateComponentDemo();
+        updateLayoutDemo();
+        updateFormDemo();
+        updateContentDemo();
+        updateNavigationDemo();
+        updateUtilityDemo();
+        updateAdvancedDemo();
+        
+        showToast('All components reset to defaults!', 'info');
+    }
+
+    function validateBootstrapHTML() {
+        let isValid = true;
+        const issues = [];
+        
+        document.querySelectorAll('.demo-container').forEach((container, index) => {
+            const elements = container.querySelectorAll('*');
+            elements.forEach(el => {
+                // Check for common Bootstrap class issues
+                const classes = el.className.split(' ');
+                classes.forEach(cls => {
+                    if (cls.startsWith('btn-') && !el.classList.contains('btn')) {
+                        issues.push(`Element with class "${cls}" should also have "btn" class`);
+                        isValid = false;
+                    }
+                });
+                
+                // Check for accessibility issues
+                if (el.tagName === 'BUTTON' && !el.hasAttribute('type')) {
+                    issues.push(`Button element should have a type attribute`);
+                    isValid = false;
+                }
+            });
+        });
+        
+        if (isValid) {
+            showToast('All HTML is valid! ✅', 'success');
+        } else {
+            showToast(`Found ${issues.length} validation issues`, 'warning');
+            console.log('Validation issues:', issues);
+        }
+    }
+
+    // Fullscreen Functions
+    function enterFullscreen(tabName) {
+        const container = document.getElementById('fullscreenContainer');
+        const playgroundContent = document.getElementById('fullscreen-playground-content');
+        const controlsContent = document.getElementById('fullscreen-controls-content');
+        
+        // Clone current tab content
+        const currentTab = document.getElementById(tabName + '-tab');
+        const demoContainer = currentTab.querySelector('.demo-container');
+        const controlsArea = currentTab.querySelector('.col-lg-6').cloneNode(true);
+        
+        playgroundContent.innerHTML = demoContainer.outerHTML;
+        controlsContent.innerHTML = controlsArea.innerHTML;
+        
+        container.classList.add('active');
+        isFullscreen = true;
+        
+        // Update fullscreen icon
+        document.getElementById('fullscreen-icon').className = 'bi bi-fullscreen-exit';
+        
+        showToast('Entered fullscreen mode', 'info');
+    }
+
+    function exitFullscreen() {
+        const container = document.getElementById('fullscreenContainer');
+        container.classList.remove('active');
+        isFullscreen = false;
+        
+        // Update fullscreen icon
+        document.getElementById('fullscreen-icon').className = 'bi bi-fullscreen';
+        
+        showToast('Exited fullscreen mode', 'info');
+    }
+
+    function toggleFullscreen() {
+        if (isFullscreen) {
+            exitFullscreen();
+        } else {
+            enterFullscreen(currentTab);
+        }
+    }
+
+    // Keyboard Shortcuts
+    function setupKeyboardShortcuts() {
+        document.addEventListener('keydown', (e) => {
+            // Toggle keyboard shortcuts display
+            if (e.key === '?' && e.shiftKey) {
+                const shortcuts = document.getElementById('keyboard-shortcuts');
+                shortcuts.classList.toggle('show');
+                return;
+            }
+            
+            // Ctrl/Cmd + D for theme toggle
+            if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
+                e.preventDefault();
+                const currentTheme = document.body.classList.contains('dark-mode') ? 'light' : 'dark';
+                setTheme(currentTheme);
+                return;
+            }
+            
+            // F11 for fullscreen
+            if (e.key === 'F11') {
+                e.preventDefault();
+                toggleFullscreen();
+                return;
+            }
+            
+            // Ctrl/Cmd + Enter for copy HTML
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                e.preventDefault();
+                const currentOutput = document.querySelector(`#${currentTab}-html-output`);
+                if (currentOutput) {
+                    copyCode(currentOutput.id);
+                }
+                return;
+            }
+            
+            // Number keys for tab switching
+            const tabMap = {
+                '1': 'components',
+                '2': 'layout', 
+                '3': 'forms',
+                '4': 'content',
+                '5': 'navigation',
+                '6': 'utilities',
+                '7': 'advanced'
+            };
+            
+            if (tabMap[e.key] && !e.ctrlKey && !e.metaKey && !e.altKey) {
+                switchComponentTab(tabMap[e.key]);
+                return;
+            }
+            
+            // Delete key for reset
+            if (e.key === 'Delete') {
+                resetAllComponents();
+                return;
+            }
+        });
+        
+        // Show shortcuts hint briefly on load
+        setTimeout(() => {
+            showToast('Press Shift+? to see keyboard shortcuts', 'info');
+        }, 3000);
+    }
+
+    // Window resize handler for responsive adjustments
+    window.addEventListener('resize', () => {
+        if (window.innerWidth < 768) {
+            document.getElementById('keyboard-shortcuts').classList.remove('show');
+        }
+    });
+    </script>
 </body>
 </html>

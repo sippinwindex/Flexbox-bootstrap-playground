@@ -1,0 +1,171 @@
+/* css/theme-variables.css */
+
+:root {
+    /* Unified theme variables that change with dark mode */
+    --theme-bg-primary: #ffffff;
+    --theme-bg-secondary: #f8f9fa;
+    --theme-bg-tertiary: #e9ecef;
+    --theme-text-primary: #495057;
+    --theme-text-secondary: #6c757d;
+    --theme-text-muted: #a0aec0;
+    --theme-border-color: #dee2e6;
+    --theme-border-focus: #667eea;
+    --theme-shadow-sm: 0 2px 8px rgba(0,0,0,0.1);
+    --theme-shadow-md: 0 4px 15px rgba(0,0,0,0.15);
+    --theme-shadow-lg: 0 8px 25px rgba(0,0,0,0.2);
+
+    /* Enhanced gradients and colors */
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --success-gradient: linear-gradient(135deg, #28a745, #20c997);
+    --warning-gradient: linear-gradient(135deg, #ffc107, #ff8c00);
+    --info-gradient: linear-gradient(135deg, #17a2b8, #20c997);
+    --danger-gradient: linear-gradient(135deg, #dc3545, #fd79a8);
+    --learning-gradient: linear-gradient(135deg, #6f42c1, #e83e8c);
+    --cyberpunk-gradient: linear-gradient(135deg, #ff006e, #8338ec, #3a86ff);
+    --sunset-gradient: linear-gradient(135deg, #ff9a9e, #fecfef, #fecfef);
+    --ocean-gradient: linear-gradient(135deg, #667eea, #764ba2);
+    --forest-gradient: linear-gradient(135deg, #134e5e, #71b280);
+    
+    /* Individual colors for consistency */
+    --success-color: #28a745;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --info-color: #17a2b8;
+    --learning-color: #6f42c1;
+    --cyberpunk-color: #ff006e;
+    --neon-blue: #00ffff;
+    --neon-pink: #ff10f0;
+    --neon-green: #39ff14;
+    
+    /* Animation Variables */
+    --transition-fast: 0.15s ease-out;
+    --transition-base: 0.3s ease-out;
+    --transition-slow: 0.5s ease-out;
+    --transition-bounce: 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    
+    /* Glass morphism variables */
+    --glass-bg: rgba(255, 255, 255, 0.1);
+    --glass-border: rgba(255, 255, 255, 0.2);
+    --glass-backdrop: blur(20px);
+    --glass-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+    
+    /* Neumorphism variables */
+    --neu-light-shadow: #ffffff;
+    --neu-dark-shadow: #d1d9e6;
+    --neu-bg: #e0e5ec;
+    
+    /* Typography scale */
+    --font-size-xs: 0.75rem;
+    --font-size-sm: 0.875rem;
+    --font-size-base: 1rem;
+    --font-size-lg: 1.125rem;
+    --font-size-xl: 1.25rem;
+    --font-size-2xl: 1.5rem;
+    --font-size-3xl: 1.875rem;
+    --font-size-4xl: 2.25rem;
+    --font-size-5xl: 3rem;
+    
+    /* Spacing scale */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+    --spacing-2xl: 3rem;
+    
+    /* Border radius scale */
+    --radius-sm: 0.25rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+    --radius-xl: 1rem;
+    --radius-2xl: 1.5rem;
+    --radius-full: 9999px;
+    
+    /* Z-index scale */
+    --z-dropdown: 1000;
+    --z-sticky: 1020;
+    --z-fixed: 1030;
+    --z-modal-backdrop: 1040;
+    --z-modal: 1050;
+    --z-popover: 1060;
+    --z-tooltip: 1070;
+    --z-toast: 1080;
+}
+
+/* Dark mode overrides - enhanced */
+body.dark-mode {
+    --theme-bg-primary: #1a202c;
+    --theme-bg-secondary: #2d3748;
+    --theme-bg-tertiary: #4a5568;
+    --theme-text-primary: #e2e8f0;
+    --theme-text-secondary: #a0aec0;
+    --theme-text-muted: #718096;
+    --theme-border-color: #4a5568;
+    --theme-border-focus: #63b3ed;
+    --theme-shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+    --theme-shadow-md: 0 4px 15px rgba(0,0,0,0.4);
+    --theme-shadow-lg: 0 8px 25px rgba(0,0,0,0.3);
+    
+    --glass-bg: rgba(0, 0, 0, 0.2);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+    
+    --neu-light-shadow: #2a2a2a;
+    --neu-dark-shadow: #0a0a0a;
+    --neu-bg: #1a1a1a;
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+    :root {
+        --theme-border-color: #000000;
+        --theme-text-primary: #000000;
+        --theme-text-secondary: #333333;
+        --theme-shadow-sm: 0 2px 8px rgba(0,0,0,0.8);
+        --theme-shadow-md: 0 4px 15px rgba(0,0,0,0.8);
+        --theme-shadow-lg: 0 8px 25px rgba(0,0,0,0.8);
+    }
+    
+    body.dark-mode {
+        --theme-text-primary: #ffffff;
+        --theme-text-secondary: #cccccc;
+        --theme-border-color: #ffffff;
+    }
+}
+
+/* Reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+    :root {
+        --transition-fast: 0.01ms;
+        --transition-base: 0.01ms;
+        --transition-slow: 0.01ms;
+        --transition-bounce: 0.01ms;
+    }
+}
+
+/* Color scheme preference detection */
+@media (prefers-color-scheme: dark) {
+    :root:not(.light-mode) {
+        --theme-bg-primary: #1a202c;
+        --theme-bg-secondary: #2d3748;
+        --theme-bg-tertiary: #4a5568;
+        --theme-text-primary: #e2e8f0;
+        --theme-text-secondary: #a0aec0;
+        --theme-text-muted: #718096;
+        --theme-border-color: #4a5568;
+        --theme-border-focus: #63b3ed;
+    }
+}
+
+/* Custom property fallbacks for older browsers */
+@supports not (color: var(--theme-bg-primary)) {
+    body {
+        background-color: #f8f9fa;
+        color: #495057;
+    }
+    
+    .dark-mode {
+        background-color: #2d3748;
+        color: #e2e8f0;
+    }
+}
